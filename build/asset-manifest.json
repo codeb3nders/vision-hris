@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a7a51899.css",
+    "main.js": "/static/js/main.a9a9a12c.js",
+    "static/js/787.55ec61d1.chunk.js": "/static/js/787.55ec61d1.chunk.js",
+    "static/media/login-bg.jpg": "/static/media/login-bg.adc9dbe6481c20081ecc.jpg",
+    "static/media/pms-watermark.png": "/static/media/pms-watermark.167cf08c8253ad77c4e6.png",
+    "index.html": "/index.html",
+    "main.a7a51899.css.map": "/static/css/main.a7a51899.css.map",
+    "main.a9a9a12c.js.map": "/static/js/main.a9a9a12c.js.map",
+    "787.55ec61d1.chunk.js.map": "/static/js/787.55ec61d1.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a7a51899.css",
+    "static/js/main.a9a9a12c.js"
+  ]
+}
