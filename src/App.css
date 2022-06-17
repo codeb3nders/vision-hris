@@ -36,3 +36,44 @@
     transform: rotate(360deg);
   }
 }
+
+.login-selector-wrapper {
+  display: flex;
+  width: 50%;
+  /* height: 50px; */
+  background-color: #eee;
+  border-radius: 30px;
+  padding: .6rem;
+}
+
+.login-selector-wrapper > button {
+  border: none;
+  outline: none;
+  background-color: #fff;
+  padding: 8px 16px;
+  flex: 1;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  transition: 300ms ease-in-out;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: .7;
+}
+
+.login-selector-wrapper > button:nth-child(1) {
+  margin-right: .5rem;
+}
+.login-selector-wrapper > button:hover {
+  border: 1px solid #db2325;
+  opacity: 1;
+}
+
+.login-selector-wrapper > button.selected {
+  opacity: 1;
+  border: 1px solid #db2325;
+  background-color: #db2326;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(219, 35, 37, .5)
+}
