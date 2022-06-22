@@ -14,6 +14,7 @@ import {
   OutlinedInput,
   InputLabel,
   FormControl,
+  Card,
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -78,12 +79,12 @@ export default function SignInSide() {
     // history.push('/');
     setIsHRLogin(isHR);
     setIsLoggedIn(true);
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    // event.preventDefault();
+    // const data = new FormData(event.currentTarget);
+    // console.log({
+    //   email: data.get('email'),
+    //   password: data.get('password'),
+    // });
   };
 
   return (
@@ -93,10 +94,10 @@ export default function SignInSide() {
         <Grid
           item
           xs={false}
-          sm={5}
-          md={8}
+          sm={12}
+          md={12}
           sx={{
-            background: `url(${require('./assets/images/login-bg.jpg')}) no-repeat`,
+            // background: `url(${require('./assets/images/login-bg.jpg')}) no-repeat`,
             backgroundAttachment: '',
             backgroundSize: 'cover',
             backgroundPosition: 'center center',
@@ -106,128 +107,151 @@ export default function SignInSide() {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-        />
-
-        <Grid item xs={12} sm={7} md={4} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <img src={PMS_LOGO} alt='' style={{ width: 100 }} />
-            </div>
-
-            {/* <Typography component='h1' variant='h5'>
-              Sign in
-            </Typography> */}
-            <section className='login-selector-wrapper'>
-              <button
-                className={isHR ? '' : 'selected'}
-                onClick={() => setIsHR(false)}
+        >
+          <Card sx={{ width: '90%', maxWidth: 900 }} elevation={20}>
+            <Grid container>
+              <Grid
+                item
+                xs={12}
+                md={6}
+                sx={{
+                  background: 'linear-gradient(to right, #db2325, #fff)',
+                  overflow: 'hidden',
+                }}
               >
-                <AccountCircle fontSize='small' s />{' '}
-                <Typography
-                  sx={{ marginLeft: '5px' }}
-                  component='small'
-                  variant='subtitle2'
-                >
-                  Employee
-                </Typography>
-              </button>
-              <button
-                className={isHR ? 'selected' : ''}
-                onClick={() => setIsHR(true)}
-              >
-                <AdminPanelSettings fontSize='small' />
-                <Typography
-                  sx={{ marginLeft: '5px' }}
-                  component='small'
-                  variant='subtitle2'
-                >
-                  HR
-                </Typography>
-              </button>
-            </section>
-            <Box
-              component='form'
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
-            >
-              <TextField
-                margin='normal'
-                required
-                fullWidth
-                id='email'
-                label='Email Address / Username'
-                name='email'
-                autoComplete='email'
-                autoFocus
-              />
-              <FormControl fullWidth sx={{ marginTop: 1 }}>
-                <InputLabel htmlFor='password'>Password</InputLabel>
-                <OutlinedInput
-                  margin='normal'
-                  required
-                  fullWidth
-                  name='password'
-                  label='Password'
-                  value={values.password}
-                  onChange={handleChange('password')}
-                  type={values.showPassword ? 'text' : 'password'}
-                  id='password'
-                  // autoComplete='current-password'
-                  endAdornment={
-                    <InputAdornment position='end'>
-                      <IconButton
-                        aria-label='toggle password visibility'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge='end'
-                      >
-                        {values.showPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-              <FormControlLabel
-                control={<Checkbox value='remember' color='primary' />}
-                label='Remember me'
-              />
-              <Button
-                type='submit'
-                fullWidth
-                variant='contained'
-                disableElevation
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item xs sx={{ textAlign: 'left' }}>
-                  <Link href='#' variant='body2'>
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href='#' variant='body2'>
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
+                <Box
+                  sx={{
+                    background: `url(${require('./assets/images/login-bg.png')}) no-repeat`,
+                    backgroundAttachment: 'local',
+                    backgroundSize: 'cover',
+                    backgroundPosition: '60% center',
+                    backgroundBlendMode: 'overlay',
+                    width: '100%',
+                    height: '100%',
+                    opacity: 0.6,
+                  }}
+                ></Box>
               </Grid>
-              <Copyright sx={{ mt: 5 }} />
-            </Box>
-          </Box>
+              <Grid item xs={12} md={6}>
+                <Box
+                  sx={{
+                    my: 6,
+                    mx: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div>
+                    <img src={PMS_LOGO} alt='' style={{ width: 100 }} />
+                  </div>
+
+                  <section
+                    style={{ marginTop: 32 }}
+                    className='login-selector-wrapper'
+                  >
+                    <button
+                      className={isHR ? '' : 'selected'}
+                      onClick={() => setIsHR(false)}
+                    >
+                      <AccountCircle fontSize='small' s />{' '}
+                      <Typography
+                        sx={{ marginLeft: '5px' }}
+                        component='small'
+                        variant='subtitle2'
+                      >
+                        Employee
+                      </Typography>
+                    </button>
+                    <button
+                      className={isHR ? 'selected' : ''}
+                      onClick={() => setIsHR(true)}
+                    >
+                      <AdminPanelSettings fontSize='small' />
+                      <Typography
+                        sx={{ marginLeft: '5px' }}
+                        component='small'
+                        variant='subtitle2'
+                      >
+                        HR
+                      </Typography>
+                    </button>
+                  </section>
+                  <Box component='form' noValidate onSubmit={handleSubmit}>
+                    <TextField
+                      margin='normal'
+                      required
+                      fullWidth
+                      id='email'
+                      label='Email Address / Username'
+                      name='email'
+                      autoComplete='email'
+                      autoFocus
+                      variant='standard'
+                    />
+                    <FormControl fullWidth>
+                      {/* <InputLabel htmlFor='password'>Password</InputLabel> */}
+                      <TextField
+                        variant='standard'
+                        margin='normal'
+                        required
+                        fullWidth
+                        name='password'
+                        label='Password'
+                        value={values.password}
+                        onChange={handleChange('password')}
+                        type={values.showPassword ? 'text' : 'password'}
+                        id='password'
+                        // autoComplete='current-password'
+                        endAdornment={
+                          <InputAdornment position='end'>
+                            <IconButton
+                              aria-label='toggle password visibility'
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge='end'
+                            >
+                              {values.showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <FormControlLabel
+                      control={<Checkbox value='remember' color='primary' />}
+                      label='Remember me'
+                    />
+                    <Button
+                      type='submit'
+                      fullWidth
+                      variant='contained'
+                      disableElevation
+                      sx={{ mt: 3, mb: 2 }}
+                    >
+                      Sign In
+                    </Button>
+                    <Grid container>
+                      <Grid item xs sx={{ textAlign: 'left' }}>
+                        <Link href='#' variant='body2'>
+                          Forgot password?
+                        </Link>
+                      </Grid>
+                      <Grid item>
+                        <Link href='#' variant='body2'>
+                          {"Don't have an account? Sign Up"}
+                        </Link>
+                      </Grid>
+                    </Grid>
+                    <Copyright sx={{ mt: 5 }} />
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+          </Card>
         </Grid>
       </Grid>
     </ThemeProvider>

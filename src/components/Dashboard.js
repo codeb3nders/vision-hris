@@ -1,16 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { AppCtx } from './../App';
-import EmployeeDashboard from './Dashboards/employee.dashboard';
-import HRDashboard from './Dashboards/hr.dashboard';
 
 const Dashboard = () => {
   const { isHRLogin } = useContext(AppCtx);
 
-  useEffect(() => {
-    // handleDashboard()
-  }, [isHRLogin]);
+  useEffect(() => {}, [isHRLogin]);
 
-  return <div>{isHRLogin ? <HRDashboard /> : <EmployeeDashboard />}</div>;
+  return <div>Dashboard</div>;
 };
 
 export default Dashboard;

@@ -39,7 +39,7 @@
 
 .login-selector-wrapper {
   display: flex;
-  width: 50%;
+  width: 100%;
   /* height: 50px; */
   background-color: #eee;
   border-radius: 30px;
