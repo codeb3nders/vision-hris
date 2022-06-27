@@ -1,0 +1,77 @@
+export const DigitalBulletin = ['Invited', 'Member', 'Rendering', 'Removed'];
+export const VaccineStatus = ['Vaccinated', 'LGU Registered'];
+export const Departments = [
+  'Business Development & Marketing',
+  'Commercial and Contracts',
+  'Corporate & General Accounting',
+  'ESH',
+  'Estimating and Tender Planning',
+  'HRMD',
+  'Information and Technology',
+  'Internal Audit',
+  'Office of the President',
+  'Operations -  Logistics & Transport',
+  'Operations - Heavy Equipment',
+  'Operations - Project Management',
+  'Operations - Tools',
+  'Operations Center - Materials Control',
+  'Operations Center - Planning & Scheduling',
+  'Procurement and Material Management',
+  'QA/QC',
+  'Quality Management',
+  'Treasury, Billing & Collection, Insurances & Bonds',
+];
+
+export const EmploymentStatus = ['REGULAR', 'PROJECT EMPLOYEE'];
+
+export const TaxExemption = ['SINGLE', 'MARRIED'];
+export const CivilStatus = ['SINGLE', 'MARRIED'];
+
+export const Employees = [
+  {
+    id: 1121,
+    employee_name: 'ABNE, MARK JAYVEN LLANERA',
+    employee_no: 1121,
+    position: 'PLANNING & SCHEDULING MANAGER',
+    rank: 'MANAGERIAL',
+    division: 'HEAD OFFICE',
+    department: 'Operations Center - Planning & Scheduling ',
+    designation: 'HEAD OFFICE',
+    date_hired: '1-Jun-21',
+    yrs_in_service: '1',
+    employment_status: 'REGULAR',
+    end_of_prob: '1-Dec-21',
+    contract_end_date: null,
+    gender: 'Male',
+    birthdate: '27-Jun-92',
+    age: '29',
+    tax_exemption: 'MARRIED',
+    contact_number: '9064195953',
+    email: 'mjlabne@gmail.com',
+    bdo_acc: null,
+    civil_status: 'MARRIED',
+    no_of_dependents: null,
+    sss: '3443240796',
+    philhealth: '030255293113',
+    pagibig: '121233972057',
+    tin: '440996953',
+    address: '11 Blk 13 Park Place Ave Park Place Village Cainta Rizal',
+    course: 'BS Civil Engineering',
+    educational_attainment: 'COLLEGE GRADUATE',
+    date_of_school_attended: '2008-2013',
+    licensure: 'Civil Engineer',
+    prc_no: null,
+    offense: null,
+    audit: null,
+    remarks: null,
+    coc_no: null,
+    vacccine_status: 'VACCINATED',
+    digital_bulletin: 'Member',
+    viber_number: '639177080278',
+    vpdc_email: 'jayven.abne@vcdcph.com',
+    emergency_contact: 'Aubrey Q. Abne',
+    emergency_address:
+      '11 Block 13 Parkplace Avenue Parkplace Village, Cainta, Rizal',
+    emergency_no: '9954887546',
+  },
+];

@@ -34,6 +34,7 @@ import {
   Settings,
   TimeToLeaveOutlined,
   ManageHistory,
+  Group,
 } from '@mui/icons-material';
 import { AppCtx } from '../App';
 // import { Link, useHistory } from 'react-router-dom';
@@ -180,6 +181,13 @@ const Main = ({ children }) => {
           </ListItemButton>
         </List>
       </Collapse>
+
+      <ListItemButton onClick={() => setCurrentPage('employee')}>
+        <ListItemIcon>
+          <Group />
+        </ListItemIcon>
+        <ListItemText secondary='Employee Database' />
+      </ListItemButton>
 
       <ListItemButton>
         <ListItemIcon>

@@ -9,6 +9,7 @@ import LeaveTable from './components/EmployeeDashboard/Tables/LeaveTable';
 import LeaveManagement from './components/EmployeeDashboard/Management/LeaveManagement';
 import OTManangement from './components/EmployeeDashboard/Management/OTManangement';
 import OTTable from './components/EmployeeDashboard/Tables/OTTable';
+import EmployeeList from './components/HRDashboard/EmployeeList';
 
 export const AppCtx = createContext();
 
@@ -37,6 +38,8 @@ const App = () => {
         return <LeaveManagement />;
       case 'ot-manage':
         return <OTManangement />;
+      case 'employee':
+        return <EmployeeList />;
 
       default:
         break;
