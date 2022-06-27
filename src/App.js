@@ -6,6 +6,9 @@ import LeaveForm from './components/EmployeeDashboard/Forms/LeaveForm';
 import OTForm from './components/EmployeeDashboard/Forms/OTForm';
 import Main from './components/Main';
 import LeaveTable from './components/EmployeeDashboard/Tables/LeaveTable';
+import LeaveManagement from './components/EmployeeDashboard/Management/LeaveManagement';
+import OTManangement from './components/EmployeeDashboard/Management/OTManangement';
+import OTTable from './components/EmployeeDashboard/Tables/OTTable';
 
 export const AppCtx = createContext();
 
@@ -28,9 +31,15 @@ const App = () => {
         return <LeaveForm />;
       case 'leave-list':
         return <LeaveTable />;
+      case 'ot-list':
+        return <OTTable />;
+      case 'leave-manage':
+        return <LeaveManagement />;
+      case 'ot-manage':
+        return <OTManangement />;
 
       default:
-        return <Dashboard />;
+        break;
     }
   };
 

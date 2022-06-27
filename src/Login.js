@@ -49,7 +49,7 @@ const theme = createTheme();
 
 export default function SignInSide() {
   const history = useHistory();
-  const { setIsLoggedIn, setIsHRLogin } = useContext(AppCtx);
+  const { setIsLoggedIn, setIsHRLogin, setCurrentPage } = useContext(AppCtx);
   const [values, setValues] = useState({
     amount: '',
     password: '',
@@ -75,16 +75,10 @@ export default function SignInSide() {
     event.preventDefault();
   };
 
-  const handleSubmit = (event) => {
-    // history.push('/');
+  const handleSubmit = () => {
     setIsHRLogin(isHR);
     setIsLoggedIn(true);
-    // event.preventDefault();
-    // const data = new FormData(event.currentTarget);
-    // console.log({
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    // });
+    setCurrentPage('dashboard');
   };
 
   return (

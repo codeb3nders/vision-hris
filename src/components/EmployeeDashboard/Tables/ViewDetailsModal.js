@@ -9,31 +9,30 @@ import {
   ListItemText,
   Divider,
   Button,
+  Grid,
+  IconButton,
 } from '@mui/material';
 import {
-  Assignment,
-  AssignmentOutlined,
+  AccessTimeTwoTone,
   AssignmentTwoTone,
-  Badge,
-  BadgeOutlined,
   BadgeTwoTone,
-  DateRange,
+  Close,
   DateRangeTwoTone,
-  DomainVerification,
-  Event,
-  EventOutlined,
   EventTwoTone,
   Info,
-  PendingActions,
   PendingActionsTwoTone,
-  SpeakerNotes,
-  SpeakerNotesOutlined,
   SpeakerNotesTwoTone,
-  SupervisedUserCircleOutlined,
   SupervisedUserCircleTwoTone,
+  ThumbDownAlt,
+  ThumbUpAlt,
 } from '@mui/icons-material';
 
-const ViewDetailsModal = ({ viewDetails, setViewDetails }) => {
+const ViewDetailsModal = ({
+  viewDetails,
+  setViewDetails,
+  isApprover,
+  isOT,
+}) => {
   const [details, setDetails] = useState(viewDetails?.details?.row);
 
   useEffect(() => {
@@ -75,6 +74,12 @@ const ViewDetailsModal = ({ viewDetails, setViewDetails }) => {
 
         case 'supervisor':
           return <SupervisedUserCircleTwoTone />;
+        case 'date':
+          return <EventTwoTone />;
+        case 'time_from':
+          return <AccessTimeTwoTone />;
+        case 'time_to':
+          return <AccessTimeTwoTone />;
 
         default:
           break;
@@ -101,6 +106,12 @@ const ViewDetailsModal = ({ viewDetails, setViewDetails }) => {
           return 'Status';
         case 'supervisor':
           return 'Supervisor';
+        case 'date':
+          return 'Date';
+        case 'time_from':
+          return 'Time From';
+        case 'time_to':
+          return 'Time To';
 
         default:
           break;
@@ -163,17 +174,37 @@ const ViewDetailsModal = ({ viewDetails, setViewDetails }) => {
           sx={{ alignItems: 'center', display: 'flex' }}
           color='primary'
         >
-          <Info sx={{ mr: 1 }} /> Leave Application Details
+          <Info sx={{ mr: 1 }} /> {isOT ? 'OT' : 'Leave'} Application Details
+          <IconButton
+            sx={{ ml: 'auto' }}
+            onClick={() => setViewDetails({ details: {}, status: false })}
+          >
+            <Close />
+          </IconButton>
         </Typography>
         <Divider sx={{ mt: 1 }} />
         <List>{handleList()}</List>
-        <div style={{ textAlign: 'right' }}>
-          <Button
-            onClick={() => setViewDetails({ details: {}, status: false })}
-          >
-            Close
-          </Button>
-        </div>
+        {isApprover && details?.status === 'Pending' && (
+          <Grid container spacing={1} justifyContent='center' sx={{ mt: 1 }}>
+            <Button
+              color='success'
+              variant='contained'
+              disableElevation
+              sx={{ mr: 1 }}
+              startIcon={<ThumbUpAlt />}
+            >
+              Approve
+            </Button>
+            <Button
+              color='error'
+              variant='contained'
+              disableElevation
+              startIcon={<ThumbDownAlt />}
+            >
+              Disapprove
+            </Button>
+          </Grid>
+        )}
       </Card>
     </Modal>
   );

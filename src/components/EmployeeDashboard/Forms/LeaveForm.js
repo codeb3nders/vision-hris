@@ -27,8 +27,14 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { Box } from '@mui/system';
 import { LeaveTypes } from '../../../constants/LeaveTypes';
+import OTModal from './OTModal';
 
-const LeaveForm = ({ setNewForm, setOpenSnack, setSelectedLeaveType }) => {
+const LeaveForm = ({
+  setNewForm,
+  setOpenSnack,
+  setSelectedLeaveType,
+  isOT,
+}) => {
   const [isOpen, setIsOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(false);

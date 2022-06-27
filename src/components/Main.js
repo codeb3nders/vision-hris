@@ -139,7 +139,10 @@ const Main = ({ children }) => {
             <ListItemText secondary='Leave Application' />
           </ListItemButton>
 
-          <ListItemButton sx={{ pl: 4 }} onClick={() => setCurrentPage('ot')}>
+          <ListItemButton
+            sx={{ pl: 4 }}
+            onClick={() => setCurrentPage('ot-list')}
+          >
             <ListItemIcon>
               <MoreTimeOutlined />
             </ListItemIcon>
@@ -157,13 +160,19 @@ const Main = ({ children }) => {
       </ListItemButton>
       <Collapse in={isManageOpen} timeout='auto' unmountOnExit>
         <List component='div' disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
+          <ListItemButton
+            sx={{ pl: 4 }}
+            onClick={() => setCurrentPage('leave-manage')}
+          >
             <ListItemIcon>
               <TimeToLeaveOutlined />
             </ListItemIcon>
             <ListItemText secondary='Leave Management' />
           </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }}>
+          <ListItemButton
+            sx={{ pl: 4 }}
+            onClick={() => setCurrentPage('ot-manage')}
+          >
             <ListItemIcon>
               <MoreTimeOutlined />
             </ListItemIcon>
@@ -221,7 +230,10 @@ const Main = ({ children }) => {
               color='error'
               startIcon={<Logout />}
               disableElevation
-              onClick={() => setIsLoggedIn(false)}
+              onClick={() => {
+                setCurrentPage('login');
+                setIsLoggedIn(false);
+              }}
             >
               Logout
             </Button>
