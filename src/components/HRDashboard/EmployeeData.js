@@ -62,41 +62,49 @@ export const CivilStatus = ["SINGLE", "MARRIED"]
 
 export const TITLES = element => [
 	{
+		// 0
 		key: "leave_type",
 		label: "Leave Type",
 		icon: <AssignmentTwoTone />
 	},
 	{
+		// 1
 		key: "date_requested",
 		label: "Date Requested",
 		icon: <EventTwoTone />
 	},
 	{
+		// 2
 		key: "employee_no",
 		label: "Employee No.",
 		icon: <BadgeTwoTone />
 	},
 	{
+		// 3
 		key: "employee_name",
 		label: "Employee Name",
 		icon: <BadgeTwoTone />
 	},
 	{
+		// 4
 		key: "date_from",
 		label: "Date/Time From",
 		icon: <DateRangeTwoTone />
 	},
 	{
+		// 5
 		key: "date_to",
 		label: "Date/Time To",
 		icon: <DateRangeTwoTone />
 	},
 	{
+		// 6
 		key: "reason",
 		label: "Reason",
 		icon: <SpeakerNotesTwoTone />
 	},
 	{
+		// 7
 		key: "status",
 		label: "Status",
 		icon: (
@@ -104,26 +112,31 @@ export const TITLES = element => [
 		)
 	},
 	{
+		// 8
 		key: "supervisor",
 		label: "Supervisor",
 		icon: <SupervisedUserCircleTwoTone />
 	},
 	{
+		// 9
 		key: "date",
 		label: "Date",
 		icon: <EventTwoTone />
 	},
 	{
+		// 10
 		key: "time_from",
 		label: "Time From",
 		icon: <AccessTimeTwoTone />
 	},
 	{
+		// 11
 		key: "time_to",
 		label: "Time To",
 		icon: <AccessTimeTwoTone />
 	},
 	{
+		// 12
 		key: "position",
 		label: "Position",
 		icon: <MilitaryTechTwoTone />
@@ -323,6 +336,14 @@ export const TITLES = element => [
 		label: "Emergency No.",
 		icon: <PhoneTwoTone />
 	}
+]
+
+export const NewEmployeeDetails = [
+	...TITLES().filter((t, i) => {
+		if (i !== 0 && i !== 1 && i !== 4 && i !== 5 && i !== 6 && i !== 7 && i !== 8 && i !== 9 && i !== 10 && i !== 11) {
+			return t
+		}
+	})
 ]
 
 export const Employees = [
