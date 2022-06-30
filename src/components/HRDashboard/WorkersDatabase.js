@@ -1,7 +1,8 @@
-import React from "react"
+import React from 'react';
+import EmployeeDatabase from './EmployeeDatabase';
 
 const WorkersDatabase = () => {
-	return <div>WorkersDatabase</div>
-}
+  return <EmployeeDatabase />;
+};
 
-export default WorkersDatabase
+export default WorkersDatabase;
