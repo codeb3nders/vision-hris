@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +9,48 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+:root {
+  --vision-red: 219 35 37;
+  --vision-red-hover: 187 33 34;
+  --vision-gray: 88 88 90;
+  --vision-rust: 209 89 39;
+  --vision-paint: 217 217 217;
+}
+
+@layer components {
+  .data-grid {
+    @apply border-0;
+  }
+
+  .data-grid .MuiDataGrid-columnHeaders {
+    @apply bg-v-gray/100 dark:bg-slate-900 text-white;
+  }
+
+  .data-grid .MuiDataGrid-row > * {
+    @apply border-0 first:text-white dark:text-white;
+  }
+
+  .data-grid .MuiDataGrid-row.Mui-selected {
+    @apply bg-v-gray/10;
+  }
+
+  .data-grid .MuiDataGrid-row:hover {
+    @apply bg-v-gray/10;
+  }
+
+  .data-grid .MuiDataGrid-row.Mui-selected:hover {
+    @apply bg-v-gray/10;
+  }
+
+  .data-grid .MuiDataGrid-columnHeaders svg {
+    @apply text-white;
+  }
 }

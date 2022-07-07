@@ -97,7 +97,7 @@ const groups = {
   remarks: 'remarks',
 };
 
-export const TITLES = (element) => [
+export const TITLES = [
   {
     // 0
     key: 'leave_type',
@@ -131,58 +131,56 @@ export const TITLES = (element) => [
     key: 'date_from',
     label: 'Date/Time From',
     icon: <DateRangeTwoTone />,
+    group: null,
   },
   {
     // 5
     key: 'date_to',
     label: 'Date/Time To',
     icon: <DateRangeTwoTone />,
+    group: null,
   },
   {
     // 6
     key: 'reason',
     label: 'Reason',
     icon: <SpeakerNotesTwoTone />,
+    group: null,
   },
   {
     // 7
     key: 'status',
     label: 'Status',
-    icon: (
-      <PendingActionsTwoTone
-        color={
-          element === 'Pending'
-            ? 'warning'
-            : element === 'Approve'
-            ? 'success'
-            : 'error'
-        }
-      />
-    ),
+    icon: <PendingActionsTwoTone />,
+    group: null,
   },
   {
     // 8
     key: 'supervisor',
     label: 'Supervisor',
     icon: <SupervisedUserCircleTwoTone />,
+    group: null,
   },
   {
     // 9
     key: 'date',
     label: 'Date',
     icon: <EventTwoTone />,
+    group: null,
   },
   {
     // 10
     key: 'time_from',
     label: 'Time From',
     icon: <AccessTimeTwoTone />,
+    group: null,
   },
   {
     // 11
     key: 'time_to',
     label: 'Time To',
     icon: <AccessTimeTwoTone />,
+    group: null,
   },
   {
     // 12
@@ -429,7 +427,7 @@ export const TITLES = (element) => [
 ];
 
 export const NewEmployeeDetails = [
-  ...TITLES().filter((t, i) => {
+  ...TITLES.filter((t, i) => {
     if (
       i !== 0 &&
       i !== 1 &&
