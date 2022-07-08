@@ -49,13 +49,13 @@ const Shortcuts = (props: Props) => {
   return (
     <CardWTitle
       title='Shortcuts'
-      className='p-4 flex flex-col space-y-1 basis-1 min-w-max border border-white hover:border hover:border-slate-200'
+      className='p-4 flex flex-col space-y-1 basis-1 min-w-max'
     >
       {shortcuts.map((s) => {
         return s.in_app ? (
           <Link to={s.url} className='no-underline text-inherit'>
-            <div className='group p-2 flex flex-row space-x-2 rounded-md hover:text-v-red ease-in-out hover:bg-red-50'>
-              <div className='text-sm text-slate-400 group-hover:text-v-red'>
+            <div className='group p-2 flex flex-row space-x-2 rounded-md hover:text-v-red ease-in-out duration-150 hover:bg-red-50 '>
+              <div className='text-sm text-slate-400 group-hover:text-v-red ease-in-out duration-150'>
                 {s.icon}
               </div>
               <div className='text-sm'>{s.label}</div>
@@ -68,8 +68,8 @@ const Shortcuts = (props: Props) => {
             rel='noreferrer'
             className='no-underline text-inherit'
           >
-            <div className='group p-2 flex flex-row space-x-2 rounded-md hover:text-v-red ease-in-out hover:bg-red-50'>
-              <div className='text-sm text-slate-400 group-hover:text-v-red'>
+            <div className='group p-2 flex flex-row space-x-2 rounded-md hover:text-v-red ease-in-out duration-150 hover:bg-red-50'>
+              <div className='text-sm text-slate-400 group-hover:text-v-red ease-in-out duration-150'>
                 {s.icon}
               </div>
               <div className='text-sm'>{s.label}</div>
