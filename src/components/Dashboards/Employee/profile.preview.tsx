@@ -3,8 +3,6 @@ import CustomCard from 'CustomComponents/CustomCard';
 import moment from 'moment';
 import { VISION_LOGO, VISION_LOGO_THICK } from 'assets';
 
-type Props = {};
-
 const details = [
   {
     title: 'Position',
@@ -27,9 +25,15 @@ const details = [
 export const ProfilePhoto =
   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80';
 
-const ProfilePreview: React.FC<Props> = () => {
+type Props = {
+  className?: string;
+};
+
+const ProfilePreview: React.FC<Props> = ({ className }) => {
   return (
-    <CustomCard className='basis-1 min-w-max overflow-hidden group'>
+    <CustomCard
+      className={`basis-1 min-w-max overflow-hidden group ${className}`}
+    >
       <>
         {/* <img
           src={VISION_LOGO_THICK}

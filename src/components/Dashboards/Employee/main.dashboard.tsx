@@ -6,27 +6,24 @@ import OTRequests from './ot.requests';
 import LeaveRequests from './leave.requests';
 import Welcome from './welcome';
 import OffsToday from './offs.today';
+import Attendance from './attendance';
 
 const MainDashboard = () => {
   return (
-    <main className='grid grid-cols-12 gap-4 max-w-[1000px] mx-auto items-start mt-4 pb-10'>
-      <div className='w-full col-span-9'>
-        <Welcome />
+    <main className='grid grid-cols-12 items-start gap-4 mt-4 pb-20'>
+      <Welcome className='col-span-9 tablet:col-span-12 laptop:col-span-9  phone:col-span-12  self-stretch' />
+      <Shortcuts className='col-span-3 tablet:col-span-4 laptop:col-span-3 phone:col-span-12  self-stretch' />
 
-        <div>
-          <section className='flex flex-wrap flex-row pb-4 gap-4 items-stretch'>
-            <ProfilePreview />
-            <LeaveBalances />
-            <OTRequests />
-            <LeaveRequests />
-            <OffsToday />
-          </section>
-        </div>
-      </div>
+      <LeaveRequests className='col-span-4 tablet:col-span-8 laptop:col-span-4 phone:col-span-12  self-stretch' />
+      <OTRequests className='col-span-4 tablet:col-span-6 laptop:col-span-4 phone:col-span-12  self-stretch' />
+      <ProfilePreview className='col-span-4 tablet:col-span-6 laptop:col-span-4 phone:col-span-12 self-stretch' />
 
-      <div className='col-span=3'>
-        <Shortcuts />
+      <div className='col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4'>
+        <LeaveBalances className='mb-4' />
+        <Attendance />
       </div>
+      <OffsToday className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
+      {/* </section> */}
     </main>
   );
 };

@@ -8,11 +8,13 @@ import {
   LinkOutlined,
 } from '@mui/icons-material';
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
-const LeaveBalances = (props: Props) => {
+const LeaveBalances: React.FC<Props> = ({ className }) => {
   return (
-    <CardWTitle title='My Leave balances' className='mt-0'>
+    <CardWTitle title='My Leave balances' className={`mt-0 ${className}`}>
       <div className='flex flex-col space-y-4 text-center mt-4'>
         <div className='bg-slate-100 p-4 rounded-lg '>
           <div className='text-slate-500 text-sm text-left font-bold'>

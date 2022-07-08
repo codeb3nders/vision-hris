@@ -3,26 +3,30 @@ import CustomCard from 'CustomComponents/CustomCard';
 import { AppCtx } from './../../../App';
 import moment from 'moment';
 import { WELCOME } from 'assets';
-import Announcement from './announcement';
+import Announcement from './sample_announcement';
 import { ChevronLeftOutlined, ChevronRightOutlined } from '@mui/icons-material';
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
-const Welcome = (props: Props) => {
+const Welcome: React.FC<Props> = ({ className }) => {
   const { isLoggedIn } = useContext(AppCtx);
   return (
-    <CustomCard className='bg-v-red/100 w-full py-6 px-20 mb-4 '>
+    <CustomCard
+      className={`bg-v-red/100 w-full py-6 tablet:px-20 laptop:px-20 desktop:px-20 phone:px-4 ${className}`}
+    >
       <img
         src={WELCOME}
         alt=''
-        className='absolute right-0 bottom-0 h-[98%] md:visible lg:visible xl:visible 2xl:visible sm:invisible sm:opacity-50 md:opacity-100 lg:opacity-100 z-0'
+        className='select-none absolute right-0 bottom-0 tablet:h-[60%] laptop:h-[98%] phone:h-[40%] z-0'
       />
       <h2 className='text-white font-medium text-2xl relative z-10'>
         Welcome, Kabalikat!
       </h2>
 
-      <div className='translate-x-[-24px] mt-2 max-w-[75%] relative z-10 flex flex-row text-white items-stretch justify-center'>
-        <button className='translate-x-[-24px] text-white/70 hover:text-white ease-in duration-200'>
+      <div className='tablet:translate-x-[-24px] laptop:translate-x-[-24px] desktop:translate-x-[-24px] phone:translate-x-0 mt-2 tablet:laptop:max-w-[75%] phone:max-w-[100%] w-full relative z-10 flex flex-row text-white items-stretch justify-center'>
+        <button className='tablet:translate-x-[-24px] phone:translate-x-0  text-white/70 hover:text-white ease-in duration-200'>
           <ChevronLeftOutlined />
         </button>
         <Announcement />

@@ -15,9 +15,10 @@ type Props = {
   requests: any[];
   title: any;
   isLeave?: boolean;
+  className?: string;
 };
 
-const Requests: React.FC<Props> = ({ requests, title, isLeave }) => {
+const Requests: React.FC<Props> = ({ requests, title, isLeave, className }) => {
   const handleColor = (status) => {
     switch (status) {
       case 'Pending':
@@ -32,7 +33,7 @@ const Requests: React.FC<Props> = ({ requests, title, isLeave }) => {
     }
   };
   return (
-    <CardWTitle title={title}>
+    <CardWTitle title={title} className={`relative pb-12 ${className}`}>
       <List>
         {requests.map((request, idx) => {
           return (
@@ -55,7 +56,7 @@ const Requests: React.FC<Props> = ({ requests, title, isLeave }) => {
                         size='small'
                         label={request.status}
                         color={handleColor(request.status)}
-                        className='ml-4 w-[100px]'
+                        className='ml-auto w-[100px]'
                         variant='outlined'
                       />
                     </div>
@@ -66,7 +67,7 @@ const Requests: React.FC<Props> = ({ requests, title, isLeave }) => {
           );
         })}
       </List>
-      <button className='bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900  ease-in duration-150 p-2 w-full rounded-md text-xs'>
+      <button className='absolute bottom-[24px] left-[50%] translate-x-[-50%] bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900  ease-in duration-150 p-2 w-[calc(100%-48px)] rounded-md text-xs'>
         Show All Requests
       </button>
     </CardWTitle>

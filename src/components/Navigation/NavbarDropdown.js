@@ -7,7 +7,7 @@ const NavbarDropdown = ({ menu }) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   return (
-    <div className='text-right'>
+    <div className='text-right phone:hidden tablet:block'>
       <Menu
         as='div'
         className='relative inline-block text-left z-10'

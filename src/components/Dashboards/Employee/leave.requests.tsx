@@ -3,9 +3,11 @@ import Requests from './requests';
 import { Link } from 'react-router-dom';
 import { ArrowRightOutlined } from '@mui/icons-material';
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
-const LeaveRequests = (props: Props) => {
+const LeaveRequests = ({ className }: Props) => {
   const initialValue = [
     {
       date: new Date(),
@@ -40,6 +42,7 @@ const LeaveRequests = (props: Props) => {
       }
       requests={leaves}
       isLeave
+      className={className}
     />
   );
 };

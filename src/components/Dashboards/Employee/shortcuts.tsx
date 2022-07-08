@@ -10,7 +10,9 @@ import {
 import { Link } from 'react-router-dom';
 import CardWTitle from 'CustomComponents/CardWTitle';
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
 const shortcuts = [
   {
@@ -45,11 +47,11 @@ const shortcuts = [
   },
 ];
 
-const Shortcuts = (props: Props) => {
+const Shortcuts: React.FC<Props> = ({ className }) => {
   return (
     <CardWTitle
       title='Shortcuts'
-      className='p-4 flex flex-col space-y-1 basis-1 min-w-max'
+      className={`p-4 flex flex-col space-y-1 basis-1 min-w-max ${className}`}
     >
       {shortcuts.map((s) => {
         return s.in_app ? (

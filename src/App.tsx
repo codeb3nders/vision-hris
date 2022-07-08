@@ -39,24 +39,19 @@ const App: React.FC<Props> = () => {
   console.log({ mode: theme.palette.mode });
 
   return (
-    <div className={theme.palette.mode}>
-      <div
-        className={`App dark:bg-slate-800 bg-gray-100 h-[100vh]`}
-        style={{ background: '#fafbff' }}
+    <div className={`App h-[100vh]`} style={{ background: '#fafbff' }}>
+      <AppCtx.Provider
+        value={{
+          setIsLoggedIn,
+          isLoggedIn,
+          setIsHRLogin,
+          isHRLogin,
+          setCurrentPage,
+          currentPage,
+        }}
       >
-        <AppCtx.Provider
-          value={{
-            setIsLoggedIn,
-            isLoggedIn,
-            setIsHRLogin,
-            isHRLogin,
-            setCurrentPage,
-            currentPage,
-          }}
-        >
-          {!isLoggedIn ? <SignInSide /> : <Main />}
-        </AppCtx.Provider>
-      </div>
+        {!isLoggedIn?.username ? <SignInSide /> : <Main />}
+      </AppCtx.Provider>
     </div>
   );
 };

@@ -105,7 +105,7 @@ export default function SignInSide() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container component='main' sx={{ height: '100vh' }}>
+      <Grid container component='main'>
         <CssBaseline />
         <Grid
           item
@@ -123,18 +123,14 @@ export default function SignInSide() {
             alignItems: 'center',
             justifyContent: 'center',
           }}
+          className='h-[100vh] p-4'
         >
-          <CustomCard className='px-0 py-0 w-[90%] max-w-[800px] shadow-xl '>
+          <CustomCard className='px-0 py-0 w-[90%] laptop:max-w-[800px] tablet:max-w-[600px] phone:max-w-full shadow-xl '>
             {/* <Card sx={{ width: '90%', maxWidth: 900 }} elevation={20}> */}
-            <Grid container>
+            <Grid container className='grid grid-cols-12'>
               <Grid
                 item
-                xs={12}
-                md={6}
-                sx={{
-                  background: 'linear-gradient(to right, #db2325, #fff)',
-                  overflow: 'hidden',
-                }}
+                className='bg-[linear-gradient(to right, #db2325, #fff)] overflow-hidden tablet:col-span-6 phone:hidden tablet:block'
               >
                 <Box
                   sx={{
@@ -149,7 +145,8 @@ export default function SignInSide() {
                   }}
                 ></Box>
               </Grid>
-              <Grid item xs={12} md={6}>
+
+              <Grid item className='tablet:col-span-6 phone:col-span-12'>
                 <Box
                   sx={{
                     my: 6,

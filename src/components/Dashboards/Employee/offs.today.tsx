@@ -12,7 +12,9 @@ import React, { useEffect, useState } from 'react';
 import CardWTitle from './../../../CustomComponents/CardWTitle';
 import { ProfilePhoto } from './profile.preview';
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
 const initialVlaue = [
   {
@@ -39,9 +41,15 @@ const initialVlaue = [
     dept: 'Operations - Project Management',
     type: 'Paternity Leave',
   },
+  {
+    id: 12350,
+    name: 'AGARRADO, JOEY ALBERT RAPISTA',
+    dept: 'Operations - Project Management',
+    type: 'Paternity Leave',
+  },
 ];
 
-const OffsToday = (props: Props) => {
+const OffsToday = ({ className }: Props) => {
   const [offs, setOffs] = useState<any[]>(initialVlaue);
 
   useEffect(() => {
@@ -49,7 +57,7 @@ const OffsToday = (props: Props) => {
   }, [initialVlaue]);
 
   return (
-    <CardWTitle title='Who is off today'>
+    <CardWTitle title='Who is off today' className={className}>
       <List>
         {offs.map((off) => {
           return (

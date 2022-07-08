@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   darkMode: 'class',
@@ -12,6 +13,17 @@ module.exports = {
         'v-paint': 'rgba(var(--vision-paint) / <alpha-value>)',
         'v-gray': 'rgba(var(--vision-gray) / <alpha-value>)',
       },
+    },
+    screens: {
+      phone: '320px',
+      tablet: '640px',
+      // => @media (min-width: 640px) { ... }
+
+      laptop: '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      desktop: '1280px',
+      // => @media (min-width: 1280px) { ... }
     },
   },
   plugins: [],

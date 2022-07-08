@@ -21,7 +21,7 @@ const Main: React.FC<Props> = () => {
     <main>
       <Router>
         <Navbar />
-        <section className='px-8'>
+        <section className='tablet:px-8 phone:px-4 max-w-[1200px] lg:max-w-[1200px] md:max-w-[1200px] sm:max-w-full mx-auto'>
           <Switch>
             <Route exact path={Employee.Dashboard} component={Dashboard} />
             <Route exact path={Employee.ESS.Leave} component={LeaveTable} />

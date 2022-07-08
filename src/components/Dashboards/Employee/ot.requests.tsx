@@ -12,9 +12,11 @@ import { Link } from 'react-router-dom';
 import { ArrowRightOutlined } from '@mui/icons-material';
 import Requests from './requests';
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
-const OTRequests = (props: Props) => {
+const OTRequests = ({ className }: Props) => {
   const initialValue = [
     {
       date: new Date(),
@@ -49,6 +51,7 @@ const OTRequests = (props: Props) => {
         </div>
       }
       requests={ots}
+      className={className}
     />
   );
 };

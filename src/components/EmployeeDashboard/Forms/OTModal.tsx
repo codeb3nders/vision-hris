@@ -6,7 +6,7 @@ const OTModal = () => {
   const [open, setOpen] = useState<boolean>(true);
   return (
     <DialogModal
-      className='max-w-[500px]'
+      className='phone:max-w-[300px] tablet:max-w-[500px] min-w-[310px]'
       title='Overtime/Working Day Off Request Form'
       open={open}
       actions={
