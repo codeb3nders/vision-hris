@@ -1,141 +1,159 @@
+import { Path } from 'constants/Path';
+
+const { Employee, Admin, HR, Manager } = Path;
+
 export const EmployeeNavigation = [
-  { name: 'Dashboard', href: '/', current: false },
+  { name: 'Dashboard', href: Employee.Dashboard },
   {
     name: 'Employee Self Service',
-    href: '/ess',
-    current: false,
     menus: [
       {
         label: 'Leave Applications',
-        href: '/ess/leave-applications',
+        href: Employee.ESS.Leave,
       },
       {
         label: 'OT Applications',
-        href: '/ess/ot-applications',
+        href: Employee.ESS.OT,
       },
       {
         label: 'Workers OT Applications',
-        href: '/ess/workers-ot-applications',
+        href: Employee.ESS.WorkersOT,
       },
     ],
   },
-  { name: 'Timesheets', href: '/timesheets', current: false },
-  { name: 'Announcements', href: '/announcements', current: false },
+  { name: 'Attendance', href: Employee.Attendance },
+  { name: 'Announcements', href: Employee.Announcements },
 ];
 
-export const ApproverNavigation = [
-  { name: 'Dashboard', href: '/', current: false },
+export const ManagerNavigation = [
+  { name: 'Dashboard', href: '/' },
   {
     name: 'Employee Requests',
-    href: '/manage',
-    current: false,
     menus: [
       {
         label: 'OT Applications',
-        href: '/manage/ot-applications',
+        href: Manager.Requests.OT,
       },
       {
         label: 'Leave Applications',
-        href: '/manage/leave-applications',
+        href: Manager.Requests.Leave,
       },
       {
-        label: `Worker' OT Applications`,
-        href: '/manage/worker-ot-applications',
+        label: `Workers' OT Applications`,
+        href: Manager.Requests.WorkersOT,
       },
     ],
   },
   {
     name: 'People',
-    href: '/people',
-    current: false,
     menus: [
-      { label: 'Employees', href: '/employees' },
-      { label: 'Project Workers', href: '/workers' },
-      { label: 'Approvers', href: '/approvers' },
-      { label: 'Org. Chart', href: '/org' },
+      { label: 'Directory', href: Manager.People.Directory },
+      { label: 'My Team', href: Manager.People.Team },
     ],
   },
-
-  { name: 'My Team', href: '/my-team', current: false },
-  { name: 'Reports', href: '/reports', current: false },
-  { name: 'Announcements', href: '/announcements', current: false },
+  { name: 'Reports', href: Manager.Reports },
+  { name: 'Announcements', href: Manager.Announcements },
 ];
 
 export const HRNavigation = [
-  { name: 'Dashboard', href: '/', current: false },
+  { name: 'Dashboard', href: '/' },
   {
     name: 'Employee Requests',
-    href: '/requests',
-    current: false,
     menus: [
       {
-        label: 'Employee Leave Applications',
-        href: '/requests/leave-applications',
+        label: 'Leave Applications',
+        href: HR.Requests.Leave,
       },
       {
-        label: 'Employee OT Applications',
-        href: '/requests/ot-applications',
+        label: 'OT Applications',
+        href: HR.Requests.OT,
       },
       {
-        label: 'Workers OT Applications',
-        href: '/requests/workers-ot-applications',
+        label: `Workers' OT Applications`,
+        href: HR.Requests.WorkersOT,
       },
     ],
   },
   {
     name: 'People',
-    href: '/people',
-    current: false,
     menus: [
-      { label: 'Employees', href: '/employees' },
-      { label: 'Project Workers', href: '/workers' },
-      { label: 'Approvers', href: '/approvers' },
-      { label: 'Org. Chart', href: '/org' },
+      { label: 'Directory', href: HR.People.Directory },
+      { label: 'Employees', href: HR.People.Employees },
+      { label: 'Project Workers', href: HR.People.Workers },
+      { label: 'Departments', href: HR.People.Departments },
+      { label: 'Approvers', href: HR.People.Approvers },
+      { label: 'Org. Chart', href: HR.People.Org },
     ],
   },
-  { name: 'Timesheets', href: '/timesheets', current: false },
-  { name: 'Reports', href: '/reports', current: false },
-  { name: 'Announcements', href: '/announcements', current: false },
+  { name: 'Attendance', href: HR.Attendance },
+  { name: 'Reports', href: HR.Reports },
+  { name: 'Announcements', href: HR.Announcements },
 ];
 
 export const AdminNavigation = [
-  { name: 'Dashboard', href: '/', current: false },
+  { name: 'Dashboard', href: '/' },
   {
     name: 'Employee Requests',
-    href: '/requests',
-    current: false,
     menus: [
       {
-        label: 'Employee Leave Applications',
-        href: '/requests/leave-applications',
+        label: 'Leave Applications',
+        href: Admin.Requests.Leave,
       },
       {
-        label: 'Employee OT Applications',
-        href: '/requests/ot-applications',
+        label: 'OT Applications',
+        href: Admin.Requests.OT,
       },
       {
-        label: 'Workers OT Applications',
-        href: '/requests/workers-ot-applications',
+        label: `Workers' OT Applications`,
+        href: Admin.Requests.WorkersOT,
       },
     ],
   },
   {
     name: 'People',
     href: '/people',
-    current: false,
     menus: [
-      { label: 'Employees', href: '/employees' },
-      { label: 'Project Workers', href: '/workers' },
-      { label: 'Approvers', href: '/approvers' },
-      { label: 'Admin User Accounts', href: '/admin-accounts' },
-      { label: 'Org. Chart', href: '/org' },
+      { label: 'Directory', href: Admin.People.Directory },
+      { label: 'Employees', href: Admin.People.Employees },
+      { label: 'Project Workers', href: Admin.People.Workers },
+      { label: 'Departments', href: Admin.People.Departments },
+      { label: 'User Accounts', href: Admin.People.UserAccounts },
+      { label: 'Org. Chart', href: Admin.People.Org },
     ],
   },
-  { name: 'Timesheets', href: '/timesheets', current: false },
-  { name: 'Reports', href: '/reports', current: false },
-  { name: 'Automations', href: '/automations', current: false },
-  { name: 'Announcements', href: '/announcements', current: false },
-  { name: 'Audit Logs', href: '/audit-logs', current: false },
+  { name: 'Attendance', href: Admin.Attendance },
+  {
+    name: 'Reports',
+    menus: [
+      {
+        label: 'Audit Logs',
+        href: Admin.Reports.Audit,
+      },
+      {
+        label: 'Assets Tracker',
+        href: Admin.Reports.Tracker,
+      },
+    ],
+  },
+  { name: 'Automations', href: Admin.Automations },
+  { name: 'Announcements', href: Admin.Announcements },
+  {
+    name: 'Company',
+    menus: [
+      {
+        label: 'General',
+        href: Admin.Company.General,
+      },
+      {
+        label: 'Positions',
+        href: Admin.Company.Positions,
+      },
+      {
+        label: 'Assets',
+        href: Admin.Company.Assets,
+      },
+    ],
+  },
 ];
 
 export const USERS = [
@@ -144,7 +162,7 @@ export const USERS = [
     password: 'pass123',
   },
   {
-    username: 'approver@hris',
+    username: 'manager@hris',
     password: 'pass123',
   },
   {

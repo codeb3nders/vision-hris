@@ -29,8 +29,8 @@ import {
 } from '@mui/icons-material';
 import { AppCtx } from './App';
 import { useHistory } from 'react-router-dom';
-import { VISION_LOGO } from 'constants/Path';
 import CustomCard from './CustomComponents/CustomCard';
+import { VISION_LOGO } from 'assets';
 
 function Copyright(props) {
   return (
@@ -95,8 +95,8 @@ export default function SignInSide() {
       alias:
         loginData.username === 'employee@hris'
           ? 'EMPLOYEE'
-          : loginData.username === 'approver@hris'
-          ? 'APPROVER'
+          : loginData.username === 'manager@hris'
+          ? 'MANAGER'
           : loginData.username === 'hr@hris'
           ? 'HR'
           : 'ADMIN',

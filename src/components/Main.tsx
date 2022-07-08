@@ -10,6 +10,9 @@ import OTManangement from './EmployeeDashboard/Management/OTManangement';
 import EmployeeDatabase from './HRDashboard/EmployeeDatabase';
 import WorkersDatabase from './HRDashboard/WorkersDatabase';
 import OTForm from './EmployeeDashboard/Forms/OTForm';
+import { Path } from 'constants/Path';
+
+const { Employee, Admin, HR, Manager } = Path;
 
 interface Props {}
 
@@ -20,43 +23,24 @@ const Main: React.FC<Props> = () => {
         <Navbar />
         <section className='px-8'>
           <Switch>
-            <Route exact path='/' component={Dashboard} />
+            <Route exact path={Employee.Dashboard} component={Dashboard} />
+            <Route exact path={Employee.ESS.Leave} component={LeaveTable} />
+            <Route exact path={Employee.ESS.LeaveNew} component={LeaveForm} />
+            <Route path={Employee.ESS.LeaveType} component={LeaveForm} />
+            <Route exact path={Employee.ESS.OT} component={OTTable} />
+            <Route path={Employee.ESS.OTNew} component={OTForm} />
+            <Route path={Employee.ESS.WorkersOT} component={OTTable} />
+            <Route path={Manager.Requests.Leave} component={LeaveManagement} />
+            <Route exact path={Manager.Requests.OT} component={OTManangement} />
+            <Route path={HR.Requests.Leave} component={LeaveManagement} />
+            <Route exact path={HR.Requests.OT} component={OTManangement} />
             <Route
-              exact
-              path='/ess/leave-applications'
-              component={LeaveTable}
+              path={Manager.People.Directory}
+              component={EmployeeDatabase}
             />
-            <Route
-              exact
-              path='/ess/leave-applications/new'
-              component={LeaveForm}
-            />
-            <Route
-              path='/ess/leave-applications/new?type=:type'
-              component={LeaveForm}
-            />
-            <Route exact path='/ess/ot-applications' component={OTTable} />
-            <Route path='/ess/ot-applications/new' component={OTForm} />
-            <Route
-              path='/manage/leave-applications'
-              component={LeaveManagement}
-            />
-            <Route
-              path='/requests/leave-applications'
-              component={LeaveManagement}
-            />
-            <Route
-              exact
-              path='/manage/ot-applications'
-              component={OTManangement}
-            />
-            <Route
-              exact
-              path='/requests/ot-applications'
-              component={OTManangement}
-            />
-            <Route path='/employees' component={EmployeeDatabase} />
-            <Route path='/workers' component={WorkersDatabase} />
+            <Route path={Manager.People.Team} component={WorkersDatabase} />
+            <Route path={HR.People.Directory} component={EmployeeDatabase} />
+            <Route path={HR.People.Workers} component={WorkersDatabase} />
           </Switch>
         </section>
       </Router>

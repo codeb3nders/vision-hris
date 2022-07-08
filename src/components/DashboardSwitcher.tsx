@@ -1,8 +1,10 @@
 import React, { useContext, useEffect } from 'react';
 import { AppCtx } from '../App';
+import AdminMainDashboard from './Dashboards/Admin/admin.main.dashboard';
 import EmployeeDashboard from './Dashboards/Employee/main.dashboard';
 // import DashboardImg from '../assets/images/dashboard.png';
-import HRDashboard from './Dashboards/hr.dashboard';
+import HRMainDashboard from './Dashboards/HR/hr.main.dashboard';
+import ManagerMainDashboard from './Dashboards/Manager/manager.main.dashboard';
 
 const Dashboard = () => {
   const { isLoggedIn } = useContext(AppCtx);
@@ -13,10 +15,12 @@ const Dashboard = () => {
     switch (isLoggedIn.alias) {
       case 'EMPLOYEE':
         return <EmployeeDashboard />;
-      case 'APPROVER':
-        return <EmployeeDashboard />;
+      case 'MANAGER':
+        return <ManagerMainDashboard />;
       case 'HR':
-        return <HRDashboard />;
+        return <HRMainDashboard />;
+      case 'ADMIN':
+        return <AdminMainDashboard />;
 
       default:
         break;

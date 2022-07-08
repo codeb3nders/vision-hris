@@ -9,9 +9,9 @@ import Logo from '../../assets/images/pms-logo.png';
 import { AppCtx } from '../../App';
 import {
   AdminNavigation,
-  ApproverNavigation,
   EmployeeNavigation,
   HRNavigation,
+  ManagerNavigation,
 } from './NavigationList';
 import NavbarDropdown from './NavbarDropdown';
 import ProfileDropdown from './ProfileDropdown';
@@ -33,8 +33,8 @@ const Navbar = () => {
         setNavigation(EmployeeNavigation);
         break;
 
-      case 'APPROVER':
-        setNavigation(ApproverNavigation);
+      case 'MANAGER':
+        setNavigation(ManagerNavigation);
         break;
       case 'HR':
         setNavigation(HRNavigation);
