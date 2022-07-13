@@ -3,7 +3,9 @@ import React from 'react';
 import {
   AccountCircleOutlined,
   LanguageOutlined,
+  MenuBookOutlined,
   MoreTimeOutlined,
+  PermContactCalendarOutlined,
   PunchClockOutlined,
   TimeToLeaveOutlined,
 } from '@mui/icons-material';
@@ -16,16 +18,16 @@ type Props = {
 
 const shortcuts = [
   {
-    label: 'Request for an OT/WDO',
-    url: '/ess/ot-applications',
-    in_app: true,
-    icon: <MoreTimeOutlined fontSize='small' />,
+    label: 'Employee Handbook',
+    url: 'https://drive.google.com/file/d/18jLHFVwoNpWiMM1EMRU1Uvtw6J8ORr99/view',
+    in_app: false,
+    icon: <MenuBookOutlined fontSize='small' />,
   },
   {
-    label: 'Request for a Leave',
+    label: 'Employee Directory',
     url: '/ess/leave-applications',
     in_app: true,
-    icon: <TimeToLeaveOutlined fontSize='small' />,
+    icon: <PermContactCalendarOutlined fontSize='small' />,
   },
   {
     label: 'Vi-You Website',
@@ -40,7 +42,7 @@ const shortcuts = [
     icon: <AccountCircleOutlined fontSize='small' />,
   },
   {
-    label: 'Submit my Timesheet',
+    label: 'Submit my Attendance',
     url: '/timesheets',
     in_app: true,
     icon: <PunchClockOutlined fontSize='small' />,

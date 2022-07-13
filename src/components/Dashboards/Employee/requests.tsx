@@ -81,7 +81,7 @@ const Requests: React.FC<Props> = ({ requests, title, isLeave, className }) => {
                         size='small'
                         label={request.status}
                         color={handleColor(request.status)}
-                        className='ml-auto w-[100px]'
+                        className='ml-auto w-[95px]'
                         variant='outlined'
                       />
                     </div>

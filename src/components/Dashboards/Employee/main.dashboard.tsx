@@ -6,6 +6,7 @@ import OTRequests from './ot.requests';
 import LeaveRequests from './leave.requests';
 import Welcome from './welcome';
 import OffsToday from './offs.today';
+import CelebrationsToday from './celebrations.today';
 import Attendance from './attendance';
 import WorkStatus from './work.status';
 
@@ -21,12 +22,15 @@ const MainDashboard = () => {
       </div>
 
       <div className='col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4 grid space-y-4'>
-        <OffsToday className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
-      </div>
-      <div className='col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4 grid space-y-4'>
         <Attendance />
         <WorkStatus />
       </div>
+
+      <div className='col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4 grid space-y-4'>
+        <OffsToday className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
+        <CelebrationsToday className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
+      </div>
+
     </main>
   );
 };
