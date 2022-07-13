@@ -41,11 +41,12 @@ const LeaveRequests = ({ className }: Props) => {
           <div className='flex flex-row justify-self-end'>
             <Link
               to={Path.Employee.ESS.OTNew}
-              className='group float-right pr-0 pl-2 rounded-sm ease-in-out duration-200'
+              className='group  pr-0 pl-2 rounded-sm ease-in-out duration-200'
             >
               <Chip
                 icon={
                   <MoreTimeTwoTone
+                    color='secondary'
                     fontSize='small'
                     className='group-hover:text-white'
                   />
@@ -57,11 +58,12 @@ const LeaveRequests = ({ className }: Props) => {
             </Link>
             <Link
               to={Path.Employee.ESS.LeaveNew}
-              className='group float-right pr-0 pl-2 rounded-sm ease-in-out duration-200'
+              className='group  pr-0 pl-2 rounded-sm ease-in-out duration-200'
             >
               <Chip
                 icon={
                   <BusinessCenterTwoTone
+                    color='primary'
                     fontSize='small'
                     className='group-hover:text-white'
                   />

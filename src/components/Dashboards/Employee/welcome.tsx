@@ -10,9 +10,11 @@ import moment from 'moment';
 
 type Props = {
   className?: string;
+  profile: any;
+  announcements: any;
 };
 
-const Welcome: React.FC<Props> = ({ className }) => {
+const Welcome: React.FC<Props> = ({ className, profile, announcements }) => {
   const { isLoggedIn } = useContext(AppCtx);
   const [index, setIndex] = useState<number>(0);
 
@@ -62,8 +64,10 @@ const Welcome: React.FC<Props> = ({ className }) => {
         </button>
 
         <SwipeableViews index={index} ref={swipeRef}>
-          <ProfilePreview />
-          <Announcement />
+          {profile}
+          {announcements}
+          {/* <ProfilePreview />
+          <Announcement /> */}
         </SwipeableViews>
 
         <button
