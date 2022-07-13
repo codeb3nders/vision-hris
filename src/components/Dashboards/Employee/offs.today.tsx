@@ -49,14 +49,7 @@ const initialVlaue = [
     name: 'AGARRADO, JOEY ALBERT RAPISTA',
     dept: 'Operations - Project Management',
     type: 'Paternity Leave',
-    icon: <BusinessCenterTwoTone color='primary' />,
-  },
-  {
-    id: 12350,
-    name: 'AGARRADO, JOEY ALBERT RAPISTA',
-    dept: 'Operations - Project Management',
-    type: 'Paternity Leave',
-    icon: <BusinessCenterTwoTone color='primary' />,
+    icon: <HouseboatTwoTone color='primary' />,
   },
 ];
 
@@ -90,7 +83,7 @@ const OffsToday = ({ className }: Props) => {
                         className='w-[inherit] ml-0 text-xs mb-1'
                       /> */}
                     </div>
-                    <div className='text-xs font-bold'>{off.name}</div>
+                    <div className='text-xs'>{off.name}</div>
                   </>
                 }
                 secondary={

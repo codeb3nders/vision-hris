@@ -74,14 +74,15 @@ const ProfilePreview: React.FC<Props> = ({ className }) => {
             <div className='text-sm  font-medium'>HEAD OFFICE</div>
           </div>
           <div>
-            <div className='text-xs  mt-2'>Manager/Supervisor:</div>
+            <div className='text-xs  mt-2'>Reports To:</div>
             <div className='text-sm  font-medium'>Test Supervisor</div>
           </div>
+          <button className='ease-in duration-150 w-full bg-white text-v-red text-center text-xs rounded-md py-2 mt-2 hover:bg-white/90 max-w-[150px]'>
+            Go to My Profile
+          </button>
         </div>
 
-        <button className='ease-in duration-150 w-full bg-white text-v-red text-center text-xs rounded-md py-2 mt-2 hover:bg-white/90 max-w-[150px]'>
-          Go to My Profile
-        </button>
+
       </section>
     </div>
     // </CustomCard>

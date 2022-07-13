@@ -56,7 +56,7 @@ const Requests: React.FC<Props> = ({ requests, title, isLeave, className }) => {
                   primary={
                     <div className='text-sm flex flex-row items-center'>
                       <div>
-                        <p className='font-medium flex flex-row gap-2 items-center'>
+                        <p className='text-xs flex flex-row gap-2 items-center'>
                           {/* {isLeave
                             ? request.type
                             : moment(request.date).format('LL')} */}
@@ -71,7 +71,7 @@ const Requests: React.FC<Props> = ({ requests, title, isLeave, className }) => {
                           >
                             {request.type}
                           </Avatar>{' '}
-                          {moment(request.date).format('dddd, ll')}
+                          {moment(request.date).format('ddd, ll')}
                         </p>
                         {/* <small className='text-slate-400'>
                           

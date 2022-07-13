@@ -55,9 +55,8 @@ const Welcome: React.FC<Props> = ({ className }) => {
       <div className='tablet:translate-x-[-24px] laptop:translate-x-[-24px] desktop:translate-x-[-24px] phone:translate-x-0 mt-2 tablet:laptop:max-w-[75%] phone:max-w-[100%] w-full relative z-10 flex flex-row text-white items-stretch justify-center'>
         <button
           onClick={() => handleIndex('left')}
-          className={`tablet:translate-x-[-24px] phone:translate-x-0  text-white/70 hover:text-white ease-in duration-200 ${
-            index === 0 ? 'hidden' : ''
-          }`}
+          className={`tablet:translate-x-[-24px] phone:translate-x-0  text-white/70 hover:text-white ease-in duration-200 ${index === 0 ? 'hidden' : ''
+            }`}
         >
           <ChevronLeftOutlined />
         </button>
@@ -69,11 +68,10 @@ const Welcome: React.FC<Props> = ({ className }) => {
 
         <button
           onClick={() => handleIndex('right')}
-          className={`text-white/70 hover:text-white ease-in duration-200 ${
-            index === swipeRef?.current?.props.children.length - 1
-              ? 'hidden'
-              : ''
-          }`}
+          className={`text-white/70 hover:text-white ease-in duration-200 ${index === swipeRef?.current?.props.children.length - 1
+            ? 'hidden'
+            : ''
+            }`}
         >
           <ChevronRightOutlined />
         </button>
@@ -84,9 +82,9 @@ const Welcome: React.FC<Props> = ({ className }) => {
         className='select-none absolute right-0 bottom-0 tablet:h-[50%] laptop:h-[75%] phone:h-[40%] z-0'
       />
 
-      <div className='text-white/80 text-sm mt-4'>
+      {/* <div className='text-white/80 text-sm mt-4'>
         {moment(new Date()).format('LL')}
-      </div>
+      </div> */}
     </CustomCard>
   );
 };
