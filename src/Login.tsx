@@ -96,10 +96,10 @@ export default function SignInSide() {
         loginData.username === 'employee@hris'
           ? 'EMPLOYEE'
           : loginData.username === 'manager@hris'
-            ? 'MANAGER'
-            : loginData.username === 'hr@hris'
-              ? 'HR'
-              : 'ADMIN',
+          ? 'MANAGER'
+          : loginData.username === 'hr@hris'
+          ? 'HR'
+          : 'ADMIN',
     });
   };
 

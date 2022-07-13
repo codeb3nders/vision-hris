@@ -3,6 +3,7 @@ import React from 'react';
 import {
   AccountCircleOutlined,
   LanguageOutlined,
+  LinkTwoTone,
   MenuBookOutlined,
   MoreTimeOutlined,
   PermContactCalendarOutlined,
@@ -31,7 +32,7 @@ const shortcuts = [
   },
   {
     label: 'Vi-You Website',
-    url: 'https://www.visionpropertiesdevt.com/',
+    url: 'https://sites.google.com/view/visionyouniversity/documents/forms?authuser=0',
     in_app: false,
     icon: <LanguageOutlined fontSize='small' />,
   },
@@ -52,7 +53,11 @@ const shortcuts = [
 const Shortcuts: React.FC<Props> = ({ className }) => {
   return (
     <CardWTitle
-      title='Shortcuts'
+      title={
+        <div className='flex flex-row gap-1 items-center text-v-red'>
+          <LinkTwoTone /> Shortcuts
+        </div>
+      }
       className={`p-4 flex flex-col space-y-1 basis-1 min-w-max ${className}`}
     >
       {shortcuts.map((s) => {

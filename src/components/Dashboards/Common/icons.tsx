@@ -10,27 +10,27 @@ import {
   PaidTwoTone,
 } from '@mui/icons-material';
 
-const OTIcon = (props?: any) => <MoreTimeTwoTone {...props} color='action' />;
+const OTIcon = (props?: any) => <MoreTimeTwoTone color='action' {...props} />;
 const BusinessIcon = (props?: any) => (
-  <BusinessCenterTwoTone {...props} color='primary' />
+  <BusinessCenterTwoTone color='primary' {...props} />
 );
-const SickIcon = (props?: any) => <SickTwoTone {...props} color='error' />;
+const SickIcon = (props?: any) => <SickTwoTone color='error' {...props} />;
 const VacationIcon = (props?: any) => (
-  <BeachAccessTwoTone {...props} color='success' />
+  <BeachAccessTwoTone color='success' {...props} />
 );
 const HomeIcon = (props?: any) => (
-  <CottageTwoTone {...props} color='secondary' />
+  <CottageTwoTone color='secondary' {...props} />
 );
 const UnpaidIcon = (props?: any) => (
-  <MoneyOffTwoTone {...props} color='warning' />
+  <MoneyOffTwoTone color='warning' {...props} />
 );
 const PaidIcon = (props?: any) => (
-  <AttachMoneyTwoTone {...props} color='success' />
+  <AttachMoneyTwoTone color='success' {...props} />
 );
 const EmergencyIcon = (props?: any) => (
-  <MedicalServicesTwoTone {...props} color='error' />
+  <MedicalServicesTwoTone color='error' {...props} />
 );
-const ServiceIcon = (props?: any) => <PaidTwoTone {...props} color='success' />;
+const ServiceIcon = (props?: any) => <PaidTwoTone color='success' {...props} />;
 
 export {
   OTIcon,

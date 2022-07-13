@@ -1,6 +1,6 @@
-import { BusinessIcon } from './../Common/icons';
+import React, { useState, useEffect } from 'react';
 import IconNumbers from '../Common/icon.numbers';
-import { useState, useEffect } from 'react';
+import { GroupTwoTone } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { Path } from 'constants/Path';
 
@@ -8,10 +8,10 @@ type Props = {
   className?: string;
 };
 
-const OnLeave = ({ className }: Props) => {
+const Employees = ({ className }: Props) => {
   const [value, setValue] = useState(0);
 
-  const max = 16;
+  const max = 128;
 
   useEffect(() => {
     let x = 0;
@@ -25,17 +25,17 @@ const OnLeave = ({ className }: Props) => {
 
   return (
     <div className={className}>
-      <Link to={Path.HR.Requests.Leave}>
+      <Link to={Path.HR.People.Employees}>
         <IconNumbers
-          className={`border border-white hover:border-sky-500 ease-in-out duration-150 hover:shadow-lg hover:shadow-sky-100 ${className}`}
-          icon={<BusinessIcon color='inherit' />}
-          title='Number on leave today'
+          className={`border border-white hover:border-red-500 ease-in-out duration-150 hover:shadow-lg hover:shadow-red-100 ${className}`}
+          icon={<GroupTwoTone />}
+          title='Number of Employees'
           number={value}
-          color='primary'
+          color='error'
         />
       </Link>
     </div>
   );
 };
 
-export default OnLeave;
+export default Employees;
