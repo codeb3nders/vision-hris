@@ -3,7 +3,6 @@ import SignInSide from './Login';
 import { useEffect, createContext, useState } from 'react';
 import Main from './components/Main';
 import { createTheme, ThemeProvider } from '@mui/material';
-import Test from 'components/test/test';
 
 export const AppCtx: any = createContext(null);
 
@@ -51,8 +50,7 @@ const App: React.FC<Props> = () => {
           currentPage,
         }}
       >
-        {/* {!isLoggedIn?.username ? <SignInSide /> : <Main />} */}
-        <Test />
+        {!isLoggedIn?.username ? <SignInSide /> : <Main />}
       </AppCtx.Provider>
     </div>
   );
