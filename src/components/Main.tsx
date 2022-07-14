@@ -12,6 +12,9 @@ import WorkersDatabase from './HRDashboard/WorkersDatabase';
 import OTForm from './EmployeeDashboard/Forms/OTForm';
 import { Path } from 'constants/Path';
 
+// just for redux testing
+import Test from './test/test'
+
 const { Employee, Admin, HR, Manager } = Path;
 
 interface Props {}
@@ -23,7 +26,7 @@ const Main: React.FC<Props> = () => {
         <Navbar />
         <section className='tablet:px-8 phone:px-4 max-w-[1200px] lg:max-w-[1200px] md:max-w-[1200px] sm:max-w-full mx-auto'>
           <Switch>
-            <Route exact path={Employee.Dashboard} component={Dashboard} />
+            {/* <Route exact path={Employee.Dashboard} component={Dashboard} />
             <Route exact path={Employee.ESS.Leave} component={LeaveTable} />
             <Route exact path={Employee.ESS.LeaveNew} component={LeaveForm} />
             <Route path={Employee.ESS.LeaveType} component={LeaveForm} />
@@ -40,7 +43,8 @@ const Main: React.FC<Props> = () => {
             />
             <Route path={Manager.People.Team} component={WorkersDatabase} />
             <Route path={HR.People.Directory} component={EmployeeDatabase} />
-            <Route path={HR.People.Workers} component={WorkersDatabase} />
+            <Route path={HR.People.Workers} component={WorkersDatabase} /> */}
+            <Route path={'test'} component={Test} />
           </Switch>
         </section>
       </Router>
