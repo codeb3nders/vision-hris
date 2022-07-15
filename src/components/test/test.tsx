@@ -1,6 +1,7 @@
+import env from 'environments/env';
 import { useEffect } from 'react';
 import {useSelector, useDispatch} from 'react-redux'
-import { getEmployeeItems, getEmployeesWithLeaves, getError, getStatus,  } from 'slices/employees/employeeSlice';
+import { getEmployeeItems, getEmployeesWithLeaves, getError, getStatus,  } from 'slices/employees/getEmployeesWithLeaveSlice';
 
 
 
@@ -18,7 +19,7 @@ const Test = () => {
   
   }, [employeeStatus, dispatch])
   
-
+console.log({env})
   const listItems = employeeItems.map((d) => {
   console.log({d})
   return <li key={d.employeeNo}>{JSON.stringify(d) }</li>});

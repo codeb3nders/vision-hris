@@ -1,11 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios' 
-import type { PayloadAction } from '@reduxjs/toolkit'
-import { EmployeesSlice } from 'slices/interfaces'
+import { EmployeesWithLeaveSlice } from 'slices/interfaces'
+import { getEmployeesWithLeavesEndpoint } from 'apis/employees'
 
-const getEmployeeUrl = `http://localhost:4002/employees/leaves/`
 
-const initialState: EmployeesSlice = {
+const initialState: EmployeesWithLeaveSlice = {
   employeeItems: [],
   status: 'idle',
   error: null
@@ -14,10 +12,10 @@ const initialState: EmployeesSlice = {
 
 export const getEmployeesWithLeaves:any = createAsyncThunk("employees/getEmployeesWithLeaves", async () => {
   try {
-    const response = await axios.get(getEmployeeUrl)
+    const response = await getEmployeesWithLeavesEndpoint()
     return [...response.data]
   } catch (err:any) {
-    console.log('ERROR', err)
+    console.error('ERROR in getEmployeesWithLeaves', err)
     return err.message
   }  
 
@@ -44,12 +42,8 @@ export const employeesSlice = createSlice({
   }
 })
 
-console.log({employeesSlice})
-
 export const getEmployeeItems = (state:any)=>state.employee.employeeItems
 export const getStatus = (state:any)=>state.employee.status
 export const getError = (state:any)=>state.employee.error
-
-export const { } = employeesSlice.actions
 
 export default employeesSlice.reducer

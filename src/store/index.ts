@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import employeeReducer from 'slices/employees/employeeSlice'
+import employeeReducer from 'slices/employees/getEmployeesWithLeaveSlice'
 
 
 

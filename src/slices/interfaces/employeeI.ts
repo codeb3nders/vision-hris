@@ -1,4 +1,4 @@
-export interface EmployeesSlice {
+export interface EmployeesWithLeaveSlice {
   employeeItems: EmployeeI[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed',
   error: string | null | undefined
