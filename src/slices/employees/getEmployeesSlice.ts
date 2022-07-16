@@ -3,7 +3,7 @@ import { EmployeesWithLeaveSlice } from 'slices/interfaces'
 import { getEmployeesEndpoint } from 'apis/employees'
 
 
-const initialState: EmployeesWithLeaveSlice = {
+const initialState: any = {
   employeeItems: [],
   status: 'idle',
   error: null

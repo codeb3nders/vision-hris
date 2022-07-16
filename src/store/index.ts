@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
-import employeeReducer from 'slices/employees/getEmployeesWithLeaveSlice'
+import employeesSlice from 'slices/employees/getEmployeesSlice'
+import employeeWithLeaveReducer from 'slices/employees/getEmployeesWithLeaveSlice'
 
 
 
 export const store = configureStore({
   reducer: {
-    employee: employeeReducer
+    employee: employeesSlice,
+    employeesWithLeave: employeeWithLeaveReducer
   },
 })
 

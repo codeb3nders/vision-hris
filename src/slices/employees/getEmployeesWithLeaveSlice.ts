@@ -10,9 +10,9 @@ const initialState: EmployeesWithLeaveSlice = {
 
 }
 
-export const getEmployeesWithLeaves:any = createAsyncThunk("employees/getEmployeesWithLeaves", async () => {
+export const getEmployeesWithLeaves:any = createAsyncThunk("employeesWithLeave/getEmployeesWithLeaves", async (employeeNo?:string) => {
   try {
-    const response = await getEmployeesWithLeavesEndpoint()
+    const response = await getEmployeesWithLeavesEndpoint(employeeNo)
     return [...response.data]
   } catch (err:any) {
     console.error('ERROR in getEmployeesWithLeaves', err)
@@ -22,8 +22,8 @@ export const getEmployeesWithLeaves:any = createAsyncThunk("employees/getEmploye
 });
 
 
-export const employeesSlice = createSlice({
-  name: 'employees',
+export const employeesWithLeaveSlice = createSlice({
+  name: 'employeesWithLeave',
   initialState,
   reducers: {},
   extraReducers: (builder)=>{
@@ -42,8 +42,8 @@ export const employeesSlice = createSlice({
   }
 })
 
-export const getEmployeeItems = (state:any)=>state.employee.employeeItems
-export const getStatus = (state:any)=>state.employee.status
-export const getError = (state:any)=>state.employee.error
+export const getEmployeesWithLeaveItems = (state:any)=>state.employeesWithLeave.employeeItems
+export const getEmployeesWithLeaveStatus = (state:any)=>state.employeesWithLeave.status
+export const getEmployeesWithLeaveError = (state:any)=>state.employeesWithLeave.error
 
-export default employeesSlice.reducer
+export default employeesWithLeaveSlice.reducer
