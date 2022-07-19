@@ -5,8 +5,8 @@ import LeaveBalances from './leave.balances';
 import Announcement from './sample_announcement';
 import LeaveRequests from './leave.requests';
 import Welcome from './welcome';
-import OffsToday from './offs.today';
-import CelebrationsToday from './celebrations.today';
+import OffsToday from '../Common/offs.today';
+import CelebrationsToday from '../Common/celebrations.today';
 import Attendance from './attendance';
 import WorkStatus from './work.status';
 
@@ -28,14 +28,12 @@ const MainDashboard = () => {
 
       <div className='col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4 grid space-y-4'>
         <Attendance />
-
       </div>
 
       <div className='col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4 grid space-y-4'>
         <CelebrationsToday className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
         <OffsToday className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
       </div>
-
     </main>
   );
 };

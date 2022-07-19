@@ -18,6 +18,10 @@ import AttendancePreview from './attendance.preview';
 import Retention from './retention';
 import Requests from './requests';
 import EmployeeSatisfaction from './employee.satisfaction';
+import CelebrationsToday from '../Common/celebrations.today';
+import OffsToday from '../Common/offs.today';
+import AttendanceStatus from './attendance.status';
+import HeadCount from './head.count';
 
 type Props = {};
 
@@ -53,13 +57,18 @@ const HRMainDashboard = (props: Props) => {
 
         <RowWrapper>
           <EmployeeSatisfaction className='col-span-6' />
-          <Requests className='col-span-6' />
+          <HeadCount className='col-span-6' />
+          <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4'>
+            <Requests />
+            <AttendanceStatus />
+          </ColumnWrapper>
         </RowWrapper>
       </div>
 
       <div className='col-span-4 tablet:col-span-4 laptop:col-span-4 phone:col-span-12 space-y-4'>
         <Shortcuts />
-        <Birthday />
+        <CelebrationsToday />
+        <OffsToday />
       </div>
     </main>
   );
