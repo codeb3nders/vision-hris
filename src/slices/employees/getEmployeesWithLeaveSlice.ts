@@ -10,7 +10,7 @@ const initialState: EmployeesWithLeaveSlice = {
 
 }
 
-export const getEmployeesWithLeaves:any = createAsyncThunk("employeesWithLeave/getEmployeesWithLeaves", async (employeeNo?:string) => {
+export const getEmployeesWithLeavesAction:any = createAsyncThunk("employeesWithLeave/getEmployeesWithLeaves", async (employeeNo?:string) => {
   try {
     const response = await getEmployeesWithLeavesEndpoint(employeeNo)
     return [...response.data]
@@ -22,20 +22,20 @@ export const getEmployeesWithLeaves:any = createAsyncThunk("employeesWithLeave/g
 });
 
 
-export const employeesWithLeaveSlice = createSlice({
+export const getEmployeesWithLeaveSlice = createSlice({
   name: 'employeesWithLeave',
   initialState,
   reducers: {},
   extraReducers: (builder)=>{
     builder
-    .addCase(getEmployeesWithLeaves.pending, (state) => {
+    .addCase(getEmployeesWithLeavesAction.pending, (state) => {
       state.status = "loading";
   })
-  .addCase(getEmployeesWithLeaves.fulfilled, (state, action) => {
+  .addCase(getEmployeesWithLeavesAction.fulfilled, (state, action) => {
     state.status = "succeeded";
     state.employeeItems = action.payload;
 })
-.addCase(getEmployeesWithLeaves.rejected, (state, action) => {
+.addCase(getEmployeesWithLeavesAction.rejected, (state, action) => {
   state.status = "failed";
   state.error = action.error.message
 })
@@ -46,4 +46,4 @@ export const getEmployeesWithLeaveItems = (state:any)=>state.employeesWithLeave.
 export const getEmployeesWithLeaveStatus = (state:any)=>state.employeesWithLeave.status
 export const getEmployeesWithLeaveError = (state:any)=>state.employeesWithLeave.error
 
-export default employeesWithLeaveSlice.reducer
+export default getEmployeesWithLeaveSlice.reducer
