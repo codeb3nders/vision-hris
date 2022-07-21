@@ -15,6 +15,7 @@ export const Path = {
       Team: '/people/my-team',
     },
     Announcements: '/announcements',
+    Profile: '/profile',
   },
   Manager: {
     Dashboard: '/',

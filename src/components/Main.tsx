@@ -11,6 +11,7 @@ import EmployeeDatabase from './HRDashboard/EmployeeDatabase';
 import WorkersDatabase from './HRDashboard/WorkersDatabase';
 import OTForm from './EmployeeDashboard/Forms/OTForm';
 import { Path } from 'constants/Path';
+import ProfileMain from './MyProfile/profile.main';
 import HRMainDashboard from './Dashboards/HR/hr.main.dashboard';
 
 const { Employee, HR, Manager } = Path;
@@ -34,6 +35,7 @@ const Main: React.FC<Props> = () => {
             <Route exact path={Employee.ESS.OT} component={OTTable} />
             <Route path={Employee.ESS.OTNew} component={OTForm} />
             <Route path={Employee.ESS.WorkersOT} component={OTTable} />
+            <Route path={Employee.Profile} component={ProfileMain} />
 
             {/*
              * Manager
