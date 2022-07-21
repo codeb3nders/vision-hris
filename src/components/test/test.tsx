@@ -71,13 +71,12 @@ const Test = () => {
   const getEmployeeItems = useSelector(_getEmployeeItems);  
   const getEmployeeError = useSelector(_getEmployeeError)
 
-    // Employees with leave
+   
     const getEmployeesWithLeaveStatus = useSelector(_getEmployeesWithLeaveStatus);
     const getEmployeesWithLeaveItems = useSelector(_getEmployeesWithLeaveItems);  
     const getEmployeesWithLeaveError = useSelector(_getEmployeesWithLeaveError)
 
   
-console.log({getEmployeeItems},{getEmployeesWithLeaveItems})
   
 // Employees
   useEffect(() => {
