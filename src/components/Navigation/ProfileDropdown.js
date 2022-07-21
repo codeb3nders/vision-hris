@@ -1,6 +1,8 @@
 import React, { Fragment, useContext } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { AppCtx } from '../../App';
+import { Link } from 'react-router-dom';
+import { Path } from 'constants/Path';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -38,15 +40,15 @@ const ProfileDropdown = () => {
           </div>
           <Menu.Item>
             {({ active }) => (
-              <a
-                href='#'
+              <Link
+                to={Path.Employee.Profile}
                 className={classNames(
                   active ? 'bg-gray-100' : '',
                   'block px-4 py-2 text-sm text-gray-700'
                 )}
               >
                 My Profile
-              </a>
+              </Link>
             )}
           </Menu.Item>
           <Menu.Item>
