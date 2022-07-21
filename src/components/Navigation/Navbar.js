@@ -1,10 +1,9 @@
 /* This example requires Tailwind CSS v2.0+ */
 
-import { Fragment, useEffect, useRef, useState, useContext } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
+import { useEffect, useState, useContext } from 'react';
+import { Disclosure } from '@headlessui/react';
+import { MenuIcon, XIcon } from '@heroicons/react/outline';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronDownIcon } from '@heroicons/react/solid';
 import Logo from '../../assets/images/pms-logo.png';
 import { AppCtx } from '../../App';
 import {
@@ -15,8 +14,6 @@ import {
 } from './NavigationList';
 import NavbarDropdown from './NavbarDropdown';
 import ProfileDropdown from './ProfileDropdown';
-import { VISION_LOGO } from 'assets';
-import { Drawer } from '@mui/material';
 import NavDrawer from './nav.drawer';
 
 function classNames(...classes) {
@@ -25,7 +22,7 @@ function classNames(...classes) {
 
 const Navbar = () => {
   const location = useLocation();
-  const { isLoggedIn, setIsLoggedIn } = useContext(AppCtx);
+  const { isLoggedIn } = useContext(AppCtx);
   const [navigation, setNavigation] = useState(EmployeeNavigation);
   const [openDrawer, setOpenDrawer] = useState(false);
 
