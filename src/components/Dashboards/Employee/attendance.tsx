@@ -1,9 +1,6 @@
-import {
-  ArrowRightOutlined,
-  ChevronLeft,
-  ChevronRight,
-} from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { ArrowRightOutlined } from '@mui/icons-material';
+import { Chip, List, ListItem, ListItemButton } from '@mui/material';
+import { Path } from 'constants/Path';
 import CardWTitle from 'CustomComponents/CardWTitle';
 import moment from 'moment';
 import React from 'react';
@@ -21,7 +18,7 @@ const Attendance = ({ className }: Props) => {
         <div>
           Attendance{' '}
           <Link
-            to='/ess/ot-applications/new'
+            to={Path.Employee.Attendance}
             className='float-right pr-0 pl-2 text-slate-500 hover:text-v-red rounded-sm ease-in-out duration-200 hover:translate-x-1'
           >
             View All <ArrowRightOutlined fontSize='small' />
@@ -30,39 +27,52 @@ const Attendance = ({ className }: Props) => {
       }
     >
       <section className='text-sm mt-4'>
-        <div className='grid grid-cols-8 items-center'>
-          <div className='col-span-6'>
-            {moment().format('L')} - {moment().format('L')}
-          </div>
-          <div className='col-span-2'>
-            <IconButton>
-              <ChevronLeft fontSize='small' />
-            </IconButton>
-            <IconButton>
-              <ChevronRight fontSize='small' />
-            </IconButton>
-          </div>
-          <div className='col-span-8 grid grid-cols-4 bg-slate-100 p-4 '>
-            <div className='col-span-1 text-center'>
-              <div className='font-bold text-lg text-green-600'>1</div>
-              <div className='text-xs'>Approved</div>
-            </div>
-            <div className='col-span-1 text-center'>
-              <div className='font-bold text-lg'>4</div>
-              <div className='text-xs'>Submitted</div>
-            </div>
-            <div className='col-span-1 text-center'>
-              <div className='font-bold text-lg text-red-600'>0</div>
-              <div className='text-xs'>Rejected</div>
-            </div>
-            <div className='col-span-1 text-center'>
-              <div className='font-bold text-lg'>0</div>
-              <div className='text-xs'>Processed</div>
-            </div>
-          </div>
-        </div>
+        <List>
+          <AttendanceWrapper
+            date={{ from: '7/15/2022', to: '7/30/2022' }}
+            status='Pending'
+          />
+          <AttendanceWrapper
+            date={{ from: '7/1/2022', to: '7/15/2022' }}
+            status='Submitted'
+          />
+          <AttendanceWrapper
+            date={{ from: '6/15/2022', to: '6/30/2022' }}
+            status='Submitted'
+          />
+          <AttendanceWrapper
+            date={{ from: '6/1/2022', to: '6/15/2022' }}
+            status='Submitted'
+          />
+        </List>
       </section>
     </CardWTitle>
+  );
+};
+
+const AttendanceWrapper: React.FC<{
+  date: { from: string; to: string };
+  status: string;
+}> = ({ date, status }) => {
+  return (
+    <ListItem className='p-0'>
+      <ListItemButton className='grid grid-cols-6 items-center w-full rounded-md hover:bg-v-red/10'>
+        {/* <div className=''> */}
+        <div className='col-span-4'>
+          {moment(date.from).format('L')} - {moment(date.to).format('L')}
+        </div>
+
+        <div className='col-span-2 justify-self-end'>
+          <Chip
+            label={status}
+            variant='outlined'
+            size='small'
+            color={status === 'Pending' ? 'warning' : 'primary'}
+          />
+        </div>
+        {/* </div> */}
+      </ListItemButton>
+    </ListItem>
   );
 };
 

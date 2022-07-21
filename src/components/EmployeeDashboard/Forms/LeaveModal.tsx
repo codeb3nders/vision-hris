@@ -1,7 +1,5 @@
-import React, { Fragment, useState } from 'react';
-import { Button, Card, Divider, Link, Modal, Typography } from '@mui/material';
-import CustomCard from '../../../CustomComponents/CustomCard';
-import { Dialog, Transition } from '@headlessui/react';
+import React, { useState } from 'react';
+import { Link, Typography } from '@mui/material';
 import DialogModal from 'CustomComponents/DialogModal';
 
 type Props = {

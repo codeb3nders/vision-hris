@@ -2,7 +2,7 @@ import React from 'react';
 import CustomCard from './CustomCard';
 
 type Props = {
-  children: any;
+  children?: any;
   title: any | string;
   className?: any;
   style?: any;

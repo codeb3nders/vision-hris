@@ -12,8 +12,9 @@ import WorkersDatabase from './HRDashboard/WorkersDatabase';
 import OTForm from './EmployeeDashboard/Forms/OTForm';
 import { Path } from 'constants/Path';
 import ProfileMain from './MyProfile/profile.main';
+import HRMainDashboard from './Dashboards/HR/hr.main.dashboard';
 
-const { Employee, Admin, HR, Manager } = Path;
+const { Employee, HR, Manager } = Path;
 
 interface Props {}
 
@@ -24,6 +25,9 @@ const Main: React.FC<Props> = () => {
         <Navbar />
         <section className='tablet:px-8 phone:px-4 max-w-[1200px] lg:max-w-[1200px] md:max-w-[1200px] sm:max-w-full mx-auto'>
           <Switch>
+            {/*
+             * Employee
+             */}
             <Route exact path={Employee.Dashboard} component={Dashboard} />
             <Route exact path={Employee.ESS.Leave} component={LeaveTable} />
             <Route exact path={Employee.ESS.LeaveNew} component={LeaveForm} />
@@ -33,15 +37,23 @@ const Main: React.FC<Props> = () => {
             <Route path={Employee.ESS.WorkersOT} component={OTTable} />
             <Route path={Employee.Profile} component={ProfileMain} />
 
+            {/*
+             * Manager
+             */}
             <Route path={Manager.Requests.Leave} component={LeaveManagement} />
             <Route exact path={Manager.Requests.OT} component={OTManangement} />
-            <Route path={HR.Requests.Leave} component={LeaveManagement} />
+            <Route path={Manager.People.Team} component={WorkersDatabase} />
+
+            {/*
+             * HR
+             */}
+            <Route exact path={HR.Dashboard} component={HRMainDashboard} />
+            <Route exact path={HR.Requests.Leave} component={LeaveManagement} />
             <Route exact path={HR.Requests.OT} component={OTManangement} />
             <Route
               path={Manager.People.Directory}
               component={EmployeeDatabase}
             />
-            <Route path={Manager.People.Team} component={WorkersDatabase} />
             <Route path={HR.People.Directory} component={EmployeeDatabase} />
             <Route path={HR.People.Workers} component={WorkersDatabase} />
           </Switch>

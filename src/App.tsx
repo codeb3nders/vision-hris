@@ -2,7 +2,7 @@ import './App.css';
 import SignInSide from './Login';
 import { useEffect, createContext, useState } from 'react';
 import Main from './components/Main';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material';
 
 export const AppCtx: any = createContext(null);
 

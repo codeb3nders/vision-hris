@@ -1,11 +1,11 @@
-import CustomCard from 'CustomComponents/CustomCard';
 import React from 'react';
 import {
   AccountCircleOutlined,
   LanguageOutlined,
-  MoreTimeOutlined,
+  LinkTwoTone,
+  MenuBookOutlined,
+  PermContactCalendarOutlined,
   PunchClockOutlined,
-  TimeToLeaveOutlined,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import CardWTitle from 'CustomComponents/CardWTitle';
@@ -16,20 +16,20 @@ type Props = {
 
 const shortcuts = [
   {
-    label: 'Request for an OT/WDO',
-    url: '/ess/ot-applications',
-    in_app: true,
-    icon: <MoreTimeOutlined fontSize='small' />,
+    label: 'Employee Handbook',
+    url: 'https://drive.google.com/file/d/18jLHFVwoNpWiMM1EMRU1Uvtw6J8ORr99/view',
+    in_app: false,
+    icon: <MenuBookOutlined fontSize='small' />,
   },
   {
-    label: 'Request for a Leave',
+    label: 'Employee Directory',
     url: '/ess/leave-applications',
     in_app: true,
-    icon: <TimeToLeaveOutlined fontSize='small' />,
+    icon: <PermContactCalendarOutlined fontSize='small' />,
   },
   {
     label: 'Vi-You Website',
-    url: 'https://www.visionpropertiesdevt.com/',
+    url: 'https://sites.google.com/view/visionyouniversity/documents/forms?authuser=0',
     in_app: false,
     icon: <LanguageOutlined fontSize='small' />,
   },
@@ -40,7 +40,7 @@ const shortcuts = [
     icon: <AccountCircleOutlined fontSize='small' />,
   },
   {
-    label: 'Submit my Timesheet',
+    label: 'Submit my Attendance',
     url: '/timesheets',
     in_app: true,
     icon: <PunchClockOutlined fontSize='small' />,
@@ -50,7 +50,11 @@ const shortcuts = [
 const Shortcuts: React.FC<Props> = ({ className }) => {
   return (
     <CardWTitle
-      title='Shortcuts'
+      title={
+        <div className='flex flex-row gap-1 items-center text-v-red'>
+          <LinkTwoTone /> Shortcuts
+        </div>
+      }
       className={`p-4 flex flex-col space-y-1 basis-1 min-w-max ${className}`}
     >
       {shortcuts.map((s) => {

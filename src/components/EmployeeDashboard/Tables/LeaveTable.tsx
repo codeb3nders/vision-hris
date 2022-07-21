@@ -1,14 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import {
-  Card,
   Breadcrumbs,
   Link,
   Typography,
   Chip,
   Button,
-  Select,
-  MenuItem,
   Grid,
   Snackbar,
   Alert,
@@ -16,7 +13,6 @@ import {
   SnackbarCloseReason,
 } from '@mui/material';
 import ViewDetailsModal from './ViewDetailsModal';
-import { AppCtx } from '../../../App';
 import { AddCircleOutlineTwoTone } from '@mui/icons-material';
 import LeaveForm from '../Forms/LeaveForm';
 import { LeaveTypes } from '../../../constants/LeaveTypes';
@@ -30,7 +26,6 @@ type Props = {
 };
 
 const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
-  const { isHRLogin } = useContext(AppCtx);
   const [selectedLeaveType, setSelectedLeaveType] = useState(null);
   const [openSnack, setOpenSnack] = useState(false);
   const [newForm, setNewForm] = useState(false);
@@ -39,51 +34,49 @@ const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
     status: false,
   });
 
-  const [openModal, setOpenModal] = useState(false);
-
-  const statusCell = (cell) =>
-    isHRLogin || isApprover ? (
-      <Chip
-        size='small'
-        color={
-          cell.value === 'Pending'
-            ? 'warning'
-            : cell.value === 'Approve'
-            ? 'success'
-            : 'error'
-        }
-        label={
-          <Select
-            fullWidth
-            onChange={() => {}}
-            size='small'
-            value={cell.value}
-            sx={{
-              '& > fieldset': { border: 'none', textAlign: 'left' },
-              textAlign: 'left',
-              color: '#fff',
-              fontSize: 14,
-            }}
-          >
-            <MenuItem value='Pending'>Pending</MenuItem>
-            <MenuItem value='Approve'>Approve</MenuItem>
-            <MenuItem value='Disapprove'>Disapprove</MenuItem>
-          </Select>
-        }
-      />
-    ) : (
-      <Chip
-        label={cell.value}
-        color={
-          cell.value === 'Pending'
-            ? 'warning'
-            : cell.value === 'Approve'
-            ? 'success'
-            : 'error'
-        }
-        size='small'
-      />
-    );
+  // const statusCell = (cell) =>
+  //   isHRLogin || isApprover ? (
+  //     <Chip
+  //       size='small'
+  //       color={
+  //         cell.value === 'Pending'
+  //           ? 'warning'
+  //           : cell.value === 'Approve'
+  //           ? 'success'
+  //           : 'error'
+  //       }
+  //       label={
+  //         <Select
+  //           fullWidth
+  //           onChange={() => {}}
+  //           size='small'
+  //           value={cell.value}
+  //           sx={{
+  //             '& > fieldset': { border: 'none', textAlign: 'left' },
+  //             textAlign: 'left',
+  //             color: '#fff',
+  //             fontSize: 14,
+  //           }}
+  //         >
+  //           <MenuItem value='Pending'>Pending</MenuItem>
+  //           <MenuItem value='Approve'>Approve</MenuItem>
+  //           <MenuItem value='Disapprove'>Disapprove</MenuItem>
+  //         </Select>
+  //       }
+  //     />
+  //   ) : (
+  //     <Chip
+  //       label={cell.value}
+  //       color={
+  //         cell.value === 'Pending'
+  //           ? 'warning'
+  //           : cell.value === 'Approve'
+  //           ? 'success'
+  //           : 'error'
+  //       }
+  //       size='small'
+  //     />
+  //   );
 
   const leaveColumns = [
     {
@@ -329,16 +322,6 @@ const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
       status: 'Approve',
     },
   ];
-
-  const handleClose = (
-    event: React.SyntheticEvent<Element, Event>,
-    reason: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSnack(false);
-  };
 
   return (
     <>

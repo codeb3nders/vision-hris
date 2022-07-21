@@ -13,6 +13,9 @@ module.exports = {
         'v-paint': 'rgba(var(--vision-paint) / <alpha-value>)',
         'v-gray': 'rgba(var(--vision-gray) / <alpha-value>)',
       },
+      gridTemplateColumns: {
+        16: 'repeat(16, minmax(0, 1fr))',
+      },
     },
     screens: {
       phone: '320px',

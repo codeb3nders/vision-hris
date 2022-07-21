@@ -1,21 +1,16 @@
-import { ContactMail, EventNote, Publish } from '@mui/icons-material';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { EventNote, Publish } from '@mui/icons-material';
 import {
-  Button,
   Card,
   Checkbox,
-  Chip,
-  Divider,
   FormControl,
   FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
-  Modal,
   Select,
   TextField,
   Typography,
-  Snackbar,
-  Alert,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -26,7 +21,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { Box } from '@mui/system';
 import { LeaveTypes } from '../../../constants/LeaveTypes';
-import OTModal from './OTModal';
 import CustomCard from '../../../CustomComponents/CustomCard';
 import LeaveModal from './LeaveModal';
 import { useParams, useLocation } from 'react-router-dom';
