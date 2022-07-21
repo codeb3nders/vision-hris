@@ -21,7 +21,7 @@ const ProfileDetails = (props: Props) => {
       <section className='col-span-9'>
         <p className='font-bold text-xl mb-4'>
           ABNE, MARK JAYVEN LLANERA{' '}
-          <span className='ml-1 px-2 py-1 bg-sky-500 text-white rounded-md text-xs'>
+          <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs'>
             0122
           </span>
         </p>

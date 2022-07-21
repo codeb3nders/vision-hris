@@ -7,11 +7,11 @@ type Props = {};
 
 const ProfileTabs = (props: Props) => {
   const { index, setIndex } = useContext(ProfileCtx);
-
   const a11yProps = (index: string) => {
     return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
+      id: `profile-${index}`,
+      'aria-controls': `profile-tabpanel-${index}`,
+      value: index,
     };
   };
 
@@ -22,47 +22,40 @@ const ProfileTabs = (props: Props) => {
         onChange={(event: React.SyntheticEvent, newValue: string) =>
           setIndex(newValue)
         }
-        aria-label='basic tabs example'
+        className='tab-list [&>div>span]:!bg-v-red'
       >
         <Tab
-          value='1'
-          className='p-1 px-3 text-xs'
+          className={`p-1 px-3 text-xs ${index === '1' ? '!text-v-red' : ''}`}
           label='Personal'
           {...a11yProps('1')}
         />
         <Tab
-          value='2'
-          className='p-1 px-3 text-xs'
+          className={`p-1 px-3 text-xs ${index === '2' ? '!text-v-red' : ''}`}
           label='Employment'
           {...a11yProps('2')}
         />
         <Tab
-          value='3'
-          className='p-1 px-3 text-xs'
+          className={`p-1 px-3 text-xs ${index === '3' ? '!text-v-red' : ''}`}
           label='Emergency'
           {...a11yProps('3')}
         />
         <Tab
-          value='4'
-          className='p-1 px-3 text-xs'
+          className={`p-1 px-3 text-xs ${index === '4' ? '!text-v-red' : ''}`}
           label='Leaves'
           {...a11yProps('4')}
         />
         <Tab
-          value='5'
-          className='p-1 px-3 text-xs'
+          className={`p-1 px-3 text-xs ${index === '5' ? '!text-v-red' : ''}`}
           label='Assets'
           {...a11yProps('5')}
         />
         <Tab
-          value='6'
-          className='p-1 px-3 text-xs'
+          className={`p-1 px-3 text-xs ${index === '6' ? '!text-v-red' : ''}`}
           label='201 Checklist'
           {...a11yProps('6')}
         />
         <Tab
-          value='7'
-          className='p-1 px-3 text-xs'
+          className={`p-1 px-3 text-xs ${index === '7' ? '!text-v-red' : ''}`}
           label='Disciplinary Actions'
           {...a11yProps('7')}
         />
