@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import Requests from './requests';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRightOutlined,
-  BusinessCenterTwoTone,
-  MoreTimeTwoTone,
-} from '@mui/icons-material';
+import { BusinessCenterTwoTone, MoreTimeTwoTone } from '@mui/icons-material';
 import { Chip } from '@mui/material';
 import { Path } from 'constants/Path';
 
@@ -33,6 +29,7 @@ const LeaveRequests = ({ className }: Props) => {
   ];
 
   const [leaves, setLeaves] = useState<any[]>(initialValue);
+
   return (
     <Requests
       title={

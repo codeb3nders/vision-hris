@@ -1,35 +1,24 @@
-import { ContactMail, EventNote, Publish } from '@mui/icons-material';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { EventNote, Publish } from '@mui/icons-material';
 import {
-  Button,
-  Card,
   Checkbox,
-  Chip,
-  Divider,
   FormControl,
   FormControlLabel,
   Grid,
-  InputLabel,
-  MenuItem,
-  Modal,
-  Select,
   TextField,
   Typography,
-  Snackbar,
-  Alert,
   FormLabel,
   RadioGroup,
   Radio,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DateTimePicker from '@mui/lab/DateTimePicker';
 import TimePicker from '@mui/lab/TimePicker';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { Box } from '@mui/system';
-import { LeaveTypes } from '../../../constants/LeaveTypes';
 import OTModal from './OTModal';
 import CustomCard from '../../../CustomComponents/CustomCard';
 
@@ -44,9 +33,7 @@ const OTForm: React.FC<Props> = ({
   setNewForm,
   setOpenSnack,
   setSelectedLeaveType,
-  isOT,
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [leaveType, setLeaveType] = useState('');
@@ -68,7 +55,6 @@ const OTForm: React.FC<Props> = ({
 
   const handleChange = () => {};
 
-  const maxWidth = 780;
   return (
     <>
       <CustomCard className='max-w-[780px] mx-auto'>

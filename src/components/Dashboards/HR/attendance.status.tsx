@@ -1,6 +1,5 @@
-import { Circle, PieChartTwoTone } from '@mui/icons-material';
+import { Circle } from '@mui/icons-material';
 import CardWTitle from 'CustomComponents/CardWTitle';
-import React from 'react';
 
 type Props = {
   className?: string;

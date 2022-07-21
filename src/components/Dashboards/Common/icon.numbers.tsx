@@ -1,4 +1,3 @@
-import { GroupTwoTone } from '@mui/icons-material';
 import { Avatar, useTheme } from '@mui/material';
 import CustomCard from 'CustomComponents/CustomCard';
 import React from 'react';

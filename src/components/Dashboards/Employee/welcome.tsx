@@ -1,12 +1,8 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CustomCard from 'CustomComponents/CustomCard';
-import { AppCtx } from './../../../App';
 import { WELCOME } from 'assets';
-import Announcement from './sample_announcement';
 import { ChevronLeftOutlined, ChevronRightOutlined } from '@mui/icons-material';
 import SwipeableViews from 'react-swipeable-views';
-import ProfilePreview from './profile.preview';
-import moment from 'moment';
 
 type Props = {
   className?: string;
@@ -15,7 +11,6 @@ type Props = {
 };
 
 const Welcome: React.FC<Props> = ({ className, profile, announcements }) => {
-  const { isLoggedIn } = useContext(AppCtx);
   const [index, setIndex] = useState<number>(0);
 
   const swipeRef: any = useRef(null);

@@ -1,19 +1,11 @@
-import {
-  BusinessCenterTwoTone,
-  HouseboatTwoTone,
-  SickTwoTone,
-  CakeTwoTone,
-  CelebrationTwoTone,
-} from '@mui/icons-material';
+import { CakeTwoTone, CelebrationTwoTone } from '@mui/icons-material';
 import {
   Avatar,
-  Chip,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import CardWTitle from '../../../CustomComponents/CardWTitle';
 import { ProfilePhoto } from '../Employee/profile.preview';
@@ -47,16 +39,16 @@ const initialVlaue = [
 ];
 
 const CelebrationsToday = ({ className }: Props) => {
-  const [offs, setOffs] = useState<any[]>(initialVlaue);
+  const [bdays, setBdays] = useState<any[]>(initialVlaue);
 
   useEffect(() => {
-    setOffs(initialVlaue);
-  }, [initialVlaue]);
+    setBdays(initialVlaue);
+  }, []);
 
   return (
     <CardWTitle title='Celebrations Today' className={className}>
       <List>
-        {offs.map((off) => {
+        {bdays.map((off) => {
           return (
             <ListItem key={off.id} className='justtify-left px-0'>
               <ListItemIcon className='flex items-center gap-4'>

@@ -1,7 +1,5 @@
 import React from 'react';
 import CardWTitle from './../../../CustomComponents/CardWTitle';
-import { Link } from 'react-router-dom';
-import { ArrowRightOutlined } from '@mui/icons-material';
 import {
   Avatar,
   Chip,

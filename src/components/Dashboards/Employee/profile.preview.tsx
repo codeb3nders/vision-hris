@@ -1,26 +1,4 @@
 import React from 'react';
-import CustomCard from 'CustomComponents/CustomCard';
-import moment from 'moment';
-import { VISION_LOGO, VISION_LOGO_THICK } from 'assets';
-
-const details = [
-  {
-    title: 'Position',
-    value: 'PLANNING & SCHEDULING MANAGER',
-  },
-  {
-    title: 'Designation',
-    value: 'HEAD OFFICE',
-  },
-  {
-    title: 'Manager/Supervisor',
-    value: 'Test Supervisor',
-  },
-  // {
-  //   title: `Today's Date`,
-  //   value: moment(new Date()).format('LL'),
-  // },
-];
 
 export const ProfilePhoto =
   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80';
@@ -29,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-const ProfilePreview: React.FC<Props> = ({ className }) => {
+const ProfilePreview: React.FC<Props> = () => {
   return (
     // <CustomCard
     //   className={`basis-1 min-w-max overflow-hidden group ${className}`}
@@ -81,20 +59,9 @@ const ProfilePreview: React.FC<Props> = ({ className }) => {
             Go to My Profile
           </button>
         </div>
-
-
       </section>
     </div>
     // </CustomCard>
-  );
-};
-
-const ProfileDetails = ({ title, value }) => {
-  return (
-    <>
-      <div className='text-xs  mt-2'>{title}:</div>
-      <div className='text-sm  font-medium'>{value}</div>
-    </>
   );
 };
 

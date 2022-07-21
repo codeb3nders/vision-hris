@@ -1,14 +1,11 @@
-import CustomCard from 'CustomComponents/CustomCard';
 import React from 'react';
 import {
   AccountCircleOutlined,
   LanguageOutlined,
   LinkTwoTone,
   MenuBookOutlined,
-  MoreTimeOutlined,
   PermContactCalendarOutlined,
   PunchClockOutlined,
-  TimeToLeaveOutlined,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import CardWTitle from 'CustomComponents/CardWTitle';

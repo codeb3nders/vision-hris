@@ -13,7 +13,7 @@ import OTForm from './EmployeeDashboard/Forms/OTForm';
 import { Path } from 'constants/Path';
 import HRMainDashboard from './Dashboards/HR/hr.main.dashboard';
 
-const { Employee, Admin, HR, Manager } = Path;
+const { Employee, HR, Manager } = Path;
 
 interface Props {}
 

@@ -1,6 +1,5 @@
 import CardWTitle from 'CustomComponents/CardWTitle';
-import React from 'react';
-import { VictoryChart, VictoryBar, VictoryAxis } from 'victory';
+import { VictoryChart, VictoryBar } from 'victory';
 
 type Props = {
   className?: string;
