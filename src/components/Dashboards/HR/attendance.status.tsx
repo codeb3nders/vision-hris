@@ -11,7 +11,7 @@ const AttendanceStatus = ({ className }: Props) => {
       <div className='text-xs mb-2'>Last Upload: July 10, 2022</div>
       <div className='grid grid-cols-3 text-sm content-center'>
         <span className='col-span-2 flex flex-row items-center gap-2'>
-          <Circle color='success' className='text-[10px]' /> Submitted
+          <Circle color='success' className='text-[10px]' /> Verified
         </span>
         <span className='self-end text-right font-bold'>26</span>
       </div>

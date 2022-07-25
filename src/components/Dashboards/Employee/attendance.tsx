@@ -34,15 +34,15 @@ const Attendance = ({ className }: Props) => {
           />
           <AttendanceWrapper
             date={{ from: '7/1/2022', to: '7/15/2022' }}
-            status='Submitted'
+            status='Verified'
           />
           <AttendanceWrapper
             date={{ from: '6/15/2022', to: '6/30/2022' }}
-            status='Submitted'
+            status='Verified'
           />
           <AttendanceWrapper
             date={{ from: '6/1/2022', to: '6/15/2022' }}
-            status='Submitted'
+            status='Verified'
           />
         </List>
       </section>

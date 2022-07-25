@@ -5,6 +5,7 @@ import ContactDetails from './PersonalProfileTab/contact.details';
 import GovernmentDetails from './PersonalProfileTab/government.details';
 import PayrollDetails from './PersonalProfileTab/payroll.details';
 import Personal from './PersonalProfileTab/personal';
+import ProfileTabs from './profile.tabs';
 
 type Props = {
   className?: string;
@@ -13,6 +14,7 @@ type Props = {
 const ProfileTabContent = ({ className }: Props) => {
   return (
     <CustomCard className={` ${className}`}>
+      <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
       <TabPanel value='1' className='p-0 grid'>
         <Personal />
         <ContactDetails />

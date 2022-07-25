@@ -3,9 +3,11 @@ import { Tab, Box } from '@mui/material';
 import React, { useContext } from 'react';
 import { ProfileCtx } from './profile.main';
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
-const ProfileTabs = (props: Props) => {
+const ProfileTabs = ({ className }: Props) => {
   const { index, setIndex } = useContext(ProfileCtx);
   const a11yProps = (index: string) => {
     return {
@@ -16,13 +18,15 @@ const ProfileTabs = (props: Props) => {
   };
 
   return (
-    <Box className='mt-6'>
+    <Box className={`mt-6 ${className} phone:mb-4`}>
       <TabList
         value={index}
         onChange={(event: React.SyntheticEvent, newValue: string) =>
           setIndex(newValue)
         }
-        className='tab-list [&>div>span]:!bg-v-red'
+        className='tab-list [&>div>.MuiTabs-indicator]:!bg-v-red'
+        scrollButtons={true}
+        variant='scrollable'
       >
         <Tab
           className={`p-1 px-3 text-xs ${index === '1' ? '!text-v-red' : ''}`}
