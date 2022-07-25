@@ -11,10 +11,10 @@ import EmployeeDatabase from './HRDashboard/EmployeeDatabase';
 import WorkersDatabase from './HRDashboard/WorkersDatabase';
 import OTForm from './EmployeeDashboard/Forms/OTForm';
 import { Path } from 'constants/Path';
-import HRMainDashboard from './Dashboards/HR/hr.main.dashboard';
 import ProfileMain from './MyProfile/profile.main';
+import HRMainDashboard from './Dashboards/HR/hr.main.dashboard';
 
-const { Employee, Admin, HR, Manager } = Path;
+const { Employee, HR, Manager } = Path;
 
 interface Props {}
 
@@ -40,7 +40,6 @@ const Main: React.FC<Props> = () => {
             {/*
              * Manager
              */}
-
             <Route path={Manager.Requests.Leave} component={LeaveManagement} />
             <Route exact path={Manager.Requests.OT} component={OTManangement} />
             <Route path={Manager.People.Team} component={WorkersDatabase} />

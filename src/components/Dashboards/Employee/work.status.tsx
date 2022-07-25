@@ -1,4 +1,3 @@
-import React from 'react';
 import CardWTitle from 'CustomComponents/CardWTitle';
 import { Link } from 'react-router-dom';
 import {
@@ -6,7 +5,6 @@ import {
   MoodTwoTone,
   SentimentSatisfiedAltTwoTone,
   SentimentVeryDissatisfiedTwoTone,
-  SentimentVerySatisfiedTwoTone,
 } from '@mui/icons-material';
 
 type Props = {};

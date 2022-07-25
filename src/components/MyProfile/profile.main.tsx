@@ -23,15 +23,15 @@ const ProfileMain = (props: Props) => {
   return (
     <ProfileCtx.Provider value={{ index, setIndex }}>
       <TabContext value={index}>
-        <section className='mt-4 grid gap-4'>
+        <section className='mt-4 grid gap-4 pb-10'>
           <ProfileDetails />
           <section className='grid grid-cols-12 w-full gap-4'>
-            <article className='col-span-3 grid gap-4'>
+            <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>
               <ProfileOther />
               <ProfileTeam />
             </article>
 
-            <article className='col-span-9 flex'>
+            <article className='laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex'>
               <ProfileTabContent className='self-stretch' />
             </article>
           </section>

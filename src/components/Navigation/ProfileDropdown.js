@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Fragment, useContext } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { AppCtx } from '../../App';

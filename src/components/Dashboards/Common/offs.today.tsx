@@ -1,37 +1,22 @@
-import {
-  BusinessCenterTwoTone,
-  HouseboatTwoTone,
-  SickTwoTone,
-  TimeToLeaveOutlined,
-  TimeToLeaveTwoTone,
-} from '@mui/icons-material';
+import { HouseboatTwoTone } from '@mui/icons-material';
 import {
   Avatar,
-  Chip,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import {
-  BusinessIcon,
-  EmergencyIcon,
-  PaidIcon,
-  ServiceIcon,
-  UnpaidIcon,
-  VacationIcon,
-} from './icons';
+import { BusinessIcon, VacationIcon } from './icons';
 import CardWTitle from '../../../CustomComponents/CardWTitle';
 import { ProfilePhoto } from '../Employee/profile.preview';
-import { HomeIcon, SickIcon } from './icons';
+import { SickIcon } from './icons';
 
 type Props = {
   className?: string;
 };
 
-const initialVlaue = [
+const initialValue = [
   {
     id: 12346,
     name: 'ACOBA, KERBY  AGUSTIN',
@@ -63,18 +48,18 @@ const initialVlaue = [
 ];
 
 const OffsToday = ({ className }: Props) => {
-  const [offs, setOffs] = useState<any[]>(initialVlaue);
+  const [offs, setOffs] = useState<any[]>(initialValue);
 
   useEffect(() => {
-    setOffs(initialVlaue);
-  }, [initialVlaue]);
+    setOffs(initialValue);
+  }, []);
 
   return (
     <CardWTitle title='Who is off today' className={` ${className}`}>
       <List className='max-h-[400px] overflow-auto'>
         {offs.map((off) => {
           return (
-            <ListItem key={off.id} className='justtify-left px-0'>
+            <ListItem key={off.id} className='justify-left px-0'>
               <ListItemIcon className='flex items-center gap-4'>
                 {off.icon}{' '}
                 <Avatar src={ProfilePhoto} className='mr-2 w-[28px] h-[28px]' />

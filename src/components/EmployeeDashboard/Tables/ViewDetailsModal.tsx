@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ListItem,
   ListItemIcon,
@@ -17,9 +17,7 @@ import {
 } from '@mui/icons-material';
 import EmployeeDetailsCollapse from './EmployeeDetailsCollapse';
 import LeaveOtDetails from './LeaveOtDetails';
-import CustomCard from '../../../CustomComponents/CustomCard';
 import { TITLES } from '../../HRDashboard/EmployeeData';
-import { Transition, Dialog } from '@headlessui/react';
 import DialogModal from '../../../CustomComponents/DialogModal';
 
 type Props = {

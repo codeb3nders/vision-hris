@@ -1,10 +1,12 @@
-import { ArrowRightAltOutlined } from '@mui/icons-material';
+import { Add, ArrowRightAltOutlined } from '@mui/icons-material';
 import moment from 'moment';
-import React from 'react';
+import React, { useContext } from 'react';
+import { WelcomeCtx } from './welcome';
 
 type Props = {};
 
 const Announcement = (props: Props) => {
+  const { index } = useContext(WelcomeCtx);
   return (
     <div className='text-white'>
       <small className='text-xs text-white/60'>{moment().format('L')}</small>
@@ -30,18 +32,13 @@ const Announcement = (props: Props) => {
         <a href='#' className='font-bold'>
           Read More <ArrowRightAltOutlined />
         </a>
-        {/* <p className='mt-2'>
-          <i>REMINDER</i>: All concerned staff will be required to sign the
-          Memorandum Receipt Form to be disseminated on-site by your respective
-          Document Controllers. Failure and/or refusal to{' '}
-          <p className='truncate'>
-            sign the Memorandum Receipt Form until 5 days from the memorandum’s
-            release date will be subject to disciplinary action as prescribed in
-            our Company Code of Conduct
-          </p>
-          
-        </p> */}
       </div>
+
+      {index === 1 && (
+        <button className='tablet:hidden laptop:hidden phone:w-full phone:max-w-full phone:mt-4 tablet:max-w-[175px] desktop:hidden flex items-center phone:block col-span-1 justify-self-end bg-white text-v-red py-1 px-2 rounded-md text-xs'>
+          <Add fontSize='small' /> Post New Announcement
+        </button>
+      )}
     </div>
   );
 };

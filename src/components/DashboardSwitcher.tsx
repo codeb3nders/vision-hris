@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { AppCtx } from '../App';
 import AdminMainDashboard from './Dashboards/Admin/admin.main.dashboard';
 import EmployeeDashboard from './Dashboards/Employee/main.dashboard';

@@ -1,15 +1,6 @@
 import React from 'react';
 import CardWTitle from 'CustomComponents/CardWTitle';
-import { Link } from 'react-router-dom';
-import {
-  ArrowForwardOutlined,
-  ArrowRightAltOutlined,
-  ArrowRightOutlined,
-  BusinessCenterTwoTone,
-  HouseboatTwoTone,
-  LinkOutlined,
-  SickTwoTone,
-} from '@mui/icons-material';
+import { HouseboatTwoTone, SickTwoTone } from '@mui/icons-material';
 
 type Props = {
   className?: string;
