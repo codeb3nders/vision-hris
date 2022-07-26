@@ -45,8 +45,12 @@ const rows = [
 
 const EmployementStatus = (props: Props) => {
   return (
-    <CollapseWrapper panelTitle='Employment Status' icon={WorkHistoryTwoTone}>
-      <div style={{ minHeight: 300, width: '100%' }}>
+    <CollapseWrapper
+      panelTitle='Employment Status'
+      icon={WorkHistoryTwoTone}
+      contentClassName='p-0'
+    >
+      <div style={{ width: '100%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -55,6 +59,7 @@ const EmployementStatus = (props: Props) => {
           checkboxSelection
           autoHeight
           getRowHeight={() => 'auto'}
+          className='border-0'
         />
       </div>
     </CollapseWrapper>

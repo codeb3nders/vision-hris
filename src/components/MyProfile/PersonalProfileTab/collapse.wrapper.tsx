@@ -14,6 +14,7 @@ type Props = {
   open?: boolean;
   className?: string;
   icon?: any;
+  contentClassName?: string;
 };
 
 const CollapseWrapper = ({
@@ -22,6 +23,7 @@ const CollapseWrapper = ({
   open,
   className,
   icon,
+  contentClassName,
 }: Props) => {
   const [expanded, setExpanded] = useState<boolean>(open || false);
   return (
@@ -53,7 +55,9 @@ const CollapseWrapper = ({
           {panelTitle}
         </Typography>
       </AccordionSummary>
-      <AccordionDetails>{children}</AccordionDetails>
+      <AccordionDetails className={contentClassName}>
+        {children}
+      </AccordionDetails>
     </Accordion>
   );
 };

@@ -5,6 +5,9 @@ import Contacts from './Emergency/contacts';
 import EmployementStatus from './EmploymentTab/employement.status';
 import General from './EmploymentTab/general';
 import JobInfo from './EmploymentTab/job.info';
+import History from './Leaves/history';
+import LeaveBalances from './Leaves/leave.balances';
+import UpcomingLeaves from './Leaves/upcoming.leaves';
 import ContactDetails from './PersonalProfileTab/contact.details';
 import GovernmentDetails from './PersonalProfileTab/government.details';
 import PayrollDetails from './PersonalProfileTab/payroll.details';
@@ -38,7 +41,9 @@ const ProfileTabContent = ({ className }: Props) => {
       </TabPanel>
 
       <TabPanel value='4' className='p-0 grid' id='Leaves'>
-        Leaves
+        <LeaveBalances />
+        <UpcomingLeaves />
+        <History />
       </TabPanel>
 
       <TabPanel value='5' className='p-0 grid' id='Assets'>

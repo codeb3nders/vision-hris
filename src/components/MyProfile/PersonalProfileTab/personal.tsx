@@ -25,7 +25,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            defaultValue='MARK JAYVEN'
+            defaultValue='JOHN'
           />
         </div>
         <div className='col-span-2'>
@@ -34,7 +34,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            defaultValue='LLANERA'
+            defaultValue=''
           />
         </div>
         <div className='col-span-2'>
@@ -43,7 +43,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            defaultValue='ABNE'
+            defaultValue='DOE'
           />
         </div>
 

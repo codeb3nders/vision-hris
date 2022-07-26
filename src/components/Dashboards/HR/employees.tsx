@@ -32,6 +32,7 @@ const Employees = ({ className }: Props) => {
           title='Number of Employees'
           number={value}
           color='error'
+          titleClassName='phone:!text-sm'
         />
       </Link>
     </div>
