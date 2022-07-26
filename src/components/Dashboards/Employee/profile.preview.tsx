@@ -9,15 +9,7 @@ type Props = {
 
 const ProfilePreview: React.FC<Props> = () => {
   return (
-    // <CustomCard
-    //   className={`basis-1 min-w-max overflow-hidden group ${className}`}
-    // >
     <div className='pl-6'>
-      {/* <img
-          src={VISION_LOGO_THICK}
-          alt=''
-          className='absolute top-[-55px] right-[-35%] w-[300px] z-0 opacity-20 group-hover:opacity-40 ease-in-out duration-500'
-        /> */}
       <section className='flex flex-row space-x-2 items-center mb-1 relative z-10 '>
         <img
           src={ProfilePhoto}
@@ -35,10 +27,6 @@ const ProfilePreview: React.FC<Props> = () => {
         </div>
       </section>
       <section className='flex flex-col relative z-10'>
-        {/* {details.map((d) => {
-          return ProfileDetails({ title: d.title, value: d.value });
-        })} */}
-
         <div>
           <div className='text-xs  mt-2'>Position:</div>
           <div className='text-sm  font-medium'>
@@ -46,22 +34,24 @@ const ProfilePreview: React.FC<Props> = () => {
           </div>
         </div>
 
-        <div className='flex flex-row gap-8'>
-          <div>
+        <div className='grid grid-cols-12 gap-4 space-y-0'>
+          <div className='phone:col-span-6 tablet:col-span-4'>
             <div className='text-xs  mt-2'>Designation:</div>
             <div className='text-sm  font-medium'>HEAD OFFICE</div>
           </div>
-          <div>
+          <div className='phone:col-span-6 tablet:col-span-4'>
             <div className='text-xs  mt-2'>Reports To:</div>
             <div className='text-sm  font-medium'>Test Supervisor</div>
           </div>
-          <button className='ease-in duration-150 w-full bg-white text-v-red text-center text-xs rounded-md py-2 mt-2 hover:bg-white/90 max-w-[150px]'>
+          <button
+            type='button'
+            className='tablet:col-span-4 phone:col-span-12 ease-in duration-150 w-full bg-white text-v-red text-center self-start text-xs rounded-md py-1 mt-2 hover:bg-white/90 '
+          >
             Go to My Profile
           </button>
         </div>
       </section>
     </div>
-    // </CustomCard>
   );
 };
 
