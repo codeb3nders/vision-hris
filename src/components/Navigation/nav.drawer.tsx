@@ -10,6 +10,7 @@ import {
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { VISION_LOGO_WHITE } from 'assets';
 import { Link } from 'react-router-dom';
+import { doNothing } from '@mui/x-date-pickers/internals/utils/utils';
 
 type Props = {
   open: boolean;

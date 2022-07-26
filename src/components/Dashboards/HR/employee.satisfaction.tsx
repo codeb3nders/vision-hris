@@ -26,25 +26,19 @@ const EmployeeSatisfaction = ({ className }: Props) => {
             style={{
               data: {
                 fill: ({ datum }) =>
-                  datum.x === 'Extremely likely'
+                  datum.x === 'Great'
                     ? 'forestgreen'
-                    : datum.x === 'Very likely'
+                    : datum.x === 'Good'
                     ? 'dodgerblue'
-                    : datum.x === 'Somewhat likely'
-                    ? 'gold'
-                    : datum.x === 'Not so likely'
+                    : datum.x === 'Not Good'
                     ? 'orangered'
-                    : datum.x === 'Not at all likely'
-                    ? 'red'
                     : '#ccc',
               },
             }}
             data={[
-              { x: 'Extremely likely', y: 3 },
-              { x: 'Very likely', y: 2 },
-              { x: 'Somewhat likely', y: 4 },
-              { x: 'Not so likely', y: 2 },
-              { x: 'Not at all likely', y: 1 },
+              { x: 'Great', y: 3 },
+              { x: 'Good', y: 2 },
+              { x: 'Not Good', y: 2 },
             ]}
           />
           <VictoryAxis

@@ -8,9 +8,13 @@ import {
   AttachMoneyTwoTone,
   MedicalServicesTwoTone,
   PaidTwoTone,
+  TimeToLeaveTwoTone,
 } from '@mui/icons-material';
 
 const OTIcon = (props?: any) => <MoreTimeTwoTone color='action' {...props} />;
+const LeaveIcon = (props?: any) => (
+  <TimeToLeaveTwoTone color='action' {...props} />
+);
 const BusinessIcon = (props?: any) => (
   <BusinessCenterTwoTone color='primary' {...props} />
 );
@@ -34,6 +38,7 @@ const ServiceIcon = (props?: any) => <PaidTwoTone color='success' {...props} />;
 
 export {
   OTIcon,
+  LeaveIcon,
   BusinessIcon,
   SickIcon,
   VacationIcon,

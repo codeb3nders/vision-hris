@@ -30,7 +30,6 @@ import {
   VerifiedUserTwoTone,
   WcTwoTone,
 } from '@mui/icons-material';
-import { getBottomNavigationActionUtilityClass } from '@mui/material';
 
 export const DigitalBulletin = ['Invited', 'Member', 'Rendering', 'Removed'];
 export const VaccineStatus = ['Vaccinated', 'LGU Registered'];
@@ -58,7 +57,17 @@ export const Departments = [
 
 export const EmploymentStatus = ['REGULAR', 'PROJECT EMPLOYEE'];
 
-export const TaxExemption = ['SINGLE', 'MARRIED'];
+export const TaxExemption = [
+  'SINGLE',
+  'SINGLE-1',
+  'SINGLE-2',
+  'MARRIED',
+  'MARRIED-1',
+  'MARRIED-2',
+  'MARRIED-3',
+  'MARRIED-4',
+  'MARRIED-5',
+];
 export const CivilStatus = ['SINGLE', 'MARRIED'];
 
 export const Groups = [
@@ -448,7 +457,7 @@ export const NewEmployeeDetails = [
 export const Employees = [
   {
     id: 1121,
-    employee_name: 'ABNE, MARK JAYVEN LLANERA',
+    employee_name: 'JOHN DOE',
     employee_no: 1121,
     position: 'PLANNING & SCHEDULING MANAGER',
     rank: 'MANAGERIAL',
@@ -486,7 +495,7 @@ export const Employees = [
     vacccine_status: 'VACCINATED',
     digital_bulletin: 'Member',
     viber_no: '639177080278',
-    vpdc_email: 'jayven.abne@vcdcph.com',
+    vpdc_email: 'johndoe@vcdcph.com',
     emergency_contact: 'Aubrey Q. Abne',
     emergency_address:
       '11 Block 13 Parkplace Avenue Parkplace Village, Cainta, Rizal',
@@ -494,7 +503,7 @@ export const Employees = [
   },
   {
     id: 2212,
-    employee_name: 'ABNE, MARK JAYVEN LLANERA',
+    employee_name: 'JOHN DOE',
     employee_no: 2212,
     position: 'PLANNING & SCHEDULING MANAGER',
     rank: 'MANAGERIAL',
@@ -532,7 +541,7 @@ export const Employees = [
     vacccine_status: 'VACCINATED',
     digital_bulletin: 'Member',
     viber_no: '639177080278',
-    vpdc_email: 'jayven.abne@vcdcph.com',
+    vpdc_email: 'johndoe@vcdcph.com',
     emergency_contact: 'Aubrey Q. Abne',
     emergency_address:
       '11 Block 13 Parkplace Avenue Parkplace Village, Cainta, Rizal',

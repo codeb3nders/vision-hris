@@ -24,14 +24,15 @@ const Workers = ({ className }: Props) => {
   }, []);
 
   return (
-    <div className={className}>
-      <Link to={Path.HR.People.Workers}>
+    <div className={`${className}`}>
+      <Link to={Path.HR.People.Workers} className={`flex ${className || ''}`}>
         <IconNumbers
           className={`border border-white hover:border-purple-500 ease-in-out duration-150 hover:shadow-lg hover:shadow-purple-100 ${className}`}
           icon={<EngineeringTwoTone />}
           title='Number of Workers'
           number={value}
           color='secondary'
+          titleClassName='phone:!text-sm'
         />
       </Link>
     </div>

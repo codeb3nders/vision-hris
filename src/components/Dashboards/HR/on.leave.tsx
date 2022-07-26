@@ -32,6 +32,7 @@ const OnLeave = ({ className }: Props) => {
           title='Number on leave today'
           number={value}
           color='primary'
+          titleClassName='phone:!text-sm'
         />
       </Link>
     </div>

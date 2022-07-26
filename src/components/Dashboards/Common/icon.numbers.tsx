@@ -7,6 +7,7 @@ type Props = {
   icon: any;
   title: any;
   number: any;
+  titleClassName?: string;
   color?:
     | 'primary'
     | 'secondary'
@@ -17,7 +18,14 @@ type Props = {
     | 'action';
 };
 
-const IconNumbers = ({ className, icon, title, number, color }: Props) => {
+const IconNumbers = ({
+  className,
+  icon,
+  title,
+  number,
+  color,
+  titleClassName,
+}: Props) => {
   const theme = useTheme();
 
   const handleBG = () => {
@@ -43,22 +51,26 @@ const IconNumbers = ({ className, icon, title, number, color }: Props) => {
   };
 
   return (
-    <CustomCard className={`${className}`}>
-      {/* <div className='text-3xl'>{icon}</div> */}
-
-      <div className='grid grid-cols-3 items-center'>
-        <div className='col-span-2 flex flex-col'>
+    <CustomCard className={`phone:col-span-2 ${className}`}>
+      <div className='flex flex-col'>
+        <div className=''>
           <Avatar
             className='text-md'
             sx={{ background: handleBG(), width: 35, height: 35 }}
           >
             {icon}
           </Avatar>
-          <span className='text-xs mt-2'>{title}</span>
         </div>
-        <strong className='col-span-1 text-3xl self-end text-right '>
-          {number}
-        </strong>
+        <div className='col-span-1 text-2xl flex flex-row w-full'>
+          <span
+            className={`text-xs mt-2 min-w-[100px] flex-1 flex justify-start items-end self-stretch h-[45px] desktop:text-xs laptop:text-xs tablet:text-sm phone:text-sm ${titleClassName}`}
+          >
+            {title}
+          </span>
+          <strong className='flex items-end w-[60px] text-right justify-end self-end'>
+            {number}
+          </strong>
+        </div>
       </div>
     </CustomCard>
   );
