@@ -7,15 +7,14 @@ import { EngineeringTwoTone } from '@mui/icons-material';
 type Props = {};
 
 const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'effective_date', headerName: 'Effective Date', width: 130 },
-  { field: 'division', headerName: 'Division', width: 130 },
-  { field: 'location', headerName: 'Location', width: 160 },
-  { field: 'department', headerName: 'Department', width: 130 },
-  { field: 'rank', headerName: 'Rank', width: 130 },
-  { field: 'position', headerName: 'Position', width: 130 },
-  { field: 'reports_to', headerName: 'Reports To', width: 130 },
-  { field: 'comment', headerName: 'Comment', width: 130 },
+  { field: 'effective_date', headerName: 'Effective Date', flex: 1 },
+  { field: 'division', headerName: 'Division', flex: 1 },
+  { field: 'location', headerName: 'Location', flex: 1 },
+  { field: 'department', headerName: 'Department', flex: 1 },
+  { field: 'rank', headerName: 'Rank', flex: 1 },
+  { field: 'position', headerName: 'Position', flex: 1 },
+  { field: 'reports_to', headerName: 'Reports To', flex: 1 },
+  { field: 'comment', headerName: 'Comment', flex: 1 },
 ];
 
 const rows = [
@@ -57,13 +56,15 @@ const rows = [
 const JobInfo = (props: Props) => {
   return (
     <CollapseWrapper panelTitle='Job Information' icon={EngineeringTwoTone}>
-      <div style={{ height: 300, width: '100%' }}>
+      <div style={{ minHeight: 300, width: '100%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
           checkboxSelection
+          getRowHeight={() => 'auto'}
+          autoHeight
         />
       </div>
     </CollapseWrapper>

@@ -12,14 +12,13 @@ export const employment_status = [
 ];
 
 const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'effective_date', headerName: 'Effective Date', width: 130 },
-  { field: 'status', headerName: 'Employment Status', width: 160 },
+  { field: 'effective_date', headerName: 'Effective Date', flex: 1 },
+  { field: 'status', headerName: 'Employment Status', flex: 1 },
   {
     field: 'comment',
     headerName: 'Comment',
     type: 'string',
-    width: 130,
+    flex: 1,
   },
 ];
 
@@ -47,13 +46,15 @@ const rows = [
 const EmployementStatus = (props: Props) => {
   return (
     <CollapseWrapper panelTitle='Employment Status' icon={WorkHistoryTwoTone}>
-      <div style={{ height: 300, width: '100%' }}>
+      <div style={{ minHeight: 300, width: '100%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
           checkboxSelection
+          autoHeight
+          getRowHeight={() => 'auto'}
         />
       </div>
     </CollapseWrapper>

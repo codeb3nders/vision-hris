@@ -1,6 +1,7 @@
 import { TabPanel } from '@mui/lab';
 import CustomCard from 'CustomComponents/CustomCard';
 import React from 'react';
+import Contacts from './Emergency/contacts';
 import EmployementStatus from './EmploymentTab/employement.status';
 import General from './EmploymentTab/general';
 import JobInfo from './EmploymentTab/job.info';
@@ -33,7 +34,7 @@ const ProfileTabContent = ({ className }: Props) => {
       </TabPanel>
 
       <TabPanel value='3' className='p-0 grid' id='Emergency'>
-        Emergency
+        <Contacts />
       </TabPanel>
 
       <TabPanel value='4' className='p-0 grid' id='Leaves'>
