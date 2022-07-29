@@ -43,7 +43,7 @@ const shortcuts = [
     url: '/ess/leave-applications',
     in_app: true,
     icon: <PermContactCalendarOutlined fontSize='small' />,
-    type: 'ADMIN',
+    type: 'ALL',
   },
   {
     label: 'Vi-You Website',

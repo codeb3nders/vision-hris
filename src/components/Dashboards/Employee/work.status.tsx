@@ -7,11 +7,14 @@ import {
   SentimentVeryDissatisfiedTwoTone,
 } from '@mui/icons-material';
 
-type Props = {};
+type Props = {
+  className?: string;
+};
 
-const WorkStatus = (props: Props) => {
+const WorkStatus = ({ className }: Props) => {
   return (
     <CardWTitle
+      className={`${className}`}
       title={
         <div>
           How did you find work this week?

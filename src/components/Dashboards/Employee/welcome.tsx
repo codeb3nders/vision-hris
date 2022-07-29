@@ -50,9 +50,9 @@ const Welcome: React.FC<Props> = ({ className, profile, announcements }) => {
   return (
     <WelcomeCtx.Provider value={{ index }}>
       <CustomCard
-        className={`relative bg-v-red/100 w-full py-6 tablet:px-20 laptop:px-20 desktop:px-20 phone:px-4 ${className}`}
+        className={`relative bg-v-red/100 w-full py-6 tablet:px-20 laptop:px-20 desktop:px-20 phone:px-4 ${className} z-0`}
       >
-        <div className='grid grid-cols-3 w-full items-center'>
+        <div className='grid grid-cols-3 w-full items-center relative z-0'>
           <h2 className='col-span-2 tablet:col-span-3 phone:col-span-3 text-white font-medium text-2xl relative z-10 phone:ml-6 tablet:ml-0 laptop:ml-0 desktop:ml-0'>
             Welcome, Kabalikat!
           </h2>
