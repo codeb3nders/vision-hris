@@ -2,7 +2,7 @@ import './App.css';
 import SignInSide from './Login';
 import { useEffect, createContext, useState } from 'react';
 import Main from './components/Main';
-import { createTheme } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material';
 
 export const AppCtx: any = createContext(null);
 
@@ -34,24 +34,29 @@ const App: React.FC<Props> = () => {
         // default: mode ? "#ffffff85" : "#121212c9"
       },
     },
+    typography: {
+      fontFamily: ['Lato'].join(','),
+    },
   });
 
   console.log({ mode: theme.palette.mode });
 
   return (
     <div className={`App h-[100vh]`} style={{ background: '#fafbff' }}>
-      <AppCtx.Provider
-        value={{
-          setIsLoggedIn,
-          isLoggedIn,
-          setIsHRLogin,
-          isHRLogin,
-          setCurrentPage,
-          currentPage,
-        }}
-      >
-        {!isLoggedIn?.username ? <SignInSide /> : <Main />}
-      </AppCtx.Provider>
+      <ThemeProvider theme={theme}>
+        <AppCtx.Provider
+          value={{
+            setIsLoggedIn,
+            isLoggedIn,
+            setIsHRLogin,
+            isHRLogin,
+            setCurrentPage,
+            currentPage,
+          }}
+        >
+          {!isLoggedIn?.username ? <SignInSide /> : <Main />}
+        </AppCtx.Provider>
+      </ThemeProvider>
     </div>
   );
 };
