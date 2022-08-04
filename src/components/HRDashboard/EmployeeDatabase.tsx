@@ -5,6 +5,7 @@ import { Employees } from './EmployeeData';
 import ViewDetailsModal from '../EmployeeDashboard/Tables/ViewDetailsModal';
 import NewEmployee from './NewEmployee';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
+import NewEmployeeProfile from './new.employee.profile';
 
 type Props = {};
 
@@ -86,7 +87,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
         isEmployeeDetails
       />
 
-      <NewEmployee open={open} setOpen={setOpen} />
+      {/* <NewEmployee open={open} setOpen={setOpen} /> */}
+      <NewEmployeeProfile open={open} setOpen={setOpen} />
 
       <Card sx={{ mt: 5, p: 2 }}>
         <div style={{ marginBottom: 16, textAlign: 'right' }}>

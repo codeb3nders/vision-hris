@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
 import { EngineeringTwoTone } from '@mui/icons-material';
+import { ProfileCtx } from '../profile.main';
 
 type Props = {};
 
@@ -110,6 +111,7 @@ const rows = [
 ];
 
 const JobInfo = (props: Props) => {
+  const { isNew } = useContext(ProfileCtx);
   return (
     <CollapseWrapper
       panelTitle='Job Information'
@@ -118,7 +120,7 @@ const JobInfo = (props: Props) => {
     >
       <div style={{ width: '100%' }}>
         <DataGrid
-          rows={rows}
+          rows={isNew ? [] : rows}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}

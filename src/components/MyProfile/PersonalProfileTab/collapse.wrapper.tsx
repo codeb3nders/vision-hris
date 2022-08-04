@@ -28,7 +28,7 @@ const CollapseWrapper = ({
   const [expanded, setExpanded] = useState<boolean>(open || false);
   return (
     <Accordion
-      className={`!p-0 shadow-none ${
+      className={`!p-0 shadow-none border-0 ${
         className || ''
       } border border-gray-200 hover:border-v-red/50 transition-all ease-in-out duration-150  !rounded-lg before:!hidden ${
         !expanded ? 'mb-2' : ''

@@ -43,6 +43,10 @@ const Main: React.FC<Props> = () => {
             <Route path={Manager.Requests.Leave} component={LeaveManagement} />
             <Route exact path={Manager.Requests.OT} component={OTManangement} />
             <Route path={Manager.People.Team} component={WorkersDatabase} />
+            <Route
+              path={Manager.People.Directory}
+              component={EmployeeDatabase}
+            />
 
             {/*
              * HR
@@ -50,11 +54,8 @@ const Main: React.FC<Props> = () => {
             <Route exact path={HR.Dashboard} component={HRMainDashboard} />
             <Route exact path={HR.Requests.Leave} component={LeaveManagement} />
             <Route exact path={HR.Requests.OT} component={OTManangement} />
-            <Route
-              path={Manager.People.Directory}
-              component={EmployeeDatabase}
-            />
             <Route path={HR.People.Directory} component={EmployeeDatabase} />
+            <Route path={HR.People.Employees} component={EmployeeDatabase} />
             <Route path={HR.People.Workers} component={WorkersDatabase} />
           </Switch>
         </section>

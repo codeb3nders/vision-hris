@@ -9,16 +9,8 @@ type Props = {
 };
 
 const ProfileTabs = ({ className }: Props) => {
-  const { index, setIndex } = useContext(ProfileCtx);
+  const { index, setIndex, isNew } = useContext(ProfileCtx);
   const [isMobile, setIsMobile] = useState(false);
-
-  const a11yProps = (index: string) => {
-    return {
-      id: `profile-${index}`,
-      'aria-controls': `profile-tabpanel-${index}`,
-      value: index,
-    };
-  };
 
   useEffect(() => {
     window.addEventListener('resize', (e: any) => {
@@ -34,6 +26,82 @@ const ProfileTabs = ({ className }: Props) => {
   useEffect(() => {
     console.log({ isMobile });
   }, [isMobile]);
+
+  return isNew ? (
+    <HRTabs
+      className={className}
+      index={index}
+      setIndex={setIndex}
+      isMobile={isMobile}
+    />
+  ) : (
+    <EmployeeTabs
+      className={className}
+      index={index}
+      setIndex={setIndex}
+      isMobile={isMobile}
+    />
+  );
+};
+
+const HRTabs = ({ className, index, setIndex, isMobile }) => {
+  const a11yProps = (index: string) => {
+    return {
+      id: `profile-${index}`,
+      'aria-controls': `profile-tabpanel-${index}`,
+      value: index,
+    };
+  };
+
+  return (
+    <Box
+      className={`${className} phone:mb-4 tablet:mb-4 laptop:mb-0 desktop:mb-0`}
+    >
+      <TabList
+        value={index}
+        onChange={(event: React.SyntheticEvent, newValue: string) =>
+          setIndex(newValue)
+        }
+        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${
+          isMobile ? 'border-b border-gray-200' : ''
+        }`}
+        scrollButtons={isMobile}
+        variant={isMobile ? 'scrollable' : 'fullWidth'}
+      >
+        <Tab
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
+            index === '1' ? '!text-v-red' : ''
+          }`}
+          label='Personal'
+          {...a11yProps('1')}
+        />
+        <Tab
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
+            index === '2' ? '!text-v-red' : ''
+          }`}
+          label='Employment'
+          {...a11yProps('2')}
+        />
+        <Tab
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
+            index === '3' ? '!text-v-red' : ''
+          }`}
+          label='Emergency'
+          {...a11yProps('3')}
+        />
+      </TabList>
+    </Box>
+  );
+};
+
+const EmployeeTabs = ({ className, index, setIndex, isMobile }) => {
+  const a11yProps = (index: string) => {
+    return {
+      id: `profile-${index}`,
+      'aria-controls': `profile-tabpanel-${index}`,
+      value: index,
+    };
+  };
 
   return (
     <Box

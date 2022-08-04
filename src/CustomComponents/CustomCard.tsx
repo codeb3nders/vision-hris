@@ -3,6 +3,7 @@ import React from 'react';
 type Props = {
   className?: string;
   style?: any;
+  id?: string;
 };
 
 const CustomCard: React.FC<Props> = (props) => {
