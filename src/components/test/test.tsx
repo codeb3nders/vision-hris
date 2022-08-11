@@ -117,4 +117,4 @@ const TestX = () => {
  </div>
 };
 
-export default Test;
+export default TestX;
