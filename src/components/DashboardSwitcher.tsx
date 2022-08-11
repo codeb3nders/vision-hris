@@ -9,6 +9,8 @@ import ManagerMainDashboard from './Dashboards/Manager/manager.main.dashboard';
 const Dashboard = () => {
   const { isLoggedIn } = useContext(AppCtx);
 
+  console.log('DASHBOARD')
+
   // useEffect(() => {}, [isHRLogin]);c
 
   const switcher = () => {

@@ -1,20 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useDispatch } from "react-redux";
 import {
   InputAdornment,
   IconButton,
   Grid,
   Box,
-  Paper,
   Link,
   Checkbox,
   FormControlLabel,
   TextField,
   CssBaseline,
   Button,
-  OutlinedInput,
   InputLabel,
   FormControl,
-  Card,
   Input,
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
@@ -23,14 +21,14 @@ import { VISION_RED } from './constants/Colors';
 import {
   VisibilityOff,
   Visibility,
-  AdminPanelSettings,
-  Person,
-  AccountCircle,
 } from '@mui/icons-material';
 import { AppCtx } from './App';
 import { useHistory } from 'react-router-dom';
 import CustomCard from './CustomComponents/CustomCard';
 import { VISION_LOGO } from 'assets';
+
+
+import { login } from 'apis/auth';
 
 function Copyright(props) {
   return (
@@ -51,6 +49,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide() {
+  const dispatch = useDispatch();
   const history = useHistory();
   const { setIsLoggedIn, setIsHRLogin, setCurrentPage } = useContext(AppCtx);
   const [values, setValues] = useState({
@@ -89,7 +88,16 @@ export default function SignInSide() {
     event.preventDefault();
   };
 
-  const handleSubmit = () => {
+
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    const response = await login({
+      "username": loginData.username,
+      "password": loginData.password
+  })
+
+  if(response.data.access_token !== ''){
     setIsLoggedIn({
       username: loginData.username,
       alias:
@@ -101,6 +109,11 @@ export default function SignInSide() {
           ? 'HR'
           : 'ADMIN',
     });
+  }else{
+    // TODO: set login failure message.
+  }
+
+    
   };
 
   return (

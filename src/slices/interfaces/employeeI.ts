@@ -77,3 +77,8 @@ export interface EmployeeI {
   familyBackground: JSON;
   leave_requests?: any;
 }
+
+export interface LoginI {
+  username: string | null;
+  password: string | null;
+}
