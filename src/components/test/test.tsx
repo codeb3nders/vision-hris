@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 
 
+
+
 import {
   createEmployee as _createEmployee, 
   getEmployeesWithLeavesAction as _getEmployeesWithLeavesAction,
@@ -16,9 +18,9 @@ import {
  
 } from "slices"
 
+type Props = {};
 
-
-const TestX = () => {
+const AdminMainDashboard = (props: Props) => {
   const dispatch = useDispatch();
 
 
@@ -57,7 +59,7 @@ const TestX = () => {
 
 
  return <div>
-  
+  <div>AdminMainDashboard</div>;
   employees count: {getEmployeeItems.length > 0 && getEmployeeItems.length} <br/>
   getEmployeeStatus: {getEmployeeStatus}<br/>
   getEmployeeError: {getEmployeeError}<br/>
@@ -68,4 +70,4 @@ const TestX = () => {
  </div>
 };
 
-export default TestX;
+export default AdminMainDashboard;

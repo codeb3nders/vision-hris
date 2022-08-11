@@ -8,7 +8,7 @@ import { EmployeeI } from "slices/interfaces/employeeI";
 const rawData = localStorage.getItem("credential");
 const data = rawData && JSON.parse(rawData);
 const internalConfig = {
-  headers: { Authorization: `Bearer ${data.access_token}` },
+  headers: { Authorization: `Bearer ${data && data.access_token}` },
 };
 export const createEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
   try {
