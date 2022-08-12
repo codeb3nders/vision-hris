@@ -1,6 +1,7 @@
 import { TabPanel } from '@mui/lab';
 import CustomCard from 'CustomComponents/CustomCard';
 import React from 'react';
+import ChecklistTable from './201Checklist/checklist.table';
 import AssetsTable from './Assets/assets.table';
 import Contacts from './Emergency/contacts';
 import EmployementStatus from './EmploymentTab/employement.status';
@@ -52,7 +53,7 @@ const ProfileTabContent = ({ className }: Props) => {
       </TabPanel>
 
       <TabPanel value='6' className='p-0 grid' id='201Checklist'>
-        201 Checklist
+        <ChecklistTable />
       </TabPanel>
       <TabPanel value='7' className='p-0 grid' id='DisciplinaryActions'>
         Disciplinary Actions

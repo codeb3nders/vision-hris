@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { TabList } from '@mui/lab';
 import { Tab, Box } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
@@ -96,6 +97,7 @@ const ProfileTabs = ({ className }: Props) => {
             index === '7' ? '!text-v-red' : ''
           }`}
           label='Disciplinary Actions'
+          disabled
           {...a11yProps('7')}
         />
       </TabList>
