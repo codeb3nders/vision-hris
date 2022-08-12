@@ -10,7 +10,7 @@ type Props = {
 const ProfileTabs = ({ className }: Props) => {
   const { index, setIndex } = useContext(ProfileCtx);
   const [isMobile, setIsMobile] = useState(false);
-
+  
   const a11yProps = (index: string) => {
     return {
       id: `profile-${index}`,

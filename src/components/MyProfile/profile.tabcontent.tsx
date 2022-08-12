@@ -25,7 +25,6 @@ const ProfileTabContent = ({ className }: Props) => {
         <GovernmentDetails />
         <PayrollDetails />
       </TabPanel>
-
       <TabPanel value='2' className='p-0 grid' id='EmploymentStatus'>
         <General />
         <EmployementStatus />
