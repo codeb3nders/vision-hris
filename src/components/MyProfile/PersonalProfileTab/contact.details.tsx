@@ -1,11 +1,14 @@
 import { AlternateEmailTwoTone } from '@mui/icons-material';
 import { TextField } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
+import { useContext } from 'react';
+import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
 
 type Props = {};
 
 const ContactDetails = (props: Props) => {
+  const { isNew } = useContext(ProfileCtx);
   return (
     <CollapseWrapper panelTitle='Contact Details' icon={AlternateEmailTwoTone}>
       <GridWrapper colSize='2'>
@@ -13,19 +16,19 @@ const ContactDetails = (props: Props) => {
           <TextField label='Address' multiline variant='standard' fullWidth />
         </div>
 
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             label='Mobile Number'
             variant='standard'
             fullWidth
             required
-            defaultValue='801-722-8299'
+            defaultValue={isNew ? null : '801-722-8299'}
           />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField label='Viber Number' variant='standard' fullWidth />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             label='Email Address'
             variant='standard'
@@ -33,12 +36,12 @@ const ContactDetails = (props: Props) => {
             required
           />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             label='VPDC Email Address'
             variant='standard'
             fullWidth
-            defaultValue='jayven.abne@vcdcph.com'
+            defaultValue={isNew ? null : 'jayven.abne@vcdcph.com'}
           />
         </div>
       </GridWrapper>

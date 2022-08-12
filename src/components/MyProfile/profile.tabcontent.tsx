@@ -1,6 +1,7 @@
 import { TabPanel } from '@mui/lab';
+import { Divider } from '@mui/material';
 import CustomCard from 'CustomComponents/CustomCard';
-import React from 'react';
+import React, { useContext } from 'react';
 import ChecklistTable from './201Checklist/checklist.table';
 import AssetsTable from './Assets/assets.table';
 import Contacts from './Emergency/contacts';
@@ -14,6 +15,7 @@ import ContactDetails from './PersonalProfileTab/contact.details';
 import GovernmentDetails from './PersonalProfileTab/government.details';
 import PayrollDetails from './PersonalProfileTab/payroll.details';
 import Personal from './PersonalProfileTab/personal';
+import { ProfileCtx } from './profile.main';
 import ProfileTabs from './profile.tabs';
 
 type Props = {
@@ -21,20 +23,33 @@ type Props = {
 };
 
 const ProfileTabContent = ({ className }: Props) => {
+  const { isNew } = useContext(ProfileCtx);
   return (
-    <CustomCard className={` ${className}`}>
+    <CustomCard
+      id='tab-content'
+      className={`${
+        isNew
+          ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
+          : ''
+      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 ${className}`}
+    >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
       <TabPanel value='1' className='p-0 grid' id='Personal'>
         <Personal />
+        <Divider />
         <ContactDetails />
+        <Divider />
         <GovernmentDetails />
+        <Divider />
         <PayrollDetails />
       </TabPanel>
       
       <TabPanel value='2' className='p-0 grid' id='EmploymentStatus'>
         <General />
+        <Divider />
         <EmployementStatus />
+        <Divider />
         <JobInfo />
       </TabPanel>
 
@@ -44,7 +59,9 @@ const ProfileTabContent = ({ className }: Props) => {
 
       <TabPanel value='4' className='p-0 grid' id='Leaves'>
         <LeaveBalances />
+        <Divider />
         <UpcomingLeaves />
+        <Divider />
         <History />
       </TabPanel>
 

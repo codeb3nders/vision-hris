@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { AddIcCallTwoTone, AddTwoTone, SaveTwoTone } from '@mui/icons-material';
+import { AddIcCallTwoTone, SaveTwoTone } from '@mui/icons-material';
 import { Dialog, TextField } from '@mui/material';
+import { ProfileCtx } from '../profile.main';
 
 type Props = {};
 
@@ -67,6 +68,7 @@ const initialState = [
 ];
 
 const Contacts = (props: Props) => {
+  const { isNew } = useContext(ProfileCtx);
   const [rows, setRows] = useState<any[]>(initialState);
   const [newContact, setNewContact] = useState<any>({
     name: null,
@@ -143,16 +145,16 @@ const Contacts = (props: Props) => {
       <div className='flex flex-row items-center justify-end mb-4 '>
         <button
           onClick={() => setOpen(true)}
-          className='px-2 py-1 bg-sky-500 text-white rounded-md w-[140px] flex items-center justify-center self-end hover:bg-sky-400 transition duration-150'
+          className='px-2 py-1 bg-sky-500 text-white desktop laptop:rounded-md tablet:rounded-md phone:rounded-sm w-auto flex items-center justify-center self-end hover:bg-sky-400 transition duration-150 desktop:mr-0 laptop:mr-0 tablet:mr-0 phone:mr-4 '
         >
-          <AddTwoTone /> Add Contact
+          <AddIcCallTwoTone className='mr-2' fontSize='small' /> Add Contact
         </button>
       </div>
       <div style={{ width: '100%' }}>
         <DataGrid
           autoHeight
           disableSelectionOnClick
-          rows={rows}
+          rows={isNew ? [] : rows}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}

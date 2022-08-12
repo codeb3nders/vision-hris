@@ -2,6 +2,8 @@ import { WorkHistoryTwoTone } from '@mui/icons-material';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
+import { useContext } from 'react';
+import { ProfileCtx } from '../profile.main';
 
 type Props = {};
 
@@ -44,6 +46,7 @@ const rows = [
 ];
 
 const EmployementStatus = (props: Props) => {
+  const { isNew } = useContext(ProfileCtx);
   return (
     <CollapseWrapper
       panelTitle='Employment Status'
@@ -52,7 +55,7 @@ const EmployementStatus = (props: Props) => {
     >
       <div style={{ width: '100%' }}>
         <DataGrid
-          rows={rows}
+          rows={isNew ? [] : rows}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}

@@ -12,16 +12,16 @@ const PayrollDetails = (props: Props) => {
       icon={AccountBalanceWalletTwoTone}
     >
       <GridWrapper colSize='2'>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField fullWidth variant='standard' label='Bank Name' />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField fullWidth variant='standard' label='Account Name' />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField fullWidth variant='standard' label='Account Number' />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField fullWidth variant='standard' label='Account Type' />
         </div>
       </GridWrapper>

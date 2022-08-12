@@ -20,10 +20,10 @@ const GovernmentDetails = (props: Props) => {
       icon={AssuredWorkloadTwoTone}
     >
       <GridWrapper colSize='2'>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField variant='standard' size='small' fullWidth label='SSS' />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             variant='standard'
             size='small'
@@ -31,10 +31,10 @@ const GovernmentDetails = (props: Props) => {
             label='PagIBIG'
           />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField variant='standard' size='small' fullWidth label='TIN' />
         </div>
-        <div className='col-span-1'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             variant='standard'
             size='small'
