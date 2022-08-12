@@ -4,6 +4,7 @@ import { useEffect, createContext, useState } from 'react';
 import Main from './components/Main';
 import { createTheme } from '@mui/material';
 
+
 export const AppCtx: any = createContext(null);
 
 type Props = {};
@@ -20,7 +21,7 @@ const App: React.FC<Props> = () => {
   });
   const [isHRLogin, setIsHRLogin] = useState(false);
   const [currentPage, setCurrentPage] = useState('login');
-  const [mode, setMode] = useState(true);
+  const [mode] = useState(true);
 
   useEffect(() => {
     console.log({ isLoggedIn });
@@ -50,7 +51,7 @@ const App: React.FC<Props> = () => {
           currentPage,
         }}
       >
-        {!isLoggedIn?.username ? <SignInSide /> : <Main />}
+        {!isLoggedIn?.username ? <SignInSide /> : <Main />}        
       </AppCtx.Provider>
     </div>
   );
