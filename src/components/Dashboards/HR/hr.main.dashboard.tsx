@@ -24,45 +24,45 @@ type Props = {};
 
 const HRMainDashboard = (props: Props) => {
   return (
-    <main className='grid grid-cols-16 items-start gap-4 mt-4 pb-20 '>
-      <div className='col-span-12 tablet:col-span-12 laptop:col-span-12 phone:col-span-12 grid gap-4'>
+    <main className='grid grid-cols-12 items-start gap-4 mt-4 pb-20 '>
+      <div className='desktop:col-span-9 tablet:col-span-12 laptop:col-span-8 phone:col-span-12 grid gap-4 grid-cols-12'>
         <Welcome
           profile={<ProfilePreview />}
           announcements={<Announcement />}
-          className='z-0'
+          className='z-0 phone:col-span-12 tablet:col-span-12'
         />
 
         <RowWrapper>
-          <Employees className='col-span-4' />
-          <Workers className='col-span-4' />
-          <OnLeave className='col-span-4' />
-          <OTHours className='col-span-4' />
+          <Employees className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
+          <Workers className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
+          <OnLeave className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
+          <OTHours className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
         </RowWrapper>
 
         <RowWrapper>
-          <AttendancePreview className='col-span-6' />
-          <ColumnWrapper className='desktop:col-span-6 laptop:col-span-6'>
+          <AttendancePreview className='laptop:col-span-4 phone:col-span-12 tablet:col-span-6' />
+          <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4'>
             <Sickleave />
             <EndContract />
           </ColumnWrapper>
 
-          <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4'>
-            <TurnOver />
-            <Retention />
+          <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4 tablet:col-span-12 grid grid-cols-2 space-y-0 gap-4'>
+            <TurnOver className='tablet:col-span-1 phone:col-span-1 laptop:col-span-2' />
+            <Retention className='tablet:col-span-1 phone:col-span-1 laptop:col-span-2' />
           </ColumnWrapper>
         </RowWrapper>
 
         <RowWrapper>
-          <EmployeeSatisfaction className='col-span-6' />
-          <HeadCount className='col-span-6' />
-          <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4'>
-            <Requests />
-            <AttendanceStatus />
+          <EmployeeSatisfaction className='col-span-4 phone:col-span-12 tablet:col-span-6 laptop:col-span-4' />
+          <HeadCount className='col-span-4 phone:col-span-12 tablet:col-span-6 laptop:col-span-4' />
+          <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4 tablet:col-span-12 grid grid-cols-2 gap-4 space-y-0'>
+            <Requests className='tablet:col-span-1 laptop:col-span-2  ' />
+            <AttendanceStatus className='tablet:col-span-1 laptop:col-span-2  ' />
           </ColumnWrapper>
         </RowWrapper>
       </div>
 
-      <div className='col-span-4 tablet:col-span-4 laptop:col-span-4 phone:col-span-12 space-y-4'>
+      <div className='desktop:col-span-3 tablet:col-span-12 laptop:col-span-4 phone:col-span-12 space-y-4'>
         <Shortcuts />
         <CelebrationsToday />
         <OffsToday />

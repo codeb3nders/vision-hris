@@ -8,7 +8,7 @@ type Props = {
 const RowWrapper = ({ children, className }: Props) => {
   return (
     <div
-      className={`col-span-14 tablet:col-span-14 laptop:col-span-15 phone:col-span-14 desktop:col-span-14 grid grid-cols-16 gap-4 ${className}`}
+      className={`col-span-12 tablet:col-span-12 laptop:col-span-12 phone:col-span-12 desktop:col-span-12 grid grid-cols-12 gap-4 ${className}`}
     >
       {children}
     </div>
