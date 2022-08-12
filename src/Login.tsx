@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react';
-import { useDispatch } from "react-redux";
 import {
   InputAdornment,
   IconButton,
@@ -14,21 +13,18 @@ import {
   InputLabel,
   FormControl,
   Input,
+  Alert,
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { VISION_RED } from './constants/Colors';
-import {
-  VisibilityOff,
-  Visibility,
-} from '@mui/icons-material';
+import { VisibilityOff, Visibility } from '@mui/icons-material';
 import { AppCtx } from './App';
-import { useHistory } from 'react-router-dom';
 import CustomCard from './CustomComponents/CustomCard';
 import { VISION_LOGO } from 'assets';
 
-
 import { login } from 'apis/auth';
+import { getEmployeesEndpoint } from 'apis/employees';
 
 function Copyright(props) {
   return (
@@ -49,9 +45,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide() {
-  const dispatch = useDispatch();
-  const history = useHistory();
-  const { setIsLoggedIn, setIsHRLogin, setCurrentPage } = useContext(AppCtx);
+  const { setIsLoggedIn } = useContext(AppCtx);
   const [values, setValues] = useState({
     amount: '',
     password: '',
@@ -59,23 +53,19 @@ export default function SignInSide() {
     weightRange: '',
     showPassword: false,
   });
-
-  const [isHR, setIsHR] = useState(false);
   const [loginData, setLoginData] = useState<{
-    username: string | null;
-    password: string | null;
+    username: string;
+    password: string;
   }>({
-    username: null,
-    password: null,
+    username: '',
+    password: '',
   });
+
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     console.log({ loginData });
   }, [loginData]);
-
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
 
   const handleClickShowPassword = () => {
     setValues({
@@ -88,32 +78,33 @@ export default function SignInSide() {
     event.preventDefault();
   };
 
-
-
   const handleSubmit = async (event) => {
-    event.preventDefault()
-    const response = await login({
-      "username": loginData.username,
-      "password": loginData.password
-  })
+    try {
+      setError(false);
+      event.preventDefault();
+      const response = await login({
+        username: loginData.username,
+        password: loginData.password,
+      });
 
-  if(response.data.access_token !== ''){
-    setIsLoggedIn({
-      username: loginData.username,
-      alias:
-        loginData.username === 'employee@hris'
-          ? 'EMPLOYEE'
-          : loginData.username === 'manager@hris'
-          ? 'MANAGER'
-          : loginData.username === 'hr@hris'
-          ? 'HR'
-          : 'ADMIN',
-    });
-  }else{
-    // TODO: set login failure message.
-  }
+      const res = await getEmployeesEndpoint(loginData.username);
 
-    
+      console.log({ res });
+
+      if (response.data.access_token !== '' && res.data.employeeNo) {
+        setError(false);
+
+        setIsLoggedIn({
+          userData: res.data,
+          alias: res.data.userGroup,
+        });
+      } else {
+        setError(true);
+        // TODO: set login failure message.
+      }
+    } catch (error) {
+      setError(true);
+    }
   };
 
   return (
@@ -174,6 +165,17 @@ export default function SignInSide() {
                     <img src={VISION_LOGO} alt='' style={{ width: 100 }} />
                   </div>
 
+                  {error && (
+                    <Alert
+                      severity='error'
+                      variant='filled'
+                      className='mt-2 w-full'
+                    >
+                      Sorry, we couldn't find an account with that username or
+                      password.
+                    </Alert>
+                  )}
+
                   <Box
                     component='form'
                     noValidate
@@ -195,10 +197,9 @@ export default function SignInSide() {
                         setLoginData({ ...loginData, username: e.target.value })
                       }
                     />
-                    <FormControl fullWidth variant='standard'>
+                    <FormControl fullWidth variant='standard' required>
                       <InputLabel htmlFor='password'>Password</InputLabel>
                       <Input
-                        required
                         fullWidth
                         name='password'
                         onChange={(e) =>
@@ -246,8 +247,8 @@ export default function SignInSide() {
                       variant='contained'
                       disableElevation
                       sx={{ mt: 3, mb: 2 }}
-                      disabled={!loginData.username}
-                      className='bg-v-red hover:bg-v-red-hover'
+                      disabled={!loginData.username && !loginData.password}
+                      className='bg-sky-500 hover:bg-sky-600'
                     >
                       Sign In
                     </Button>

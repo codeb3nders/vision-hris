@@ -34,13 +34,13 @@ const Navbar = () => {
         setNavigation(EmployeeNavigation);
         break;
 
-      case 'MANAGER':
+      case 'APPROVER':
         setNavigation(ManagerNavigation);
         break;
-      case 'HR':
+      case 'HR ADMIN':
         setNavigation(HRNavigation);
         break;
-      case 'ADMIN':
+      case 'SYTEM ADMIN':
         setNavigation(AdminNavigation);
         break;
 
