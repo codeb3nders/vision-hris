@@ -33,6 +33,7 @@ const OTHours = ({ className }: Props) => {
           number={value}
           color='warning'
           className={`border border-white hover:border-orange-500 ease-in-out duration-150 hover:shadow-lg hover:shadow-orange-100 ${className}`}
+          titleClassName='phone:!text-xs'
         />
       </Link>
     </div>

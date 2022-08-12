@@ -7,14 +7,70 @@ import { EngineeringTwoTone } from '@mui/icons-material';
 type Props = {};
 
 const columns: GridColDef[] = [
-  { field: 'effective_date', headerName: 'Effective Date', flex: 1 },
-  { field: 'division', headerName: 'Division', flex: 1 },
-  { field: 'location', headerName: 'Location', flex: 1 },
-  { field: 'department', headerName: 'Department', flex: 1 },
-  { field: 'rank', headerName: 'Rank', flex: 1 },
-  { field: 'position', headerName: 'Position', flex: 1 },
-  { field: 'reports_to', headerName: 'Reports To', flex: 1 },
-  { field: 'comment', headerName: 'Comment', flex: 1 },
+  {
+    field: 'effective_date',
+    headerName: 'Effective Date',
+    width: 120,
+    renderCell: (params: any) => {
+      return <div className='text-xs p-1'>{params.value}</div>;
+    },
+  },
+  {
+    field: 'division',
+    headerName: 'Division',
+    width: 120,
+    renderCell: (params: any) => {
+      return <div className='text-xs p-1'>{params.value}</div>;
+    },
+  },
+  {
+    field: 'location',
+    headerName: 'Location',
+    width: 120,
+    renderCell: (params: any) => {
+      return <div className='text-xs p-1'>{params.value}</div>;
+    },
+  },
+  {
+    field: 'department',
+    headerName: 'Department',
+    width: 120,
+    renderCell: (params: any) => {
+      return <div className='text-xs p-1'>{params.value}</div>;
+    },
+  },
+  {
+    field: 'rank',
+    headerName: 'Rank',
+    width: 120,
+    renderCell: (params: any) => {
+      return <div className='text-xs p-1'>{params.value}</div>;
+    },
+  },
+  {
+    field: 'position',
+    headerName: 'Position',
+    width: 120,
+    renderCell: (params: any) => {
+      return <div className='text-xs p-1'>{params.value}</div>;
+    },
+  },
+  {
+    field: 'reports_to',
+    headerName: 'Reports To',
+    width: 120,
+    renderCell: (params: any) => {
+      return <div className='text-xs p-1'>{params.value}</div>;
+    },
+  },
+  {
+    field: 'comment',
+    headerName: 'Comment',
+    width: 120,
+    renderCell: (params: any) => {
+      return <div className='text-xs p-1'>{params.value}</div>;
+    },
+  },
 ];
 
 const rows = [
@@ -55,8 +111,12 @@ const rows = [
 
 const JobInfo = (props: Props) => {
   return (
-    <CollapseWrapper panelTitle='Job Information' icon={EngineeringTwoTone}>
-      <div style={{ minHeight: 300, width: '100%' }}>
+    <CollapseWrapper
+      panelTitle='Job Information'
+      icon={EngineeringTwoTone}
+      contentClassName='p-0'
+    >
+      <div style={{ width: '100%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -65,6 +125,7 @@ const JobInfo = (props: Props) => {
           checkboxSelection
           getRowHeight={() => 'auto'}
           autoHeight
+          className='border-0'
         />
       </div>
     </CollapseWrapper>

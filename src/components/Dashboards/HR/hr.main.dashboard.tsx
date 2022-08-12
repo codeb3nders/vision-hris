@@ -32,9 +32,9 @@ const HRMainDashboard = (props: Props) => {
           className='z-0 phone:col-span-12 tablet:col-span-12'
         />
 
-        <RowWrapper>
+        <RowWrapper className='justify-items-stretch'>
           <Employees className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
-          <Workers className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
+          <Workers className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3 h-[100%]' />
           <OnLeave className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
           <OTHours className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
         </RowWrapper>

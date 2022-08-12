@@ -17,9 +17,9 @@ const ProfilePreview: React.FC<Props> = () => {
           className='inline-block h-12 w-12 rounded-full'
         />
         <div>
-          <div className='text-sm  font-medium'>ABNE, MARK JAYVEN LLANERA</div>
+          <div className='text-sm  font-medium'>John Doe</div>
           <div className='text-xs '>
-            <small>Email:</small> jayven.abne@vcdcph.com
+            <small>Email:</small> johndoe@vcdcph.com
           </div>
           <div className='text-xs '>
             <small>Employee No:.</small> 0122

@@ -457,7 +457,7 @@ export const NewEmployeeDetails = [
 export const Employees = [
   {
     id: 1121,
-    employee_name: 'ABNE, MARK JAYVEN LLANERA',
+    employee_name: 'JOHN DOE',
     employee_no: 1121,
     position: 'PLANNING & SCHEDULING MANAGER',
     rank: 'MANAGERIAL',
@@ -495,7 +495,7 @@ export const Employees = [
     vacccine_status: 'VACCINATED',
     digital_bulletin: 'Member',
     viber_no: '639177080278',
-    vpdc_email: 'jayven.abne@vcdcph.com',
+    vpdc_email: 'johndoe@vcdcph.com',
     emergency_contact: 'Aubrey Q. Abne',
     emergency_address:
       '11 Block 13 Parkplace Avenue Parkplace Village, Cainta, Rizal',
@@ -503,7 +503,7 @@ export const Employees = [
   },
   {
     id: 2212,
-    employee_name: 'ABNE, MARK JAYVEN LLANERA',
+    employee_name: 'JOHN DOE',
     employee_no: 2212,
     position: 'PLANNING & SCHEDULING MANAGER',
     rank: 'MANAGERIAL',
@@ -541,7 +541,7 @@ export const Employees = [
     vacccine_status: 'VACCINATED',
     digital_bulletin: 'Member',
     viber_no: '639177080278',
-    vpdc_email: 'jayven.abne@vcdcph.com',
+    vpdc_email: 'johndoe@vcdcph.com',
     emergency_contact: 'Aubrey Q. Abne',
     emergency_address:
       '11 Block 13 Parkplace Avenue Parkplace Village, Cainta, Rizal',
