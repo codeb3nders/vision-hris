@@ -1,5 +1,6 @@
 import { TabContext } from '@mui/lab';
-import { createEmployeeEndpoint } from 'apis/employees';
+import { Alert, CircularProgress, Dialog, Snackbar } from '@mui/material';
+import { createEmployeeEndpoint, updateEmployeeEndpoint } from 'apis/employees';
 import { AppCtx } from 'App';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
@@ -13,6 +14,7 @@ type Props = {
   isNew?: boolean;
   isView?: boolean;
   userDetails?: EmployeeI;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type ProfileModel = {
@@ -33,11 +35,22 @@ export const ProfileCtx = createContext<ProfileModel>({
   setEmployeeDetails: () => {},
 });
 
-const ProfileMain = ({ isNew, isView, userDetails }: Props) => {
+const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
   const [index, setIndex] = useState<string>('0');
   const { isLoggedIn } = useContext(AppCtx);
   const [employeeDetails, setEmployeeDetails] =
     useState<EmployeeI>(initialState);
+
+  const [openNotif, setOpenNotif] = useState<{
+    message: string;
+    status: boolean;
+    severity: any;
+  }>({ message: '', status: false, severity: '' });
+
+  const [loading, setLoading] = useState<{ status: boolean; action: string }>({
+    status: false,
+    action: '',
+  });
 
   useEffect(() => {
     setIndex('1');
@@ -50,19 +63,90 @@ const ProfileMain = ({ isNew, isView, userDetails }: Props) => {
     }
   }, [userDetails, isLoggedIn, isNew, isView]);
 
-  const handleSaveEmployeeDetails = async () => {
+  const handleEmployee = async () => {
+    if (!employeeDetails.employeeNo && isNew) {
+      saveEmployee();
+    } else {
+      updateEmployee();
+    }
+  };
+
+  const saveEmployee = async () => {
+    setLoading({ status: true, action: 'Saving' });
     try {
       const response = await createEmployeeEndpoint(employeeDetails);
+
+      if (response.status === 201) {
+        setLoading({ status: false, action: '' });
+        // setRefresh(true);
+        setOpenNotif({
+          message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully added.`,
+          status: true,
+          severity: 'success',
+        });
+
+        setTimeout(() => {
+          // setRefresh(false);
+          setOpenNotif({
+            message: '',
+            status: false,
+            severity: 'success',
+          });
+          setOpen && setOpen(false);
+        }, 2000);
+      } else {
+        setLoading({ status: false, action: '' });
+        setOpenNotif({
+          message: `Something's wrong.`,
+          status: true,
+          severity: 'error',
+        });
+      }
       console.log({ response });
     } catch (error: any) {
-      console.log(error.message);
+      setLoading({ status: false, action: '' });
+      console.log(error);
+    }
+  };
+
+  const updateEmployee = async () => {
+    try {
+      const response = await updateEmployeeEndpoint(
+        employeeDetails,
+        employeeDetails.employeeNo
+      );
+      console.log({ response });
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
     <ProfileCtx.Provider
-      value={{ index, setIndex, isNew, setEmployeeDetails, employeeDetails }}
+      value={{
+        index,
+        setIndex,
+        isNew,
+        setEmployeeDetails,
+        employeeDetails,
+        isView,
+      }}
     >
+      <Dialog open={loading.status}>
+        <div className='p-4 pt-6 flex flex-col items-center justify-center'>
+          <CircularProgress />
+          <p className='mt-2'>{loading.action} Employee Details.</p>
+        </div>
+      </Dialog>
+
+      <Snackbar
+        autoHideDuration={2000}
+        open={openNotif.status}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+      >
+        <Alert severity={openNotif.severity}>{openNotif.message}</Alert>
+      </Snackbar>
+
       <TabContext value={index}>
         <section
           className={`mt-4 grid gap-4 pb-10 w-full ${isNew ? '!pb-0' : ''}`}
@@ -86,15 +170,15 @@ const ProfileMain = ({ isNew, isView, userDetails }: Props) => {
               <ProfileTabContent className='self-stretch' />
             </article>
           </section>
-          {isNew && (
-            <button
-              className='px-4 py-2 bg-green-500 text-white w-full'
-              onClick={handleSaveEmployeeDetails}
-            >
-              Save Employee Profile
-            </button>
-          )}
         </section>
+        {(isNew || isView) && (
+          <button
+            className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10'
+            onClick={handleEmployee}
+          >
+            {isNew ? 'Save' : 'Update'} Employee Profile
+          </button>
+        )}
       </TabContext>
     </ProfileCtx.Provider>
   );

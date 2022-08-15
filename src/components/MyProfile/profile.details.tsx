@@ -16,6 +16,7 @@ import { PHOTO_PLACEHOLDER } from 'assets';
 import moment from 'moment';
 import { Departments } from 'components/HRDashboard/EmployeeData';
 import { AppCtx } from 'App';
+import { DEPARTMENTS } from 'constants/Values';
 
 type Props = {};
 
@@ -105,7 +106,7 @@ const ProfileDetails = (props: Props) => {
                 });
               }}
             >
-              {Departments.map((dept: string) => {
+              {DEPARTMENTS.map((dept: string) => {
                 return (
                   <MenuItem key={dept} value={dept}>
                     {dept}

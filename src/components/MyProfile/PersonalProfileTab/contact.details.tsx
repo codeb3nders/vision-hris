@@ -34,11 +34,11 @@ const ContactDetails = (props: Props) => {
             variant='standard'
             fullWidth
             required
-            defaultValue={employeeDetails?.contactNumber}
+            defaultValue={employeeDetails?.personalContactNumber}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
-                contactNumber: e.target.value,
+                personalContactNumber: e.target.value,
               })
             }
           />

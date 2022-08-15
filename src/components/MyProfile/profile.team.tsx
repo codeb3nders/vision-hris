@@ -18,7 +18,7 @@ const ProfileTeam = ({ className }: Props) => {
   return (
     <CustomCard className={`${className}`}>
       <List className='p-0'>
-        <p className='text-xs font-bold text-gray-500'>MANAGER</p>
+        {/* <p className='text-xs font-bold text-gray-500'>MANAGER</p>
         <ListItemButton className='p-0 px-1'>
           <ListItemIcon>
             <Avatar src={ProfilePhoto} />
@@ -27,7 +27,7 @@ const ProfileTeam = ({ className }: Props) => {
             primary={<span className='text-sm font-bold'>Amber Valencia</span>}
             secondary={<span className='text-xs '>Director of Design</span>}
           />
-        </ListItemButton>
+        </ListItemButton> */}
 
         <p className='text-xs font-bold text-gray-500 mt-2'>REPORTS TO</p>
         <ListItemButton className='p-0 px-1'>
@@ -40,7 +40,7 @@ const ProfileTeam = ({ className }: Props) => {
           />
         </ListItemButton>
 
-        <p className='text-xs font-bold text-gray-500 mt-2'>MY TEAMMATES</p>
+        <p className='text-xs font-bold text-gray-500 mt-2'>MY TEAM</p>
         <ListItemButton className='p-0 px-1'>
           <ListItemIcon>
             <Avatar src={ProfilePhoto} />

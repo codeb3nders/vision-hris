@@ -14,7 +14,7 @@ const NewEmployeeProfile = ({ open, setOpen }: Props) => {
       onClose={() => setOpen(false)}
       className='mx-auto [&>.MuiDialog-container>.MuiPaper-root]:!max-w-[900px] [&>.MuiDialog-container>.MuiPaper-root]:max-h-[800px] [&>.MuiDialog-container>.MuiPaper-root]:w-full overflow-y-auto'
     >
-      <ProfileMain isNew />
+      <ProfileMain isNew setOpen={setOpen} />
     </Dialog>
   );
 };

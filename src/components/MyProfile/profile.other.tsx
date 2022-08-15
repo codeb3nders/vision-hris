@@ -12,13 +12,15 @@ import {
   ListItemText,
 } from '@mui/material';
 import CustomCard from 'CustomComponents/CustomCard';
-import React from 'react';
+import React, { useContext } from 'react';
+import { ProfileCtx } from './profile.main';
 
 type Props = {
   className?: string;
 };
 
 const ProfileOther = ({ className }: Props) => {
+  const { employeeDetails } = useContext(ProfileCtx);
   return (
     <CustomCard className={`${className}`}>
       <List className='p-0'>
@@ -27,7 +29,11 @@ const ProfileOther = ({ className }: Props) => {
             <PhoneTwoTone />
           </ListItemIcon>
           <ListItemText
-            primary={<span className='text-sm '>801-722-8299</span>}
+            primary={
+              <span className='text-xs '>
+                {employeeDetails?.personalContactNumber}
+              </span>
+            }
             primaryTypographyProps={{ sx: { fontSize: '.85rem' } }}
           />
         </ListItem>
@@ -39,12 +45,12 @@ const ProfileOther = ({ className }: Props) => {
           <ListItemText
             primary={
               <a
-                href='mailto:jayven.abne@vcdcph.com'
+                href='mailto:test@vcdcph.com'
                 target='_blank'
                 rel='noreferrer'
-                className='text-sm text-sky-500'
+                className='text-xs text-sky-500'
               >
-                jayven.abne@vcdcph.com
+                {employeeDetails?.companyEmail}
               </a>
             }
           />
@@ -57,7 +63,9 @@ const ProfileOther = ({ className }: Props) => {
             <GroupTwoTone />
           </ListItemIcon>
           <ListItemText
-            primary={<span className='text-sm'>Product Development</span>}
+            primary={
+              <span className='text-xs'>{employeeDetails?.position}</span>
+            }
           />
         </ListItem>
         <ListItem className='p-0'>
@@ -65,7 +73,9 @@ const ProfileOther = ({ className }: Props) => {
             <PlaceTwoTone />
           </ListItemIcon>
           <ListItemText
-            primary={<span className='text-sm'>Head Office</span>}
+            primary={
+              <span className='text-xs'>{employeeDetails?.location}</span>
+            }
           />
         </ListItem>
       </List>
