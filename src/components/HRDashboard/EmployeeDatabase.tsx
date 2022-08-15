@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, Button } from '@mui/material';
 import { Employees } from './EmployeeData';
@@ -6,6 +6,8 @@ import ViewDetailsModal from '../EmployeeDashboard/Tables/ViewDetailsModal';
 import NewEmployee from './NewEmployee';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
+import { getEmployeesEndpoint } from 'apis/employees';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {};
 
@@ -14,6 +16,24 @@ const EmployeeDatabase: React.FC<Props> = () => {
     details: {},
     status: false,
   });
+  const [employees, setEmployees] = useState<EmployeeI[]>([]);
+
+  useEffect(() => {
+    getEmployees();
+  }, []);
+
+  const getEmployees = async () => {
+    try {
+      const res = await getEmployeesEndpoint();
+      setEmployees(
+        res.data.map((r: any) => {
+          return { ...r, id: r.employeeNo };
+        })
+      );
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
 
   const [open, setOpen] = useState(false);
 
@@ -25,18 +45,18 @@ const EmployeeDatabase: React.FC<Props> = () => {
       renderCell: (cell) => {
         return (
           <Button
-            title={cell.value}
+            title={cell.row.firstName}
             variant='text'
             onClick={() => setViewDetails({ details: cell, status: true })}
             size='small'
           >
-            {cell.value}
+            {cell.row.lastName}, {cell.row.firstName} {cell.row.middleName}
           </Button>
         );
       },
     },
     {
-      field: 'employee_no',
+      field: 'employeeNo',
       headerName: 'Employee No.',
       width: 100,
       renderCell: (cell) => (
@@ -106,12 +126,12 @@ const EmployeeDatabase: React.FC<Props> = () => {
         <div style={{ height: 400, width: '100%' }}>
           <DataGrid
             disableSelectionOnClick
-            rows={Employees || []}
+            rows={employees || []}
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5]}
             checkboxSelection
-            loading={Employees.length <= 0}
+            loading={employees.length <= 0}
           />
         </div>
       </Card>

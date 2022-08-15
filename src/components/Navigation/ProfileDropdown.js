@@ -2,7 +2,7 @@
 import React, { Fragment, useContext } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { AppCtx } from '../../App';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Path } from 'constants/Path';
 
 function classNames(...classes) {
@@ -10,7 +10,12 @@ function classNames(...classes) {
 }
 
 const ProfileDropdown = () => {
+  const history = useHistory();
   const { isLoggedIn, setIsLoggedIn } = useContext(AppCtx);
+
+  const handleLogin = () => {
+    history.push('/');
+  };
   return (
     <Menu as='div' className='ml-3 relative z-10'>
       <div>
@@ -22,7 +27,12 @@ const ProfileDropdown = () => {
             alt=''
           /> */}
           <div className='w-8 h-8 rounded-full flex justify-center items-center font-medium hover:text-red-600'>
-            {isLoggedIn.alias ? isLoggedIn.alias?.split('')[0] : 'U'}
+            {isLoggedIn.userData?.firstName
+              ? isLoggedIn.userData?.firstName?.split('')[0]
+              : 'V'}
+            {isLoggedIn.userData?.lastName
+              ? isLoggedIn.userData?.lastName?.split('')[0]
+              : 'S'}
           </div>
         </Menu.Button>
       </div>
@@ -37,7 +47,7 @@ const ProfileDropdown = () => {
       >
         <Menu.Items className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg overflow-hidden bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'>
           <div className='w-full p-2 bg-slate-100 text-xs text-center'>
-            {isLoggedIn.username}
+            {isLoggedIn.userData.firstName} {isLoggedIn.userData.lastName}
           </div>
           <Menu.Item>
             {({ active }) => (
@@ -80,16 +90,18 @@ const ProfileDropdown = () => {
           </Menu.Item> */}
           <Menu.Item>
             {({ active }) => (
-              <a
-                href='#'
-                onClick={() => setIsLoggedIn(null)}
+              <button
                 className={classNames(
                   active ? 'bg-gray-100' : '',
-                  'block px-4 py-2 text-sm text-gray-700'
+                  'block px-4 py-2 text-sm text-gray-700 w-full text-left'
                 )}
+                onClick={() => {
+                  handleLogin();
+                  setIsLoggedIn(null);
+                }}
               >
                 Sign out
-              </a>
+              </button>
             )}
           </Menu.Item>
         </Menu.Items>

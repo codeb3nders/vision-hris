@@ -9,7 +9,7 @@ import ManagerMainDashboard from './Dashboards/Manager/manager.main.dashboard';
 const Dashboard = () => {
   const { isLoggedIn } = useContext(AppCtx);
 
-  console.log('DASHBOARD')
+  console.log('DASHBOARD');
 
   // useEffect(() => {}, [isHRLogin]);c
 
@@ -17,11 +17,11 @@ const Dashboard = () => {
     switch (isLoggedIn.alias) {
       case 'EMPLOYEE':
         return <EmployeeDashboard />;
-      case 'MANAGER':
+      case 'APPROVER':
         return <ManagerMainDashboard />;
-      case 'HR':
+      case 'HR ADMIN':
         return <HRMainDashboard />;
-      case 'ADMIN':
+      case 'SYSTEM ADMIN':
         return <AdminMainDashboard />;
 
       default:
