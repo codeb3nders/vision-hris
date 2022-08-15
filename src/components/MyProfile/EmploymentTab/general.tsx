@@ -46,7 +46,6 @@ const General = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
           <TextField
-            disabled
             label='Employee Number'
             required
             size='small'

@@ -11,14 +11,28 @@ import {
 import CollapseWrapper from './collapse.wrapper';
 import { AccountCircleTwoTone } from '@mui/icons-material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 import moment from 'moment';
+import { CIVIL_STATUS, HIGHEST_EDUCATION, RELIGION } from 'constants/Values';
 
 type Props = {};
 
 const Personal = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails, isNew } = useContext(ProfileCtx);
+  const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
+  const [otherReligion, setOtherReligion] = useState<boolean>(false);
+
+  const handleReligion = (e: any) => {
+    if (e.target.value !== 'Others, please specify') {
+      setOtherReligion(false);
+      setEmployeeDetails({
+        ...employeeDetails,
+        religion: e.target.value,
+      });
+    } else {
+      setOtherReligion(true);
+    }
+  };
 
   const handleChange = (value: any) => {
     setEmployeeDetails({
@@ -104,12 +118,110 @@ const Personal = (props: Props) => {
                   gender: e.target.value,
                 });
               }}
-              defaultValue={employeeDetails?.gender?.toLowerCase() || 'male'}
+              defaultValue={employeeDetails?.gender}
             >
-              <MenuItem value='male'>Male</MenuItem>
-              <MenuItem value='female'>Female</MenuItem>
+              <MenuItem value='MALE'>Male</MenuItem>
+              <MenuItem value='FEMALE'>Female</MenuItem>
             </Select>
           </FormControl>
+        </div>
+
+        <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'>
+          <FormControl required fullWidth variant='standard'>
+            <InputLabel id='civil_status'>Civil Status</InputLabel>
+            <Select
+              labelId='civil_status'
+              size='small'
+              onChange={(e: any) => {
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  civilStatus: e.target.value,
+                });
+              }}
+              defaultValue={employeeDetails?.civilStatus}
+            >
+              {CIVIL_STATUS.map((status) => {
+                return <MenuItem value={status}>{status}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+
+        <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'>
+          <FormControl required fullWidth variant='standard'>
+            <InputLabel id='religion'>Religion</InputLabel>
+            <Select
+              labelId='religion'
+              size='small'
+              onChange={handleReligion}
+              defaultValue={employeeDetails?.religion}
+            >
+              {RELIGION.map((religion) => {
+                return <MenuItem value={religion}>{religion}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+
+        {otherReligion && (
+          <>
+            <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'></div>
+            <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'>
+              <TextField
+                label='Please specify your religion.'
+                size='small'
+                variant='standard'
+                fullWidth
+                // defaultValue={employeeDetails?.religion}
+                onChange={(e: any) =>
+                  setEmployeeDetails({
+                    ...employeeDetails,
+                    religion: e.target.value,
+                  })
+                }
+              />
+            </div>
+          </>
+        )}
+
+        <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'>
+          <FormControl required fullWidth variant='standard'>
+            <InputLabel id='educational_attainment'>
+              Highest Educational Attainment
+            </InputLabel>
+            <Select
+              labelId='educational_attainment'
+              size='small'
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  highestEducationalAttainment: e.target.value,
+                })
+              }
+              defaultValue={employeeDetails?.highestEducationalAttainment}
+            >
+              {HIGHEST_EDUCATION.map((education) => {
+                return <MenuItem value={education}>{education}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+
+        <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'>
+          <TextField
+            required
+            label='Citizenship'
+            size='small'
+            variant='standard'
+            fullWidth
+            defaultValue={employeeDetails?.citizenship}
+            onChange={(e: any) =>
+              setEmployeeDetails({
+                ...employeeDetails,
+                citizenship: e.target.value,
+              })
+            }
+          />
         </div>
       </GridWrapper>
     </CollapseWrapper>

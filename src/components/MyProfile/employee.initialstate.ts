@@ -12,7 +12,7 @@ export const initialState: EmployeeI = {
   department: '',
   location: '',
   isActive: true,
-  userGroup: '',
+  userGroup: 'EMPLOYEE',
   reportsTo: '',
   dateHired: new Date(),
   employmentStatus: '',
