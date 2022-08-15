@@ -45,7 +45,7 @@ export const getEmployeesEndpoint = async (employeeNo?: string) => {
     const url = employeeNo ? `${URL_EMPLOYEES}${employeeNo}` : URL_EMPLOYEES;
     const rawData = localStorage.getItem('credential');
     const data = rawData && JSON.parse(rawData);
-
+    
     return await axios.get(url, {
       headers: { Authorization: `Bearer ${data && data.access_token}` },
     });
