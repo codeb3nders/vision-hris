@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { WorkHistoryTwoTone } from '@mui/icons-material';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 
 type Props = {};
@@ -14,8 +15,22 @@ export const employment_status = [
 ];
 
 const columns: GridColDef[] = [
-  { field: 'effective_date', headerName: 'Effective Date', flex: 1 },
-  { field: 'status', headerName: 'Employment Status', flex: 1 },
+  {
+    field: 'dateHired',
+    headerName: 'Effective Date',
+    flex: 1,
+    renderCell: (params: GridCellParams) => {
+      return <div>{moment(params.value).format('LL')}</div>;
+    },
+  },
+  {
+    field: 'employmentStatus',
+    headerName: 'Employment Status',
+    flex: 1,
+    renderCell: (params: GridCellParams) => {
+      return <div>{moment(params.value).format('LL')}</div>;
+    },
+  },
   {
     field: 'comment',
     headerName: 'Comment',
@@ -24,29 +39,31 @@ const columns: GridColDef[] = [
   },
 ];
 
-const rows = [
-  {
-    id: 1,
-    effective_date: moment().format('LL'),
-    status: employment_status[0],
-    comment: '',
-  },
-  {
-    id: 2,
-    effective_date: moment().format('LL'),
-    status: employment_status[2],
-    comment: '',
-  },
-  {
-    id: 2,
-    effective_date: moment().format('LL'),
-    status: employment_status[1],
-    comment: '',
-  },
-];
+type EmploymentI = {
+  id: any;
+  dateHired: string;
+  employementStatus: string;
+  endOfProbationary: string;
+};
 
 const EmployementStatus = (props: Props) => {
-  const { isNew } = useContext(ProfileCtx);
+  const [employmentDetails, setEmployementDetails] = useState<EmploymentI[]>(
+    []
+  );
+  const { isNew, employeeDetails } = useContext(ProfileCtx);
+
+  useEffect(() => {
+    setEmployementDetails([
+      ...employmentDetails,
+      {
+        id: employeeDetails?.dateHired,
+        dateHired: employeeDetails?.dateHired,
+        employementStatus: employeeDetails?.employementStatus,
+        endOfProbationary: employeeDetails?.endOfProbationary,
+      },
+    ]);
+  }, [employeeDetails]);
+
   return (
     <CollapseWrapper
       panelTitle='Employment Status'
@@ -55,7 +72,10 @@ const EmployementStatus = (props: Props) => {
     >
       <div style={{ width: '100%' }}>
         <DataGrid
-          rows={isNew ? [] : rows}
+          getRowId={(data: any) =>
+            `${employeeDetails?.dateHired}~${employeeDetails?.employeeNo}`
+          }
+          rows={isNew ? [] : employmentDetails}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}

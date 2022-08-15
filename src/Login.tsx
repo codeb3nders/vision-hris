@@ -24,7 +24,10 @@ import CustomCard from './CustomComponents/CustomCard';
 import { VISION_LOGO } from 'assets';
 
 import { login } from 'apis/auth';
-import { getEmployeesEndpoint } from 'apis/employees';
+import {
+  getEmployeesEndpoint,
+  getEmployeesWithLeavesEndpoint,
+} from 'apis/employees';
 
 function Copyright(props) {
   return (
@@ -87,16 +90,16 @@ export default function SignInSide() {
         password: loginData.password,
       });
 
-      const res = await getEmployeesEndpoint(loginData.username);
+      const leaves = await getEmployeesWithLeavesEndpoint(loginData.username);
 
-      console.log({ res });
+      console.log({ leaves });
 
-      if (response.data.access_token !== '' && res.data.employeeNo) {
+      if (response.data.access_token !== '' && leaves.data[0].employeeNo) {
         setError(false);
 
         setIsLoggedIn({
-          userData: res.data,
-          alias: res.data.userGroup,
+          userData: leaves.data[0],
+          alias: leaves.data[0].userGroup,
         });
       } else {
         setError(true);

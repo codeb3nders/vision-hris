@@ -1,32 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, Button } from '@mui/material';
-import { Employees } from './EmployeeData';
-import ViewDetailsModal from '../EmployeeDashboard/Tables/ViewDetailsModal';
-import NewEmployee from './NewEmployee';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import { getEmployeesEndpoint } from 'apis/employees';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import ViewEmployeeProfile from './view.employee.profile';
 
 type Props = {};
 
 const EmployeeDatabase: React.FC<Props> = () => {
-  const [viewDetails, setViewDetails] = useState({
+  const [viewDetails, setViewDetails] = useState<{
+    details: any;
+    status: boolean;
+  }>({
     details: {},
     status: false,
   });
   const [employees, setEmployees] = useState<EmployeeI[]>([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    getEmployees();
-  }, []);
+    employees && employees?.length <= 0 && getEmployees();
+  }, [employees]);
 
   const getEmployees = async () => {
     try {
       const res = await getEmployeesEndpoint();
       setEmployees(
-        res.data.map((r: any) => {
+        res.data?.map((r: any) => {
           return { ...r, id: r.employeeNo };
         })
       );
@@ -34,8 +36,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
       console.log(error.message);
     }
   };
-
-  const [open, setOpen] = useState(false);
 
   const columns = [
     {
@@ -47,7 +47,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
           <Button
             title={cell.row.firstName}
             variant='text'
-            onClick={() => setViewDetails({ details: cell, status: true })}
+            onClick={() => setViewDetails({ details: cell.row, status: true })}
             size='small'
           >
             {cell.row.lastName}, {cell.row.firstName} {cell.row.middleName}
@@ -99,16 +99,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   return (
     <>
-      <ViewDetailsModal
+      <NewEmployeeProfile open={open} setOpen={setOpen} />
+      <ViewEmployeeProfile
         viewDetails={viewDetails}
         setViewDetails={setViewDetails}
-        isApprover={true}
-        isOT={false}
-        isEmployeeDetails
       />
-
-      {/* <NewEmployee open={open} setOpen={setOpen} /> */}
-      <NewEmployeeProfile open={open} setOpen={setOpen} />
 
       <Card sx={{ mt: 5, p: 2 }}>
         <div style={{ marginBottom: 16, textAlign: 'right' }}>

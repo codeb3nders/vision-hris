@@ -1,6 +1,6 @@
 export interface EmployeesWithLeaveSlice {
   employeeItems: EmployeeI[];
-  status: "idle" | "loading" | "succeeded" | "failed";
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null | undefined;
 }
 
@@ -29,7 +29,7 @@ export interface EmployeeI {
   taxExemption: string;
   companyEmail: string;
   personalEmail: string;
-  payrollBankAccount: JSON;
+  payrollBankAccount: JSON | null;
   civilStatus: string;
   religion: string;
   NumberOfDependents: number;
@@ -70,11 +70,11 @@ export interface EmployeeI {
   othersDegree: string;
   othersHonors: string;
   licensure: string;
-  emergencyContact: JSON;
-  employmentRecords: JSON;
-  govtProfExamsPassed: JSON;
-  licensesCertifications: JSON;
-  familyBackground: JSON;
+  emergencyContact: JSON | null;
+  employmentRecords: JSON | null;
+  govtProfExamsPassed: JSON | null;
+  licensesCertifications: JSON | null;
+  familyBackground: JSON | null;
   leave_requests?: any;
 }
 

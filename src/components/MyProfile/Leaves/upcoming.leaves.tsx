@@ -48,21 +48,8 @@ const columns: GridColDef[] = [
   },
 ];
 
-const initialState = [
-  {
-    id: 1,
-    date: moment().format('LL'),
-    type: 'Vacation',
-  },
-  {
-    id: 2,
-    date: moment().format('LL'),
-    type: 'Sick',
-  },
-];
-
 const UpcomingLeaves = (props: Props) => {
-  const [rows, setRows] = useState<any[]>(initialState);
+  const [rows, setRows] = useState<any[]>([]);
 
   return (
     <CollapseWrapper
