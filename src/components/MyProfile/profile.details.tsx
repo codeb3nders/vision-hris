@@ -15,14 +15,19 @@ import useResize from 'hooks/useResize';
 import { PHOTO_PLACEHOLDER } from 'assets';
 import moment from 'moment';
 import { Departments } from 'components/HRDashboard/EmployeeData';
+import { AppCtx } from 'App';
 
 type Props = {};
 
 const ProfileDetails = (props: Props) => {
   const inputRef: any = useRef(null);
-  const { isNew, employeeDetails } = useContext(ProfileCtx);
+  const { isNew, employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { isLoggedIn } = useContext(AppCtx);
+  const { userData } = isLoggedIn;
   const [img, setImg] = useState<any>(null);
   const { processfile, resized } = useResize({ quality: 0.9 });
+
+  console.log({ employeeDetails });
 
   useEffect(() => {
     img && processfile(img);
@@ -62,44 +67,25 @@ const ProfileDetails = (props: Props) => {
             isNew ? '' : 'desktop:mb-4 laptop:mb-4 tablet:mb-4 phone:mb-0'
           } uppercase min-h-[20px]`}
         >
-          {isNew ? (
-            <div className='font-bold desktop:text-xl laptop:text-xl tablet:text-xl phone:text-md phone:mb-0 flex flex-row gap-2 items-center phone:justify-center desktop:justify-start laptop:justify-start tablet:justify-start'>
-              <span>
-                {employeeDetails?.lastName || (
-                  <span className='text-sm text-gray-300 italic'>
-                    Last Name
-                  </span>
-                )}
-                {employeeDetails?.lastName ? ', ' : ''}
-              </span>
-              <span>
-                {employeeDetails?.firstName || (
-                  <span className='text-sm text-gray-300 italic'>
-                    First Name
-                  </span>
-                )}
-              </span>{' '}
-              <span>
-                {employeeDetails?.middleName || (
-                  <span className='text-sm text-gray-300 italic'>
-                    Middle Name
-                  </span>
-                )}
-              </span>{' '}
-              {employeeDetails?.employeeNo && (
-                <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs phone:hidden desktop:block laptop:block tablet:block'>
-                  {employeeDetails?.employeeNo}
-                </span>
+          <div className='font-bold desktop:text-xl laptop:text-xl tablet:text-xl phone:text-md phone:mb-0 flex flex-row gap-2 items-center phone:justify-center desktop:justify-start laptop:justify-start tablet:justify-start'>
+            <span>
+              {employeeDetails?.lastName || (
+                <span className='text-sm text-gray-300 italic'>Last Name</span>
               )}
-            </div>
-          ) : (
-            <div>
-              JOHN DOE
-              <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs'>
-                0122
+              {employeeDetails?.lastName ? ', ' : ''}
+            </span>
+            <span>
+              {employeeDetails?.firstName || (
+                <span className='text-sm text-gray-300 italic'>First Name</span>
+              )}
+            </span>{' '}
+            <span>{employeeDetails?.middleName}</span>{' '}
+            {employeeDetails?.employeeNo && (
+              <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs phone:hidden desktop:block laptop:block tablet:block'>
+                {employeeDetails?.employeeNo}
               </span>
-            </div>
-          )}
+            )}
+          </div>
 
           {employeeDetails?.employeeNo && (
             <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs phone:inline-block desktop:hidden laptop:hidden tablet:hidden'>
@@ -109,9 +95,16 @@ const ProfileDetails = (props: Props) => {
         </p>
 
         {isNew ? (
-          <FormControl fullWidth variant='standard' size='small'>
+          <FormControl fullWidth variant='standard' size='small' required>
             <InputLabel id='department'>Department</InputLabel>
-            <Select>
+            <Select
+              onChange={(e: any) => {
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  department: e.target.value,
+                });
+              }}
+            >
               {Departments.map((dept: string) => {
                 return (
                   <MenuItem key={dept} value={dept}>
@@ -122,7 +115,7 @@ const ProfileDetails = (props: Props) => {
             </Select>
           </FormControl>
         ) : (
-          <p className='text-sm '>PLANNING & SCHEDULING MANAGER </p>
+          <p className='text-sm '>{employeeDetails?.department}</p>
         )}
 
         <p className='text-gray-500 mt-2'>

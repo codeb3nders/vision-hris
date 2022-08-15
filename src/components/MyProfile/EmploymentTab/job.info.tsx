@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
@@ -9,11 +9,13 @@ type Props = {};
 
 const columns: GridColDef[] = [
   {
-    field: 'effective_date',
+    field: 'dateHired',
     headerName: 'Effective Date',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return (
+        <div className='text-xs p-1'>{moment(params.value).format('LL')}</div>
+      );
     },
   },
   {
@@ -57,7 +59,7 @@ const columns: GridColDef[] = [
     },
   },
   {
-    field: 'reports_to',
+    field: 'reportsTo',
     headerName: 'Reports To',
     width: 120,
     renderCell: (params: any) => {
@@ -110,8 +112,24 @@ const rows = [
   },
 ];
 
+type JobInfoI = {
+  dateHired: string;
+  location: string;
+  department: string;
+  rank: string;
+  position: string;
+  reportsTo: string;
+  comment: string;
+};
+
 const JobInfo = (props: Props) => {
-  const { isNew } = useContext(ProfileCtx);
+  const [infos, setInfos] = useState<JobInfoI[]>([]);
+  const { isNew, employeeDetails } = useContext(ProfileCtx);
+
+  useEffect(() => {
+    setInfos([...infos, employeeDetails]);
+  }, [employeeDetails]);
+
   return (
     <CollapseWrapper
       panelTitle='Job Information'
@@ -120,7 +138,8 @@ const JobInfo = (props: Props) => {
     >
       <div style={{ width: '100%' }}>
         <DataGrid
-          rows={isNew ? [] : rows}
+          getRowId={(data: any) => `${data?.reportsTo}~${data?.dateHired}`}
+          rows={isNew ? [] : infos}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
