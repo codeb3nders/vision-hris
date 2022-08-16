@@ -14,17 +14,19 @@ import { ProfileCtx } from './profile.main';
 import useResize from 'hooks/useResize';
 import { PHOTO_PLACEHOLDER } from 'assets';
 import moment from 'moment';
-import { Departments } from 'components/HRDashboard/EmployeeData';
-import { AppCtx } from 'App';
 import { DEPARTMENTS } from 'constants/Values';
 
 type Props = {};
 
 const ProfileDetails = (props: Props) => {
   const inputRef: any = useRef(null);
-  const { isNew, employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
-  const { isLoggedIn } = useContext(AppCtx);
-  const { userData } = isLoggedIn;
+  const {
+    isNew,
+    employeeDetails,
+    setEmployeeDetails,
+    setDisplayPhoto,
+    displayPhoto,
+  } = useContext(ProfileCtx);
   const [img, setImg] = useState<any>(null);
   const { processfile, resized } = useResize({ quality: 0.9 });
 
@@ -33,6 +35,12 @@ const ProfileDetails = (props: Props) => {
   useEffect(() => {
     img && processfile(img);
   }, [img]);
+
+  useEffect(() => {
+    resized && setDisplayPhoto({ employeeNo: '', photo: resized });
+  }, [resized]);
+
+  console.log({ displayPhoto });
 
   return (
     <CustomCard
@@ -51,7 +59,7 @@ const ProfileDetails = (props: Props) => {
             onChange={(e: any) => setImg(e.target.files[0])}
           />
           <Avatar
-            src={resized || PHOTO_PLACEHOLDER}
+            src={displayPhoto?.photo ? displayPhoto?.photo : PHOTO_PLACEHOLDER}
             className='desktop:w-[130px] laptop:w-[130px] tablet:w-[130px] phone:w-[100px] desktop:h-[130px] laptop:h-[130px] tablet:h-[130px] phone:h-[100px] relative'
           />
           <div className='cursor-pointer absolute bottom-[16px] right-[10px] z-10 w-[36px] h-[36px] bg-white/75 rounded-full flex items-center justify-center'>

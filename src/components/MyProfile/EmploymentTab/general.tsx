@@ -44,24 +44,27 @@ const General = (props: Props) => {
           </LocalizationProvider>
         </div>
 
-        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
-          <TextField
-            label='Employee Number'
-            required
-            size='small'
-            variant='standard'
-            fullWidth
-            defaultValue={employeeDetails?.employeeNo}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                employeeNo: e.target.value,
-              })
-            }
-          />
-        </div>
-        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
-          {!isNew && (
+        {!isNew && (
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+            <TextField
+              disabled
+              label='Employee Number'
+              required
+              size='small'
+              variant='standard'
+              fullWidth
+              defaultValue={employeeDetails?.employeeNo}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  employeeNo: e.target.value,
+                })
+              }
+            />
+          </div>
+        )}
+        {!isNew && (
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
             <TextField
               label='Years in service'
               size='small'
@@ -69,8 +72,8 @@ const General = (props: Props) => {
               fullWidth
               defaultValue={moment(employeeDetails?.dateHired).fromNow()}
             />
-          )}
-        </div>
+          </div>
+        )}
       </GridWrapper>
     </CollapseWrapper>
   );

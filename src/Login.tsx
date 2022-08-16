@@ -38,9 +38,8 @@ function Copyright(props) {
       className='text-xs'
       {...props}
     >
-      {'Copyright © '}
-      <Link color='inherit'>VISION HRIS</Link> {new Date().getFullYear()}
-      {'.'}
+      <span>Copyright © 2022 • Vision Properties Develoment Corporation</span>
+      <div>All Rights Reserved</div>
     </Typography>
   );
 }
@@ -137,7 +136,7 @@ export default function SignInSide() {
             <Grid container className='grid grid-cols-12'>
               <Grid
                 item
-                className='bg-[linear-gradient(to right, #db2325, #fff)] overflow-hidden tablet:col-span-6 phone:hidden tablet:block'
+                className='bg-[linear-gradient(to right, #db2325, #fff)] overflow-hidden tablet:col-span-5 phone:hidden tablet:block'
               >
                 <Box
                   sx={{
@@ -153,7 +152,7 @@ export default function SignInSide() {
                 ></Box>
               </Grid>
 
-              <Grid item className='tablet:col-span-6 phone:col-span-12'>
+              <Grid item className='tablet:col-span-7 phone:col-span-12'>
                 <Box
                   sx={{
                     my: 6,
