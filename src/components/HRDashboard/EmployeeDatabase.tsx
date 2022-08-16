@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, Button } from '@mui/material';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
@@ -6,12 +6,16 @@ import NewEmployeeProfile from './new.employee.profile';
 import { getEmployeesEndpoint } from 'apis/employees';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
+import { useLocation } from 'react-router-dom';
+import { MainCtx } from 'components/Main';
 
 type Props = {};
 
 export const EmployeeCtx = createContext<any>({});
 
 const EmployeeDatabase: React.FC<Props> = () => {
+  const location = useLocation();
+  const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
     details: any;
     status: boolean;
@@ -24,6 +28,15 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   const [employees, setEmployees] = useState<EmployeeI[]>([]);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    console.log({ location });
+    if (location.pathname === '/people/employees') {
+      setIsTable(true);
+    } else {
+      setIsTable(false);
+    }
+  }, [location]);
 
   useEffect(() => {
     employees && employees?.length <= 0 && getEmployees();

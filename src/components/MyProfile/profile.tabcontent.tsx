@@ -32,7 +32,7 @@ const ProfileTabContent = ({ className }: Props) => {
         isNew || isView
           ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
           : ''
-      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 ${className}`}
+      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 ${className}`}
     >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
@@ -51,8 +51,12 @@ const ProfileTabContent = ({ className }: Props) => {
       <TabPanel value='2' className='p-0 grid' id='EmploymentStatus'>
         <General />
         <Divider />
-        <EmployementStatus />
-        <Divider />
+        {!isNew && (
+          <>
+            <EmployementStatus />
+            <Divider />
+          </>
+        )}
         <JobInfo />
       </TabPanel>
 
