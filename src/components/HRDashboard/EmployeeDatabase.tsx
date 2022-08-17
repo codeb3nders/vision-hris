@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, Button } from '@mui/material';
+import { Card, Button, Link } from '@mui/material';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import { getEmployeesEndpoint } from 'apis/employees';
@@ -106,14 +106,13 @@ const columns = (setViewDetails: any) => [
     width: 200,
     renderCell: (cell) => {
       return (
-        <Button
-          title={cell.row.firstName}
-          variant='text'
+        <Link
+          underline="none"
+          variant='button'
           onClick={() => setViewDetails({ details: cell.row, status: true })}
-          size='small'
         >
-          {cell.row.lastName}, {cell.row.firstName} {cell.row.middleName}
-        </Button>
+          {cell.row.lastName}, {cell.row.firstName}
+        </Link>
       );
     },
   },
@@ -134,25 +133,19 @@ const columns = (setViewDetails: any) => [
     width: 140,
   },
   {
-    field: 'division',
-    headerName: 'Division',
-    width: 140,
-    //   renderCell: (cell) => cell,
-  },
-  {
     field: 'department',
     headerName: 'Department',
     width: 250,
     //   renderCell: (cell) => cell,
   },
   {
-    field: 'desgination',
-    headerName: 'Designation',
+    field: 'location',
+    headerName: 'Location',
     width: 140,
     //   renderCell: (cell) => cell,
   },
   {
-    field: 'employment_status',
+    field: 'employmentStatus',
     headerName: 'Employment Status',
     width: 140,
     //   renderCell: (cell) => cell,
