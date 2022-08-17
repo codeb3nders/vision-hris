@@ -109,6 +109,7 @@ const columns = (setViewDetails: any) => [
         <Link
           underline="none"
           variant='button'
+          style={{ cursor: "pointer" }}
           onClick={() => setViewDetails({ details: cell.row, status: true })}
         >
           {cell.row.lastName}, {cell.row.firstName}
