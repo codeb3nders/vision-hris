@@ -93,13 +93,15 @@ export default function SignInSide() {
 
       console.log({ leaves });
 
-      if (response.data.access_token !== '' && leaves.data[0].employeeNo) {
+      if (response.data.access_token !== '') {
+        if(leaves.data[0].employeeNo){
         setError(false);
 
         setIsLoggedIn({
           userData: leaves.data[0],
           alias: leaves.data[0].userGroup,
         });
+      }
       } else {
         setError(true);
         // TODO: set login failure message.

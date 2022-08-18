@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, Button } from '@mui/material';
+import { Card, Button, Link } from '@mui/material';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import { getEmployeesEndpoint } from 'apis/employees';
@@ -107,11 +107,11 @@ const columns = (setViewDetails: any) => [
     width: 300,
     renderCell: (cell) => {
       return (
-        <Button
-          title={cell.row.firstName}
-          variant='text'
+        <Link
+          underline="none"
+          variant='button'
+          style={{ cursor: "pointer" }}
           onClick={() => setViewDetails({ details: cell.row, status: true })}
-          size='small'
         >
           <div className='whitespace-normal'>
             {cell.row.lastName}, {cell.row.firstName} {cell.row.middleName}
