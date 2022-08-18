@@ -34,10 +34,10 @@ const NavDrawer = ({ open, setOpen, navigation }: Props) => {
           {navigation.map((item: any) => {
             return item.menus ? (
               <>
-                <Menus item={item} setOpen={setOpen} />
+                <Menus key={item.href} item={item} setOpen={setOpen} />
               </>
             ) : (
-              <Link to={item.href}>
+              <Link to={item.href} key={item.href}>
                 <ListItemButton
                   className='text-sm'
                   onClick={() => setOpen(false)}

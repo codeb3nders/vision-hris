@@ -200,8 +200,12 @@ const Personal = (props: Props) => {
               }
               defaultValue={employeeDetails?.highestEducationalAttainment}
             >
-              {HIGHEST_EDUCATION.map((education) => {
-                return <MenuItem value={education}>{education}</MenuItem>;
+              {HIGHEST_EDUCATION.map((education: any) => {
+                return (
+                  <MenuItem key={education} value={education}>
+                    {education}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>

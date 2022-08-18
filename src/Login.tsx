@@ -68,10 +68,6 @@ export default function SignInSide() {
     message: '',
   });
 
-  useEffect(() => {
-    console.log({ loginData });
-  }, [loginData]);
-
   const handleClickShowPassword = () => {
     setValues({
       ...values,
@@ -94,18 +90,9 @@ export default function SignInSide() {
 
       const leaves = await getEmployeesWithLeavesEndpoint(loginData.username);
 
-      console.log({ leaves });
-
-      if (
-        response.data.access_token !== '' &&
-        leaves.data[0].employeeNo &&
-        !leaves.data[0].isActive
-      ) {
+      if (response.data.access_token !== '' && !leaves.data[0].isActive) {
         setError({ status: true, message: `Sorry, your account is inactive.` });
-      } else if (
-        response.data.access_token !== '' &&
-        leaves.data[0].employeeNo
-      ) {
+      } else if (response.data.access_token !== '' && leaves.data[0].isActive) {
         setError({ status: false, message: '' });
 
         setIsLoggedIn({

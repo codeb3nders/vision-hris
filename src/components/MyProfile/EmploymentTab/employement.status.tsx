@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
     headerName: 'Employment Status',
     flex: 1,
     renderCell: (params: GridCellParams) => {
-      return <div>{moment(params.value).format('LL')}</div>;
+      return <div>{params.value}</div>;
     },
   },
   {
@@ -42,7 +42,7 @@ const columns: GridColDef[] = [
 type EmploymentI = {
   id: any;
   dateHired: string;
-  employementStatus: string;
+  employmentStatus: string;
   endOfProbationary: string;
 };
 
@@ -58,7 +58,7 @@ const EmployementStatus = (props: Props) => {
       {
         id: employeeDetails?.dateHired,
         dateHired: employeeDetails?.dateHired,
-        employementStatus: employeeDetails?.employementStatus,
+        employmentStatus: employeeDetails?.employmentStatus,
         endOfProbationary: employeeDetails?.endOfProbationary,
       },
     ]);
