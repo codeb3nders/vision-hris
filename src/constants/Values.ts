@@ -168,9 +168,9 @@ export const RELIGION = [
 ];
 
 export const HIGHEST_EDUCATION = [
-  'Primary Education – Kinder to Grade 6',
-  'Lower Secondary Education – Grade 7 to 10',
-  'Upper Secondary Education – Grade 11 to 12',
+  `Primary Education – Kinder to Grade 6`,
+  `Lower Secondary Education – Grade 7 to 10`,
+  `Upper Secondary Education – Grade 11 to 12`,
   'Associates Degree',
   'No Degree - Less than 1 year of college/university',
   'No Degree - More than 1 year of college/university',

@@ -38,7 +38,7 @@ const NavbarDropdown = ({ menu }) => {
               {menu.menus.map((menu, i) => {
                 return (
                   <Link
-                    key={i}
+                    key={menu.href}
                     to={menu.href}
                     style={{ textDecoration: 'none', color: 'inherit' }}
                   >

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, Button, Link } from '@mui/material';
@@ -103,7 +104,7 @@ const columns = (setViewDetails: any) => [
   {
     field: 'employee_name',
     headerName: 'Employee name',
-    width: 200,
+    width: 300,
     renderCell: (cell) => {
       return (
         <Link
@@ -112,8 +113,10 @@ const columns = (setViewDetails: any) => [
           style={{ cursor: "pointer" }}
           onClick={() => setViewDetails({ details: cell.row, status: true })}
         >
-          {cell.row.lastName}, {cell.row.firstName}
-        </Link>
+          <div className='whitespace-normal'>
+            {cell.row.lastName}, {cell.row.firstName} {cell.row.middleName}
+          </div>
+        </Button>
       );
     },
   },
