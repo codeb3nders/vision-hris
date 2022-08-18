@@ -59,31 +59,8 @@ const columns: GridColDef[] = [
   },
 ];
 
-const initialState = [
-  {
-    id: 1,
-    date: moment().format('LL'),
-    leave_type: 'Vacation',
-    details:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. In necessitatibus dolorum eaque soluta quasi harum ipsam omnis voluptatum, reiciendis animi repellat.',
-    used: 1,
-    balance: 4,
-    comments: 'sample comment',
-  },
-  {
-    id: 2,
-    date: moment().format('LL'),
-    leave_type: 'Sick',
-    details:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. In necessitatibus dolorum eaque soluta quasi harum ipsam omnis voluptatum, reiciendis animi repellat.',
-    used: 2,
-    balance: 3,
-    comments: 'sample comment',
-  },
-];
-
 const History = (props: Props) => {
-  const [rows, setRows] = useState<any>(initialState);
+  const [rows, setRows] = useState<any>([]);
 
   return (
     <CollapseWrapper

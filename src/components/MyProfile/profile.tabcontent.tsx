@@ -12,6 +12,7 @@ import History from './Leaves/history';
 import LeaveBalances from './Leaves/leave.balances';
 import UpcomingLeaves from './Leaves/upcoming.leaves';
 import ContactDetails from './PersonalProfileTab/contact.details';
+import FamilyBackground from './PersonalProfileTab/family.background';
 import GovernmentDetails from './PersonalProfileTab/government.details';
 import PayrollDetails from './PersonalProfileTab/payroll.details';
 import Personal from './PersonalProfileTab/personal';
@@ -23,20 +24,22 @@ type Props = {
 };
 
 const ProfileTabContent = ({ className }: Props) => {
-  const { isNew } = useContext(ProfileCtx);
+  const { isNew, isView } = useContext(ProfileCtx);
   return (
     <CustomCard
       id='tab-content'
       className={`${
-        isNew
+        isNew || isView
           ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
           : ''
-      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 ${className}`}
+      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 ${className}`}
     >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
       <TabPanel value='1' className='p-0 grid' id='Personal'>
         <Personal />
+        <Divider />
+        <FamilyBackground />
         <Divider />
         <ContactDetails />
         <Divider />
@@ -44,12 +47,16 @@ const ProfileTabContent = ({ className }: Props) => {
         <Divider />
         <PayrollDetails />
       </TabPanel>
-      
+
       <TabPanel value='2' className='p-0 grid' id='EmploymentStatus'>
         <General />
         <Divider />
-        <EmployementStatus />
-        <Divider />
+        {!isNew && (
+          <>
+            <EmployementStatus />
+            <Divider />
+          </>
+        )}
         <JobInfo />
       </TabPanel>
 

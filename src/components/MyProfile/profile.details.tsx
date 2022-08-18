@@ -14,19 +14,33 @@ import { ProfileCtx } from './profile.main';
 import useResize from 'hooks/useResize';
 import { PHOTO_PLACEHOLDER } from 'assets';
 import moment from 'moment';
-import { Departments } from 'components/HRDashboard/EmployeeData';
+import { DEPARTMENTS } from 'constants/Values';
 
 type Props = {};
 
 const ProfileDetails = (props: Props) => {
   const inputRef: any = useRef(null);
-  const { isNew, employeeDetails } = useContext(ProfileCtx);
+  const {
+    isNew,
+    employeeDetails,
+    setEmployeeDetails,
+    setDisplayPhoto,
+    displayPhoto,
+  } = useContext(ProfileCtx);
   const [img, setImg] = useState<any>(null);
   const { processfile, resized } = useResize({ quality: 0.9 });
+
+  console.log({ employeeDetails });
 
   useEffect(() => {
     img && processfile(img);
   }, [img]);
+
+  useEffect(() => {
+    resized && setDisplayPhoto({ employeeNo: '', photo: resized });
+  }, [resized]);
+
+  console.log({ displayPhoto });
 
   return (
     <CustomCard
@@ -45,7 +59,7 @@ const ProfileDetails = (props: Props) => {
             onChange={(e: any) => setImg(e.target.files[0])}
           />
           <Avatar
-            src={resized || PHOTO_PLACEHOLDER}
+            src={displayPhoto?.photo ? displayPhoto?.photo : PHOTO_PLACEHOLDER}
             className='desktop:w-[130px] laptop:w-[130px] tablet:w-[130px] phone:w-[100px] desktop:h-[130px] laptop:h-[130px] tablet:h-[130px] phone:h-[100px] relative'
           />
           <div className='cursor-pointer absolute bottom-[16px] right-[10px] z-10 w-[36px] h-[36px] bg-white/75 rounded-full flex items-center justify-center'>
@@ -62,44 +76,25 @@ const ProfileDetails = (props: Props) => {
             isNew ? '' : 'desktop:mb-4 laptop:mb-4 tablet:mb-4 phone:mb-0'
           } uppercase min-h-[20px]`}
         >
-          {isNew ? (
-            <div className='font-bold desktop:text-xl laptop:text-xl tablet:text-xl phone:text-md phone:mb-0 flex flex-row gap-2 items-center phone:justify-center desktop:justify-start laptop:justify-start tablet:justify-start'>
-              <span>
-                {employeeDetails?.lastName || (
-                  <span className='text-sm text-gray-300 italic'>
-                    Last Name
-                  </span>
-                )}
-                {employeeDetails?.lastName ? ', ' : ''}
-              </span>
-              <span>
-                {employeeDetails?.firstName || (
-                  <span className='text-sm text-gray-300 italic'>
-                    First Name
-                  </span>
-                )}
-              </span>{' '}
-              <span>
-                {employeeDetails?.middleName || (
-                  <span className='text-sm text-gray-300 italic'>
-                    Middle Name
-                  </span>
-                )}
-              </span>{' '}
-              {employeeDetails?.employeeNo && (
-                <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs phone:hidden desktop:block laptop:block tablet:block'>
-                  {employeeDetails?.employeeNo}
-                </span>
+          <div className='font-bold desktop:text-xl laptop:text-xl tablet:text-xl phone:text-md phone:mb-0 flex flex-row gap-2 items-center phone:justify-center desktop:justify-start laptop:justify-start tablet:justify-start'>
+            <span>
+              {employeeDetails?.lastName || (
+                <span className='text-sm text-gray-300 italic'>Last Name</span>
               )}
-            </div>
-          ) : (
-            <div>
-              JOHN DOE
-              <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs'>
-                0122
+              {employeeDetails?.lastName ? ', ' : ''}
+            </span>
+            <span>
+              {employeeDetails?.firstName || (
+                <span className='text-sm text-gray-300 italic'>First Name</span>
+              )}
+            </span>{' '}
+            <span>{employeeDetails?.middleName}</span>{' '}
+            {employeeDetails?.employeeNo && (
+              <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs phone:hidden desktop:block laptop:block tablet:block'>
+                {employeeDetails?.employeeNo}
               </span>
-            </div>
-          )}
+            )}
+          </div>
 
           {employeeDetails?.employeeNo && (
             <span className='ml-1 px-2 py-1 bg-v-red text-white rounded-md text-xs phone:inline-block desktop:hidden laptop:hidden tablet:hidden'>
@@ -109,10 +104,17 @@ const ProfileDetails = (props: Props) => {
         </p>
 
         {isNew ? (
-          <FormControl fullWidth variant='standard' size='small'>
+          <FormControl fullWidth variant='standard' size='small' required>
             <InputLabel id='department'>Department</InputLabel>
-            <Select>
-              {Departments.map((dept: string) => {
+            <Select
+              onChange={(e: any) => {
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  department: e.target.value,
+                });
+              }}
+            >
+              {DEPARTMENTS.map((dept: string) => {
                 return (
                   <MenuItem key={dept} value={dept}>
                     {dept}
@@ -122,7 +124,7 @@ const ProfileDetails = (props: Props) => {
             </Select>
           </FormControl>
         ) : (
-          <p className='text-sm '>PLANNING & SCHEDULING MANAGER </p>
+          <p className='text-sm '>{employeeDetails?.department}</p>
         )}
 
         <p className='text-gray-500 mt-2'>

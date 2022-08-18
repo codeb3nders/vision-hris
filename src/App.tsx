@@ -3,6 +3,7 @@ import SignInSide from './Login';
 import { useEffect, createContext, useState } from 'react';
 import Main from './components/Main';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 export const AppCtx: any = createContext(null);
 
@@ -23,16 +24,25 @@ const App: React.FC<Props> = () => {
   const [mode] = useState(true);
 
   useEffect(() => {
-    console.log({ isLoggedIn });
-  }, [isLoggedIn]);
+    handleGetUserInfoFromLocalStorage();
+  }, []);
+
+  const handleGetUserInfoFromLocalStorage = () => {
+    const credential: any = localStorage.getItem('credential');
+    const local_user: { access_token: string; userInfo: EmployeeI } =
+      JSON.parse(credential);
+
+    if (local_user?.access_token && local_user?.userInfo.employeeNo) {
+      setIsLoggedIn({
+        alias: local_user?.userInfo.userGroup,
+        userData: local_user?.userInfo,
+      });
+    }
+  };
 
   const theme = createTheme({
     palette: {
       mode: mode ? 'light' : 'dark',
-      background: {
-        // paper: mode ? '#ffffff85' : '#121212a1',
-        // default: mode ? "#ffffff85" : "#121212c9"
-      },
     },
     typography: {
       fontFamily: ['Lato'].join(','),

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { AddIcCallTwoTone, SaveTwoTone } from '@mui/icons-material';
 import { Dialog, TextField } from '@mui/material';
@@ -48,7 +48,7 @@ const columns: GridColDef[] = [
     },
   },
   {
-    field: 'phone_no',
+    field: 'phoneNumber',
     headerName: 'Phone Number',
     flex: 1,
     renderCell: (params: any) => {
@@ -57,32 +57,41 @@ const columns: GridColDef[] = [
   },
 ];
 
-const initialState = [
-  {
-    id: 1,
-    name: 'Jane Doe',
-    address: 'Quezon City',
-    phone_no: '09771234567',
-    is_new: false,
-  },
-];
+type ContactsI = {
+  id: any;
+  name: string;
+  address: string;
+  phoneNumber: string;
+  isNew: false;
+};
 
 const Contacts = (props: Props) => {
-  const { isNew } = useContext(ProfileCtx);
-  const [rows, setRows] = useState<any[]>(initialState);
+  const { isNew, employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const [rows, setRows] = useState<ContactsI[]>([]);
   const [newContact, setNewContact] = useState<any>({
     name: null,
     address: null,
-    phone_no: null,
+    phoneNumber: null,
   });
 
   const [open, setOpen] = useState<boolean>(false);
 
+  useEffect(() => {
+    setRows([
+      {
+        ...employeeDetails?.emergencyContact,
+        id: `${employeeDetails?.emergencyContact?.name}~${employeeDetails?.emergencyContact?.phoneNumber}`,
+      },
+    ]);
+  }, [employeeDetails]);
+
   const handleSaveNewContact = () => {
     setOpen(false);
-    setNewContact({ name: null, address: null, phone_no: null });
-    const filtered = rows.filter((r) => !r.is_new);
+    setNewContact({ name: null, address: null, phoneNumber: null });
+    const filtered = rows.filter((r) => !r.isNew);
     setRows([...filtered, { ...newContact, id: filtered.length + 1 }]);
+
+    setEmployeeDetails({ ...employeeDetails, emergencyContact: newContact });
   };
 
   return (
@@ -118,13 +127,15 @@ const Contacts = (props: Props) => {
             size='small'
             label='Phone Number'
             onChange={(e: any) =>
-              setNewContact({ ...newContact, phone_no: e.target.value })
+              setNewContact({ ...newContact, phoneNumber: e.target.value })
             }
           />
           <div className='grid grid-cols-5'>
             <button
               disabled={
-                !newContact.name || !newContact.address || !newContact.phone_no
+                !newContact.name ||
+                !newContact.address ||
+                !newContact.phoneNumber
               }
               onClick={handleSaveNewContact}
               className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
@@ -154,7 +165,7 @@ const Contacts = (props: Props) => {
         <DataGrid
           autoHeight
           disableSelectionOnClick
-          rows={isNew ? [] : rows}
+          rows={rows}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}

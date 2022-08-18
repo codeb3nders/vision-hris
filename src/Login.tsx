@@ -24,7 +24,10 @@ import CustomCard from './CustomComponents/CustomCard';
 import { VISION_LOGO } from 'assets';
 
 import { login } from 'apis/auth';
-import { getEmployeesEndpoint } from 'apis/employees';
+import {
+  getEmployeesEndpoint,
+  getEmployeesWithLeavesEndpoint,
+} from 'apis/employees';
 
 function Copyright(props) {
   return (
@@ -35,9 +38,8 @@ function Copyright(props) {
       className='text-xs'
       {...props}
     >
-      {'Copyright © '}
-      <Link color='inherit'>VISION HRIS</Link> {new Date().getFullYear()}
-      {'.'}
+      <span>Copyright © 2022 • Vision Properties Develoment Corporation</span>
+      <div>All Rights Reserved</div>
     </Typography>
   );
 }
@@ -87,16 +89,16 @@ export default function SignInSide() {
         password: loginData.password,
       });
 
-      const res = await getEmployeesEndpoint(loginData.username);
+      const leaves = await getEmployeesWithLeavesEndpoint(loginData.username);
 
-      console.log({ res });
+      console.log({ leaves });
 
-      if (response.data.access_token !== '' && res.data.employeeNo) {
+      if (response.data.access_token !== '' && leaves.data[0].employeeNo) {
         setError(false);
 
         setIsLoggedIn({
-          userData: res.data,
-          alias: res.data.userGroup,
+          userData: leaves.data[0],
+          alias: leaves.data[0].userGroup,
         });
       } else {
         setError(true);
@@ -134,7 +136,7 @@ export default function SignInSide() {
             <Grid container className='grid grid-cols-12'>
               <Grid
                 item
-                className='bg-[linear-gradient(to right, #db2325, #fff)] overflow-hidden tablet:col-span-6 phone:hidden tablet:block'
+                className='bg-[linear-gradient(to right, #db2325, #fff)] overflow-hidden tablet:col-span-5 phone:hidden tablet:block'
               >
                 <Box
                   sx={{
@@ -150,7 +152,7 @@ export default function SignInSide() {
                 ></Box>
               </Grid>
 
-              <Grid item className='tablet:col-span-6 phone:col-span-12'>
+              <Grid item className='tablet:col-span-7 phone:col-span-12'>
                 <Box
                   sx={{
                     my: 6,
