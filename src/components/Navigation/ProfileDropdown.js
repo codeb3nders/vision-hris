@@ -14,8 +14,13 @@ const ProfileDropdown = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AppCtx);
 
   const handleLogin = () => {
+    localStorage.setItem(
+      'credential',
+      JSON.stringify({ access_token: null, userInfo: null })
+    );
     history.push('/');
   };
+
   return (
     <Menu as='div' className='ml-3 relative z-10'>
       <div>

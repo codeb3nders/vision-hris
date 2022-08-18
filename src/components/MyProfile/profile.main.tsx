@@ -10,6 +10,11 @@ import ProfileOther from './profile.other';
 import ProfileTabContent from './profile.tabcontent';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
+import {
+  createEmployee,
+  getEmployeeCreateStatus,
+} from './../../slices/employees/createEmployeesSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 type Props = {
   isNew?: boolean;
@@ -49,6 +54,9 @@ export const ProfileCtx = createContext<ProfileModel>({
 });
 
 const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
+  const dispatch = useDispatch();
+  const status = useSelector(getEmployeeCreateStatus);
+
   const [index, setIndex] = useState<string>('0');
   const { isLoggedIn } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
@@ -99,7 +107,6 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
       const employee_dp = displayPhotos.filter(
         (dp) => dp.employeeNo === employeeDetails.employeeNo
       )[0];
-      console.log({ employee_dp });
 
       setDisplayPhoto(employee_dp);
     }
@@ -108,7 +115,6 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
   const handleGetDisplayPhoto = () => {
     const local_dps: any = localStorage.getItem('display_photos');
     const dps = JSON.parse(local_dps);
-    console.log({ dps });
 
     setDisplayPhotos(dps);
   };
@@ -138,10 +144,10 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
   const saveEmployee = async () => {
     setLoading({ status: true, action: 'Saving' });
     try {
-      const response = await createEmployeeEndpoint(employeeDetails);
+      const response = await dispatch(createEmployee(employeeDetails));
 
-      if (response.status === 201) {
-        handleSaveDisplayPhoto(response.data.employeeNo);
+      if (response.meta.requestStatus === 'fulfilled') {
+        handleSaveDisplayPhoto(response.payload.employeeNo);
         setLoading({ status: false, action: '' });
         setRefresh(true);
         setOpenNotif({
@@ -167,7 +173,6 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
           severity: 'error',
         });
       }
-      console.log({ response });
     } catch (error: any) {
       setLoading({ status: false, action: '' });
       console.log(error);
@@ -180,7 +185,6 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
         employeeDetails,
         employeeDetails.employeeNo
       );
-      console.log({ response });
     } catch (error) {
       console.log(error);
     }
