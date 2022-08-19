@@ -1,41 +1,41 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createEmployeeEndpoint } from "apis/employees";
-import { EmployeeI } from "slices/interfaces/employeeI";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createEmployeeEndpoint } from 'apis/employees';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 const initialState: any = {
-  employeeCreatedItem: {},
-  status: "idle",
+  employeeItems: {},
+  status: 'idle',
   error: null,
 };
 
 export const createEmployee: any = createAsyncThunk(
-  "employees/createEmployee",
+  'employees/createEmployee',
   async (body: EmployeeI, config?: any) => {
     try {
       const response = await createEmployeeEndpoint(body, config);
-      return [...response.data];
+      return { ...response.data };
     } catch (err: any) {
-      console.error("ERROR in createEmployee", err);
+      console.error('ERROR in createEmployee', err);
       return err.message;
     }
   }
 );
 
 export const createEmployeesSlice = createSlice({
-  name: "employees",
+  name: 'employees',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(createEmployee.pending, (state) => {
-        state.status = "loading";
+        state.status = 'loading';
       })
       .addCase(createEmployee.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.status = 'succeeded';
         state.employeeItems = action.payload;
       })
       .addCase(createEmployee.rejected, (state, action) => {
-        state.status = "failed";
+        state.status = 'failed';
         state.error = action.error.message;
       });
   },

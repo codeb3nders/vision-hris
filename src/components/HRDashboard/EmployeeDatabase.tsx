@@ -31,7 +31,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    console.log({ location });
     if (location.pathname === '/people/employees') {
       setIsTable(true);
     } else {
@@ -108,9 +107,9 @@ const columns = (setViewDetails: any) => [
     renderCell: (cell) => {
       return (
         <Link
-          underline="none"
+          underline='none'
           variant='button'
-          style={{ cursor: "pointer" }}
+          style={{ cursor: 'pointer' }}
           onClick={() => setViewDetails({ details: cell.row, status: true })}
         >
           <div className='whitespace-normal'>

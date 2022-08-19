@@ -39,7 +39,7 @@ function Copyright(props) {
       {...props}
     >
       <span>Copyright © 2022 • Vision Properties Develoment Corporation</span>
-      <div>All Rights Reserved</div>
+      <span className='block'>All Rights Reserved</span>
     </Typography>
   );
 }
@@ -63,11 +63,10 @@ export default function SignInSide() {
     password: '',
   });
 
-  const [error, setError] = useState<boolean>(false);
-
-  useEffect(() => {
-    console.log({ loginData });
-  }, [loginData]);
+  const [error, setError] = useState<{ status: boolean; message: string }>({
+    status: false,
+    message: '',
+  });
 
   const handleClickShowPassword = () => {
     setValues({
@@ -82,7 +81,7 @@ export default function SignInSide() {
 
   const handleSubmit = async (event) => {
     try {
-      setError(false);
+      setError({ status: false, message: '' });
       event.preventDefault();
       const response = await login({
         username: loginData.username,
@@ -91,23 +90,27 @@ export default function SignInSide() {
 
       const leaves = await getEmployeesWithLeavesEndpoint(loginData.username);
 
-      console.log({ leaves });
-
-      if (response.data.access_token !== '') {
-        if(leaves.data[0].employeeNo){
-        setError(false);
+      if (response.data.access_token !== '' && !leaves.data[0].isActive) {
+        setError({ status: true, message: `Sorry, your account is inactive.` });
+      } else if (response.data.access_token !== '' && leaves.data[0].isActive) {
+        setError({ status: false, message: '' });
 
         setIsLoggedIn({
           userData: leaves.data[0],
           alias: leaves.data[0].userGroup,
         });
-      }
       } else {
-        setError(true);
+        setError({
+          status: true,
+          message: `Sorry, we couldn't find an account with that username or password.`,
+        });
         // TODO: set login failure message.
       }
     } catch (error) {
-      setError(true);
+      setError({
+        status: true,
+        message: `Sorry, we couldn't find an account with that username or password.`,
+      });
     }
   };
 
@@ -169,14 +172,13 @@ export default function SignInSide() {
                     <img src={VISION_LOGO} alt='' style={{ width: 100 }} />
                   </div>
 
-                  {error && (
+                  {error.status && (
                     <Alert
                       severity='error'
                       variant='filled'
                       className='mt-2 w-full'
                     >
-                      Sorry, we couldn't find an account with that username or
-                      password.
+                      {error.message}
                     </Alert>
                   )}
 
