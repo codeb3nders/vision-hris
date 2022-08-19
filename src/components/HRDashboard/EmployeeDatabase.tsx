@@ -116,7 +116,7 @@ const columns = (setViewDetails: any) => [
           <div className='whitespace-normal'>
             {cell.row.lastName}, {cell.row.firstName} {cell.row.middleName}
           </div>
-        </Button>
+        </Link>
       );
     },
   },
