@@ -24,10 +24,6 @@ import CustomCard from './CustomComponents/CustomCard';
 import { VISION_LOGO } from 'assets';
 
 import { login } from 'apis/auth';
-import {
-  getEmployeesEndpoint,
-  getEmployeesWithLeavesEndpoint,
-} from 'apis/employees';
 
 function Copyright(props) {
   return (
@@ -48,6 +44,7 @@ const theme = createTheme();
 
 export default function SignInSide() {
   const { setIsLoggedIn } = useContext(AppCtx);
+  const [userData, setUserData] = useState<any>({})
   const [values, setValues] = useState({
     amount: '',
     password: '',
@@ -87,18 +84,23 @@ export default function SignInSide() {
         username: loginData.username,
         password: loginData.password,
       });
+      console.log({ response });
+      if (response.data.access_token !== '') {
+        const userData = response.data.userInfo;
+        console.log({ userData })
+        setUserData(userData);
+        if (!userData.isActive) {
+          setError({ status: true, message: `Sorry, your account is inactive.` });
+        } else {
+          setError({ status: false, message: '' });
 
-      const leaves = await getEmployeesWithLeavesEndpoint(loginData.username);
-
-      if (response.data.access_token !== '' && !leaves.data[0].isActive) {
-        setError({ status: true, message: `Sorry, your account is inactive.` });
-      } else if (response.data.access_token !== '' && leaves.data[0].isActive) {
-        setError({ status: false, message: '' });
-
-        setIsLoggedIn({
-          userData: leaves.data[0],
-          alias: leaves.data[0].userGroup,
-        });
+          setIsLoggedIn({
+            userData,
+            alias: userData.userGroup
+          });
+          localStorage.setItem("access_token", response.data.access_token)
+          localStorage.setItem("userData", JSON.stringify(userData));
+        }
       } else {
         setError({
           status: true,
@@ -107,11 +109,13 @@ export default function SignInSide() {
         // TODO: set login failure message.
       }
     } catch (error) {
+      console.log({ error })
       setError({
         status: true,
         message: `Sorry, we couldn't find an account with that username or password.`,
       });
     }
+    // createLog({ user_id: 0, email_address: userData.email, details: { login: "failed", reason: "User is not yet registered." } });
   };
 
   return (

@@ -5,18 +5,11 @@ import {
 } from 'constants/EndpointPath';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
-const rawData = localStorage.getItem('credential');
-const data = rawData && JSON.parse(rawData);
+const access_token = localStorage.getItem('access_token');
 const internalConfig = {
-  headers: { Authorization: `Bearer ${data && data.access_token}` },
+  headers: { Authorization: `Bearer ${access_token}` },
 };
 export const createEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
-  const rawData = localStorage.getItem('credential');
-  const data = rawData && JSON.parse(rawData);
-
-  const internalConfig = {
-    headers: { Authorization: `Bearer ${data && data.access_token}` },
-  };
   try {
     return await axios.post(URL_EMPLOYEES, body, {
       ...internalConfig,
@@ -43,12 +36,7 @@ export const updateEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
 export const getEmployeesEndpoint = async (employeeNo?: string) => {
   try {
     const url = employeeNo ? `${URL_EMPLOYEES}${employeeNo}` : URL_EMPLOYEES;
-    const rawData = localStorage.getItem('credential');
-    const data = rawData && JSON.parse(rawData);
-
-    return await axios.get(url, {
-      headers: { Authorization: `Bearer ${data && data.access_token}` },
-    });
+    return await axios.get(url, { ...internalConfig });
   } catch (error: any) {
     console.error('ERROR in getEmployeesEndpoint', error);
     return error.message;
