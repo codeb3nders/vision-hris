@@ -25,6 +25,8 @@ import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { getEmployeeItems as _getEmployeeItems } from 'slices';
+import { useSelector } from 'react-redux';
 
 type Props = {};
 
@@ -145,6 +147,8 @@ const JobInfo = (props: Props) => {
 
 const JobInfoFields = ({ employees }) => {
   const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const getEmployeeItems = useSelector(_getEmployeeItems);
+
   return (
     <GridWrapper colSize='2' className='items-center p-2'>
       <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -235,7 +239,7 @@ const JobInfoFields = ({ employees }) => {
               })
             }
           >
-            {employees.map((employee) => {
+            {getEmployeeItems?.map((employee) => {
               return (
                 <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
                   {employee.firstName} {employee.lastName}
