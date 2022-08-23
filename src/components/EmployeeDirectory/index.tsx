@@ -66,24 +66,27 @@ const EmployeeDirectory: React.FC<Props> = () => {
 const columns = () => [
     {
         field: 'full_name',
-        headerName: 'Employee name', flex: 1, style: { textOverflow: "clip" }
+        headerName: 'Employee name', flex: 1, sortable: false,
+        renderCell: (cell) => {
+            return cell.value;
+        },
     },
-    { field: 'position', headerName: 'Position', flex: 1, style: { textOverflow: "clip" } },
+    { field: 'position', headerName: 'Position', flex: 1, sortable: false },
     {
         field: 'department',
-        headerName: 'Department', flex: 1
+        headerName: 'Department', flex: 1, sortable: false
     },
     {
         field: 'location',
-        headerName: 'Location', flex: 1
+        headerName: 'Location', flex: 1, sortable: false
     },
     {
         field: 'companyEmail',
-        headerName: 'Email', flex: 1
+        headerName: 'Email', flex: 1, sortable: false
     },
     {
         field: 'companyContactNumber',
-        headerName: 'Mobile', flex: 1
+        headerName: 'Mobile', flex: 1, sortable: false
     },
 ];
 
