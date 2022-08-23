@@ -74,6 +74,39 @@ const General = (props: Props) => {
             />
           </div>
         )}
+
+        <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
+          <TextField
+            required
+            label='Company Contact Number'
+            size='small'
+            variant='standard'
+            fullWidth
+            defaultValue={employeeDetails?.companyContactNumber}
+            onChange={(e: any) =>
+              setEmployeeDetails({
+                ...employeeDetails,
+                companyContactNumber: e.target.value,
+              })
+            }
+          />
+        </div>
+        <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
+          <TextField
+            required
+            label='Company Email Address'
+            size='small'
+            variant='standard'
+            fullWidth
+            defaultValue={employeeDetails?.contactEmail}
+            onChange={(e: any) =>
+              setEmployeeDetails({
+                ...employeeDetails,
+                contactEmail: e.target.value,
+              })
+            }
+          />
+        </div>
       </GridWrapper>
     </CollapseWrapper>
   );

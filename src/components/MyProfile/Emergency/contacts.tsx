@@ -1,8 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { AddIcCallTwoTone, SaveTwoTone } from '@mui/icons-material';
+import {
+  AddIcCallTwoTone,
+  ContactPhoneTwoTone,
+  SaveTwoTone,
+} from '@mui/icons-material';
 import { Dialog, TextField } from '@mui/material';
 import { ProfileCtx } from '../profile.main';
+import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 
 type Props = {};
 
@@ -95,85 +100,88 @@ const Contacts = (props: Props) => {
   };
 
   return (
-    <div className='flex flex-col'>
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <div className='p-6 flex flex-col gap-4 w-[350px]'>
-          <p className='text-md font-bold '>
-            <AddIcCallTwoTone fontSize='small' /> New Contact
-          </p>
-          <TextField
-            fullWidth
-            variant='standard'
-            size='small'
-            label='Name'
-            onChange={(e: any) =>
-              setNewContact({ ...newContact, name: e.target.value })
-            }
-          />
-          <TextField
-            fullWidth
-            variant='standard'
-            size='small'
-            multiline
-            minRows={2}
-            label='Address'
-            onChange={(e: any) =>
-              setNewContact({ ...newContact, address: e.target.value })
-            }
-          />
-          <TextField
-            fullWidth
-            variant='standard'
-            size='small'
-            label='Phone Number'
-            onChange={(e: any) =>
-              setNewContact({ ...newContact, phoneNumber: e.target.value })
-            }
-          />
-          <div className='grid grid-cols-5'>
-            <button
-              disabled={
-                !newContact.name ||
-                !newContact.address ||
-                !newContact.phoneNumber
+    <CollapseWrapper panelTitle='Emergency Contact' icon={ContactPhoneTwoTone}>
+      <div className='flex flex-col'>
+        <Dialog open={open} onClose={() => setOpen(false)}>
+          <div className='p-6 flex flex-col gap-4 w-[350px]'>
+            <p className='text-md font-bold '>
+              <AddIcCallTwoTone fontSize='small' /> New Contact
+            </p>
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              label='Name'
+              onChange={(e: any) =>
+                setNewContact({ ...newContact, name: e.target.value })
               }
-              onClick={handleSaveNewContact}
-              className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
-            >
-              <SaveTwoTone fontSize='small' className='mr-2' />
-              Save Contact
-            </button>
-            <button
-              className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </button>
+            />
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              multiline
+              minRows={2}
+              label='Address'
+              onChange={(e: any) =>
+                setNewContact({ ...newContact, address: e.target.value })
+              }
+            />
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              label='Phone Number'
+              onChange={(e: any) =>
+                setNewContact({ ...newContact, phoneNumber: e.target.value })
+              }
+            />
+            <div className='grid grid-cols-5'>
+              <button
+                disabled={
+                  !newContact.name ||
+                  !newContact.address ||
+                  !newContact.phoneNumber
+                }
+                onClick={handleSaveNewContact}
+                className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+              >
+                <SaveTwoTone fontSize='small' className='mr-2' />
+                Save Contact
+              </button>
+              <button
+                className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-        </div>
-      </Dialog>
+        </Dialog>
 
-      <div className='flex flex-row items-center justify-end mb-4 '>
-        <button
-          onClick={() => setOpen(true)}
-          className='px-2 py-1 bg-sky-500 text-white desktop laptop:rounded-md tablet:rounded-md phone:rounded-sm w-auto flex items-center justify-center self-end hover:bg-sky-400 transition duration-150 desktop:mr-0 laptop:mr-0 tablet:mr-0 phone:mr-4 '
-        >
-          <AddIcCallTwoTone className='mr-2' fontSize='small' /> Add Contact
-        </button>
+        <div style={{ width: '100%' }}>
+          <DataGrid
+            autoHeight
+            disableSelectionOnClick
+            rows={rows}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            checkboxSelection
+            getRowHeight={() => 'auto'}
+          />
+        </div>
+
+        <div className='flex flex-row items-center justify-end mb-4 '>
+          <button
+            onClick={() => setOpen(true)}
+            className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
+          >
+            <AddIcCallTwoTone className='mr-2' fontSize='small' /> Add Contact
+          </button>
+        </div>
       </div>
-      <div style={{ width: '100%' }}>
-        <DataGrid
-          autoHeight
-          disableSelectionOnClick
-          rows={rows}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          checkboxSelection
-          getRowHeight={() => 'auto'}
-        />
-      </div>
-    </div>
+    </CollapseWrapper>
   );
 };
 

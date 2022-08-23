@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { AssuredWorkloadTwoTone } from '@mui/icons-material';
 import {
   FormControl,
@@ -6,7 +7,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { TaxExemption } from './../../HRDashboard/EmployeeData';
 import GridWrapper from 'CustomComponents/GridWrapper';
@@ -15,7 +16,43 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const GovernmentDetails = (props: Props) => {
-  const { isNew, employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+
+  const handleTaxExemption = () => {
+    switch (employeeDetails.civilStatus) {
+      case 'SINGLE':
+        const singleTax =
+          parseInt(employeeDetails.NumberOfDependents) > 0
+            ? `SINGLE-${employeeDetails.NumberOfDependents}`
+            : 'SINGLE';
+        setEmployeeDetails((prev: any) => ({
+          ...prev,
+          taxExemption: singleTax,
+        }));
+        break;
+      case 'MARRIED':
+        console.log({ dep: parseInt(employeeDetails.NumberOfDependents) });
+
+        const marriedTax =
+          parseInt(employeeDetails.NumberOfDependents) > 0
+            ? `MARRIED-${employeeDetails.NumberOfDependents}`
+            : 'MARRIED';
+        setEmployeeDetails((prev: any) => ({
+          ...prev,
+          taxExemption: marriedTax,
+        }));
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    employeeDetails.NumberOfDependents >= 0 &&
+      employeeDetails.civilStatus &&
+      handleTaxExemption();
+  }, [employeeDetails.NumberOfDependents]);
+
   return (
     <CollapseWrapper
       panelTitle='Government Details'
@@ -42,7 +79,23 @@ const GovernmentDetails = (props: Props) => {
             variant='standard'
             size='small'
             fullWidth
-            label='PagIBIG'
+            label='PhilHealth'
+            defaultValue={employeeDetails?.philHealth}
+            onChange={(e: any) =>
+              setEmployeeDetails({
+                ...employeeDetails,
+                philHealth: e.target.value,
+              })
+            }
+          />
+        </div>
+
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <TextField
+            variant='standard'
+            size='small'
+            fullWidth
+            label='Pag-IBIG/HMDF'
             defaultValue={employeeDetails?.pagIbig}
             onChange={(e: any) =>
               setEmployeeDetails({
@@ -67,27 +120,30 @@ const GovernmentDetails = (props: Props) => {
             }
           />
         </div>
+
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             variant='standard'
             size='small'
             fullWidth
-            label='PhilHealth'
-            defaultValue={employeeDetails?.philHealth}
+            type='number'
+            label='Number of Dependents'
+            defaultValue={employeeDetails?.NumberOfDependents}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
-                philHealth: e.target.value,
+                NumberOfDependents: e.target.value,
               })
             }
           />
         </div>
-        <div className='col-span-2'>
+
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <FormControl variant='standard' fullWidth size='small'>
             <InputLabel id='tax'>Tax Exemption</InputLabel>
             <Select
               labelId='tax'
-              defaultValue={employeeDetails?.taxExemption}
+              value={employeeDetails.taxExemption}
               onChange={(e: any) =>
                 setEmployeeDetails({
                   ...employeeDetails,

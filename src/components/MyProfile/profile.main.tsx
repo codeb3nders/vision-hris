@@ -103,6 +103,7 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
   };
 
   useEffect(() => {
+    handleCompanyEmail();
     if (employeeDetails.employeeNo && displayPhotos?.length > 0) {
       const employee_dp = displayPhotos.filter(
         (dp) => dp.employeeNo === employeeDetails.employeeNo
@@ -117,6 +118,18 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     const dps = JSON.parse(local_dps);
 
     setDisplayPhotos(dps);
+  };
+
+  const handleCompanyEmail = () => {
+    const { firstName, lastName, rank, companyEmail } = employeeDetails;
+    if (rank === 'RANK AND FILE' && !companyEmail) {
+      const companyEmail =
+        `${firstName}${lastName}.vpdcph@gmail.com`.toLowerCase();
+      setEmployeeDetails((employeeDetails: EmployeeI) => ({
+        ...employeeDetails,
+        companyEmail,
+      }));
+    }
   };
 
   const handleSaveDisplayPhoto = (employeeNo: string) => {

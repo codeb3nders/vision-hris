@@ -75,10 +75,12 @@ const ContactDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            disabled
             type='email'
             label='VPDC Email Address'
             variant='standard'
             fullWidth
+            className='VPDC_EMAIL [&>div>input>div]:!text-black'
             defaultValue={employeeDetails?.companyEmail}
             onChange={(e: any) =>
               setEmployeeDetails({
@@ -86,6 +88,16 @@ const ContactDetails = (props: Props) => {
                 companyEmail: e.target.value,
               })
             }
+            sx={{
+              '& .Mui-disabled': {
+                '-webkit-text-fill-color': 'black',
+                color: 'black',
+              },
+              '& .MuiInputLabel-root': {
+                '-webkit-text-fill-color': 'rgba(0,0,0,.6)',
+                color: 'rgba(0,0,0,.6)',
+              },
+            }}
           />
         </div>
       </GridWrapper>

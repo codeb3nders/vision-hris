@@ -33,7 +33,10 @@ const FamilyBackground = (props: Props) => {
   }, [family]);
 
   return (
-    <CollapseWrapper panelTitle='Family' icon={FamilyRestroomTwoTone}>
+    <CollapseWrapper
+      panelTitle='Family Background'
+      icon={FamilyRestroomTwoTone}
+    >
       <FamilyBackgroundForm
         open={open}
         setOpen={setOpen}
@@ -43,13 +46,6 @@ const FamilyBackground = (props: Props) => {
 
       <GridWrapper colSize='1'>
         <div className='ww-full col-span-1 flex flex-col justify-end'>
-          <button
-            onClick={() => setOpen(true)}
-            className='px-2 py-1 bg-sky-500 text-white desktop:rounded-sms laptop:rounded-sm tablet:rounded-sm phone:rounded-sm w-auto flex items-center justify-center self-end hover:bg-sky-400 transition duration-150 desktop:mr-0 laptop:mr-0 tablet:mr-0 phone:mr-4 '
-          >
-            <PersonAddTwoTone fontSize='small' className='mr-1' /> Add Family
-            Member
-          </button>
           <DataGrid
             getRowId={(data: any) => `${data?.fullname}`}
             rows={family}
@@ -64,6 +60,15 @@ const FamilyBackground = (props: Props) => {
           />
         </div>
       </GridWrapper>
+      <div className='flex justify-end'>
+        <button
+          onClick={() => setOpen(true)}
+          className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
+        >
+          <PersonAddTwoTone fontSize='small' className='mr-1' /> Add Family
+          Member
+        </button>
+      </div>
     </CollapseWrapper>
   );
 };

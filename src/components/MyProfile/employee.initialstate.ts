@@ -10,7 +10,7 @@ export const initialState: EmployeeI = {
   position: '',
   rank: '',
   department: '',
-  location: '',
+  locations: [],
   isActive: true,
   userGroup: 'EMPLOYEE',
   reportsTo: '',

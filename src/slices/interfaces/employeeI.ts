@@ -14,7 +14,7 @@ export interface EmployeeI {
   position: string;
   rank: string;
   department: string;
-  location: string;
+  locations: string[];
   isActive: boolean;
   userGroup: string;
   reportsTo: string;

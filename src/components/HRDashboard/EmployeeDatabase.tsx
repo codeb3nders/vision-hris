@@ -105,7 +105,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
         const position = employee?.position?.toLowerCase();
         const rank = employee?.rank?.toLowerCase();
         const department = employee?.department?.toLowerCase();
-        const location = employee?.location?.toLowerCase();
+        // const location = employee?.locations?.toLowerCase();
         const employmentStatus = employee?.employmentStatus?.toLowerCase();
         const reportsTo = employee?.reportsTo?.toLowerCase();
         const isActive = active?.toString()?.toLowerCase();
@@ -121,8 +121,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
           department?.includes(text) ||
           employmentStatus?.includes(text) ||
           reportsTo?.includes(text) ||
-          isActive?.includes(text) ||
-          location?.includes(text)
+          isActive?.includes(text)
+          // location?.includes(text)
         );
       });
 
@@ -146,7 +146,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [searchText]);
 
   return (
-    <EmployeeCtx.Provider value={{ setRefresh }}>
+    <EmployeeCtx.Provider value={{ setRefresh, employees: tempEmployees }}>
       <NewEmployeeProfile open={open} setOpen={setOpen} />
       <ViewEmployeeProfile
         viewDetails={viewDetails}
