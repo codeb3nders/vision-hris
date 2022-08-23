@@ -1,14 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, Button, Link } from '@mui/material';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
-import { getEmployeesEndpoint } from 'apis/employees';
+import {
+  getEmployeesWithLeavesAction as _getEmployeesWithLeavesAction,
+  getEmployeesWithLeaveStatus as _getEmployeesWithLeaveStatus,
+  getEmployeesWithLeaveItems as _getEmployeesWithLeaveItems,
+  getEmployeesWithLeaveError as _getEmployeesWithLeaveError,
+  getEmployeesAction as _getEmployeesAction,
+  getEmployeeStatus as _getEmployeeStatus,
+  getEmployeeItems as _getEmployeeItems,
+  getEmployeeError as _getEmployeeError
+} from "slices"
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
+import { authStore } from 'slices/userAccess/authSlice';
+import { AppCtx } from 'App';
 
 type Props = {};
 
@@ -16,6 +28,19 @@ export const EmployeeCtx = createContext<any>({});
 
 const EmployeeDatabase: React.FC<Props> = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const { access_token } = useContext(AppCtx);
+
+  // Employees
+  const getEmployeeStatus = useSelector(_getEmployeeStatus);
+  const getEmployeeItems = useSelector(_getEmployeeItems);
+  const getEmployeeError = useSelector(_getEmployeeError)
+
+
+  const getEmployeesWithLeaveStatus = useSelector(_getEmployeesWithLeaveStatus);
+  const getEmployeesWithLeaveItems = useSelector(_getEmployeesWithLeaveItems);
+  const getEmployeesWithLeaveError = useSelector(_getEmployeesWithLeaveError)
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
     details: any;
@@ -39,28 +64,20 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [location]);
 
   useEffect(() => {
-    employees && employees?.length <= 0 && getEmployees();
-  }, [employees]);
+    if (access_token && getEmployeeStatus === "idle") {
+      dispatch(_getEmployeesAction(access_token))
+    }
+  }, [access_token]);
 
   useEffect(() => {
-    if (refresh) {
-      setEmployees([]);
-      getEmployees();
-    }
-  }, [refresh]);
-
-  const getEmployees = async () => {
-    try {
-      const res = await getEmployeesEndpoint();
-      setEmployees(
-        res.data?.map((r: any) => {
-          return { ...r, id: r.employeeNo };
-        })
-      );
-    } catch (error: any) {
-      console.log(error.message);
-    }
-  };
+    setEmployees(
+      getEmployeeItems.map((r: any) => {
+        const mi = r.middleName ? r.middleName.charAt(0) : "";
+        const full_name = `${r.lastName}, ${r.firstName} ${mi}`
+        return { ...r, id: r.employeeNo, full_name };
+      })
+    );
+  }, [getEmployeeItems])
 
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
@@ -92,6 +109,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
             rowsPerPageOptions={[5]}
             checkboxSelection
             loading={employees?.length <= 0}
+            getRowId={(row) => row.employeeNo}
           />
         </div>
       </Card>
@@ -101,7 +119,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
 const columns = (setViewDetails: any) => [
   {
-    field: 'employee_name',
+    field: 'full_name',
     headerName: 'Employee name',
     width: 300,
     renderCell: (cell) => {
@@ -113,7 +131,7 @@ const columns = (setViewDetails: any) => [
           onClick={() => setViewDetails({ details: cell.row, status: true })}
         >
           <div className='whitespace-normal'>
-            {cell.row.lastName}, {cell.row.firstName} {cell.row.middleName}
+            {cell.value}
           </div>
         </Link>
       );

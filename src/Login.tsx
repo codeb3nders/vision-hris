@@ -22,8 +22,10 @@ import { VisibilityOff, Visibility } from '@mui/icons-material';
 import { AppCtx } from './App';
 import CustomCard from './CustomComponents/CustomCard';
 import { VISION_LOGO } from 'assets';
+import { persistor } from "./store";
 
-import { login } from 'apis/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { authAction, setIsLoggedIn, clearData } from 'slices/userAccess/authSlice';
 
 function Copyright(props) {
   return (
@@ -34,7 +36,8 @@ function Copyright(props) {
       className='text-xs'
       {...props}
     >
-      <span>Copyright © 2022 • Vision Properties Develoment Corporation</span>
+      <span>Copyright © 2022</span>
+      <span className='block'>Vision Properties Develoment Corporation</span>
       <span className='block'>All Rights Reserved</span>
     </Typography>
   );
@@ -43,8 +46,10 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide() {
-  const { setIsLoggedIn } = useContext(AppCtx);
-  const [userData, setUserData] = useState<any>({})
+  const dispatch = useDispatch();
+  const { auth } = useSelector((state: any) => state);
+  const { status, isLoggedIn, access_token, userData } = auth;
+  // const { setIsLoggedIn } = useContext(AppCtx);
   const [values, setValues] = useState({
     amount: '',
     password: '',
@@ -65,6 +70,34 @@ export default function SignInSide() {
     message: '',
   });
 
+  useEffect(() => {
+    console.log({ auth }, "xxxxxxxxxxxxxx")
+    if (status === 'succeeded') {
+      if (access_token !== '') {
+        console.log({ userData })
+        // setUserData(userData);
+        if (!userData.isActive) {
+          setError({ status: true, message: `Sorry, your account is inactive.` });
+        } else {
+          setError({ status: false, message: '' });
+          dispatch(setIsLoggedIn(true))
+        }
+      } else {
+        setError({
+          status: true,
+          message: `Sorry, we couldn't find an account with that username or password.`,
+        });
+        // TODO: set login failure message.
+      }
+    }
+  }, [status])
+
+  useEffect(() => {
+    if (error.status) {
+      dispatch(clearData());
+    }
+  }, [error])
+
   const handleClickShowPassword = () => {
     setValues({
       ...values,
@@ -80,34 +113,10 @@ export default function SignInSide() {
     try {
       setError({ status: false, message: '' });
       event.preventDefault();
-      const response = await login({
+      const response = await dispatch(authAction({
         username: loginData.username,
         password: loginData.password,
-      });
-      console.log({ response });
-      if (response.data.access_token !== '') {
-        const userData = response.data.userInfo;
-        console.log({ userData })
-        setUserData(userData);
-        if (!userData.isActive) {
-          setError({ status: true, message: `Sorry, your account is inactive.` });
-        } else {
-          setError({ status: false, message: '' });
-
-          setIsLoggedIn({
-            userData,
-            alias: userData.userGroup
-          });
-          localStorage.setItem("access_token", response.data.access_token)
-          localStorage.setItem("userData", JSON.stringify(userData));
-        }
-      } else {
-        setError({
-          status: true,
-          message: `Sorry, we couldn't find an account with that username or password.`,
-        });
-        // TODO: set login failure message.
-      }
+      }));
     } catch (error) {
       console.log({ error })
       setError({
@@ -128,7 +137,6 @@ export default function SignInSide() {
           sm={12}
           md={12}
           sx={{
-            // background: `url(${require('./assets/images/login-bg.jpg')}) no-repeat`,
             backgroundAttachment: '',
             backgroundSize: 'cover',
             backgroundPosition: 'center center',
@@ -145,14 +153,14 @@ export default function SignInSide() {
             <Grid container className='grid grid-cols-12'>
               <Grid
                 item
-                className='bg-[linear-gradient(to right, #db2325, #fff)] overflow-hidden tablet:col-span-5 phone:hidden tablet:block'
+                className='bg-[linear-gradient(to right, #db2325, #fff)] overflow-hidden tablet:col-span-7 phone:hidden tablet:block'
               >
                 <Box
                   sx={{
                     background: `url(${require('./assets/images/login-bg.png')}) no-repeat`,
                     backgroundAttachment: 'local',
                     backgroundSize: 'cover',
-                    backgroundPosition: '60% center',
+                    backgroundPosition: '40% center',
                     backgroundBlendMode: 'overlay',
                     width: '100%',
                     height: '100%',
@@ -161,7 +169,7 @@ export default function SignInSide() {
                 ></Box>
               </Grid>
 
-              <Grid item className='tablet:col-span-7 phone:col-span-12'>
+              <Grid item className='tablet:col-span-5 phone:col-span-12'>
                 <Box
                   sx={{
                     my: 6,
@@ -173,7 +181,7 @@ export default function SignInSide() {
                   }}
                 >
                   <div>
-                    <img src={VISION_LOGO} alt='' style={{ width: 100 }} />
+                    <img src={VISION_LOGO} alt='' />
                   </div>
 
                   {error.status && (
@@ -239,7 +247,7 @@ export default function SignInSide() {
                       />
                     </FormControl>
 
-                    <FormControlLabel
+                    {/* <FormControlLabel
                       className='text-xs'
                       control={
                         <Checkbox
@@ -249,7 +257,7 @@ export default function SignInSide() {
                         />
                       }
                       label='Remember me'
-                    />
+                    /> */}
 
                     <Button
                       type='submit'
