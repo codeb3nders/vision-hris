@@ -13,7 +13,7 @@ import OTTable from './EmployeeDashboard/Tables/OTTable';
 import LeaveManagement from './EmployeeDashboard/Management/LeaveManagement';
 import OTManangement from './EmployeeDashboard/Management/OTManangement';
 import EmployeeDatabase from './HRDashboard/EmployeeDatabase';
-import WorkersDatabase from './HRDashboard/WorkersDatabase';
+import EmployeeDirectory from './EmployeeDirectory';
 import OTForm from './EmployeeDashboard/Forms/OTForm';
 import { Path } from 'constants/Path';
 import ProfileMain from './MyProfile/profile.main';
@@ -76,6 +76,7 @@ const Main: React.FC<Props> = ({ role }) => {
             <Switch>
               <PrivateRoute is_allowed={isAllowed('hr_dashboard')} exact path={Employee.Dashboard} component={Dashboard} />
               <PrivateRoute is_allowed={isAllowed('employees_db')} path={HR.People.Employees} component={EmployeeDatabase} />
+              <PrivateRoute is_allowed={isAllowed('employee_directory')} path={HR.People.Directory} component={EmployeeDirectory} />
 
               {/* <Route component={GenericErrorPage} /> */}
             </Switch>
