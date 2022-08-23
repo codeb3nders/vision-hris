@@ -9,9 +9,12 @@ const initialState: any = {
 
 export const getEmployeesAction: any = createAsyncThunk(
   "employees/getEmployees",
-  async () => {
+  async (access_token: string) => {
     try {
-      const response = await getEmployeesEndpoint();
+      const config = {
+        headers: { Authorization: `Bearer ${access_token}` },
+      };
+      const response = await getEmployeesEndpoint(config);
       return [...response.data];
     } catch (err: any) {
       console.error("ERROR in getEmployees", err);

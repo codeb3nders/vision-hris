@@ -5,21 +5,9 @@ import {
 } from 'constants/EndpointPath';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
-const rawData = localStorage.getItem('credential');
-const data = rawData && JSON.parse(rawData);
-const internalConfig = {
-  headers: { Authorization: `Bearer ${data && data.access_token}` },
-};
-export const createEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
-  const rawData = localStorage.getItem('credential');
-  const data = rawData && JSON.parse(rawData);
-
-  const internalConfig = {
-    headers: { Authorization: `Bearer ${data && data.access_token}` },
-  };
+export const createEmployeeEndpoint = async (body: EmployeeI, config = {}) => {
   try {
     return await axios.post(URL_EMPLOYEES, body, {
-      ...internalConfig,
       ...config,
     });
   } catch (error: any) {
@@ -29,6 +17,10 @@ export const createEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
 };
 
 export const updateEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
+  const access_token = localStorage.getItem('access_token');
+  const internalConfig = {
+    headers: { Authorization: `Bearer ${access_token}` },
+  };
   try {
     return await axios.patch(`${URL_EMPLOYEES}${body.employeeNo}`, body, {
       ...internalConfig,
@@ -40,15 +32,10 @@ export const updateEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
   }
 };
 
-export const getEmployeesEndpoint = async (employeeNo?: string) => {
+export const getEmployeesEndpoint = async (config?: any, employeeNo?: string) => {
   try {
     const url = employeeNo ? `${URL_EMPLOYEES}${employeeNo}` : URL_EMPLOYEES;
-    const rawData = localStorage.getItem('credential');
-    const data = rawData && JSON.parse(rawData);
-
-    return await axios.get(url, {
-      headers: { Authorization: `Bearer ${data && data.access_token}` },
-    });
+    return await axios.get(url, { ...config });
   } catch (error: any) {
     console.error('ERROR in getEmployeesEndpoint', error);
     return error.message;
@@ -56,6 +43,10 @@ export const getEmployeesEndpoint = async (employeeNo?: string) => {
 };
 
 export const getEmployeesWithLeavesEndpoint = async (employeeNo?: string) => {
+  const access_token = localStorage.getItem('access_token');
+  const internalConfig = {
+    headers: { Authorization: `Bearer ${access_token}` },
+  };
   try {
     const url = employeeNo
       ? `${URL_EMPLOYEES_WITH_LEAVES}${employeeNo}`
@@ -69,6 +60,10 @@ export const getEmployeesWithLeavesEndpoint = async (employeeNo?: string) => {
 };
 
 export const deleteEmployeeEndpoint = async (employeeNo: string) => {
+  const access_token = localStorage.getItem('access_token');
+  const internalConfig = {
+    headers: { Authorization: `Bearer ${access_token}` },
+  };
   try {
     const url = `${URL_EMPLOYEES}${employeeNo}`;
     return await axios.delete(url, { ...internalConfig });

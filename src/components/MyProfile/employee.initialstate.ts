@@ -72,4 +72,5 @@ export const initialState: EmployeeI = {
   licensesCertifications: null,
   familyBackground: null,
   leave_requests: null,
+  full_name: ""
 };

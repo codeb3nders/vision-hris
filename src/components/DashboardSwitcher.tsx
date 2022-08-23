@@ -10,7 +10,7 @@ import ManagerMainDashboard from './Dashboards/Manager/manager.main.dashboard';
 import { MainCtx } from './Main';
 
 const Dashboard = () => {
-  const { isLoggedIn } = useContext(AppCtx);
+  const { isLoggedIn, userData } = useContext(AppCtx);
   const { setIsTable } = useContext(MainCtx);
   const location = useLocation();
 
@@ -23,7 +23,7 @@ const Dashboard = () => {
   }, [location]);
 
   const switcher = () => {
-    switch (isLoggedIn.alias) {
+    switch (userData.userGroup) {
       case 'EMPLOYEE':
         return <EmployeeDashboard />;
       case 'APPROVER':

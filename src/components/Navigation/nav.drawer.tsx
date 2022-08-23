@@ -41,6 +41,7 @@ const NavDrawer = ({ open, setOpen, navigation }: Props) => {
                 <ListItemButton
                   className='text-sm'
                   onClick={() => setOpen(false)}
+                  key={item.name}
                 >
                   {item.name}
                 </ListItemButton>
@@ -71,9 +72,9 @@ const Menus = ({ item, setOpen }) => {
 
       <Collapse in={openMenus} timeout='auto' unmountOnExit>
         <List component='div' disablePadding>
-          {item.menus.map((menu: any) => {
+          {item.menus.map((menu: any, i: number) => {
             return (
-              <Link to={menu.href}>
+              <Link to={menu.href} key={i}>
                 <ListItemButton
                   sx={{ pl: 4 }}
                   className='text-sm'

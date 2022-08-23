@@ -22,14 +22,14 @@ function classNames(...classes) {
 
 const Navbar = () => {
   const location = useLocation();
-  const { isLoggedIn } = useContext(AppCtx);
+  const { isLoggedIn, userData } = useContext(AppCtx);
   const [navigation, setNavigation] = useState(EmployeeNavigation);
   const [openDrawer, setOpenDrawer] = useState(false);
 
   console.log({ location });
 
   useEffect(() => {
-    switch (isLoggedIn.alias) {
+    switch (userData.userGroup) {
       case 'EMPLOYEE':
         setNavigation(EmployeeNavigation);
         break;
@@ -98,7 +98,7 @@ const Navbar = () => {
                   <div className='flex space-x-2'>
                     {navigation.map((item) => {
                       return item.menus ? (
-                        <NavbarDropdown menu={item} />
+                        <NavbarDropdown key={item.name} menu={item} />
                       ) : (
                         <Link
                           key={item.name}

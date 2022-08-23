@@ -3,24 +3,17 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import { StyledEngineProvider } from '@mui/material';
 import App from './App';
-import {store} from './store'
-import {Provider} from 'react-redux'
-// import reportWebVitals from './reportWebVitals';
-
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(
-//   <React.StrictMode>
-//     <StyledEngineProvider injectFirst>
-//       <App />
-//     </StyledEngineProvider>
-//   </React.StrictMode>
-// );
+import { persistor, store } from './store'
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react';
 
 ReactDOM.render(
   <React.StrictMode>
     <StyledEngineProvider injectFirst>
       <Provider store={store}>
-      <App />
+        <PersistGate loading={null} persistor={persistor}>
+          <App />
+        </PersistGate>
       </Provider>
     </StyledEngineProvider>
   </React.StrictMode>,

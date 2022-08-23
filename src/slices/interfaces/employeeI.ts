@@ -76,6 +76,7 @@ export interface EmployeeI {
   licensesCertifications: JSON | null;
   familyBackground: JSON | null;
   leave_requests?: any;
+  full_name: string;
 }
 
 export interface LoginI {
