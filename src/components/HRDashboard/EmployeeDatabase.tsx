@@ -6,20 +6,15 @@ import { Card, Button, Link } from '@mui/material';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import {
-  getEmployeesWithLeavesAction as _getEmployeesWithLeavesAction,
-  getEmployeesWithLeaveStatus as _getEmployeesWithLeaveStatus,
-  getEmployeesWithLeaveItems as _getEmployeesWithLeaveItems,
-  getEmployeesWithLeaveError as _getEmployeesWithLeaveError,
   getEmployeesAction as _getEmployeesAction,
   getEmployeeStatus as _getEmployeeStatus,
   getEmployeeItems as _getEmployeeItems,
-  getEmployeeError as _getEmployeeError,
+  getEmployeeError as _getEmployeeError
 } from 'slices';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
-import { authStore } from 'slices/userAccess/authSlice';
 import { AppCtx } from 'App';
 
 type Props = {};
@@ -37,9 +32,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const getEmployeeItems = useSelector(_getEmployeeItems);
   const getEmployeeError = useSelector(_getEmployeeError);
 
-  const getEmployeesWithLeaveStatus = useSelector(_getEmployeesWithLeaveStatus);
-  const getEmployeesWithLeaveItems = useSelector(_getEmployeesWithLeaveItems);
-  const getEmployeesWithLeaveError = useSelector(_getEmployeesWithLeaveError);
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
     details: any;
@@ -48,7 +40,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
     details: {},
     status: false,
   });
-
+  const [loading, setIsLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
 
   const [employees, setEmployees] = useState<EmployeeI[]>([]);
@@ -64,7 +56,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   useEffect(() => {
     if (access_token && getEmployeeStatus === 'idle') {
-      dispatch(_getEmployeesAction(access_token));
+      dispatch(_getEmployeesAction({ access_token }));
     }
   }, [access_token]);
 
@@ -76,6 +68,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
         return { ...r, id: r.employeeNo, full_name };
       })
     );
+    setIsLoading(false);
   }, [getEmployeeItems]);
 
   return (
@@ -107,7 +100,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
             pageSize={5}
             rowsPerPageOptions={[5]}
             checkboxSelection
-            loading={employees?.length <= 0}
+            loading={loading}
             getRowId={(row) => row.employeeNo}
           />
         </div>

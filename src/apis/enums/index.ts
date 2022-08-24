@@ -1,12 +1,12 @@
 import axios from 'axios';
 import {
-    URL_LIST_OF_VALUES
+    URL_ENUMS
 } from 'constants/EndpointPath';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
-export const createLOVEndpoint = async (body: EmployeeI, config = {}) => {
+export const createEnumEndpoint = async (body: EmployeeI, config = {}) => {
     try {
-        return await axios.post(URL_LIST_OF_VALUES, body, {
+        return await axios.post(URL_ENUMS, body, {
             ...config,
         });
     } catch (error: any) {
@@ -15,9 +15,9 @@ export const createLOVEndpoint = async (body: EmployeeI, config = {}) => {
     }
 };
 
-export const updateLOVEndpoint = async (body: EmployeeI, config: any) => {
+export const updateEnumEndpoint = async (body: EmployeeI, config: any) => {
     try {
-        return await axios.patch(`${URL_LIST_OF_VALUES}${body.employeeNo}`, body, {
+        return await axios.patch(`${URL_ENUMS}${body.employeeNo}`, body, {
             ...config,
         });
     } catch (error: any) {
@@ -26,10 +26,10 @@ export const updateLOVEndpoint = async (body: EmployeeI, config: any) => {
     }
 };
 
-export const getLOVEndpoint = async (config: any, table: string, params?: any) => {
+export const getEnumEndpoint = async (config: any, params?: any) => {
     try {
-        const url = `${URL_LIST_OF_VALUES}${table}`;
-        return await axios.get(url, { ...config, ...params });
+        const url = `${URL_ENUMS}`;
+        return await axios.get(url, { ...config, params });
     } catch (error: any) {
         console.error('ERROR in getEmployeesEndpoint', error);
         return error.message;

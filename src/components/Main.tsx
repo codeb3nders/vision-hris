@@ -43,7 +43,6 @@ const Main: React.FC<Props> = ({ role }) => {
     if (!role) return true;
 
     const code = role.toLowerCase().replace(" ", "_");
-    console.log({ code })
     const haveAcess = ROLE_ACCESS[code].indexOf(module_id);
     if (haveAcess !== -1) {
       return true;

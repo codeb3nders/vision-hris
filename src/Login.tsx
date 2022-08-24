@@ -19,11 +19,12 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { VISION_RED } from './constants/Colors';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { AppCtx } from './App';
 import CustomCard from './CustomComponents/CustomCard';
 import { VISION_LOGO } from 'assets';
-import { persistor } from "./store";
-
+import {
+  getEnumsAction as _getEnumsAction,
+  enumsStore
+} from 'slices';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction, setIsLoggedIn, clearData } from 'slices/userAccess/authSlice';
 
@@ -47,9 +48,9 @@ const theme = createTheme();
 
 export default function SignInSide() {
   const dispatch = useDispatch();
+  const { status: enumsStatus, enumsData } = useSelector(enumsStore);
   const { auth } = useSelector((state: any) => state);
   const { status, isLoggedIn, access_token, userData } = auth;
-  // const { setIsLoggedIn } = useContext(AppCtx);
   const [values, setValues] = useState({
     amount: '',
     password: '',
@@ -71,15 +72,16 @@ export default function SignInSide() {
   });
 
   useEffect(() => {
-    console.log({ auth }, "xxxxxxxxxxxxxx")
     if (status === 'succeeded') {
       if (access_token !== '') {
-        console.log({ userData })
         // setUserData(userData);
         if (!userData.isActive) {
           setError({ status: true, message: `Sorry, your account is inactive.` });
         } else {
           setError({ status: false, message: '' });
+          if (userData.userGroup == "HR ADMIN") {
+            dispatch(_getEnumsAction({ access_token }));
+          }
           dispatch(setIsLoggedIn(true))
         }
       } else {
@@ -118,7 +120,6 @@ export default function SignInSide() {
         password: loginData.password,
       }));
     } catch (error) {
-      console.log({ error })
       setError({
         status: true,
         message: `Sorry, we couldn't find an account with that username or password.`,

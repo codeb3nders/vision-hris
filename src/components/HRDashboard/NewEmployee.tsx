@@ -50,7 +50,7 @@ const NewEmployee: React.FC<Props> = ({ open, setOpen, id }) => {
 
   console.log({ open });
 
-  const handleDateChange = () => {};
+  const handleDateChange = () => { };
 
   const handleList = () => {
     const DateInput = (title) => (

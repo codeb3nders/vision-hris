@@ -84,6 +84,7 @@ const Education = (props: Props) => {
                   disabled={!handleExist(params.row.levelOfEducation)}
                   value={employeeDetails[yrFrom] || null}
                   label='From'
+                  views={['year']}
                   onChange={(value: any) =>
                     setEmployeeDetails((prev: EmployeeI) => ({
                       ...prev,
@@ -107,6 +108,7 @@ const Education = (props: Props) => {
                 <DatePicker
                   disabled={!handleExist(params.row.levelOfEducation)}
                   label='To'
+                  views={['year']}
                   onChange={(value: any) =>
                     setEmployeeDetails((prev: EmployeeI) => ({
                       ...prev,

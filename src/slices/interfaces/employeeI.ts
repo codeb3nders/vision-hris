@@ -23,7 +23,7 @@ export interface EmployeeI {
   endOfProbationary: Date;
   contractEndDate: Date;
   gender: string;
-  birthDate: Date;
+  birthDate: Date | null;
   personalContactNumber: string;
   companyContactNumber: string;
   taxExemption: string;

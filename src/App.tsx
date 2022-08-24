@@ -3,8 +3,6 @@ import React, { useEffect, createContext, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
 import SignInSide from './Login';
 import Main from './components/Main';
-import { EmployeeI } from 'slices/interfaces/employeeI';
-import { getLocalStorageItems } from 'utils/localStorage';
 import { useSelector } from 'react-redux';
 
 export const AppCtx: any = createContext(null);
@@ -27,7 +25,6 @@ const App: React.FC<Props> = () => {
   const [currentPage, setCurrentPage] = useState('login');
   const [mode] = useState(true);
 
-  console.log({ isLoggedIn })
   const theme = createTheme({
     palette: {
       mode: mode ? 'light' : 'dark',
@@ -37,24 +34,30 @@ const App: React.FC<Props> = () => {
     },
   });
 
-  console.log({ mode: theme.palette.mode });
+  useEffect(() => {
+    if (userData && userData.userGroup == "HR ADMIN") {
+      setIsHRLogin(true);
+    }
+  }, [userData])
 
   return (
     <div className={`App h-[100vh]`} style={{ background: '#fafbff' }}>
       <ThemeProvider theme={theme}>
-        <AppCtx.Provider
-          value={{
-            access_token,
-            isLoggedIn,
-            userData,
-            setIsHRLogin,
-            isHRLogin,
-            setCurrentPage,
-            currentPage,
-          }}
-        >
-          {!isLoggedIn ? <SignInSide /> : <Main role={userData.userGroup} />}
-        </AppCtx.Provider>
+        {!isLoggedIn ? <SignInSide /> :
+          <AppCtx.Provider
+            value={{
+              access_token,
+              isLoggedIn,
+              userData,
+              setIsHRLogin,
+              isHRLogin,
+              setCurrentPage,
+              currentPage,
+            }}
+          >
+            <Main role={userData.userGroup} />
+          </AppCtx.Provider>
+        }
       </ThemeProvider>
     </div>
   );

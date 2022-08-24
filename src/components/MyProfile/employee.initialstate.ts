@@ -19,7 +19,7 @@ export const initialState: EmployeeI = {
   endOfProbationary: new Date(),
   contractEndDate: new Date(),
   gender: '',
-  birthDate: new Date(),
+  birthDate: null,
   personalContactNumber: '',
   companyContactNumber: '',
   taxExemption: '',

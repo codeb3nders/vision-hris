@@ -15,6 +15,7 @@ import {
   getEmployeeCreateStatus,
 } from './../../slices/employees/createEmployeesSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { enumsStore } from 'slices';
 
 type Props = {
   isNew?: boolean;
@@ -37,20 +38,24 @@ export type ProfileModel = {
     }>
   >;
   displayPhoto: { employeeNo: string; photo: string };
+  isOwner: boolean;
+  enums: any;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => {},
+  setIndex: () => { },
   isNew: false,
   isView: false,
   employeeDetails: {},
-  setEmployeeDetails: () => {},
-  setDisplayPhoto: () => {},
+  setEmployeeDetails: () => { },
+  setDisplayPhoto: () => { },
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
+  isOwner: false,
+  enums: {}
 });
 
 const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
@@ -58,7 +63,7 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
   const status = useSelector(getEmployeeCreateStatus);
 
   const [index, setIndex] = useState<string>('0');
-  const { isLoggedIn } = useContext(AppCtx);
+  const { isLoggedIn, userData } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
   const [employeeDetails, setEmployeeDetails] =
     useState<EmployeeI>(initialState);
@@ -69,6 +74,8 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     employeeNo: '',
     photo: '',
   });
+  const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [enums, setEnums] = useState<any>({});
   const [displayPhotos, setDisplayPhotos] = useState<any[]>([]);
 
   const [openNotif, setOpenNotif] = useState<{
@@ -81,14 +88,18 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     status: false,
     action: '',
   });
+  const { enumsData } = useSelector(enumsStore)
 
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex('1');
     if (!isNew && isView) {
       setEmployeeDetails(userDetails || initialState);
+      if (userDetails?.employeeNo === userData.employeeNo) {
+        setIsOwner(true);
+      }
     } else if (!isNew && !isView) {
-      setEmployeeDetails(isLoggedIn.userData || initialState);
+      setEmployeeDetails(userData || initialState);
     } else {
       setEmployeeDetails(initialState);
     }
@@ -102,6 +113,51 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     }
   };
 
+  useEffect(() => {
+    var positions: any = [], departments: any = [], ranks: any = [], civil_status: any = [], citizenship: any = [], religions: any = [], employment_status: any = [], locations: any = [], assets: any = [], file201: any = [], allowance_types: any = [], disciplinary_actions: any = [];
+    enumsData.forEach((o: any) => {
+      switch (o.type.toLocaleLowerCase()) {
+        case "position":
+          positions.push(o);
+          break;
+        case "civil_status":
+          civil_status.push(o);
+          break;
+        case "citizenship":
+          citizenship.push(o);
+          break;
+        case "religion":
+          religions.push(o);
+          break;
+        case "employment_status":
+          employment_status.push(o);
+          break;
+        case "location":
+          locations.push(o);
+          break;
+        case "department":
+          departments.push(o);
+          break;
+        case "rank":
+          ranks.push(o);
+          break;
+        case "asset":
+          assets.push(o);
+          break;
+        case "201_file_types":
+          file201.push(o);
+          break;
+        case "allowance_type":
+          allowance_types.push(o);
+          break;
+        case "disciplinary_action":
+          disciplinary_actions.push(o);
+          break;
+      }
+    })
+    setEnums({ positions, departments, ranks, civil_status, citizenship, religions, employment_status, locations, assets, file201, allowance_types, disciplinary_actions })
+  }, [enumsData])
+  console.log({ enums })
   useEffect(() => {
     handleCompanyEmail();
     if (employeeDetails.employeeNo && displayPhotos?.length > 0) {
@@ -138,18 +194,18 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-              ...displayPhotos,
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+            ...displayPhotos,
+          ]
           : [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+          ]
       )
     );
   };
@@ -214,6 +270,8 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
         isView,
         setDisplayPhoto,
         displayPhoto,
+        isOwner,
+        enums
       }}
     >
       <Dialog open={loading.status}>
@@ -245,11 +303,10 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
-                isNew
-                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                  : ''
-              }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
+                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                : ''
+                }`}
             >
               <ProfileTabContent className='self-stretch' />
             </article>

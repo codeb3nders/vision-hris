@@ -16,22 +16,25 @@ import GridWrapper from 'CustomComponents/GridWrapper';
 import { useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 import moment from 'moment';
-import {
-  CITIZENSHIP,
-  CIVIL_STATUS,
-  HIGHEST_EDUCATION,
-  RELIGION,
-} from 'constants/Values';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import Address from './address';
 
 type Props = {};
 
 const Personal = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
+  const { setEmployeeDetails, employeeDetails, isOwner, enums } = useContext(ProfileCtx);
   const [otherReligion, setOtherReligion] = useState<boolean>(false);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
   const [philData, setPhilData] = useState<any>(null);
+  const [citizenship, setCitizenship] = useState<any[]>([])
+  const [civilStatus, setCivilStatus] = useState<any[]>([])
+  const [religion, setReligion] = useState<any[]>([])
+
+  useEffect(() => {
+    setCitizenship(enums.citizenship)
+    setCivilStatus(enums.civil_status)
+    setReligion(enums.religions)
+  }, [enums])
 
   useEffect(() => {
     if (sameAddress) {
@@ -128,10 +131,7 @@ const Personal = (props: Props) => {
   };
 
   const handleChange = (value: any) => {
-    setEmployeeDetails({
-      ...employeeDetails,
-      birthDate: moment(value).format('LL'),
-    });
+    setEmployeeDetails(employeeDetails);
   };
 
   return (
@@ -206,10 +206,10 @@ const Personal = (props: Props) => {
         <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
-              label='Birthday'
+              label='Birthdate'
               onChange={handleChange}
               // disabled={loading}
-              value={employeeDetails?.birthDate}
+              value={employeeDetails?.birthDate || null}
               renderInput={(params) => (
                 <TextField {...params} fullWidth required variant='standard' />
               )}
@@ -251,8 +251,8 @@ const Personal = (props: Props) => {
               }}
               defaultValue={employeeDetails?.civilStatus}
             >
-              {CIVIL_STATUS.map((status) => {
-                return <MenuItem value={status}>{status}</MenuItem>;
+              {civilStatus.map((status) => {
+                return <MenuItem key={status._id} value={status.code}>{status.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
@@ -263,7 +263,7 @@ const Personal = (props: Props) => {
           className='desktop:col-span-7 laptop:col-span-7 phone:col-span-7'
         >
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
-            <FormControl required fullWidth variant='standard'>
+            <FormControl required={isOwner} fullWidth variant='standard'>
               <InputLabel id='citizenship'>Citizenship</InputLabel>
               <Select
                 labelId='citizenship'
@@ -276,10 +276,10 @@ const Personal = (props: Props) => {
                 }}
                 defaultValue={employeeDetails?.citizenship}
               >
-                {CITIZENSHIP.map((c: string, idx: number) => {
+                {citizenship.map((c: any, idx: number) => {
                   return (
-                    <MenuItem key={`${c}~${idx}`} value={c}>
-                      {c}
+                    <MenuItem key={`${c._id}~${idx}`} value={c.code}>
+                      {c.name}
                     </MenuItem>
                   );
                 })}
@@ -288,7 +288,7 @@ const Personal = (props: Props) => {
           </div>
 
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
-            <FormControl required fullWidth variant='standard'>
+            <FormControl required={isOwner} fullWidth variant='standard'>
               <InputLabel id='religion'>Religion</InputLabel>
               <Select
                 labelId='religion'
@@ -296,8 +296,8 @@ const Personal = (props: Props) => {
                 onChange={handleReligion}
                 defaultValue={employeeDetails?.religion}
               >
-                {RELIGION.map((religion) => {
-                  return <MenuItem value={religion}>{religion}</MenuItem>;
+                {religion.map((religion) => {
+                  return <MenuItem key={religion._id} value={religion.code}>{religion.name}</MenuItem>;
                 })}
               </Select>
             </FormControl>

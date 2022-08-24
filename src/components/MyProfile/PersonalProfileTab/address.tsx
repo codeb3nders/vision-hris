@@ -27,19 +27,19 @@ const Address = ({ data, isPermanent }: Props) => {
   useEffect(() => {
     isPermanent
       ? setEmployeeDetails((prev: EmployeeI) => ({
-          ...prev,
-          permanentRegion: selectedRegion.region_name,
-          permanentProvince: selectedProvince.id,
-          permanentMunicipality: selectedMunicipality.id,
-          permanentBarangay: selectedBarangay,
-        }))
+        ...prev,
+        permanentRegion: selectedRegion.region_name,
+        permanentProvince: selectedProvince.id,
+        permanentMunicipality: selectedMunicipality.id,
+        permanentBarangay: selectedBarangay,
+      }))
       : setEmployeeDetails((prev: EmployeeI) => ({
-          ...prev,
-          presentRegion: selectedRegion.region_name,
-          presentProvince: selectedProvince.id,
-          presentMunicipality: selectedMunicipality.id,
-          presentBarangay: selectedBarangay,
-        }));
+        ...prev,
+        presentRegion: selectedRegion.region_name,
+        presentProvince: selectedProvince.id,
+        presentMunicipality: selectedMunicipality.id,
+        presentBarangay: selectedBarangay,
+      }));
   }, [
     selectedRegion,
     selectedProvince,
@@ -55,11 +55,11 @@ const Address = ({ data, isPermanent }: Props) => {
 
   return (
     <GridWrapper colSize='8'>
-      <div className='col-span-4'>
+      <div className='col-span-8'>
         <TextField
           multiline
           required
-          label={`${isPermanent ? 'Permanent' : 'Present'} Street Address 1`}
+          label={`${isPermanent ? 'Permanent' : 'Present'} Street Address`}
           size='small'
           variant='standard'
           fullWidth
@@ -72,7 +72,7 @@ const Address = ({ data, isPermanent }: Props) => {
           }}
         />
       </div>
-      <div className='col-span-4'>
+      {/* <div className='col-span-4'>
         <TextField
           multiline
           required
@@ -88,7 +88,7 @@ const Address = ({ data, isPermanent }: Props) => {
             });
           }}
         />
-      </div>
+      </div> */}
 
       <div className='col-span-2'>
         <FormControl variant='standard' size='small' required fullWidth>
