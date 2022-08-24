@@ -10,7 +10,6 @@ const initialState: any = {
 export const getEmployeesAction: any = createAsyncThunk(
   "employees/getEmployees",
   async (data: { access_token: string, params?: any }) => {
-    console.log({ data })
     try {
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },

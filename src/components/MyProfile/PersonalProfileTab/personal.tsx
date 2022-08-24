@@ -274,7 +274,7 @@ const Personal = (props: Props) => {
                     citizenship: e.target.value,
                   });
                 }}
-                defaultValue={employeeDetails?.citizenship}
+                defaultValue={employeeDetails?.citizenship || "Philippines"}
               >
                 {citizenship.map((c: any, idx: number) => {
                   return (

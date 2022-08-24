@@ -15,7 +15,6 @@ export const getEnumsAction: any = createAsyncThunk(
             const config = {
                 headers: { Authorization: `Bearer ${access_token}` },
             };
-            console.log({ data })
             const response = await getEnumEndpoint(config, params);
             return [...response.data];
         } catch (err: any) {
