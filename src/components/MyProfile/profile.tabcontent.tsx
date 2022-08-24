@@ -11,9 +11,13 @@ import JobInfo from './EmploymentTab/job.info';
 import History from './Leaves/history';
 import LeaveBalances from './Leaves/leave.balances';
 import UpcomingLeaves from './Leaves/upcoming.leaves';
+import Certificates from './PersonalProfileTab/certificates';
 import ContactDetails from './PersonalProfileTab/contact.details';
+import Education from './PersonalProfileTab/education';
+import EmployementRecord from './PersonalProfileTab/employement.record';
 import FamilyBackground from './PersonalProfileTab/family.background';
 import GovernmentDetails from './PersonalProfileTab/government.details';
+import Licensure from './PersonalProfileTab/licensure';
 import PayrollDetails from './PersonalProfileTab/payroll.details';
 import Personal from './PersonalProfileTab/personal';
 import { ProfileCtx } from './profile.main';
@@ -32,24 +36,30 @@ const ProfileTabContent = ({ className }: Props) => {
         isNew || isView
           ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
           : ''
-      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 ${className}`}
+      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
     >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
       <TabPanel value='1' className='p-0 grid' id='Personal'>
         <Personal />
-        <Divider />
+
+        <Education />
+
+        <EmployementRecord />
+
+        <Licensure />
+
+        <Certificates />
+
         <FamilyBackground />
-        <Divider />
-        <ContactDetails />
-        <Divider />
-        <GovernmentDetails />
-        <Divider />
-        <PayrollDetails />
+
+        <Contacts />
       </TabPanel>
 
       <TabPanel value='2' className='p-0 grid' id='EmploymentStatus'>
-        <General />
+        <JobInfo />
+        <GovernmentDetails />
+        {/* <General /> */}
         <Divider />
         {!isNew && (
           <>
@@ -57,7 +67,6 @@ const ProfileTabContent = ({ className }: Props) => {
             <Divider />
           </>
         )}
-        <JobInfo />
       </TabPanel>
 
       <TabPanel value='3' className='p-0 grid' id='Emergency'>

@@ -13,8 +13,8 @@ import {
   getEmployeesAction as _getEmployeesAction,
   getEmployeeStatus as _getEmployeeStatus,
   getEmployeeItems as _getEmployeeItems,
-  getEmployeeError as _getEmployeeError
-} from "slices"
+  getEmployeeError as _getEmployeeError,
+} from 'slices';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
@@ -35,12 +35,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
   // Employees
   const getEmployeeStatus = useSelector(_getEmployeeStatus);
   const getEmployeeItems = useSelector(_getEmployeeItems);
-  const getEmployeeError = useSelector(_getEmployeeError)
-
+  const getEmployeeError = useSelector(_getEmployeeError);
 
   const getEmployeesWithLeaveStatus = useSelector(_getEmployeesWithLeaveStatus);
   const getEmployeesWithLeaveItems = useSelector(_getEmployeesWithLeaveItems);
-  const getEmployeesWithLeaveError = useSelector(_getEmployeesWithLeaveError)
+  const getEmployeesWithLeaveError = useSelector(_getEmployeesWithLeaveError);
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
     details: any;
@@ -64,20 +63,20 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [location]);
 
   useEffect(() => {
-    if (access_token && getEmployeeStatus === "idle") {
-      dispatch(_getEmployeesAction(access_token))
+    if (access_token && getEmployeeStatus === 'idle') {
+      dispatch(_getEmployeesAction(access_token));
     }
   }, [access_token]);
 
   useEffect(() => {
     setEmployees(
       getEmployeeItems.map((r: any) => {
-        const mi = r.middleName ? r.middleName.charAt(0) : "";
-        const full_name = `${r.lastName}, ${r.firstName} ${mi}`
+        const mi = r.middleName ? r.middleName.charAt(0) : '';
+        const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
         return { ...r, id: r.employeeNo, full_name };
       })
     );
-  }, [getEmployeeItems])
+  }, [getEmployeeItems]);
 
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
@@ -130,9 +129,7 @@ const columns = (setViewDetails: any) => [
           style={{ cursor: 'pointer' }}
           onClick={() => setViewDetails({ details: cell.row, status: true })}
         >
-          <div className='whitespace-normal'>
-            {cell.value}
-          </div>
+          <div className='whitespace-normal'>{cell.value}</div>
         </Link>
       );
     },
