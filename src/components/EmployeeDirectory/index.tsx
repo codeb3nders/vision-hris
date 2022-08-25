@@ -5,7 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Card, Button, Link } from '@mui/material';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import {
-    getEmployeesAction as _getEmployeesAction,
+    getAllEmployeesAction as _getEmployeesAction,
     getEmployeeStatus as _getEmployeeStatus,
     getEmployeeItems as _getEmployeeItems,
     getEmployeeError as _getEmployeeError
@@ -46,19 +46,18 @@ const EmployeeDirectory: React.FC<Props> = () => {
 
     return <>
         <Card sx={{ mt: 5, p: 2 }}>
-
-            <div style={{ height: 400, width: '100%' }}>
-                <DataGrid
-                    disableSelectionOnClick
-                    rows={employees || []}
-                    columns={columns()}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    checkboxSelection
-                    loading={employees?.length <= 0}
-                    getRowId={(row) => row.employeeNo}
-                />
-            </div>
+            <DataGrid
+                autoHeight
+                density="compact"
+                disableSelectionOnClick
+                rows={employees || []}
+                columns={columns()}
+                pageSize={30}
+                rowsPerPageOptions={[30]}
+                checkboxSelection={false}
+                loading={employees?.length <= 0}
+                getRowId={(row) => row.employeeNo}
+            />
         </Card>
     </>
 };

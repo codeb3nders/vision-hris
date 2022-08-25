@@ -6,7 +6,7 @@ import { Card, Button, Link } from '@mui/material';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import {
-  getEmployeesAction as _getEmployeesAction,
+  getAllEmployeesAction as _getEmployeesAction,
   getEmployeeStatus as _getEmployeeStatus,
   getEmployeeItems as _getEmployeeItems,
   getEmployeeError as _getEmployeeError
@@ -34,11 +34,13 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
-    details: any;
+    employeeNo: string;
     status: boolean;
+    myTeam: any[];
   }>({
-    details: {},
+    employeeNo: "",
     status: false,
+    myTeam: []
   });
   const [loading, setIsLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -71,6 +73,64 @@ const EmployeeDatabase: React.FC<Props> = () => {
     setIsLoading(false);
   }, [getEmployeeItems]);
 
+  const getMyTeam = (teamLeader) => {
+    return employees.filter((x: any) => x.reportsTo === teamLeader)
+  }
+
+  const columns = (setViewDetails: any) => [
+    {
+      field: 'full_name',
+      headerName: 'Employee name',
+      width: 300,
+      renderCell: (cell) => {
+        return (
+          <Link
+            underline='none'
+            variant='button'
+            style={{ cursor: 'pointer' }}
+            onClick={() => setViewDetails({ employeeNo: cell.row.employeeNo, myTeam: getMyTeam(cell.row.reportsTo), status: true })}
+          >
+            <div className='whitespace-normal'>{cell.value}</div>
+          </Link>
+        );
+      },
+    },
+    {
+      field: 'employeeNo',
+      headerName: 'Employee No.',
+      width: 100,
+      renderCell: (cell) => (
+        <span title={cell.value} className='MuiDataGrid-cellContent'>
+          {cell.value}
+        </span>
+      ),
+    },
+    { field: 'position', headerName: 'Position', width: 200 },
+    {
+      field: 'rank',
+      headerName: 'Rank',
+      width: 140,
+    },
+    {
+      field: 'department',
+      headerName: 'Department',
+      width: 250,
+      //   renderCell: (cell) => cell,
+    },
+    {
+      field: 'location',
+      headerName: 'Location',
+      width: 140,
+      //   renderCell: (cell) => cell,
+    },
+    {
+      field: 'employmentStatus',
+      headerName: 'Employment Status',
+      width: 140,
+      //   renderCell: (cell) => cell,
+    },
+  ];
+
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
       <NewEmployeeProfile open={open} setOpen={setOpen} />
@@ -92,75 +152,22 @@ const EmployeeDatabase: React.FC<Props> = () => {
           </Button>
         </div>
 
-        <div style={{ height: 400, width: '100%' }}>
-          <DataGrid
-            disableSelectionOnClick
-            rows={employees || []}
-            columns={columns(setViewDetails)}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            checkboxSelection
-            loading={loading}
-            getRowId={(row) => row.employeeNo}
-          />
-        </div>
+        {/* <div style={{ height: 'auto', width: '100%' }}> */}
+        <DataGrid
+          autoHeight
+          density="compact"
+          disableSelectionOnClick
+          rows={employees || []}
+          columns={columns(setViewDetails)}
+          pageSize={30}
+          rowsPerPageOptions={[30]}
+          checkboxSelection={false}
+          loading={loading}
+          getRowId={(row) => row.employeeNo}
+        />
+        {/* </div> */}
       </Card>
     </EmployeeCtx.Provider>
   );
 };
-
-const columns = (setViewDetails: any) => [
-  {
-    field: 'full_name',
-    headerName: 'Employee name',
-    width: 300,
-    renderCell: (cell) => {
-      return (
-        <Link
-          underline='none'
-          variant='button'
-          style={{ cursor: 'pointer' }}
-          onClick={() => setViewDetails({ details: cell.row, status: true })}
-        >
-          <div className='whitespace-normal'>{cell.value}</div>
-        </Link>
-      );
-    },
-  },
-  {
-    field: 'employeeNo',
-    headerName: 'Employee No.',
-    width: 100,
-    renderCell: (cell) => (
-      <span title={cell.value} className='MuiDataGrid-cellContent'>
-        {cell.value}
-      </span>
-    ),
-  },
-  { field: 'position', headerName: 'Position', width: 200 },
-  {
-    field: 'rank',
-    headerName: 'Rank',
-    width: 140,
-  },
-  {
-    field: 'department',
-    headerName: 'Department',
-    width: 250,
-    //   renderCell: (cell) => cell,
-  },
-  {
-    field: 'location',
-    headerName: 'Location',
-    width: 140,
-    //   renderCell: (cell) => cell,
-  },
-  {
-    field: 'employmentStatus',
-    headerName: 'Employment Status',
-    width: 140,
-    //   renderCell: (cell) => cell,
-  },
-];
-
 export default EmployeeDatabase;

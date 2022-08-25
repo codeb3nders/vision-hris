@@ -15,13 +15,19 @@ import {
   getEmployeeCreateStatus,
 } from './../../slices/employees/createEmployeesSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { enumsStore } from 'slices';
+import {
+  enumsStore,
+  getOneEmployeeAction as _getOneEmployeeAction,
+  getEmployeeStatusOne as _getOneEmployeeStatus,
+  getEmployeeDetails as _getOneEmployeeDetails,
+} from 'slices';
 
 type Props = {
   isNew?: boolean;
   isView?: boolean;
-  userDetails?: EmployeeI;
+  employeeNo?: string;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  myTeam?: any[];
 };
 
 export type ProfileModel = {
@@ -40,6 +46,7 @@ export type ProfileModel = {
   displayPhoto: { employeeNo: string; photo: string };
   isOwner: boolean;
   enums: any;
+  myTeam: any[] | undefined;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -55,15 +62,16 @@ export const ProfileCtx = createContext<ProfileModel>({
     photo: '',
   },
   isOwner: false,
-  enums: {}
+  enums: {},
+  myTeam: []
 });
 
-const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
+const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const dispatch = useDispatch();
   const status = useSelector(getEmployeeCreateStatus);
 
   const [index, setIndex] = useState<string>('0');
-  const { isLoggedIn, userData } = useContext(AppCtx);
+  const { isLoggedIn, userData, access_token } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
   const [employeeDetails, setEmployeeDetails] =
     useState<EmployeeI>(initialState);
@@ -89,13 +97,22 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     action: '',
   });
   const { enumsData } = useSelector(enumsStore)
+  // Employees
+  const getEmployeeStatus = useSelector(_getOneEmployeeStatus);
+  const employeeData = useSelector(_getOneEmployeeDetails);
+
+  useEffect(() => {
+    if (access_token && employeeNo) {
+      dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo } }))
+    }
+  }, [access_token, employeeNo]);
 
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex('1');
     if (!isNew && isView) {
-      setEmployeeDetails(userDetails || initialState);
-      if (userDetails?.employeeNo === userData.employeeNo) {
+      setEmployeeDetails(employeeData || initialState);
+      if (employeeData?.employeeNo === userData.employeeNo) {
         setIsOwner(true);
       }
     } else if (!isNew && !isView) {
@@ -103,7 +120,7 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     } else {
       setEmployeeDetails(initialState);
     }
-  }, [userDetails, isLoggedIn, isNew, isView]);
+  }, [employeeData, isLoggedIn, isNew, isView]);
 
   const handleEmployee = async () => {
     if (!employeeDetails.employeeNo && isNew) {
@@ -157,7 +174,7 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     })
     setEnums({ positions, departments, ranks, civil_status, citizenship, religions, employment_status, locations, assets, file201, allowance_types, disciplinary_actions })
   }, [enumsData])
-  console.log({ enums })
+
   useEffect(() => {
     handleCompanyEmail();
     if (employeeDetails.employeeNo && displayPhotos?.length > 0) {
@@ -271,7 +288,8 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
         setDisplayPhoto,
         displayPhoto,
         isOwner,
-        enums
+        enums,
+        myTeam
       }}
     >
       <Dialog open={loading.status}>
