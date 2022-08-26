@@ -11,7 +11,6 @@ import ProfileOther from './profile.other';
 import ProfileTabContent from './profile.tabcontent';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
-<<<<<<< HEAD
 import {
   createEmployee,
   getEmployeeCreateStatus,
@@ -23,10 +22,6 @@ import {
   getEmployeeStatusOne as _getOneEmployeeStatus,
   getEmployeeDetails as _getOneEmployeeDetails,
 } from 'slices';
-=======
-import { createEmployee } from './../../slices/employees/createEmployeesSlice';
-import { useDispatch } from 'react-redux';
->>>>>>> feature/VHRIS-41
 
 type Props = {
   isNew?: boolean;
