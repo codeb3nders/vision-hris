@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { TabContext } from '@mui/lab';
 import { Alert, CircularProgress, Dialog, Snackbar } from '@mui/material';
-import { createEmployeeEndpoint, updateEmployeeEndpoint } from 'apis/employees';
+import { updateEmployeeEndpoint } from 'apis/employees';
 import { AppCtx } from 'App';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
@@ -10,6 +11,7 @@ import ProfileOther from './profile.other';
 import ProfileTabContent from './profile.tabcontent';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
+<<<<<<< HEAD
 import {
   createEmployee,
   getEmployeeCreateStatus,
@@ -21,6 +23,10 @@ import {
   getEmployeeStatusOne as _getOneEmployeeStatus,
   getEmployeeDetails as _getOneEmployeeDetails,
 } from 'slices';
+=======
+import { createEmployee } from './../../slices/employees/createEmployeesSlice';
+import { useDispatch } from 'react-redux';
+>>>>>>> feature/VHRIS-41
 
 type Props = {
   isNew?: boolean;
@@ -68,7 +74,6 @@ export const ProfileCtx = createContext<ProfileModel>({
 
 const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const dispatch = useDispatch();
-  const status = useSelector(getEmployeeCreateStatus);
 
   const [index, setIndex] = useState<string>('0');
   const { isLoggedIn, userData, access_token } = useContext(AppCtx);
@@ -106,6 +111,10 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo } }))
     }
   }, [access_token, employeeNo]);
+
+  useEffect(() => {
+    console.log({ employeeDetails });
+  }, [employeeDetails]);
 
   useEffect(() => {
     handleGetDisplayPhoto();

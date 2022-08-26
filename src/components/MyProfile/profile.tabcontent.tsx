@@ -1,18 +1,18 @@
 import { TabPanel } from '@mui/lab';
 import { Divider } from '@mui/material';
 import CustomCard from 'CustomComponents/CustomCard';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import ChecklistTable from './201Checklist/checklist.table';
 import AssetsTable from './Assets/assets.table';
+import AllowanceDetails from './CompensationAndBenefits/allowance.details';
+import PayrollInformation from './CompensationAndBenefits/payroll.information';
 import Contacts from './Emergency/contacts';
 import EmployementStatus from './EmploymentTab/employement.status';
-import General from './EmploymentTab/general';
 import JobInfo from './EmploymentTab/job.info';
 import History from './Leaves/history';
 import LeaveBalances from './Leaves/leave.balances';
 import UpcomingLeaves from './Leaves/upcoming.leaves';
 import Certificates from './PersonalProfileTab/certificates';
-import ContactDetails from './PersonalProfileTab/contact.details';
 import Education from './PersonalProfileTab/education';
 import EmployementRecord from './PersonalProfileTab/employement.record';
 import FamilyBackground from './PersonalProfileTab/family.background';
@@ -42,25 +42,16 @@ const ProfileTabContent = ({ className }: Props) => {
 
       <TabPanel value='1' className='p-0 grid' id='Personal'>
         <Personal />
-
         <Education />
-
         <EmployementRecord />
-
         <Licensure />
-
         <Certificates />
-
         <FamilyBackground />
-
         <Contacts />
       </TabPanel>
 
       <TabPanel value='2' className='p-0 grid' id='EmploymentStatus'>
         <JobInfo />
-        <GovernmentDetails />
-        {/* <General /> */}
-        <Divider />
         {!isNew && (
           <>
             <EmployementStatus />
@@ -69,8 +60,12 @@ const ProfileTabContent = ({ className }: Props) => {
         )}
       </TabPanel>
 
-      <TabPanel value='3' className='p-0 grid' id='Emergency'>
-        <Contacts />
+      <TabPanel value='3' className='p-0 grid' id='CompensationAndBenefits'>
+        <GovernmentDetails />
+        <PayrollInformation />
+        <AllowanceDetails />
+        {/* <PayrollAccountDetails /> */}
+        <PayrollDetails />
       </TabPanel>
 
       <TabPanel value='4' className='p-0 grid' id='Leaves'>

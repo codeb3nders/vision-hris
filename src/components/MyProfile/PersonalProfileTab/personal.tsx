@@ -15,7 +15,6 @@ import { AccountCircleTwoTone } from '@mui/icons-material';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
-import moment from 'moment';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import Address from './address';
 
@@ -143,6 +142,7 @@ const Personal = (props: Props) => {
       <GridWrapper colSize='7'>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
           <TextField
+            id='first-name'
             required
             label='First Name'
             size='small'
@@ -159,6 +159,7 @@ const Personal = (props: Props) => {
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
           <TextField
+            id='middle-name'
             label='Middle Name'
             size='small'
             variant='standard'
@@ -174,6 +175,7 @@ const Personal = (props: Props) => {
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
           <TextField
+            id='last-name'
             required
             label='Last Name'
             size='small'
@@ -190,6 +192,7 @@ const Personal = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-7'>
           <TextField
+            id='name-suffix'
             label='Suffix (If any)'
             size='small'
             variant='standard'
@@ -212,7 +215,13 @@ const Personal = (props: Props) => {
               // disabled={loading}
               value={employeeDetails?.birthDate || null}
               renderInput={(params) => (
-                <TextField {...params} fullWidth required variant='standard' />
+                <TextField
+                  id='birthday'
+                  {...params}
+                  fullWidth
+                  required
+                  variant='standard'
+                />
               )}
             />
           </LocalizationProvider>
@@ -222,6 +231,7 @@ const Personal = (props: Props) => {
           <FormControl required fullWidth variant='standard'>
             <InputLabel id='gender'>Gender</InputLabel>
             <Select
+              id='gender'
               labelId='gender'
               size='small'
               onChange={(e: any) => {
@@ -242,6 +252,7 @@ const Personal = (props: Props) => {
           <FormControl required fullWidth variant='standard'>
             <InputLabel id='civil_status'>Civil Status</InputLabel>
             <Select
+              id='civil-status'
               labelId='civil_status'
               size='small'
               onChange={(e: any) => {
@@ -267,6 +278,7 @@ const Personal = (props: Props) => {
             <FormControl required={isOwner} fullWidth variant='standard'>
               <InputLabel id='citizenship'>Citizenship</InputLabel>
               <Select
+                id='citizenship'
                 labelId='citizenship'
                 size='small'
                 onChange={(e: any) => {
@@ -292,6 +304,7 @@ const Personal = (props: Props) => {
             <FormControl required={isOwner} fullWidth variant='standard'>
               <InputLabel id='religion'>Religion</InputLabel>
               <Select
+                id='religion'
                 labelId='religion'
                 size='small'
                 onChange={handleReligion}
@@ -309,6 +322,7 @@ const Personal = (props: Props) => {
               <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2 phone:hidden desktop:block laptop:block'></div>
               <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
                 <TextField
+                  id='other-religion'
                   label='Please specify your religion.'
                   size='small'
                   variant='standard'
@@ -327,6 +341,7 @@ const Personal = (props: Props) => {
 
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
             <TextField
+              id='personal-contact-no'
               required
               label='Personal Contact Number'
               size='small'
@@ -343,6 +358,7 @@ const Personal = (props: Props) => {
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
             <TextField
+              id='personal-email'
               required
               label='Personal Email Address'
               size='small'

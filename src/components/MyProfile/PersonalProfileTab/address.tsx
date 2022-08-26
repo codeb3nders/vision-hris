@@ -57,6 +57,7 @@ const Address = ({ data, isPermanent }: Props) => {
     <GridWrapper colSize='8'>
       <div className='col-span-8'>
         <TextField
+          id={`${isPermanent ? 'permanent' : 'present'}-address-1`}
           multiline
           label={`${isPermanent ? 'Permanent' : 'Present'} Street Address`}
           size='small'
@@ -74,8 +75,11 @@ const Address = ({ data, isPermanent }: Props) => {
 
       <div className='col-span-2'>
         <FormControl variant='standard' size='small' fullWidth>
-          <InputLabel id='region'>Region</InputLabel>
-          <Select onChange={(e: any) => setSelectedRegion(e.target.value)}>
+          <InputLabel>Region</InputLabel>
+          <Select
+            id={`${isPermanent ? 'permanent' : 'present'}-region`}
+            onChange={(e: any) => setSelectedRegion(e.target.value)}
+          >
             {data
               ?.sort((a: any, b: any) =>
                 a.region_name.localeCompare(b.region_name)
@@ -98,8 +102,11 @@ const Address = ({ data, isPermanent }: Props) => {
           fullWidth
           disabled={!selectedRegion}
         >
-          <InputLabel id='region'>Province</InputLabel>
-          <Select onChange={(e: any) => setSelectedProvince(e.target.value)}>
+          <InputLabel>Province</InputLabel>
+          <Select
+            id={`${isPermanent ? 'permanent' : 'present'}-province`}
+            onChange={(e: any) => setSelectedProvince(e.target.value)}
+          >
             {selectedRegion?.province_list?.map((province: any) => {
               return (
                 <MenuItem key={province.id} value={province}>
@@ -118,8 +125,9 @@ const Address = ({ data, isPermanent }: Props) => {
           fullWidth
           disabled={!selectedProvince}
         >
-          <InputLabel id='region'>Municipality</InputLabel>
+          <InputLabel>Municipality</InputLabel>
           <Select
+            id={`${isPermanent ? 'permanent' : 'present'}-municipality`}
             onChange={(e: any) => setSelectedMunicipality(e.target.value)}
           >
             {selectedProvince?.municipality_list?.map((municipality: any) => {
@@ -138,8 +146,11 @@ const Address = ({ data, isPermanent }: Props) => {
           fullWidth
           disabled={!selectedMunicipality}
         >
-          <InputLabel id='region'>Barangay</InputLabel>
-          <Select onChange={(e: any) => setSelectedBarangay(e.target.value)}>
+          <InputLabel>Barangay</InputLabel>
+          <Select
+            id={`${isPermanent ? 'permanent' : 'present'}-barangay`}
+            onChange={(e: any) => setSelectedBarangay(e.target.value)}
+          >
             {selectedMunicipality?.barangay_list?.map((barangay: any) => {
               return <MenuItem value={barangay}>{barangay}</MenuItem>;
             })}

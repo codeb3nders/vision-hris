@@ -1,64 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import {
   AddIcCallTwoTone,
   ContactPhoneTwoTone,
+  Delete,
   SaveTwoTone,
 } from '@mui/icons-material';
-import { Dialog, TextField } from '@mui/material';
+import { Dialog, IconButton, TextField } from '@mui/material';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 
 type Props = {};
-
-const columns: GridColDef[] = [
-  {
-    field: 'name',
-    headerName: 'Name',
-    flex: 1,
-    renderCell: (params: any) => {
-      return params.value;
-    },
-  },
-  {
-    field: 'address',
-    headerName: 'Address',
-    flex: 1,
-    renderCell: (params: any) => {
-      return (
-        <TextField
-          value={params.value}
-          multiline
-          disabled
-          className='text-xs'
-          sx={{
-            border: 'none',
-            '& > .MuiOutlinedInput-root': {
-              p: 0,
-              border: 'none',
-              '& textarea': {
-                border: 'none',
-                '-webkit-text-fill-color': '#000',
-                fontSize: '.85rem',
-              },
-              '& fieldset': {
-                border: 'none',
-              },
-            },
-          }}
-        />
-      );
-    },
-  },
-  {
-    field: 'phoneNumber',
-    headerName: 'Phone Number',
-    flex: 1,
-    renderCell: (params: any) => {
-      return params.value;
-    },
-  },
-];
 
 type ContactsI = {
   id: any;
@@ -69,9 +22,10 @@ type ContactsI = {
 };
 
 const Contacts = (props: Props) => {
-  const { isNew, employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
   const [rows, setRows] = useState<ContactsI[]>([]);
   const [newContact, setNewContact] = useState<any>({
+    id: null,
     name: null,
     address: null,
     phoneNumber: null,
@@ -79,23 +33,66 @@ const Contacts = (props: Props) => {
 
   const [open, setOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    setRows([
-      {
-        ...employeeDetails?.emergencyContact,
-        id: `${employeeDetails?.emergencyContact?.name}~${employeeDetails?.emergencyContact?.phoneNumber}`,
+  const columns: any = (handleDelete: any) => [
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      flex: 1,
+    },
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      flex: 1,
+      renderCell: (params: any) => {
+        return (
+          <div className='flex flex-row items-center w-full gap-1'>
+            <span className='text-xs'>{params.value}</span>
+            <div className='flex-1 flex justify-end'>
+              <IconButton size='small' onClick={() => handleDelete(params)}>
+                <Delete />
+              </IconButton>
+            </div>
+          </div>
+        );
       },
-    ]);
+    },
+  ];
+
+  useEffect(() => {
+    rows.length <= 0 && setRows(employeeDetails?.emergencyContact);
   }, [employeeDetails]);
 
   const handleSaveNewContact = () => {
     setOpen(false);
-    setNewContact({ name: null, address: null, phoneNumber: null });
-    const filtered = rows.filter((r) => !r.isNew);
-    setRows([...filtered, { ...newContact, id: filtered.length + 1 }]);
 
-    setEmployeeDetails({ ...employeeDetails, emergencyContact: newContact });
+    setRows((prev: any) => [
+      ...prev,
+      { ...newContact, id: `${newContact.name}~${newContact.phoneNumber}` },
+    ]);
+
+    setEmployeeDetails({
+      ...employeeDetails,
+      emergencyContact: rows,
+    });
+
+    setNewContact({ name: null, address: null, phoneNumber: null });
   };
+
+  const handleDelete = (params: any) => {
+    setRows((prev: any) => {
+      const filtered = prev.filter((a: any) => a.id !== params.row.id);
+      return filtered;
+    });
+  };
+
+  useEffect(() => {
+    !open && setNewContact({ name: null, address: null, phoneNumber: null });
+  }, [open]);
 
   return (
     <CollapseWrapper panelTitle='Emergency Contact' icon={ContactPhoneTwoTone}>
@@ -106,6 +103,7 @@ const Contacts = (props: Props) => {
               <AddIcCallTwoTone fontSize='small' /> New Contact
             </p>
             <TextField
+              id='emergency-name'
               fullWidth
               variant='standard'
               size='small'
@@ -115,6 +113,7 @@ const Contacts = (props: Props) => {
               }
             />
             <TextField
+              id='emergency-address'
               fullWidth
               variant='standard'
               size='small'
@@ -126,6 +125,7 @@ const Contacts = (props: Props) => {
               }
             />
             <TextField
+              id='emergency-phone-number'
               fullWidth
               variant='standard'
               size='small'
@@ -159,10 +159,11 @@ const Contacts = (props: Props) => {
 
         <div style={{ width: '100%' }}>
           <DataGrid
+            getRowId={(data: any) => data.id}
             autoHeight
             disableSelectionOnClick
             rows={rows}
-            columns={columns}
+            columns={columns(handleDelete)}
             pageSize={5}
             rowsPerPageOptions={[5]}
             checkboxSelection

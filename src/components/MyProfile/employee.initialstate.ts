@@ -66,11 +66,11 @@ export const initialState: EmployeeI = {
   othersDegree: '',
   othersHonors: '',
   licensure: '',
-  emergencyContact: null,
-  employmentRecords: null,
-  govtProfExamsPassed: null,
-  licensesCertifications: null,
-  familyBackground: null,
-  leave_requests: null,
-  full_name: ""
+  emergencyContact: [],
+  employmentRecords: [],
+  govtProfExamsPassed: [],
+  licensesCertifications: [],
+  familyBackground: [],
+  leave_requests: [],
+  full_name: '',
 };
