@@ -1,21 +1,25 @@
-import { Add, BadgeTwoTone } from '@mui/icons-material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import React, { useContext, useState } from 'react';
+import { Add, BadgeTwoTone, Delete } from '@mui/icons-material';
+import { DataGrid } from '@mui/x-data-grid';
+import React, { useEffect, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { ProfileCtx } from '../profile.main';
-import { Dialog, TextField } from '@mui/material';
+import { Dialog, IconButton, TextField } from '@mui/material';
 import moment from 'moment';
-import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {};
 
 const EmployementRecord = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
   const [records, setRecords] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+
+  const handleDelete = (params: any) => {
+    setRecords((prev: any) => {
+      const filtered = prev.filter((a: any) => a.id !== params.row.id);
+      return filtered;
+    });
+  };
 
   return (
     <CollapseWrapper panelTitle='Employment Record' icon={BadgeTwoTone}>
@@ -26,7 +30,7 @@ const EmployementRecord = (props: Props) => {
           autoHeight
           disableSelectionOnClick
           rows={records}
-          columns={columns}
+          columns={columns(handleDelete)}
           pageSize={5}
           rowsPerPageOptions={[5]}
           getRowHeight={() => 'auto'}
@@ -50,9 +54,31 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
   console.log({ data });
 
   const handleSave = () => {
-    setRecords((prev: any) => [...prev, data]);
+    setRecords((prev: any) => [
+      ...prev,
+      { ...data, id: `${data?.company_name}~${data?.yrFrom}` },
+    ]);
     setOpen(false);
+
+    setData({
+      yrFrom: '',
+      yrTo: '',
+      companyName: '',
+      companyAddress: '',
+      positionHeld: '',
+    });
   };
+
+  useEffect(() => {
+    !open &&
+      setData({
+        yrFrom: '',
+        yrTo: '',
+        companyName: '',
+        companyAddress: '',
+        positionHeld: '',
+      });
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
@@ -77,6 +103,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                   }
                   renderInput={(params) => (
                     <TextField
+                      id='years-of-inclusion-from'
                       size='small'
                       {...params}
                       fullWidth
@@ -100,6 +127,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                   }
                   renderInput={(params) => (
                     <TextField
+                      id='years-of-inclusion-to'
                       size='small'
                       {...params}
                       fullWidth
@@ -114,6 +142,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
         </div>
 
         <TextField
+          id='company-name'
           variant='standard'
           label='Company Name'
           value={data.companyName}
@@ -122,6 +151,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
           }
         />
         <TextField
+          id='company-address'
           variant='standard'
           label='Company Address'
           multiline
@@ -134,6 +164,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
           }
         />
         <TextField
+          id='position-held'
           variant='standard'
           label='Position Held'
           value={data.positionHeld}
@@ -153,45 +184,56 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
   );
 };
 
-const columns: GridColDef[] = [
-  {
-    field: 'yearsOfInclusion',
-    headerName: 'Years of Inclusions',
-    width: 300,
-    renderCell: (params: any) => {
-      return (
-        <div className='text-xs'>
-          <span>{moment(params?.row?.yrFrom).format('LL')}</span>
-          <span className='mx-2'> - </span>
-          <span>{moment(params?.row?.yrTo).format('LL')}</span>
-        </div>
-      );
+const columns: any = (handleDelete: any) => {
+  return [
+    {
+      field: 'yearsOfInclusion',
+      headerName: 'Years of Inclusions',
+      width: 300,
+      renderCell: (params: any) => {
+        return (
+          <div className='text-xs'>
+            <span>{moment(params?.row?.yrFrom).format('LL')}</span>
+            <span className='mx-2'> - </span>
+            <span>{moment(params?.row?.yrTo).format('LL')}</span>
+          </div>
+        );
+      },
     },
-  },
-  {
-    field: 'companyName',
-    headerName: 'Company Name',
-    width: 150,
-    renderCell: (params: any) => {
-      return <span className='text-xs'>{params.value}</span>;
+    {
+      field: 'companyName',
+      headerName: 'Company Name',
+      width: 150,
+      renderCell: (params: any) => {
+        return <span className='text-xs'>{params.value}</span>;
+      },
     },
-  },
-  {
-    field: 'companyAddress',
-    headerName: 'Company Address',
-    width: 300,
-    renderCell: (params: any) => {
-      return <span className='text-xs'>{params.value}</span>;
+    {
+      field: 'companyAddress',
+      headerName: 'Company Address',
+      width: 300,
+      renderCell: (params: any) => {
+        return <span className='text-xs'>{params.value}</span>;
+      },
     },
-  },
-  {
-    field: 'positionHeld',
-    headerName: 'Position Held',
-    width: 150,
-    renderCell: (params: any) => {
-      return <span className='text-xs'>{params.value}</span>;
+    {
+      field: 'positionHeld',
+      headerName: 'Position Held',
+      flex: 1,
+      renderCell: (params: any) => {
+        return (
+          <div className='flex flex-row items-center w-full gap-1'>
+            <span className='text-xs'>{params.value}</span>
+            <div className='flex-1 flex justify-end'>
+              <IconButton size='small' onClick={() => handleDelete(params)}>
+                <Delete />
+              </IconButton>
+            </div>
+          </div>
+        );
+      },
     },
-  },
-];
+  ];
+};
 
 export default EmployementRecord;

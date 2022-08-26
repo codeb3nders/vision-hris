@@ -70,11 +70,11 @@ export interface EmployeeI {
   othersDegree: string;
   othersHonors: string;
   licensure: string;
-  emergencyContact: JSON | null;
-  employmentRecords: JSON | null;
-  govtProfExamsPassed: JSON | null;
-  licensesCertifications: JSON | null;
-  familyBackground: JSON | null;
+  emergencyContact: JSON[] | null;
+  employmentRecords: JSON[] | null;
+  govtProfExamsPassed: JSON[] | null;
+  licensesCertifications: JSON[] | null;
+  familyBackground: JSON[] | null;
   leave_requests?: any;
   full_name: string;
 }

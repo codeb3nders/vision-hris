@@ -86,7 +86,7 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
             index === '3' ? '!text-v-red' : ''
           }`}
-          label='Emergency'
+          label='Compensation and Benefits'
           {...a11yProps('3')}
         />
       </TabList>

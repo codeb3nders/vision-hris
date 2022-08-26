@@ -1,8 +1,4 @@
-import {
-  AddIcCallTwoTone,
-  PersonAddTwoTone,
-  SaveTwoTone,
-} from '@mui/icons-material';
+import { PersonAddTwoTone, SaveTwoTone } from '@mui/icons-material';
 import {
   Dialog,
   FormControl,
@@ -33,7 +29,10 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
   });
 
   const handleAddFamily = () => {
-    setFamily((family: FamilyI[]) => [...family, newFamily]);
+    setFamily((family: FamilyI[]) => [
+      ...family,
+      { ...newFamily, id: `${newFamily.fullname}~${newFamily.relation}` },
+    ]);
     setOpen(false);
   };
 
@@ -44,6 +43,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
           <PersonAddTwoTone fontSize='small' /> Add Family Member
         </p>
         <TextField
+          id='fullname'
           required
           fullWidth
           variant='standard'
@@ -57,6 +57,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
         <FormControl variant='standard' fullWidth size='small' required>
           <InputLabel id='relation'>Relation</InputLabel>
           <Select
+            id='relation'
             labelId='relation'
             onChange={(e: any) =>
               setNewFamily({ ...newFamily, relation: e.target.value })
@@ -69,6 +70,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
         </FormControl>
 
         <TextField
+          id='occupation'
           fullWidth
           variant='standard'
           size='small'
@@ -79,6 +81,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
         />
 
         <TextField
+          id='company'
           fullWidth
           variant='standard'
           size='small'
@@ -89,6 +92,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
         />
 
         <TextField
+          id='residence'
           required
           fullWidth
           variant='standard'

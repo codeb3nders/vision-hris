@@ -1,7 +1,7 @@
-import { Add, AdminPanelSettingsTwoTone } from '@mui/icons-material';
-import { Dialog, TextField } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import React, { useState } from 'react';
+import { Add, AdminPanelSettingsTwoTone, Delete } from '@mui/icons-material';
+import { Dialog, IconButton, TextField } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import React, { useEffect, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -13,6 +13,14 @@ type Props = {};
 const Licensure = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [exams, setExams] = useState<any[]>([]);
+
+  const handleDelete = (params: any) => {
+    setExams((prev: any) => {
+      const filtered = prev.filter((a: any) => a.id !== params.row.id);
+      return filtered;
+    });
+  };
+
   return (
     <CollapseWrapper
       panelTitle='Government/Professional Licensure Examinations Passed'
@@ -25,7 +33,7 @@ const Licensure = (props: Props) => {
           autoHeight
           disableSelectionOnClick
           rows={exams}
-          columns={columns}
+          columns={columns(handleDelete)}
           pageSize={5}
           rowsPerPageOptions={[5]}
           getRowHeight={() => 'auto'}
@@ -47,9 +55,27 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
   const [data, setData] = useState<any>({});
 
   const handleSave = () => {
-    setExams((prev: any) => [...prev, data]);
+    setExams((prev: any) => [
+      ...prev,
+      { ...data, id: `${data.rating}~${data.dateTaken}` },
+    ]);
     setOpen(false);
+
+    setData({
+      examinationTitle: '',
+      dateTaken: '',
+      rating: '',
+    });
   };
+
+  useEffect(() => {
+    !open &&
+      setData({
+        examinationTitle: '',
+        dateTaken: '',
+        rating: '',
+      });
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
@@ -60,6 +86,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
         </p>
 
         <TextField
+          id='title-licensure-exam'
           variant='standard'
           size='small'
           label='Title of Government Exam/Professional Licensure Exam'
@@ -84,6 +111,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
             }
             renderInput={(params) => (
               <TextField
+                id='date-taken'
                 size='small'
                 {...params}
                 fullWidth
@@ -95,6 +123,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
         </LocalizationProvider>
 
         <TextField
+          id='rating'
           variant='standard'
           size='small'
           label='Rating'
@@ -118,22 +147,36 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
   );
 };
 
-const columns: GridColDef[] = [
-  {
-    field: 'examinationTitle',
-    headerName: 'Title of Government Exam/Professional Licensure Exam',
-    flex: 1,
-  },
-  {
-    field: 'dateTaken',
-    headerName: 'Date Taken',
-    flex: 1,
-  },
-  {
-    field: 'rating',
-    headerName: 'Rating',
-    flex: 1,
-  },
-];
+const columns: any = (handleDelete: any) => {
+  return [
+    {
+      field: 'examinationTitle',
+      headerName: 'Title of Government Exam/Professional Licensure Exam',
+      flex: 1,
+    },
+    {
+      field: 'dateTaken',
+      headerName: 'Date Taken',
+      flex: 1,
+    },
+    {
+      field: 'rating',
+      headerName: 'Rating',
+      flex: 1,
+      renderCell: (params: any) => {
+        return (
+          <div className='flex flex-row items-center w-full gap-1'>
+            <span className='text-xs'>{params.value}</span>
+            <div className='flex-1 flex justify-end'>
+              <IconButton size='small' onClick={() => handleDelete(params)}>
+                <Delete />
+              </IconButton>
+            </div>
+          </div>
+        );
+      },
+    },
+  ];
+};
 
 export default Licensure;

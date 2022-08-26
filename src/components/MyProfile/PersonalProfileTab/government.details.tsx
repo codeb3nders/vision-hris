@@ -57,6 +57,7 @@ const GovernmentDetails = (props: Props) => {
     <CollapseWrapper
       panelTitle='Government Details'
       icon={AssuredWorkloadTwoTone}
+      open
     >
       <GridWrapper colSize='2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>

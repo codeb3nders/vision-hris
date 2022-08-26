@@ -123,6 +123,7 @@ const JobInfo = (props: Props) => {
       panelTitle='Personnel Information'
       icon={EngineeringTwoTone}
       contentClassName='p-0'
+      open
     >
       {isNew ? (
         <JobInfoFields employees={employees} />

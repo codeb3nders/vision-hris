@@ -1,11 +1,7 @@
-import {
-  Add,
-  AdminPanelSettingsTwoTone,
-  WorkspacePremiumTwoTone,
-} from '@mui/icons-material';
-import { Dialog, TextField } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import React, { useState } from 'react';
+import { Add, Delete, WorkspacePremiumTwoTone } from '@mui/icons-material';
+import { Dialog, IconButton, TextField } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -16,20 +12,32 @@ type Props = {};
 
 const Certificates = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [exams, setExams] = useState<any[]>([]);
+  const [exams, setCertificates] = useState<any[]>([]);
+
+  const handleDelete = (params: any) => {
+    setCertificates((prev: any) => {
+      const filtered = prev.filter((a: any) => a.id !== params.row.id);
+      return filtered;
+    });
+  };
+
   return (
     <CollapseWrapper
       panelTitle='Licenses and Certifications'
       icon={WorkspacePremiumTwoTone}
     >
-      <LicensureDialog open={open} setOpen={setOpen} setExams={setExams} />
+      <LicensureDialog
+        open={open}
+        setOpen={setOpen}
+        setCertificates={setCertificates}
+      />
       <div style={{ width: '100%' }}>
         <DataGrid
           getRowId={(data: any) => data?.certificateNumber}
           autoHeight
           disableSelectionOnClick
           rows={exams}
-          columns={columns}
+          columns={columns(handleDelete)}
           pageSize={5}
           rowsPerPageOptions={[5]}
           getRowHeight={() => 'auto'}
@@ -47,13 +55,33 @@ const Certificates = (props: Props) => {
   );
 };
 
-const LicensureDialog = ({ open, setOpen, setExams }) => {
+const LicensureDialog = ({ open, setOpen, setCertificates }) => {
   const [data, setData] = useState<any>({});
 
   const handleSave = () => {
-    setExams((prev: any) => [...prev, data]);
+    setCertificates((prev: any) => [
+      ...prev,
+      { ...data, id: data.certificateNumber },
+    ]);
     setOpen(false);
+
+    setData({
+      certificate: '',
+      authorizingEntity: '',
+      certificateValidUntil: '',
+      certificateNumber: '',
+    });
   };
+
+  useEffect(() => {
+    !open &&
+      setData({
+        certificate: '',
+        authorizingEntity: '',
+        certificateValidUntil: '',
+        certificateNumber: '',
+      });
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
@@ -63,6 +91,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
         </p>
 
         <TextField
+          id='certification'
           variant='standard'
           size='small'
           label='License/Certification'
@@ -75,6 +104,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
           }
         />
         <TextField
+          id='authorizing-entity'
           variant='standard'
           size='small'
           label='Authorizing Entity'
@@ -99,6 +129,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
             }
             renderInput={(params) => (
               <TextField
+                id='certification-valid-until'
                 size='small'
                 {...params}
                 fullWidth
@@ -110,6 +141,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
         </LocalizationProvider>
 
         <TextField
+          id='certification-number'
           variant='standard'
           size='small'
           label='License/Certification Number'
@@ -133,7 +165,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
   );
 };
 
-const columns: GridColDef[] = [
+const columns: any = (handleDelete: any) => [
   {
     field: 'certificate',
     headerName: 'License/Certification',
@@ -153,6 +185,18 @@ const columns: GridColDef[] = [
     field: 'certificateNumber',
     headerName: 'License/Certification Number',
     flex: 1,
+    renderCell: (params: any) => {
+      return (
+        <div className='flex flex-row items-center w-full gap-1'>
+          <span className='text-xs'>{params.value}</span>
+          <div className='flex-1 flex justify-end'>
+            <IconButton size='small' onClick={() => handleDelete(params)}>
+              <Delete />
+            </IconButton>
+          </div>
+        </div>
+      );
+    },
   },
 ];
 

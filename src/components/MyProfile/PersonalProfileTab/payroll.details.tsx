@@ -8,16 +8,17 @@ import CollapseWrapper from './collapse.wrapper';
 type Props = {};
 
 const PayrollDetails = (props: Props) => {
-  const { isNew, employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
 
   return (
     <CollapseWrapper
-      panelTitle='Payroll Details'
+      panelTitle='Payroll Account Details'
       icon={AccountBalanceWalletTwoTone}
     >
       <GridWrapper colSize='2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='payroll-bank-name'
             fullWidth
             variant='standard'
             label='Bank Name'
@@ -33,8 +34,29 @@ const PayrollDetails = (props: Props) => {
             }
           />
         </div>
+
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='payroll-bank-branch'
+            fullWidth
+            variant='standard'
+            label='Bank Branch'
+            defaultValue={employeeDetails?.payrollBankAccount?.accountType}
+            onChange={(e: any) =>
+              setEmployeeDetails({
+                ...employeeDetails,
+                payrollBankBranch: {
+                  ...employeeDetails?.payrollBankBranch,
+                  bankName: e.target.value,
+                },
+              })
+            }
+          />
+        </div>
+
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <TextField
+            id='payroll-account-name'
             fullWidth
             variant='standard'
             label='Account Name'
@@ -52,6 +74,7 @@ const PayrollDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='payroll-account-number'
             fullWidth
             variant='standard'
             label='Account Number'
@@ -65,15 +88,6 @@ const PayrollDetails = (props: Props) => {
                 },
               })
             }
-          />
-        </div>
-        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-          <TextField
-            disabled
-            fullWidth
-            variant='standard'
-            label='Account Type'
-            defaultValue={employeeDetails?.payrollBankAccount?.accountType}
           />
         </div>
       </GridWrapper>

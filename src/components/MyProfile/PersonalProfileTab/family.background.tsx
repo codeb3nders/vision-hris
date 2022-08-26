@@ -1,5 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FamilyRestroomTwoTone, PersonAddTwoTone } from '@mui/icons-material';
+import {
+  Delete,
+  FamilyRestroomTwoTone,
+  PersonAddTwoTone,
+} from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { useContext, useEffect, useState } from 'react';
@@ -32,6 +37,13 @@ const FamilyBackground = (props: Props) => {
     setEmployeeDetails({ ...employeeDetails, familyBackground: family });
   }, [family]);
 
+  const handleDelete = (params: any) => {
+    setFamily((prev: any) => {
+      const filtered = prev.filter((a: any) => a.id !== params.row.id);
+      return filtered;
+    });
+  };
+
   return (
     <CollapseWrapper
       panelTitle='Family Background'
@@ -49,7 +61,7 @@ const FamilyBackground = (props: Props) => {
           <DataGrid
             getRowId={(data: any) => `${data?.fullname}`}
             rows={family}
-            columns={columns}
+            columns={columns(handleDelete)}
             pageSize={5}
             rowsPerPageOptions={[5]}
             checkboxSelection
@@ -73,7 +85,7 @@ const FamilyBackground = (props: Props) => {
   );
 };
 
-const columns: GridColDef[] = [
+const columns: any = (handleDelete: any) => [
   {
     field: 'fullname',
     headerName: 'Fullname',
@@ -101,6 +113,18 @@ const columns: GridColDef[] = [
     headerName: 'Residences',
     type: 'string',
     flex: 1,
+    renderCell: (params: any) => {
+      return (
+        <div className='flex flex-row items-center w-full gap-1'>
+          <span className='text-xs'>{params.value}</span>
+          <div className='flex-1 flex justify-end'>
+            <IconButton size='small' onClick={() => handleDelete(params)}>
+              <Delete />
+            </IconButton>
+          </div>
+        </div>
+      );
+    },
   },
 ];
 

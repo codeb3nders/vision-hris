@@ -1,12 +1,11 @@
-import { Add, SchoolTwoTone } from '@mui/icons-material';
+import { SchoolTwoTone } from '@mui/icons-material';
 import { TextField } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import GridWrapper from 'CustomComponents/GridWrapper';
 import moment from 'moment';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
 import { EmployeeI } from 'slices/interfaces/employeeI';
@@ -15,32 +14,7 @@ type Props = {};
 
 const Education = (props: Props) => {
   const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
-  const [rows, setRows] = useState<any[]>([]);
-  const [addText, setAddText] = useState<string>('');
   const [selectedLevels, setSelectedLevels] = useState<any>('');
-
-  // useEffect(() => {
-  //   if (!employeeDetails.elementaryYrFrom) {
-  //     setAddText('Elementary Level');
-  //   } else if (
-  //     employeeDetails.elementaryYrFrom &&
-  //     !employeeDetails.secondaryYrFrom
-  //   ) {
-  //     setAddText('Secondary Level');
-  //   } else if (
-  //     employeeDetails.secondaryYrFrom &&
-  //     !employeeDetails.tertiaryYrFrom
-  //   ) {
-  //     setAddText('Tertiary Level');
-  //   } else if (
-  //     employeeDetails.tertiaryYrFrom &&
-  //     !employeeDetails.postGradYrFrom
-  //   ) {
-  //     setAddText('Post Graduate Level');
-  //   } else {
-  //     setAddText('Others');
-  //   }
-  // }, [employeeDetails]);
 
   const handleExist = (levelOfEducation: any) => {
     return (
@@ -92,6 +66,7 @@ const Education = (props: Props) => {
                   }
                   renderInput={(params) => (
                     <TextField
+                      id='education-yrfrom'
                       size='small'
                       {...params}
                       fullWidth
@@ -116,6 +91,7 @@ const Education = (props: Props) => {
                   value={employeeDetails[yrTo] || null}
                   renderInput={(params) => (
                     <TextField
+                      id='education-yrto'
                       size='small'
                       {...params}
                       fullWidth
@@ -159,6 +135,7 @@ const Education = (props: Props) => {
         );
         return handleExist(params.row.levelOfEducation) ? (
           <TextField
+            id='school-and-address'
             variant='standard'
             size='small'
             fullWidth
@@ -183,6 +160,7 @@ const Education = (props: Props) => {
         const key: any = handleKey(params.row.levelOfEducation, 'Degree');
         return handleExist(params.row.levelOfEducation) ? (
           <TextField
+            id='degree'
             variant='standard'
             size='small'
             fullWidth
@@ -206,6 +184,7 @@ const Education = (props: Props) => {
         const key: any = handleKey(params.row.levelOfEducation, 'Honors');
         return handleExist(params.row.levelOfEducation) ? (
           <TextField
+            id='honors'
             variant='standard'
             size='small'
             fullWidth
