@@ -133,7 +133,6 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
                 size='small'
                 {...params}
                 fullWidth
-                required
                 variant='standard'
               />
             )}

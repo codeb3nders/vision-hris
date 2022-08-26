@@ -70,7 +70,6 @@ const Education = (props: Props) => {
                       size='small'
                       {...params}
                       fullWidth
-                      required
                       variant='standard'
                     />
                   )}
@@ -95,7 +94,6 @@ const Education = (props: Props) => {
                       size='small'
                       {...params}
                       fullWidth
-                      required
                       variant='standard'
                     />
                   )}

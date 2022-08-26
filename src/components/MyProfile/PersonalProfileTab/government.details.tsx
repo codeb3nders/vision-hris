@@ -62,6 +62,7 @@ const GovernmentDetails = (props: Props) => {
       <GridWrapper colSize='2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             variant='standard'
             size='small'
             fullWidth
@@ -77,6 +78,7 @@ const GovernmentDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             variant='standard'
             size='small'
             fullWidth
@@ -93,6 +95,7 @@ const GovernmentDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             variant='standard'
             size='small'
             fullWidth
@@ -108,6 +111,7 @@ const GovernmentDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             variant='standard'
             size='small'
             fullWidth
@@ -124,6 +128,7 @@ const GovernmentDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             variant='standard'
             size='small'
             fullWidth
@@ -140,7 +145,7 @@ const GovernmentDetails = (props: Props) => {
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-          <FormControl variant='standard' fullWidth size='small'>
+          <FormControl variant='standard' fullWidth size='small' required>
             <InputLabel id='tax'>Tax Exemption</InputLabel>
             <Select
               labelId='tax'

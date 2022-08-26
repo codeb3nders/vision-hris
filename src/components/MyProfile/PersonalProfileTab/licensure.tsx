@@ -115,7 +115,6 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
                 size='small'
                 {...params}
                 fullWidth
-                required
                 variant='standard'
               />
             )}

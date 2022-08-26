@@ -271,7 +271,7 @@ const Personal = (props: Props) => {
           className='desktop:col-span-7 laptop:col-span-7 phone:col-span-7'
         >
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
-            <FormControl required fullWidth variant='standard'>
+            <FormControl fullWidth variant='standard'>
               <InputLabel id='citizenship'>Citizenship</InputLabel>
               <Select
                 id='citizenship'
@@ -297,7 +297,7 @@ const Personal = (props: Props) => {
           </div>
 
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
-            <FormControl required fullWidth variant='standard'>
+            <FormControl fullWidth variant='standard'>
               <InputLabel id='religion'>Religion</InputLabel>
               <Select
                 id='religion'

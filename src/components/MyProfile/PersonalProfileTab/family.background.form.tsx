@@ -44,7 +44,6 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
         </p>
         <TextField
           id='fullname'
-          required
           fullWidth
           variant='standard'
           size='small'
@@ -54,7 +53,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
           }
         />
 
-        <FormControl variant='standard' fullWidth size='small' required>
+        <FormControl variant='standard' fullWidth size='small'>
           <InputLabel id='relation'>Relation</InputLabel>
           <Select
             id='relation'
@@ -93,7 +92,6 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
 
         <TextField
           id='residence'
-          required
           fullWidth
           variant='standard'
           size='small'

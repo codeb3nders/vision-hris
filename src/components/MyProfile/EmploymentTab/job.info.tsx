@@ -27,6 +27,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { getEmployeeItems as _getEmployeeItems } from 'slices';
 import { useSelector } from 'react-redux';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {};
 
@@ -352,7 +353,7 @@ const JobInfoFields = ({ employees }) => {
           <InputLabel id='employement_status'>Employment Status</InputLabel>
           <Select
             labelId='employement_status'
-            defaultValue={employeeDetails?.employmentStatus}
+            value={employeeDetails?.employmentStatus || 'PROBATIONARY'}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -366,6 +367,62 @@ const JobInfoFields = ({ employees }) => {
           </Select>
         </FormControl>
       </div>
+
+      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+        <TextField
+          required
+          variant='standard'
+          label='Company Contact Number'
+          fullWidth
+          onChange={(e: any) =>
+            setEmployeeDetails((prev: EmployeeI) => ({
+              ...prev,
+              companyContactNumber: e.target.value,
+            }))
+          }
+        />
+      </div>
+
+      {employeeDetails.rank === 'RANK AND FILE' ? (
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <TextField
+            required
+            variant='standard'
+            label='Company Email Address'
+            fullWidth
+            disabled
+            value={`${employeeDetails.firstName}${employeeDetails.lastName}.vpdcph@gmail.com`.toLowerCase()}
+            helperText={
+              <span>
+                This is an auto-generated email for a{' '}
+                <strong>Rank and File</strong> employment rank.
+              </span>
+            }
+            // onChange={(e: any) =>
+            //   setEmployeeDetails((prev: EmployeeI) => ({
+            //     ...prev,
+            //     companyEmail: e.target.value,
+            //   }))
+            // }
+          />
+        </div>
+      ) : (
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <TextField
+            required
+            variant='standard'
+            label='Company Email Address'
+            fullWidth
+            value={employeeDetails.companyEmail || null}
+            onChange={(e: any) =>
+              setEmployeeDetails((prev: EmployeeI) => ({
+                ...prev,
+                companyEmail: e.target.value,
+              }))
+            }
+          />
+        </div>
+      )}
 
       {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <FormControl variant='standard' fullWidth size='small' required>

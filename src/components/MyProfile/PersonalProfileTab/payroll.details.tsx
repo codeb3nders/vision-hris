@@ -18,6 +18,7 @@ const PayrollDetails = (props: Props) => {
       <GridWrapper colSize='2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             id='payroll-bank-name'
             fullWidth
             variant='standard'
@@ -37,6 +38,7 @@ const PayrollDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             id='payroll-bank-branch'
             fullWidth
             variant='standard'
@@ -56,6 +58,7 @@ const PayrollDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             id='payroll-account-name'
             fullWidth
             variant='standard'
@@ -74,6 +77,7 @@ const PayrollDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            required
             id='payroll-account-number'
             fullWidth
             variant='standard'

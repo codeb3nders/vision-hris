@@ -107,7 +107,6 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                       size='small'
                       {...params}
                       fullWidth
-                      required
                       variant='standard'
                     />
                   )}
@@ -131,7 +130,6 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                       size='small'
                       {...params}
                       fullWidth
-                      required
                       variant='standard'
                     />
                   )}

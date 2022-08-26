@@ -59,7 +59,6 @@ const Address = ({ data, isPermanent }: Props) => {
         <TextField
           id={`${isPermanent ? 'permanent' : 'present'}-address-1`}
           multiline
-          required
           label={`${isPermanent ? 'Permanent' : 'Present'} Street Address 1`}
           size='small'
           variant='standard'
@@ -76,7 +75,6 @@ const Address = ({ data, isPermanent }: Props) => {
       <div className='col-span-4'>
         <TextField
           multiline
-          required
           id={`${isPermanent ? 'permanent' : 'present'}-address-2`}
           label={`${isPermanent ? 'Permanent' : 'Present'} Street Address 2`}
           size='small'
@@ -93,7 +91,7 @@ const Address = ({ data, isPermanent }: Props) => {
       </div>
 
       <div className='col-span-2'>
-        <FormControl variant='standard' size='small' required fullWidth>
+        <FormControl variant='standard' size='small' fullWidth>
           <InputLabel>Region</InputLabel>
           <Select
             id={`${isPermanent ? 'permanent' : 'present'}-region`}
@@ -118,7 +116,6 @@ const Address = ({ data, isPermanent }: Props) => {
         <FormControl
           variant='standard'
           size='small'
-          required
           fullWidth
           disabled={!selectedRegion}
         >
@@ -142,7 +139,6 @@ const Address = ({ data, isPermanent }: Props) => {
         <FormControl
           variant='standard'
           size='small'
-          required
           fullWidth
           disabled={!selectedProvince}
         >
@@ -164,7 +160,6 @@ const Address = ({ data, isPermanent }: Props) => {
         <FormControl
           variant='standard'
           size='small'
-          required
           fullWidth
           disabled={!selectedMunicipality}
         >
