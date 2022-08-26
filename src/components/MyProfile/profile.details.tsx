@@ -14,7 +14,6 @@ import { ProfileCtx } from './profile.main';
 import useResize from 'hooks/useResize';
 import { PHOTO_PLACEHOLDER } from 'assets';
 import moment from 'moment';
-import { DEPARTMENTS } from 'constants/Values';
 
 type Props = {};
 
@@ -25,10 +24,11 @@ const ProfileDetails = (props: Props) => {
     employeeDetails,
     setEmployeeDetails,
     setDisplayPhoto,
-    displayPhoto,
+    displayPhoto, enums
   } = useContext(ProfileCtx);
   const [img, setImg] = useState<any>(null);
   const { processfile, resized } = useResize({ quality: 0.9 });
+  const { departments } = enums;
 
   useEffect(() => {
     img && processfile(img);
@@ -115,7 +115,7 @@ const ProfileDetails = (props: Props) => {
                   });
                 }}
               >
-                {DEPARTMENTS.map((dept: string) => {
+                {departments.map((dept: string) => {
                   return (
                     <MenuItem key={dept} value={dept}>
                       {dept}
