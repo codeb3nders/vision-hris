@@ -29,7 +29,7 @@ const Personal = (props: Props) => {
   const [citizenship, setCitizenship] = useState<any[]>([])
   const [civilStatus, setCivilStatus] = useState<any[]>([])
   const [religion, setReligion] = useState<any[]>([])
-  console.log({ employeeDetails })
+
   useEffect(() => {
     setCitizenship(enums.citizenship)
     setCivilStatus(enums.civil_status)

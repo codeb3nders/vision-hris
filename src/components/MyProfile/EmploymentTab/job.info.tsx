@@ -14,12 +14,7 @@ import {
 } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import {
-  DEPARTMENTS,
-  EMPLOYMENT_STATUS,
-  LOCATIONS,
-  POSITIONS,
-  RANK,
-  // USER_GROUP,
+  USER_GROUP,
 } from 'constants/Values';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -111,9 +106,8 @@ type JobInfoI = {
 
 const JobInfo = (props: Props) => {
   const [infos, setInfos] = useState<JobInfoI[]>([]);
-  const { isNew, employeeDetails } = useContext(ProfileCtx);
-  const { employees } = useContext(EmployeeCtx);
-
+  const { isNew, employeeDetails, setEmployeeDetails, enums } = useContext(ProfileCtx);
+  const values = { employeeDetails, setEmployeeDetails, enums };
   useEffect(() => {
     setInfos([...infos, employeeDetails]);
   }, [employeeDetails]);
@@ -125,7 +119,7 @@ const JobInfo = (props: Props) => {
       contentClassName='p-0'
     >
       {isNew ? (
-        <JobInfoFields employees={employees} />
+        <JobInfoFields {...values} />
       ) : (
         <div style={{ width: '100%' }}>
           <DataGrid
@@ -145,9 +139,21 @@ const JobInfo = (props: Props) => {
   );
 };
 
-const JobInfoFields = ({ employees }) => {
-  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
   const getEmployeeItems = useSelector(_getEmployeeItems);
+  const [departments, setDepartments] = useState<any[]>([])
+  const [employmentStatus, setEmploymentStatus] = useState<any[]>([])
+  const [locations, setLocations] = useState<any[]>([])
+  const [positions, setPositions] = useState<any[]>([])
+  const [ranks, setRanks] = useState<any[]>([])
+
+  useEffect(() => {
+    setDepartments(enums.departments);
+    setEmploymentStatus(enums.employment_status);
+    setLocations(enums.locations);
+    setPositions(enums.positions);
+    setRanks(enums.ranks);
+  }, [enums])
 
   return (
     <GridWrapper colSize='2' className='items-center p-2'>
@@ -179,7 +185,7 @@ const JobInfoFields = ({ employees }) => {
               })
             }
           >
-            {POSITIONS.map((position) => {
+            {positions.map((position) => {
               return <MenuItem value={position}>{position}</MenuItem>;
             })}
           </Select>
@@ -198,7 +204,7 @@ const JobInfoFields = ({ employees }) => {
               })
             }
           >
-            {DEPARTMENTS.map((department) => {
+            {departments.map((department) => {
               return <MenuItem value={department}>{department}</MenuItem>;
             })}
           </Select>
@@ -219,38 +225,78 @@ const JobInfoFields = ({ employees }) => {
               })
             }
           >
-            {LOCATIONS.map((location) => {
+            {locations.map((location) => {
               return <MenuItem value={location}>{location}</MenuItem>;
             })}
           </Select>
         </FormControl>
       </div>
 
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='teamLeader'>Team Leader</InputLabel>
-          <Select
-            labelId='teamLeader'
-            defaultValue={employeeDetails?.reportsTo}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                reportsTo: e.target.value,
-              })
-            }
-          >
-            {getEmployeeItems?.map((employee) => {
-              return (
-                <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
-                  {employee.firstName} {employee.lastName}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      </div>
+      <GridWrapper colSize='3' className='col-span-2'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='teamLeader'>Team Leader</InputLabel>
+            <Select
+              labelId='teamLeader'
+              defaultValue={employeeDetails?.reportsTo}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  reportsTo: e.target.value,
+                })
+              }
+            >
+              {getEmployeeItems?.filter((x: any) => x.department === employeeDetails.department).map((employee) => {
+                return (
+                  <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
+                    {employee.firstName} {employee.lastName}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </div>
 
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'></div>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='rank'>Employment Rank</InputLabel>
+            <Select
+              labelId='rank'
+              defaultValue={employeeDetails?.rank}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  rank: e.target.value,
+                })
+              }
+            >
+              {ranks.map((rank) => {
+                return <MenuItem value={rank}>{rank}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='employement_status'>Employment Status</InputLabel>
+            <Select
+              labelId='employement_status'
+              defaultValue={employeeDetails?.employmentStatus}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  employmentStatus: e.target.value,
+                })
+              }
+            >
+              {employmentStatus.map((status) => {
+                return <MenuItem value={status}>{status}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+      </GridWrapper>
 
       <GridWrapper colSize='3' className='col-span-2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
@@ -325,46 +371,6 @@ const JobInfoFields = ({ employees }) => {
           </LocalizationProvider>
         </div>
       </GridWrapper>
-
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='rank'>Employment Rank</InputLabel>
-          <Select
-            labelId='rank'
-            defaultValue={employeeDetails?.rank}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                rank: e.target.value,
-              })
-            }
-          >
-            {RANK.map((rank) => {
-              return <MenuItem value={rank}>{rank}</MenuItem>;
-            })}
-          </Select>
-        </FormControl>
-      </div>
-
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='employement_status'>Employment Status</InputLabel>
-          <Select
-            labelId='employement_status'
-            defaultValue={employeeDetails?.employmentStatus}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                employmentStatus: e.target.value,
-              })
-            }
-          >
-            {EMPLOYMENT_STATUS.map((status) => {
-              return <MenuItem value={status}>{status}</MenuItem>;
-            })}
-          </Select>
-        </FormControl>
-      </div>
 
       {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <FormControl variant='standard' fullWidth size='small' required>

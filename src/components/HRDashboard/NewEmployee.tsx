@@ -149,8 +149,8 @@ const NewEmployee: React.FC<Props> = ({ open, setOpen, id }) => {
             <span style={{ textTransform: 'uppercase' }}>{title.label}</span>
           </InputLabel>
           <Select fullWidth>
-            {menu().map((m) => {
-              return <MenuItem value={m}>{m}</MenuItem>;
+            {menu().map((m: any, i: number) => {
+              return <MenuItem key={i} value={m}>{m}</MenuItem>;
             })}
           </Select>
         </FormControl>

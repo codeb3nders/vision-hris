@@ -17,8 +17,6 @@ const columns: GridColDef[] = [
     headerName: 'Name',
     flex: 1,
     renderCell: (params: any) => {
-      console.log({ params });
-
       return params.value;
     },
   },
