@@ -47,8 +47,6 @@ const EmployementRecord = (props: Props) => {
 const RecordDialog = ({ open, setOpen, setRecords }) => {
   const [data, setData] = useState<any>({});
 
-  console.log({ data });
-
   const handleSave = () => {
     setRecords((prev: any) => [...prev, data]);
     setOpen(false);

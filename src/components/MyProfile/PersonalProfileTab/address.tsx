@@ -58,7 +58,6 @@ const Address = ({ data, isPermanent }: Props) => {
       <div className='col-span-8'>
         <TextField
           multiline
-          required
           label={`${isPermanent ? 'Permanent' : 'Present'} Street Address`}
           size='small'
           variant='standard'
@@ -72,26 +71,9 @@ const Address = ({ data, isPermanent }: Props) => {
           }}
         />
       </div>
-      {/* <div className='col-span-4'>
-        <TextField
-          multiline
-          required
-          label={`${isPermanent ? 'Permanent' : 'Present'} Street Address 2`}
-          size='small'
-          variant='standard'
-          fullWidth
-          defaultValue={employeeDetails?.presentResidenceAddress}
-          onChange={(e: any) => {
-            setEmployeeDetails({
-              ...employeeDetails,
-              presentResidenceAddress: e.target.value,
-            });
-          }}
-        />
-      </div> */}
 
       <div className='col-span-2'>
-        <FormControl variant='standard' size='small' required fullWidth>
+        <FormControl variant='standard' size='small' fullWidth>
           <InputLabel id='region'>Region</InputLabel>
           <Select onChange={(e: any) => setSelectedRegion(e.target.value)}>
             {data
@@ -113,7 +95,6 @@ const Address = ({ data, isPermanent }: Props) => {
         <FormControl
           variant='standard'
           size='small'
-          required
           fullWidth
           disabled={!selectedRegion}
         >
@@ -134,7 +115,6 @@ const Address = ({ data, isPermanent }: Props) => {
         <FormControl
           variant='standard'
           size='small'
-          required
           fullWidth
           disabled={!selectedProvince}
         >
@@ -155,7 +135,6 @@ const Address = ({ data, isPermanent }: Props) => {
         <FormControl
           variant='standard'
           size='small'
-          required
           fullWidth
           disabled={!selectedMunicipality}
         >
