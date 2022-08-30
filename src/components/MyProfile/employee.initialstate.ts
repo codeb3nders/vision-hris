@@ -10,7 +10,7 @@ export const initialState: EmployeeI = {
   position: '',
   rank: '',
   department: '',
-  locations: [],
+  location: [],
   isActive: true,
   userGroup: 'EMPLOYEE',
   reportsTo: '',
@@ -25,7 +25,12 @@ export const initialState: EmployeeI = {
   taxExemption: '',
   companyEmail: '',
   personalEmail: '',
-  payrollBankAccount: null,
+  payrollBankAccount: {
+    accountName: '',
+    accountNumber: '',
+    bankName: '',
+    bankBranch: ''
+  },
   civilStatus: '',
   religion: '',
   NumberOfDependents: 0,

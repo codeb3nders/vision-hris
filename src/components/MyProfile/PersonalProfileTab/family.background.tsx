@@ -29,8 +29,8 @@ const FamilyBackground = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    employeeDetails?.familyBackground?.length > 0 &&
-      setFamily(employeeDetails?.familyBackground);
+    // employeeDetails?.familyBackground?.length > 0 &&
+    //   setFamily(employeeDetails?.familyBackground);
   }, [employeeDetails]);
 
   useEffect(() => {

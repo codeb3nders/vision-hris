@@ -7,15 +7,17 @@ import {
   Delete,
   SaveTwoTone,
 } from '@mui/icons-material';
-import { Dialog, IconButton, TextField } from '@mui/material';
+import { Dialog, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
+import { RELATION } from 'constants/Values';
 
 type Props = {};
 
 type ContactsI = {
   id: any;
   name: string;
+  relation: string;
   address: string;
   phoneNumber: string;
   isNew: false;
@@ -37,6 +39,11 @@ const Contacts = (props: Props) => {
     {
       field: 'name',
       headerName: 'Name',
+      flex: 1,
+    },
+    {
+      field: 'relation',
+      headerName: 'Relation',
       flex: 1,
     },
     {
@@ -64,7 +71,11 @@ const Contacts = (props: Props) => {
   ];
 
   useEffect(() => {
-    rows.length <= 0 && setRows(employeeDetails?.emergencyContact);
+    if (employeeDetails) {
+      setRows(employeeDetails.emergencyContact || []);
+    }
+    // rows.length <= 0 && employeeDetails?.emergencyContact && setRows(employeeDetails?.emergencyContact);
+    console.log({ employeeDetails })
   }, [employeeDetails]);
 
   const handleSaveNewContact = () => {
@@ -112,6 +123,17 @@ const Contacts = (props: Props) => {
                 setNewContact({ ...newContact, name: e.target.value })
               }
             />
+            <Select
+              id='relation'
+              labelId='relation'
+              onChange={(e: any) =>
+                setNewContact({ ...newContact, relation: e.target.value })
+              }
+            >
+              {RELATION.map((relation) => {
+                return <MenuItem value={relation}>{relation}</MenuItem>;
+              })}
+            </Select>
             <TextField
               id='emergency-address'
               fullWidth

@@ -19,7 +19,7 @@ const General = (props: Props) => {
     setHireDate(value);
     setEmployeeDetails({
       ...employeeDetails,
-      dateHired: moment(value).format('LL'),
+      dateHired: moment(value),
     });
   };
 
@@ -33,7 +33,7 @@ const General = (props: Props) => {
               onChange={(value: Date | any) =>
                 setEmployeeDetails({
                   ...employeeDetails,
-                  dateHired: moment(value).format('LL'),
+                  dateHired: moment(value),
                 })
               }
               value={employeeDetails?.dateHired}
@@ -98,11 +98,11 @@ const General = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            defaultValue={employeeDetails?.contactEmail}
+            defaultValue={employeeDetails?.companyEmail}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
-                contactEmail: e.target.value,
+                companyEmail: e.target.value,
               })
             }
           />

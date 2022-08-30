@@ -36,7 +36,7 @@ export type ProfileModel = {
   setIndex: React.Dispatch<React.SetStateAction<string>>;
   isNew?: boolean;
   isView?: boolean;
-  employeeDetails: any;
+  employeeDetails: EmployeeI;
   setEmployeeDetails: React.Dispatch<React.SetStateAction<EmployeeI>>;
   setDisplayPhoto: React.Dispatch<
     React.SetStateAction<{
@@ -55,7 +55,7 @@ export const ProfileCtx = createContext<ProfileModel>({
   setIndex: () => { },
   isNew: false,
   isView: false,
-  employeeDetails: {},
+  employeeDetails: initialState,
   setEmployeeDetails: () => { },
   setDisplayPhoto: () => { },
   displayPhoto: {

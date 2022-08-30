@@ -115,19 +115,25 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'department',
       headerName: 'Department',
       width: 250,
-      //   renderCell: (cell) => cell,
+      renderCell: (cell) => cell.row.department.map((o: any) => o.name).join(", ")
     },
     {
       field: 'location',
       headerName: 'Location',
       width: 140,
-      //   renderCell: (cell) => cell,
+      renderCell: (cell) => cell.row.location.map((o: any) => o.name).join(", ")
     },
     {
       field: 'employmentStatus',
       headerName: 'Employment Status',
       width: 140,
       //   renderCell: (cell) => cell,
+    },
+    {
+      field: 'reportsTo',
+      headerName: 'Team Leader',
+      width: 140,
+      renderCell: (cell) => cell.row.reportsTo.employeeName
     },
   ];
 

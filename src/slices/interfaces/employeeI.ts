@@ -1,3 +1,5 @@
+import { Moment } from "moment";
+
 export interface EmployeesWithLeaveSlice {
   employeeItems: EmployeeI[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -14,14 +16,14 @@ export interface EmployeeI {
   position: string;
   rank: string;
   department: string;
-  locations: string[];
+  location: any[];
   isActive: boolean;
   userGroup: string;
   reportsTo: string;
-  dateHired: Date;
+  dateHired: Date | Moment;
   employmentStatus: string;
-  endOfProbationary: Date;
-  contractEndDate: Date;
+  endOfProbationary: Date | Moment;
+  contractEndDate: Date | Moment;
   gender: string;
   birthDate: Date | null;
   personalContactNumber: string;
@@ -29,7 +31,7 @@ export interface EmployeeI {
   taxExemption: string;
   companyEmail: string;
   personalEmail: string;
-  payrollBankAccount: JSON | null;
+  payrollBankAccount: any | null;
   civilStatus: string;
   religion: string;
   NumberOfDependents: number;
@@ -70,11 +72,11 @@ export interface EmployeeI {
   othersDegree: string;
   othersHonors: string;
   licensure: string;
-  emergencyContact: JSON[] | null;
-  employmentRecords: JSON[] | null;
-  govtProfExamsPassed: JSON[] | null;
-  licensesCertifications: JSON[] | null;
-  familyBackground: JSON[] | null;
+  emergencyContact: any[] | null;
+  employmentRecords: any[] | null;
+  govtProfExamsPassed: any[] | null;
+  licensesCertifications: any[] | null;
+  familyBackground: any[] | null;
   leave_requests?: any;
   full_name: string;
 }

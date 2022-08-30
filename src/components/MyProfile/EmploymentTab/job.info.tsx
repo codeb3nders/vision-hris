@@ -110,7 +110,7 @@ const JobInfo = (props: Props) => {
   const { isNew, employeeDetails, setEmployeeDetails, enums } = useContext(ProfileCtx);
   const values = { employeeDetails, setEmployeeDetails, enums };
   useEffect(() => {
-    setInfos([...infos, employeeDetails]);
+    // setInfos([...infos, employeeDetails]);
   }, [employeeDetails]);
 
   return (

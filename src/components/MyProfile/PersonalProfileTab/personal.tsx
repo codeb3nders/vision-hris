@@ -213,7 +213,7 @@ const Personal = (props: Props) => {
               label='Birthdate'
               onChange={handleChange}
               // disabled={loading}
-              value={employeeDetails?.birthDate || null}
+              value={employeeDetails.birthDate}
               renderInput={(params) => (
                 <TextField
                   id='birthday'

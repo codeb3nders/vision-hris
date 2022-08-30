@@ -22,7 +22,7 @@ const GovernmentDetails = (props: Props) => {
     switch (employeeDetails.civilStatus) {
       case 'SINGLE':
         const singleTax =
-          parseInt(employeeDetails.NumberOfDependents) > 0
+          employeeDetails.NumberOfDependents > 0
             ? `SINGLE-${employeeDetails.NumberOfDependents}`
             : 'SINGLE';
         setEmployeeDetails((prev: any) => ({
@@ -31,10 +31,10 @@ const GovernmentDetails = (props: Props) => {
         }));
         break;
       case 'MARRIED':
-        console.log({ dep: parseInt(employeeDetails.NumberOfDependents) });
+        console.log({ dep: employeeDetails.NumberOfDependents });
 
         const marriedTax =
-          parseInt(employeeDetails.NumberOfDependents) > 0
+          employeeDetails.NumberOfDependents > 0
             ? `MARRIED-${employeeDetails.NumberOfDependents}`
             : 'MARRIED';
         setEmployeeDetails((prev: any) => ({
