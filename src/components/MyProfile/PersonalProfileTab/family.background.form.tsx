@@ -125,4 +125,4 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
   );
 };
 
-export default FamilyBackgroundForm;
+export default React.memo(FamilyBackgroundForm);

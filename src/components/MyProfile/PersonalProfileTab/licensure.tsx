@@ -178,4 +178,4 @@ const columns: any = (handleDelete: any) => {
   ];
 };
 
-export default Licensure;
+export default React.memo(Licensure);

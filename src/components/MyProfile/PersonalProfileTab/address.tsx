@@ -23,6 +23,8 @@ const Address = ({ data, isPermanent }: Props) => {
   const [selectedProvince, setSelectedProvince] = useState<any>('');
   const [selectedMunicipality, setSelectedMunicipality] = useState<any>('');
   const [selectedBarangay, setSelectedBarangay] = useState<any>('');
+  const [streetAddress1, setStreetAddress1] = useState<string>('');
+  const [streetAddress2, setStreetAddress2] = useState<string>('');
 
   useEffect(() => {
     isPermanent
@@ -53,26 +55,43 @@ const Address = ({ data, isPermanent }: Props) => {
     setSelectedBarangay('');
   }, [selectedRegion]);
 
+  // useEffect(() => {
+  //   setEmployeeDetails({
+  //     ...employeeDetails,
+  //     [isPermanent ? 'permanentResidenceAddress' : 'presentResidenceAddress']: {
+  //       addressLine:
+  //     },
+  //   });
+  // }, [streetAddress1, streetAddress2]);
+
   return (
     <GridWrapper colSize='8'>
-      <div className='col-span-4'>
+      <div className='col-span-8'>
         <TextField
-          id={`${isPermanent ? 'permanent' : 'present'}-address-1`}
+          id={`${isPermanent ? 'permanent' : 'present'}-addressline`}
           multiline
           label={`${isPermanent ? 'Permanent' : 'Present'} Street Address 1`}
           size='small'
           variant='standard'
           fullWidth
-          defaultValue={employeeDetails?.presentResidenceAddress}
-          onChange={(e: any) => {
-            setEmployeeDetails({
-              ...employeeDetails,
-              presentResidenceAddress: e.target.value,
-            });
-          }}
+          defaultValue={
+            employeeDetails[
+              isPermanent
+                ? 'permanentResidenceAddress'
+                : 'presentResidenceAddress'
+            ]?.addressLine
+          }
+          onChange={(e: any) =>
+            setEmployeeDetails((prev: any) => ({
+              ...prev,
+              [isPermanent
+                ? 'permanentResidenceAddress'
+                : 'presentResidenceAddress']: e.target.value,
+            }))
+          }
         />
       </div>
-      <div className='col-span-4'>
+      {/* <div className='col-span-4'>
         <TextField
           multiline
           id={`${isPermanent ? 'permanent' : 'present'}-address-2`}
@@ -80,15 +99,13 @@ const Address = ({ data, isPermanent }: Props) => {
           size='small'
           variant='standard'
           fullWidth
-          defaultValue={employeeDetails?.presentResidenceAddress}
-          onChange={(e: any) => {
-            setEmployeeDetails({
-              ...employeeDetails,
-              presentResidenceAddress: e.target.value,
-            });
-          }}
+          defaultValue={
+            employeeDetails[isPermanent ? 'permanent' : 'present']
+              ?.streetAddress2
+          }
+          onChange={(e: any) => setStreetAddress2(e.target.value)}
         />
-      </div>
+      </div> */}
 
       <div className='col-span-2'>
         <FormControl variant='standard' size='small' fullWidth>
@@ -103,7 +120,7 @@ const Address = ({ data, isPermanent }: Props) => {
               )
               ?.map((d: any) => {
                 return (
-                  <MenuItem key={d.region_name} value={d}>
+                  <MenuItem key={d.region_name} id={d.region_name} value={d}>
                     {d.region_name}
                   </MenuItem>
                 );
@@ -126,7 +143,7 @@ const Address = ({ data, isPermanent }: Props) => {
           >
             {selectedRegion?.province_list?.map((province: any) => {
               return (
-                <MenuItem key={province.id} value={province}>
+                <MenuItem key={province.id} id={province.id} value={province}>
                   {province.id}
                 </MenuItem>
               );
@@ -149,7 +166,9 @@ const Address = ({ data, isPermanent }: Props) => {
           >
             {selectedProvince?.municipality_list?.map((municipality: any) => {
               return (
-                <MenuItem value={municipality}>{municipality.id}</MenuItem>
+                <MenuItem value={municipality} id={municipality.id}>
+                  {municipality.id}
+                </MenuItem>
               );
             })}
           </Select>
@@ -169,7 +188,11 @@ const Address = ({ data, isPermanent }: Props) => {
             onChange={(e: any) => setSelectedBarangay(e.target.value)}
           >
             {selectedMunicipality?.barangay_list?.map((barangay: any) => {
-              return <MenuItem value={barangay}>{barangay}</MenuItem>;
+              return (
+                <MenuItem value={barangay} id={barangay}>
+                  {barangay}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>

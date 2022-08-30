@@ -1,7 +1,7 @@
 import { AccountBalanceWalletTwoTone } from '@mui/icons-material';
 import { TextField } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
 
@@ -99,4 +99,4 @@ const PayrollDetails = (props: Props) => {
   );
 };
 
-export default PayrollDetails;
+export default React.memo(PayrollDetails);

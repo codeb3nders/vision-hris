@@ -5,7 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
 import { EmployeeI } from 'slices/interfaces/employeeI';
@@ -13,8 +13,16 @@ import { EmployeeI } from 'slices/interfaces/employeeI';
 type Props = {};
 
 const Education = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
+  const { setEmployeeDetails, employeeDetails: details } =
+    useContext(ProfileCtx);
   const [selectedLevels, setSelectedLevels] = useState<any>('');
+
+  const employeeDetails = useMemo(() => details, [details]);
+
+  console.log('Education', { details });
+  useEffect(() => {
+    console.log({ EDUCATION: employeeDetails });
+  }, [employeeDetails]);
 
   const handleExist = (levelOfEducation: any) => {
     return (
@@ -48,7 +56,6 @@ const Education = (props: Props) => {
       renderCell: (params: any) => {
         const yrFrom: any = handleKey(params.row.levelOfEducation, 'YrFrom');
         const yrTo: any = handleKey(params.row.levelOfEducation, 'YrTo');
-        // console.log({ yrFrom, yrTo, params });
 
         return (
           <span className='flex flex-row p-1 text-xs w-full gap-4'>

@@ -1,7 +1,7 @@
 import { AlternateEmailTwoTone } from '@mui/icons-material';
 import { TextField } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
 
@@ -105,4 +105,4 @@ const ContactDetails = (props: Props) => {
   );
 };
 
-export default ContactDetails;
+export default React.memo(ContactDetails);

@@ -10,9 +10,10 @@ import moment from 'moment';
 
 type Props = {};
 
-const EmployementRecord = (props: Props) => {
+const EmploymentRecord = (props: Props) => {
   const [records, setRecords] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  console.log('EmploymentRecord');
 
   const handleDelete = (params: any) => {
     setRecords((prev: any) => {
@@ -50,8 +51,6 @@ const EmployementRecord = (props: Props) => {
 
 const RecordDialog = ({ open, setOpen, setRecords }) => {
   const [data, setData] = useState<any>({});
-
-  console.log({ data });
 
   const handleSave = () => {
     setRecords((prev: any) => [
@@ -234,4 +233,4 @@ const columns: any = (handleDelete: any) => {
   ];
 };
 
-export default EmployementRecord;
+export default EmploymentRecord;

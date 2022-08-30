@@ -7,10 +7,10 @@ import {
 import { IconButton } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { useContext, useEffect, useState } from 'react';
+import { lazy, useContext, useEffect, useState, memo } from 'react';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
-import FamilyBackgroundForm from './family.background.form';
+const FamilyBackgroundForm = lazy(() => import('./family.background.form'));
 
 type Props = {};
 
@@ -128,4 +128,4 @@ const columns: any = (handleDelete: any) => [
   },
 ];
 
-export default FamilyBackground;
+export default memo(FamilyBackground);

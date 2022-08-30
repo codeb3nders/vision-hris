@@ -168,4 +168,4 @@ const GovernmentDetails = (props: Props) => {
   );
 };
 
-export default GovernmentDetails;
+export default React.memo(GovernmentDetails);

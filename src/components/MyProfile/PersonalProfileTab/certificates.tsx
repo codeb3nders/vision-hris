@@ -1,7 +1,7 @@
 import { Add, Delete, WorkspacePremiumTwoTone } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -199,4 +199,4 @@ const columns: any = (handleDelete: any) => [
   },
 ];
 
-export default Certificates;
+export default React.memo(Certificates);

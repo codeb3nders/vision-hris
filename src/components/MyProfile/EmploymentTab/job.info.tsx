@@ -182,7 +182,11 @@ const JobInfoFields = ({ employees }) => {
             }
           >
             {POSITIONS.map((position) => {
-              return <MenuItem value={position}>{position}</MenuItem>;
+              return (
+                <MenuItem id={position} value={position}>
+                  {position}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -191,6 +195,7 @@ const JobInfoFields = ({ employees }) => {
         <FormControl variant='standard' fullWidth size='small' required>
           <InputLabel id='rank'>Department</InputLabel>
           <Select
+            id='department'
             labelId='department'
             defaultValue={employeeDetails?.department}
             onChange={(e: any) =>
@@ -201,7 +206,11 @@ const JobInfoFields = ({ employees }) => {
             }
           >
             {DEPARTMENTS.map((department) => {
-              return <MenuItem value={department}>{department}</MenuItem>;
+              return (
+                <MenuItem value={department} id={department}>
+                  {department}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -222,7 +231,11 @@ const JobInfoFields = ({ employees }) => {
             }
           >
             {LOCATIONS.map((location) => {
-              return <MenuItem value={location}>{location}</MenuItem>;
+              return (
+                <MenuItem value={location} id={location}>
+                  {location}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -243,7 +256,11 @@ const JobInfoFields = ({ employees }) => {
           >
             {getEmployeeItems?.map((employee) => {
               return (
-                <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
+                <MenuItem
+                  key={employee.employeeNo}
+                  id={employee.employeeNo}
+                  value={employee.employeeNo}
+                >
                   {employee.firstName} {employee.lastName}
                 </MenuItem>
               );
@@ -268,6 +285,7 @@ const JobInfoFields = ({ employees }) => {
               }
               renderInput={(params) => (
                 <TextField
+                  id='date-hired'
                   size='small'
                   {...params}
                   fullWidth
@@ -292,6 +310,7 @@ const JobInfoFields = ({ employees }) => {
               }
               renderInput={(params) => (
                 <TextField
+                  id='end-of-probation'
                   size='small'
                   {...params}
                   fullWidth
@@ -316,6 +335,7 @@ const JobInfoFields = ({ employees }) => {
               }
               renderInput={(params) => (
                 <TextField
+                  id='end-of-contract'
                   size='small'
                   {...params}
                   fullWidth
@@ -342,7 +362,11 @@ const JobInfoFields = ({ employees }) => {
             }
           >
             {RANK.map((rank) => {
-              return <MenuItem value={rank}>{rank}</MenuItem>;
+              return (
+                <MenuItem id={`rank-${rank}`} value={rank}>
+                  {rank}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -362,7 +386,11 @@ const JobInfoFields = ({ employees }) => {
             }
           >
             {EMPLOYMENT_STATUS.map((status) => {
-              return <MenuItem value={status}>{status}</MenuItem>;
+              return (
+                <MenuItem id={`employment-status-${status}`} value={status}>
+                  {status}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -370,6 +398,7 @@ const JobInfoFields = ({ employees }) => {
 
       <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <TextField
+          id='company-contact-number'
           required
           variant='standard'
           label='Company Contact Number'
@@ -386,6 +415,7 @@ const JobInfoFields = ({ employees }) => {
       {employeeDetails.rank === 'RANK AND FILE' ? (
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='company-email-auto'
             required
             variant='standard'
             label='Company Email Address'
@@ -409,6 +439,7 @@ const JobInfoFields = ({ employees }) => {
       ) : (
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='company-email'
             required
             variant='standard'
             label='Company Email Address'

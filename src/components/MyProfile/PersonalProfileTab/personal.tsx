@@ -13,12 +13,12 @@ import {
 import CollapseWrapper from './collapse.wrapper';
 import { AccountCircleTwoTone } from '@mui/icons-material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { useContext, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 import moment from 'moment';
 import { CITIZENSHIP, CIVIL_STATUS, RELIGION } from 'constants/Values';
 import { EmployeeI } from 'slices/interfaces/employeeI';
-import Address from './address';
+const Address = lazy(() => import('./address'));
 
 type Props = {};
 
@@ -29,7 +29,7 @@ const Personal = (props: Props) => {
   const [philData, setPhilData] = useState<any>(null);
 
   useEffect(() => {
-    if (sameAddress) {
+    if (sameAddress && !employeeDetails.permanentRegion) {
       setEmployeeDetails((prev: any) => ({
         ...prev,
         permanentRegion: prev.presentRegion,
@@ -41,9 +41,13 @@ const Personal = (props: Props) => {
       setEmployeeDetails((prev: EmployeeI) => ({
         ...prev,
         permanentResidenceAddress: '',
+        permanentRegion: '',
+        permanentProvince: '',
+        permanentMunicipality: '',
+        permanentBarangay: '',
       }));
     }
-  }, [sameAddress]);
+  }, [sameAddress, employeeDetails]);
 
   useEffect(() => {
     getData();
@@ -133,7 +137,6 @@ const Personal = (props: Props) => {
     <CollapseWrapper
       panelTitle='Personal Information'
       icon={AccountCircleTwoTone}
-      open
     >
       <GridWrapper colSize='7'>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
@@ -238,8 +241,12 @@ const Personal = (props: Props) => {
               }}
               defaultValue={employeeDetails?.gender}
             >
-              <MenuItem value='MALE'>Male</MenuItem>
-              <MenuItem value='FEMALE'>Female</MenuItem>
+              <MenuItem id='male' value='MALE'>
+                Male
+              </MenuItem>
+              <MenuItem id='female' value='FEMALE'>
+                Female
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -260,7 +267,11 @@ const Personal = (props: Props) => {
               defaultValue={employeeDetails?.civilStatus}
             >
               {CIVIL_STATUS.map((status) => {
-                return <MenuItem value={status}>{status}</MenuItem>;
+                return (
+                  <MenuItem id={status} value={status}>
+                    {status}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>
@@ -287,7 +298,7 @@ const Personal = (props: Props) => {
               >
                 {CITIZENSHIP.map((c: string, idx: number) => {
                   return (
-                    <MenuItem key={`${c}~${idx}`} value={c}>
+                    <MenuItem key={`${c}~${idx}`} id={`${c}~${idx}`} value={c}>
                       {c}
                     </MenuItem>
                   );
@@ -307,7 +318,11 @@ const Personal = (props: Props) => {
                 defaultValue={employeeDetails?.religion}
               >
                 {RELIGION.map((religion) => {
-                  return <MenuItem value={religion}>{religion}</MenuItem>;
+                  return (
+                    <MenuItem id={religion} value={religion}>
+                      {religion}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </FormControl>
@@ -374,7 +389,9 @@ const Personal = (props: Props) => {
             <h5 className='text-sm col-span-2 mt-4'>
               Present Residence Address
             </h5>
-            <Address data={philData} />
+            <Suspense fallback={<div>Loading...</div>}>
+              <Address data={philData} />
+            </Suspense>
           </div>
 
           <h5 className='text-sm col-span-2'>Permanent Residence Address</h5>
@@ -443,4 +460,4 @@ const Personal = (props: Props) => {
   );
 };
 
-export default Personal;
+export default React.memo(Personal);

@@ -94,6 +94,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
           <Button
             startIcon={<AddCircleOutlineTwoTone />}
             onClick={() => setOpen(true)}
+            id='add-new-employee-btn'
           >
             Add New Employee
           </Button>

@@ -3,16 +3,27 @@ import { TabContext } from '@mui/lab';
 import { Alert, CircularProgress, Dialog, Snackbar } from '@mui/material';
 import { updateEmployeeEndpoint } from 'apis/employees';
 import { AppCtx } from 'App';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  lazy,
+  Suspense,
+  useMemo,
+  useCallback,
+} from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import { initialState } from './employee.initialstate';
-import ProfileDetails from './profile.details';
+// import ProfileDetails from './profile.details';
 import ProfileOther from './profile.other';
-import ProfileTabContent from './profile.tabcontent';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import { createEmployee } from './../../slices/employees/createEmployeesSlice';
 import { useDispatch } from 'react-redux';
+
+const ProfileDetails = lazy(() => import('./profile.details'));
+const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
 
 type Props = {
   isNew?: boolean;
@@ -27,7 +38,7 @@ export type ProfileModel = {
   isNew?: boolean;
   isView?: boolean;
   employeeDetails: any;
-  setEmployeeDetails: React.Dispatch<React.SetStateAction<EmployeeI>>;
+  setEmployeeDetails: any;
   setDisplayPhoto: React.Dispatch<
     React.SetStateAction<{
       employeeNo: string;
@@ -66,6 +77,17 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     employeeNo: '',
     photo: '',
   });
+
+  const memoizedEmployeeDetails = useMemo(
+    () => employeeDetails,
+    [employeeDetails]
+  );
+
+  const setEmployeeDetailsCallback = useCallback(
+    (data: EmployeeI) => setEmployeeDetails(data),
+    []
+  );
+
   const [displayPhotos, setDisplayPhotos] = useState<any[]>([]);
 
   const [openNotif, setOpenNotif] = useState<{
@@ -78,10 +100,6 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     status: false,
     action: '',
   });
-
-  useEffect(() => {
-    console.log({ employeeDetails });
-  }, [employeeDetails]);
 
   useEffect(() => {
     handleGetDisplayPhoto();
@@ -210,8 +228,8 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
         index,
         setIndex,
         isNew,
-        setEmployeeDetails,
-        employeeDetails,
+        setEmployeeDetails: setEmployeeDetailsCallback,
+        employeeDetails: memoizedEmployeeDetails,
         isView,
         setDisplayPhoto,
         displayPhoto,
@@ -236,7 +254,9 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
         <section
           className={`mt-4 grid gap-4 pb-0 w-full ${isNew ? '!pb-0' : ''}`}
         >
-          <ProfileDetails />
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProfileDetails />
+          </Suspense>
           <section className='grid grid-cols-12 w-full gap-4'>
             {!isNew && (
               <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>
@@ -252,7 +272,9 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
                   : ''
               }`}
             >
-              <ProfileTabContent className='self-stretch' />
+              <Suspense fallback={<div>Loading...</div>}>
+                <ProfileTabContent className='self-stretch' />
+              </Suspense>
             </article>
           </section>
         </section>

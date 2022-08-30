@@ -30,8 +30,6 @@ const ProfileDetails = (props: Props) => {
   const [img, setImg] = useState<any>(null);
   const { processfile, resized } = useResize({ quality: 0.9 });
 
-  console.log({ employeeDetails });
-
   useEffect(() => {
     img && processfile(img);
   }, [img]);
@@ -39,8 +37,6 @@ const ProfileDetails = (props: Props) => {
   useEffect(() => {
     resized && setDisplayPhoto({ employeeNo: '', photo: resized });
   }, [resized]);
-
-  console.log({ displayPhoto });
 
   return (
     <CustomCard
