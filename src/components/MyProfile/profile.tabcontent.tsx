@@ -29,6 +29,7 @@ type Props = {
 
 const ProfileTabContent = ({ className }: Props) => {
   const { isNew, isView } = useContext(ProfileCtx);
+  console.log({ isView })
   return (
     <CustomCard
       id='tab-content'

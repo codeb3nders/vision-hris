@@ -62,8 +62,8 @@ const ProfileTeam = ({ className }: Props) => {
             <Avatar src={ProfilePhoto} />
           </ListItemIcon>
           <ListItemText
-            primary={<span className='text-sm font-bold'>{employeeDetails.reportsTo}</span>}
-            secondary={<span className='text-xs '>Global Director</span>}
+            primary={<span className='text-sm font-bold'>{employeeDetails.reportsTo.employeeName}</span>}
+            secondary={<span className='text-xs '>{employeeDetails.reportsTo.position}</span>}
           />
         </ListItemButton>
 

@@ -21,6 +21,7 @@ type Props = {
 
 const ProfileOther = ({ className }: Props) => {
   const { employeeDetails } = useContext(ProfileCtx);
+  console.log({ employeeDetails })
   return (
     <CustomCard className={`${className}`}>
       <List className='p-0'>

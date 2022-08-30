@@ -63,11 +63,14 @@ const Address = ({ data, isPermanent }: Props) => {
           size='small'
           variant='standard'
           fullWidth
-          defaultValue={employeeDetails?.presentResidenceAddress}
+          defaultValue={employeeDetails?.presentAddress?.addressLine}
           onChange={(e: any) => {
             setEmployeeDetails({
               ...employeeDetails,
-              presentResidenceAddress: e.target.value,
+              presentAddress: {
+                ...employeeDetails.presentAddress,
+                addressLine: e.target.value
+              }
             });
           }}
         />

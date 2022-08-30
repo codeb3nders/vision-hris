@@ -22,7 +22,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
   const [newFamily, setNewFamily] = useState<FamilyI>({
     // id: family?.length + 1,
     company: '',
-    fullname: '',
+    name: '',
     occupation: '',
     relation: '',
     residence: '',
@@ -31,7 +31,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
   const handleAddFamily = () => {
     setFamily((family: FamilyI[]) => [
       ...family,
-      { ...newFamily, id: `${newFamily.fullname}~${newFamily.relation}` },
+      { ...newFamily, id: `${newFamily.name}~${newFamily.relation}` },
     ]);
     setOpen(false);
   };
@@ -43,13 +43,13 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
           <PersonAddTwoTone fontSize='small' /> Add Family Member
         </p>
         <TextField
-          id='fullname'
+          id='name'
           fullWidth
           variant='standard'
           size='small'
           label='Fullname'
           onChange={(e: any) =>
-            setNewFamily({ ...newFamily, fullname: e.target.value })
+            setNewFamily({ ...newFamily, name: e.target.value })
           }
         />
 
@@ -105,7 +105,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
         <div className='grid grid-cols-7'>
           <button
             disabled={
-              !newFamily.relation || !newFamily.fullname || !newFamily.residence
+              !newFamily.relation || !newFamily.name || !newFamily.residence
             }
             onClick={handleAddFamily}
             className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'

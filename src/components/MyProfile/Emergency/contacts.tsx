@@ -75,7 +75,6 @@ const Contacts = (props: Props) => {
       setRows(employeeDetails.emergencyContact || []);
     }
     // rows.length <= 0 && employeeDetails?.emergencyContact && setRows(employeeDetails?.emergencyContact);
-    console.log({ employeeDetails })
   }, [employeeDetails]);
 
   const handleSaveNewContact = () => {

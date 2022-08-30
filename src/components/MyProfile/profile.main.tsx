@@ -108,14 +108,10 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   }, [access_token, employeeNo]);
 
   useEffect(() => {
-    console.log({ employeeDetails });
-  }, [employeeDetails]);
-
-  useEffect(() => {
     handleGetDisplayPhoto();
     setIndex('1');
     if (!isNew && isView) {
-      setEmployeeDetails(employeeData || initialState);
+      setEmployeeDetails({...initialState, ...employeeData} );
       if (employeeData?.employeeNo === userData.employeeNo) {
         setIsOwner(true);
       }
