@@ -138,11 +138,11 @@ const ProfileDetails = (props: Props) => {
         </section>
       )}
 
-      {isNew && (
-        <section className='laptop:col-span-9 desktop:col-span-9 tablet:col-span-9 phone:col-span-12 phone:text-xs flex flex-col justify-end phone:text-center tablet:text-left laptop:text-left desktop:text-left'>
-          <ProfileTabs className='phone:hidden laptop:block desktop:block tablet:hidden ' />
-        </section>
-      )}
+      {/* {isNew && ( */}
+      <section className='laptop:col-span-9 desktop:col-span-9 tablet:col-span-9 phone:col-span-12 phone:text-xs flex flex-col justify-end phone:text-center tablet:text-left laptop:text-left desktop:text-left'>
+        <ProfileTabs className='phone:hidden laptop:block desktop:block tablet:hidden ' />
+      </section>
+      {/* )} */}
     </CustomCard>
   );
 };

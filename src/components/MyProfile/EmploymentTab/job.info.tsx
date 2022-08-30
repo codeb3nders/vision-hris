@@ -38,19 +38,11 @@ const columns: GridColDef[] = [
     },
   },
   {
-    field: 'division',
-    headerName: 'Division',
-    width: 120,
-    renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
-    },
-  },
-  {
     field: 'location',
     headerName: 'Location',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.location.name}</div>;
     },
   },
   {
@@ -58,7 +50,7 @@ const columns: GridColDef[] = [
     headerName: 'Department',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.department.name}</div>;
     },
   },
   {
@@ -66,7 +58,7 @@ const columns: GridColDef[] = [
     headerName: 'Rank',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.rank.name}</div>;
     },
   },
   {
@@ -74,7 +66,7 @@ const columns: GridColDef[] = [
     headerName: 'Position',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.position.name}</div>;
     },
   },
   {
@@ -82,15 +74,7 @@ const columns: GridColDef[] = [
     headerName: 'Reports To',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
-    },
-  },
-  {
-    field: 'comment',
-    headerName: 'Comment',
-    width: 120,
-    renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.reportsTo.employeeName}</div>;
     },
   },
 ];
@@ -102,15 +86,14 @@ type JobInfoI = {
   rank: string;
   position: string;
   reportsTo: string;
-  comment: string;
 };
 
 const JobInfo = (props: Props) => {
-  const [infos, setInfos] = useState<JobInfoI[]>([]);
+  const [infos, setInfos] = useState<any[]>([]);
   const { isNew, employeeDetails, setEmployeeDetails, enums } = useContext(ProfileCtx);
   const values = { employeeDetails, setEmployeeDetails, enums };
   useEffect(() => {
-    // setInfos([...infos, employeeDetails]);
+    setInfos([...infos, employeeDetails]);
   }, [employeeDetails]);
 
   return (
@@ -148,14 +131,33 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
   const [locations, setLocations] = useState<any[]>([])
   const [positions, setPositions] = useState<any[]>([])
   const [ranks, setRanks] = useState<any[]>([])
+  console.log({ getEmployeeItems })
 
   useEffect(() => {
+    console.log({ enums })
     setDepartments(enums.departments);
     setEmploymentStatus(enums.employment_status);
     setLocations(enums.locations);
     setPositions(enums.positions);
     setRanks(enums.ranks);
   }, [enums])
+
+  useEffect(() => {
+    if (!employeeDetails.employeeNo && employeeDetails.rank && employeeDetails.firstName && employeeDetails.lastName) {
+      const firstName = employeeDetails.firstName.split(" ")
+      if (employeeDetails.rank.toLowerCase() === "rank and file") {
+        setEmployeeDetails((prev: EmployeeI) => ({
+          ...prev,
+          companyEmail: `${firstName[0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
+        }))
+      } else {
+        setEmployeeDetails((prev: EmployeeI) => ({
+          ...prev,
+          companyEmail: `${firstName[0]}.${employeeDetails.lastName}@vcdcph.com`.toLowerCase(),
+        }))
+      }
+    }
+  }, [employeeDetails.rank])
 
   return (
     <GridWrapper colSize='2' className='items-center p-2'>
@@ -188,14 +190,14 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             }
           >
             {positions.map((position) => {
-              return <MenuItem value={position}>{position}</MenuItem>;
+              return <MenuItem value={position.code}>{position.name}</MenuItem>;
             })}
           </Select>
         </FormControl>
       </div>
       <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='rank'>Department</InputLabel>
+          <InputLabel id='department'>Department</InputLabel>
           <Select
             labelId='department'
             defaultValue={employeeDetails?.department}
@@ -207,7 +209,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             }
           >
             {departments.map((department) => {
-              return <MenuItem value={department}>{department}</MenuItem>;
+              return <MenuItem value={department.code}>{department.name}</MenuItem>;
             })}
           </Select>
         </FormControl>
@@ -219,16 +221,16 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
           <Select
             multiple
             labelId='location'
-            defaultValue={employeeDetails?.locations}
+            defaultValue={employeeDetails?.location}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
-                locations: e.target.value,
+                location: e.target.value,
               })
             }
           >
             {locations.map((location) => {
-              return <MenuItem value={location}>{location}</MenuItem>;
+              return <MenuItem value={location.code}>{location.name}</MenuItem>;
             })}
           </Select>
         </FormControl>
@@ -248,7 +250,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
                 })
               }
             >
-              {getEmployeeItems?.filter((x: any) => x.department === employeeDetails.department).map((employee) => {
+              {getEmployeeItems?.filter((x: any) => x.department.code === employeeDetails.department.code).map((employee) => {
                 return (
                   <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
                     {employee.firstName} {employee.lastName}
@@ -273,7 +275,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
               }
             >
               {ranks.map((rank) => {
-                return <MenuItem value={rank}>{rank}</MenuItem>;
+                return <MenuItem value={rank.code}>{rank.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
@@ -293,7 +295,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
               }
             >
               {employmentStatus.map((status) => {
-                return <MenuItem value={status}>{status}</MenuItem>;
+                return <MenuItem value={status.code}>{status.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
@@ -374,45 +376,6 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         </div>
       </GridWrapper>
 
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='rank'>Employment Rank</InputLabel>
-          <Select
-            labelId='rank'
-            defaultValue={employeeDetails?.rank}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                rank: e.target.value,
-              })
-            }
-          >
-            {ranks.map((rank) => {
-              return <MenuItem value={rank}>{rank}</MenuItem>;
-            })}
-          </Select>
-        </FormControl>
-      </div>
-
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='employement_status'>Employment Status</InputLabel>
-          <Select
-            labelId='employement_status'
-            value={employeeDetails?.employmentStatus || 'PROBATIONARY'}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                employmentStatus: e.target.value,
-              })
-            }
-          >
-            {employmentStatus.map((status) => {
-              return <MenuItem value={status}>{status}</MenuItem>;
-            })}
-          </Select>
-        </FormControl>
-      </div>
 
       <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <TextField
@@ -429,46 +392,21 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         />
       </div>
 
-      {employeeDetails.rank === 'RANK AND FILE' ? (
-        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-          <TextField
-            required
-            variant='standard'
-            label='Company Email Address'
-            fullWidth
-            disabled
-            value={`${employeeDetails.firstName}${employeeDetails.lastName}.vpdcph@gmail.com`.toLowerCase()}
-            helperText={
-              <span>
-                This is an auto-generated email for a{' '}
-                <strong>Rank and File</strong> employment rank.
-              </span>
-            }
-          // onChange={(e: any) =>
-          //   setEmployeeDetails((prev: EmployeeI) => ({
-          //     ...prev,
-          //     companyEmail: e.target.value,
-          //   }))
-          // }
-          />
-        </div>
-      ) : (
-        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-          <TextField
-            required
-            variant='standard'
-            label='Company Email Address'
-            fullWidth
-            value={employeeDetails.companyEmail || null}
-            onChange={(e: any) =>
-              setEmployeeDetails((prev: EmployeeI) => ({
-                ...prev,
-                companyEmail: e.target.value,
-              }))
-            }
-          />
-        </div>
-      )}
+      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+        <TextField
+          required
+          variant='standard'
+          label='Company Email Address'
+          fullWidth
+          disabled
+          value={employeeDetails.companyEmail}
+          helperText={
+            <span>
+              This is an auto-generated email address according to the employee's Rank.
+            </span>
+          }
+        />
+      </div>
 
       {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <FormControl variant='standard' fullWidth size='small' required>

@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import CollapseWrapper from './collapse.wrapper';
-import { TaxExemption } from './../../HRDashboard/EmployeeData';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { ProfileCtx } from '../profile.main';
 
@@ -20,16 +19,6 @@ const GovernmentDetails = (props: Props) => {
 
   const handleTaxExemption = () => {
     switch (employeeDetails.civilStatus) {
-      case 'SINGLE':
-        const singleTax =
-          employeeDetails.NumberOfDependents > 0
-            ? `SINGLE-${employeeDetails.NumberOfDependents}`
-            : 'SINGLE';
-        setEmployeeDetails((prev: any) => ({
-          ...prev,
-          taxExemption: singleTax,
-        }));
-        break;
       case 'MARRIED':
         console.log({ dep: employeeDetails.NumberOfDependents });
 
@@ -43,6 +32,14 @@ const GovernmentDetails = (props: Props) => {
         }));
         break;
       default:
+        const singleTax =
+          employeeDetails.NumberOfDependents > 0
+            ? `SINGLE-${employeeDetails.NumberOfDependents}`
+            : 'SINGLE';
+        setEmployeeDetails((prev: any) => ({
+          ...prev,
+          taxExemption: singleTax,
+        }));
         break;
     }
   };
@@ -145,23 +142,20 @@ const GovernmentDetails = (props: Props) => {
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-          <FormControl variant='standard' fullWidth size='small' required>
-            <InputLabel id='tax'>Tax Exemption</InputLabel>
-            <Select
-              labelId='tax'
-              value={employeeDetails.taxExemption}
-              onChange={(e: any) =>
-                setEmployeeDetails({
-                  ...employeeDetails,
-                  taxExemption: e.target.value,
-                })
-              }
-            >
-              {TaxExemption.map((tax) => {
-                return <MenuItem value={tax}>{tax}</MenuItem>;
-              })}
-            </Select>
-          </FormControl>
+          <TextField
+            required
+            variant='standard'
+            size='small'
+            fullWidth
+            label='Tax Exemption'
+            defaultValue={employeeDetails?.sss}
+            onChange={(e: any) =>
+              setEmployeeDetails({
+                ...employeeDetails,
+                taxExemption: e.target.value,
+              })
+            }
+          />
         </div>
       </GridWrapper>
     </CollapseWrapper>

@@ -28,8 +28,6 @@ import {
   DigitalBulletin,
   EmploymentStatus,
   NewEmployeeDetails,
-  TaxExemption,
-  TITLES,
   VaccineStatus,
 } from './EmployeeData';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -127,8 +125,6 @@ const NewEmployee: React.FC<Props> = ({ open, setOpen, id }) => {
         switch (title.key) {
           case 'employment_status':
             return EmploymentStatus;
-          case 'tax_exemption':
-            return TaxExemption;
           case 'civil_status':
             return CivilStatus;
           case 'vaccine_status':

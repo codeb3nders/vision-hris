@@ -62,30 +62,26 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
         onChange={(event: React.SyntheticEvent, newValue: string) =>
           setIndex(newValue)
         }
-        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${
-          isMobile ? 'border-b border-gray-200' : ''
-        }`}
+        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${isMobile ? 'border-b border-gray-200' : ''
+          }`}
         scrollButtons={isMobile}
         variant={isMobile ? 'scrollable' : 'fullWidth'}
       >
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
-            index === '1' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '1' ? '!text-v-red' : ''
+            }`}
           label='Personal'
           {...a11yProps('1')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
-            index === '2' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '2' ? '!text-v-red' : ''
+            }`}
           label='Employment'
           {...a11yProps('2')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
-            index === '3' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '3' ? '!text-v-red' : ''
+            }`}
           label='Compensation and Benefits'
           {...a11yProps('3')}
         />
@@ -112,58 +108,50 @@ const EmployeeTabs = ({ className, index, setIndex, isMobile }) => {
         onChange={(event: React.SyntheticEvent, newValue: string) =>
           setIndex(newValue)
         }
-        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${
-          isMobile ? 'border-b border-gray-200' : ''
-        }`}
+        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${isMobile ? 'border-b border-gray-200' : ''
+          }`}
         scrollButtons={isMobile}
         variant={isMobile ? 'scrollable' : 'fullWidth'}
       >
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
-            index === '1' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '1' ? '!text-v-red' : ''
+            }`}
           label='Personal'
           {...a11yProps('1')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
-            index === '2' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '2' ? '!text-v-red' : ''
+            }`}
           label='Employment'
           {...a11yProps('2')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
-            index === '3' ? '!text-v-red' : ''
-          }`}
-          label='Emergency'
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '3' ? '!text-v-red' : ''
+            }`}
+          label='Compensation and Benefits'
           {...a11yProps('3')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
-            index === '4' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '4' ? '!text-v-red' : ''
+            }`}
           label='Leaves'
           {...a11yProps('4')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
-            index === '5' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '5' ? '!text-v-red' : ''
+            }`}
           label='Assets'
           {...a11yProps('5')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
-            index === '6' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '6' ? '!text-v-red' : ''
+            }`}
           label='201 Checklist'
           {...a11yProps('6')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
-            index === '7' ? '!text-v-red' : ''
-          }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '7' ? '!text-v-red' : ''
+            }`}
           label='Disciplinary Actions'
           disabled
           {...a11yProps('7')}

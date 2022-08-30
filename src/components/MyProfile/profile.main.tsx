@@ -111,7 +111,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
     handleGetDisplayPhoto();
     setIndex('1');
     if (!isNew && isView) {
-      setEmployeeDetails({...initialState, ...employeeData} );
+      setEmployeeDetails({ ...initialState, ...employeeData });
       if (employeeData?.employeeNo === userData.employeeNo) {
         setIsOwner(true);
       }
