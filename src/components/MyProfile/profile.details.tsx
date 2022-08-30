@@ -130,10 +130,8 @@ const ProfileDetails = (props: Props) => {
 
           <p className='text-gray-500 mt-2'>
             Started on{' '}
-            {employeeDetails?.dateHired
-              ? moment(employeeDetails?.dateHired).format('LL')
-              : 'April 17, 2019'}{' '}
-            ({moment(employeeDetails?.dateHired).fromNow() || '3.2 years ago'})
+            {moment(employeeDetails.dateHired).format('LL')}{' '}
+            ({employeeDetails.yearsInService} year/s)
           </p>
         </section>
       )}

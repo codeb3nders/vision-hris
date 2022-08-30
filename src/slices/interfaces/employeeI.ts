@@ -117,7 +117,8 @@ export interface EmployeeI {
   educationalBackground: EducationI[] | null;
   employmentRecords: EmploymentRecordsI[] | null;
   licensesCertifications: LicensesCertificationsI[] | null;
-  allowanceDetails: AllowanceDetailsI[] | null
+  allowanceDetails: AllowanceDetailsI[] | null;
+  yearsInService: number;
 }
 
 export interface LoginI {

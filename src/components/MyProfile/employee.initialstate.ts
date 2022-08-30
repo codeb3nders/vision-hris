@@ -76,5 +76,5 @@ export const initialState: EmployeeI = {
   employmentRecords: [],
   licensesCertifications: [],
   allowanceDetails: [],
-
+  yearsInService: 0
 };
