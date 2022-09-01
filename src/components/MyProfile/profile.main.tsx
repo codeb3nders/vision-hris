@@ -2,7 +2,7 @@
 import { TabContext } from '@mui/lab';
 import { Alert, CircularProgress, Dialog, Snackbar } from '@mui/material';
 import { updateEmployeeEndpoint } from 'apis/employees';
-import { AppCtx } from 'App';
+import { AppCtx, consoler } from 'App';
 import React, {
   createContext,
   useContext,
@@ -134,8 +134,18 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex('1');
-    if (!isNew && isView) {
-      setEmployeeDetails({ ...initialState, ...employeeData });
+    if (!isNew && isView && employeeData) {
+      console.log({ employeeData });
+      setEmployeeDetails(() => {
+        return {
+          ...initialState,
+          ...employeeData,
+          department: employeeData.department.name,
+          // position: employeeData.name,
+          employmentType: employeeData.employmentType.name,
+          employmentStatus: employeeData.employmentStatus.name,
+        };
+      });
       if (employeeData?.employeeNo === userData.employeeNo) {
         setIsOwner(true);
       }
@@ -168,12 +178,13 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       allowance_types: any = [],
       disciplinary_actions: any = [],
       employment_types: any = [];
+
     enumsData.forEach((o: any) => {
       switch (o.type) {
         case 'position':
           positions.push(o);
           break;
-        case 'civilStatus':
+        case 'civilstatus':
           civil_status.push(o);
           break;
         case 'citizenship':
@@ -182,7 +193,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         case 'religion':
           religions.push(o);
           break;
-        case 'employmentStatus':
+        case 'employmentstatus':
           employment_status.push(o);
           break;
         case 'location':
@@ -206,7 +217,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         case 'disciplinary_action':
           disciplinary_actions.push(o);
           break;
-        case 'employmentType':
+        case 'employmenttype':
           employment_types.push(o);
           break;
       }
@@ -283,8 +294,11 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const saveEmployee = async () => {
     setLoading({ status: true, action: 'Saving' });
     try {
-      const response = await dispatch(createEmployee(employeeDetails));
-
+      consoler(employeeDetails, 'blue', 'saveEmployee');
+      const response = await dispatch(
+        createEmployee({ body: employeeDetails, access_token })
+      );
+      console.log({ response }, 'vvvvvvvvvvvvvvvvvvv');
       if (response.meta.requestStatus === 'fulfilled') {
         handleSaveDisplayPhoto(response.payload.employeeNo);
         setLoading({ status: false, action: '' });

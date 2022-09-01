@@ -40,7 +40,11 @@ const columns: GridColDef[] = [
     headerName: 'Location',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.location.name}</div>;
+      return (
+        <div className='text-xs p-1'>
+          {params.row.location.map((o: any) => o.name).join(', ')}
+        </div>
+      );
     },
   },
   {
@@ -48,7 +52,7 @@ const columns: GridColDef[] = [
     headerName: 'Department',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.department.name}</div>;
+      return <div className='text-xs p-1'>{params.row.department}</div>;
     },
   },
   {
@@ -56,7 +60,7 @@ const columns: GridColDef[] = [
     headerName: 'Rank',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.rank.name}</div>;
+      return <div className='text-xs p-1'>{params.row.rank}</div>;
     },
   },
   {
@@ -64,7 +68,7 @@ const columns: GridColDef[] = [
     headerName: 'Position',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.position.name}</div>;
+      return <div className='text-xs p-1'>{params.row.position}</div>;
     },
   },
   {
@@ -93,6 +97,7 @@ const JobInfo = (props: Props) => {
   const { isNew, employeeDetails, setEmployeeDetails, enums } =
     useContext(ProfileCtx);
   const values = { employeeDetails, setEmployeeDetails, enums };
+
   useEffect(() => {
     setInfos([...infos, employeeDetails]);
   }, [employeeDetails]);
@@ -159,7 +164,6 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             `${firstName[0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
         }));
       } else {
-        setIsProjectEmployee(false);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
           companyEmail:
@@ -168,6 +172,40 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
       }
     }
   }, [employeeDetails.rank]);
+  console.log({ employeeDetails });
+  useEffect(() => {
+    if (employeeDetails.dateHired && employeeDetails.employmentType) {
+      const employement_type = employmentTypes.find(
+        (x: any) =>
+          x.code.toLowerCase() == employeeDetails.employmentType.toLowerCase()
+      );
+
+      if (
+        employement_type &&
+        employement_type.code.toLowerCase() == 'project'
+      ) {
+        setIsProjectEmployee(true);
+        setEmployeeDetails((prev: EmployeeI) => ({
+          ...prev,
+          contractEndDate: moment(employeeDetails.dateHired)
+            .endOf('day')
+            .add(6, 'months')
+            .endOf('day'),
+          endOfProbationary: null,
+        }));
+      } else {
+        setIsProjectEmployee(false);
+        setEmployeeDetails((prev: EmployeeI) => ({
+          ...prev,
+          endOfProbationary: moment(employeeDetails.dateHired)
+            .endOf('day')
+            .add(6, 'months')
+            .endOf('day'),
+          contractEndDate: null,
+        }));
+      }
+    }
+  }, [employeeDetails.employmentType, employeeDetails.dateHired]);
 
   return (
     <GridWrapper colSize='2' className='items-center p-2'>
@@ -192,7 +230,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
           <Select
             id='jobinfo-position'
             labelId='position'
-            defaultValue={employeeDetails?.position}
+            value={employeeDetails?.position}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -216,7 +254,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
           <Select
             id='jobinfo-department'
             labelId='department'
-            defaultValue={employeeDetails?.department}
+            value={employeeDetails?.department}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -240,7 +278,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             id='jobinfo-location'
             multiple
             labelId='location'
-            defaultValue={employeeDetails?.location}
+            value={employeeDetails?.location}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -303,7 +341,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             <InputLabel id='rank'>Employment Rank</InputLabel>
             <Select
               labelId='rank'
-              defaultValue={employeeDetails?.rank}
+              value={employeeDetails?.rank}
               onChange={(e: any) =>
                 setEmployeeDetails({
                   ...employeeDetails,
@@ -323,7 +361,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             <InputLabel id='employment_type'>Employment Type</InputLabel>
             <Select
               labelId='employment_type'
-              defaultValue={employeeDetails?.employmentType}
+              value={employeeDetails?.employmentType}
               onChange={(e: any) =>
                 setEmployeeDetails({
                   ...employeeDetails,
@@ -343,7 +381,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             <InputLabel id='employement_status'>Employment Status</InputLabel>
             <Select
               labelId='employement_status'
-              defaultValue={employeeDetails?.employmentStatus}
+              value={employeeDetails?.employmentStatus}
               onChange={(e: any) =>
                 setEmployeeDetails({
                   ...employeeDetails,
@@ -436,58 +474,60 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         </div>
       </GridWrapper>
 
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <TextField
-          id='company-contact-number'
-          required
-          variant='standard'
-          label='Company Contact Number'
-          fullWidth
-          onChange={(e: any) =>
-            setEmployeeDetails((prev: EmployeeI) => ({
-              ...prev,
-              companyContactNumber: e.target.value,
-            }))
-          }
-        />
-      </div>
-
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <TextField
-          required
-          variant='standard'
-          label='Company Email Address'
-          fullWidth
-          disabled
-          value={employeeDetails.companyEmail}
-          helperText={
-            <span>
-              This is an auto-generated email address according to the
-              employee's Rank.
-            </span>
-          }
-        />
-      </div>
-
-      {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='user_group'>User Group</InputLabel>
-          <Select
-            labelId='user_group'
-            defaultValue={employeeDetails?.userGroup}
+      <GridWrapper colSize='3' className='col-span-2'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <TextField
+            required
+            variant='standard'
+            label='Company Contact Number'
+            fullWidth
             onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                userGroup: e.target.value,
-              })
+              setEmployeeDetails((prev: EmployeeI) => ({
+                ...prev,
+                companyContactNumber: e.target.value,
+              }))
             }
-          >
-            {USER_GROUP.map((group) => {
-              return <MenuItem value={group}>{group}</MenuItem>;
-            })}
-          </Select>
-        </FormControl>
-      </div> */}
+          />
+        </div>
+
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <TextField
+            required
+            variant='standard'
+            label='Company Email Address'
+            fullWidth
+            disabled
+            value={employeeDetails.companyEmail}
+            helperText={
+              <span>
+                This is an auto-generated email address according to the
+                employee's Rank.
+              </span>
+            }
+          />
+        </div>
+
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='user_group'>User Group</InputLabel>
+            <Select
+              required
+              labelId='user_group'
+              value={employeeDetails?.userGroup}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  userGroup: e.target.value,
+                })
+              }
+            >
+              {USER_GROUP.map((group) => {
+                return <MenuItem value={group}>{group}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+      </GridWrapper>
     </GridWrapper>
   );
 };

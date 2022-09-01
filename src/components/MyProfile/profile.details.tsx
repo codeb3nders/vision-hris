@@ -105,29 +105,7 @@ const ProfileDetails = (props: Props) => {
             )}
           </p>
 
-          {isNew ? (
-            <FormControl fullWidth variant='standard' size='small' required>
-              <InputLabel id='department'>Department</InputLabel>
-              <Select
-                onChange={(e: any) => {
-                  setEmployeeDetails({
-                    ...employeeDetails,
-                    department: e.target.value,
-                  });
-                }}
-              >
-                {departments.map((dept: any) => {
-                  return (
-                    <MenuItem key={dept.code} id={dept.code} value={dept.code}>
-                      {dept.name}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          ) : (
-            <p className='text-sm '>{employeeDetails?.department}</p>
-          )}
+          <p className='text-sm '>{employeeDetails.department}</p>
 
           <p className='text-gray-500 mt-2'>
             Started on {moment(employeeDetails.dateHired).format('LL')} (

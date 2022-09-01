@@ -8,12 +8,6 @@ import { ProfileCtx } from '../profile.main';
 
 type Props = {};
 
-export const employment_status = [
-  'Regular',
-  'Probationary',
-  'Project Employee',
-];
-
 const columns: GridColDef[] = [
   {
     field: 'dateHired',
@@ -24,8 +18,8 @@ const columns: GridColDef[] = [
     },
   },
   {
-    field: 'employmentStatus',
-    headerName: 'Employment Status',
+    field: 'employmentType',
+    headerName: 'Employment Type',
     flex: 1,
     renderCell: (params: GridCellParams) => {
       console.log({ params });
@@ -34,16 +28,19 @@ const columns: GridColDef[] = [
     },
   },
   {
-    field: 'comment',
-    headerName: 'Comment',
-    type: 'string',
+    field: 'employmentStatus',
+    headerName: 'Employment Status',
     flex: 1,
-  },
+    renderCell: (params: GridCellParams) => {
+      return <div>{params.value}</div>;
+    },
+  }
 ];
 
 type EmploymentI = {
   id: any;
   dateHired: Date | Moment;
+  employmentType: string;
   employmentStatus: string;
   endOfProbationary: Date | null | Moment;
   contractEndDate: Date | null | Moment;
@@ -61,6 +58,7 @@ const EmployementStatus = (props: Props) => {
       {
         id: employeeDetails?.dateHired,
         dateHired: employeeDetails?.dateHired,
+        employmentType: employeeDetails?.employmentType,
         employmentStatus: employeeDetails?.employmentStatus,
         endOfProbationary: employeeDetails?.endOfProbationary,
         contractEndDate: employeeDetails?.contractEndDate,
