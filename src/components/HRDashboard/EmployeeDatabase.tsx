@@ -74,8 +74,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
     setIsLoading(false);
   }, [getEmployeeItems]);
 
-  const getMyTeam = (teamLeader) => {
-    return employees.filter((x: any) => x.reportsTo === teamLeader)
+  const getMyTeam = (teamLeader, employeeNo) => {
+    return employees.filter((x: any) => x.reportsTo === teamLeader && x.employeeNo !== employeeNo)
   }
 
   const columns = (setViewDetails: any) => [
@@ -89,7 +89,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
             underline='none'
             variant='button'
             style={{ cursor: 'pointer' }}
-            onClick={() => setViewDetails({ employeeNo: cell.row.employeeNo, myTeam: getMyTeam(cell.row.reportsTo), status: true })}
+            onClick={() => setViewDetails({ employeeNo: cell.row.employeeNo, myTeam: getMyTeam(cell.row.reportsTo, cell.row.employeeNo), status: true })}
           >
             <div className='whitespace-normal'>{cell.value}</div>
           </Link>
@@ -116,7 +116,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'department',
       headerName: 'Department',
       width: 180,
-      renderCell: (cell) => cell.row.department.map((o: any) => o.name).join(", ")
+      renderCell: (cell) => cell.row.department.name
     },
     {
       field: 'location',

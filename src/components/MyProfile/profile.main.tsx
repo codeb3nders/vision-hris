@@ -110,8 +110,18 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex('1');
-    if (!isNew && isView) {
-      setEmployeeDetails({ ...initialState, ...employeeData });
+    if (!isNew && isView && employeeData) {
+      console.log({ employeeData })
+      setEmployeeDetails(() => {
+        return {
+          ...initialState,
+          ...employeeData,
+          department: employeeData.department.name,
+          // position: employeeData.name,
+          employmentType: employeeData.employmentType.name,
+          employmentStatus: employeeData.employmentStatus.name
+        }
+      });
       if (employeeData?.employeeNo === userData.employeeNo) {
         setIsOwner(true);
       }
@@ -240,7 +250,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       if (response.meta.requestStatus === 'fulfilled') {
         handleSaveDisplayPhoto(response.payload.employeeNo);
         setLoading({ status: false, action: '' });
-        // setRefresh(true);
+        setRefresh(true);
         setOpenNotif({
           message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully added.`,
           status: true,
@@ -254,7 +264,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
             status: false,
             severity: 'success',
           });
-          // setOpen && setOpen(false);
+          setOpen && setOpen(false);
         }, 2000);
       } else {
         setLoading({ status: false, action: '' });

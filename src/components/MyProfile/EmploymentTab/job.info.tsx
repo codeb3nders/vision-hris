@@ -42,7 +42,7 @@ const columns: GridColDef[] = [
     headerName: 'Location',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.location.name}</div>;
+      return <div className='text-xs p-1'>{params.row.location.map((o: any) => o.name).join(", ")}</div>;
     },
   },
   {
@@ -50,7 +50,7 @@ const columns: GridColDef[] = [
     headerName: 'Department',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.department.name}</div>;
+      return <div className='text-xs p-1'>{params.row.department}</div>;
     },
   },
   {
@@ -58,7 +58,7 @@ const columns: GridColDef[] = [
     headerName: 'Rank',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.rank.name}</div>;
+      return <div className='text-xs p-1'>{params.row.rank}</div>;
     },
   },
   {
@@ -66,7 +66,7 @@ const columns: GridColDef[] = [
     headerName: 'Position',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.position.name}</div>;
+      return <div className='text-xs p-1'>{params.row.position}</div>;
     },
   },
   {
@@ -92,6 +92,7 @@ const JobInfo = (props: Props) => {
   const [infos, setInfos] = useState<any[]>([]);
   const { isNew, employeeDetails, setEmployeeDetails, enums } = useContext(ProfileCtx);
   const values = { employeeDetails, setEmployeeDetails, enums };
+
   useEffect(() => {
     setInfos([...infos, employeeDetails]);
   }, [employeeDetails]);
