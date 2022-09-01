@@ -131,7 +131,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   };
 
   useEffect(() => {
-    var positions: any = [], departments: any = [], ranks: any = [], civil_status: any = [], citizenship: any = [], religions: any = [], employment_status: any = [], locations: any = [], assets: any = [], file201: any = [], allowance_types: any = [], disciplinary_actions: any = [];
+    var positions: any = [], departments: any = [], ranks: any = [], civil_status: any = [], citizenship: any = [], religions: any = [], employment_status: any = [], locations: any = [], assets: any = [], file201: any = [], allowance_types: any = [], disciplinary_actions: any = [], employment_types: any = [];
     enumsData.forEach((o: any) => {
       switch (o.type.toLocaleLowerCase()) {
         case "position":
@@ -170,9 +170,12 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         case "disciplinary_action":
           disciplinary_actions.push(o);
           break;
+        case "employmentType":
+          employment_types.push(o);
+          break;
       }
     })
-    setEnums({ positions, departments, ranks, civil_status, citizenship, religions, employment_status, locations, assets, file201, allowance_types, disciplinary_actions })
+    setEnums({ positions, departments, ranks, civil_status, citizenship, religions, employment_status, locations, assets, file201, allowance_types, disciplinary_actions, employment_types })
   }, [enumsData])
 
   useEffect(() => {

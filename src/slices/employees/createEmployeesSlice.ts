@@ -25,7 +25,7 @@ export const createEmployee: any = createAsyncThunk(
 );
 
 export const createEmployeesSlice = createSlice({
-  name: 'employees',
+  name: 'employees-create',
   initialState,
   reducers: {},
   extraReducers: (builder) => {

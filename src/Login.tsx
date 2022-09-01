@@ -73,7 +73,9 @@ export default function SignInSide() {
 
   useEffect(() => {
     if (status === 'succeeded') {
-      if (access_token !== '') {
+      console.log({ auth })
+      if (access_token && userData) {
+        console.log({ userData })
         // setUserData(userData);
         if (!userData.isActive) {
           setError({ status: true, message: `Sorry, your account is inactive.` });

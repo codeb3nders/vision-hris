@@ -83,8 +83,9 @@ export interface EmployeeI {
   reportsTo: any;
   dateHired: Date | Moment;
   employmentStatus: string;
-  endOfProbationary: Date | Moment | undefined;
-  contractEndDate: Date | Moment | undefined;
+  employmentType: string;
+  endOfProbationary: Date | Moment | null;
+  contractEndDate: Date | Moment | null;
   gender: string;
   birthDate: Date | null;
   personalContactNumber: string;

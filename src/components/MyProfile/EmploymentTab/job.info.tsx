@@ -131,6 +131,8 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
   const [locations, setLocations] = useState<any[]>([])
   const [positions, setPositions] = useState<any[]>([])
   const [ranks, setRanks] = useState<any[]>([])
+  const [employmentTypes, setEmploymentTypes] = useState<any[]>([])
+  const [isProjectEmployee, setIsProjectEmployee] = useState<boolean>(false);
   console.log({ getEmployeeItems })
 
   useEffect(() => {
@@ -140,6 +142,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
     setLocations(enums.locations);
     setPositions(enums.positions);
     setRanks(enums.ranks);
+    setEmploymentTypes(enums.employment_types);
   }, [enums])
 
   useEffect(() => {
@@ -160,17 +163,24 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
   }, [employeeDetails.rank])
 
   useEffect(() => {
-    if (employeeDetails.dateHired) {
+    if (employeeDetails.dateHired && employeeDetails.employmentStatus) {
+      console.log({ employeeDetails })
       const dateHired = moment(employeeDetails.dateHired);
-      if (employeeDetails.employmentStatus.toLowerCase() == "project employee") {
+      console.log({ dateHired }, dateHired.add(6, "months"))
+      const employement_status = employmentStatus.find((x: any) => x.code.toLowerCase() == employeeDetails.employmentStatus.toLowerCase())
+      if (employement_status.name.toLowerCase() == "project employee") {
+        setIsProjectEmployee(true);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
-          contractEndDate: dateHired.add(6, "months")
+          contractEndDate: dateHired.add(6, "months"),
+          endOfProbationary: null
         }))
       } else {
+        setIsProjectEmployee(false);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
-          endOfProbationary: dateHired.add(6, "months")
+          endOfProbationary: dateHired.add(6, "months"),
+          contractEndDate: null
         }))
       }
     }
@@ -253,7 +263,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         </FormControl>
       </div>
 
-      <GridWrapper colSize='3' className='col-span-2'>
+      <GridWrapper colSize='4' className='col-span-2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
           <FormControl variant='standard' fullWidth size='small' required>
             <InputLabel id='teamLeader'>Team Leader</InputLabel>
@@ -293,6 +303,26 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             >
               {ranks.map((rank) => {
                 return <MenuItem value={rank.code}>{rank.name}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='employement_type'>Employment Type</InputLabel>
+            <Select
+              labelId='employement_type'
+              defaultValue={employeeDetails?.employmentType}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  employmentType: e.target.value,
+                })
+              }
+            >
+              {employmentTypes.map((status) => {
+                return <MenuItem value={status.code}>{status.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
@@ -360,7 +390,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
                   size='small'
                   {...params}
                   fullWidth
-                  required
+                  required={!isProjectEmployee}
                   variant='standard'
                 />
               )}
@@ -384,7 +414,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
                   size='small'
                   {...params}
                   fullWidth
-                  required
+                  required={isProjectEmployee}
                   variant='standard'
                 />
               )}

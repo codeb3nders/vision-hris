@@ -19,9 +19,10 @@ export const initialState: EmployeeI = {
     position: ""
   },
   dateHired: new Date(),
+  employmentType: '',
   employmentStatus: '',
-  endOfProbationary: undefined,
-  contractEndDate: undefined,
+  endOfProbationary: null,
+  contractEndDate: null,
   gender: '',
   birthDate: null,
   personalContactNumber: '',

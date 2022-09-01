@@ -43,8 +43,8 @@ type EmploymentI = {
   id: any;
   dateHired: Date | Moment;
   employmentStatus: string;
-  endOfProbationary: Date | undefined | Moment;
-  contractEndDate: Date | undefined | Moment;
+  endOfProbationary: Date | null | Moment;
+  contractEndDate: Date | null | Moment;
 };
 
 const EmployementStatus = (props: Props) => {
