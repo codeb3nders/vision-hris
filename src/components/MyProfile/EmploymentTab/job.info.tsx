@@ -94,9 +94,21 @@ type JobInfoI = {
 
 const JobInfo = (props: Props) => {
   const [infos, setInfos] = useState<any[]>([]);
-  const { isNew, employeeDetails, setEmployeeDetails, enums } =
-    useContext(ProfileCtx);
-  const values = { employeeDetails, setEmployeeDetails, enums };
+  const {
+    isNew,
+    employeeDetails,
+    setEmployeeDetails,
+    enums,
+    isView,
+    setUpdatedDetails,
+  } = useContext(ProfileCtx);
+  const values = {
+    employeeDetails,
+    setEmployeeDetails,
+    enums,
+    isView,
+    setUpdatedDetails,
+  };
 
   useEffect(() => {
     setInfos([...infos, employeeDetails]);
@@ -130,7 +142,13 @@ const JobInfo = (props: Props) => {
   );
 };
 
-const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
+const JobInfoFields = ({
+  employeeDetails,
+  setEmployeeDetails,
+  enums,
+  isView,
+  setUpdatedDetails,
+}) => {
   const getEmployeeItems = useSelector(_getEmployeeItems);
   const [departments, setDepartments] = useState<any[]>([]);
   const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
@@ -231,12 +249,17 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             id='jobinfo-position'
             labelId='position'
             value={employeeDetails?.position}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 position: e.target.value,
-              })
-            }
+              });
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  position: e.target.value,
+                }));
+            }}
           >
             {positions.map((position) => {
               return (
@@ -255,12 +278,18 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             id='jobinfo-department'
             labelId='department'
             value={employeeDetails?.department}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 department: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  department: e.target.value,
+                }));
+            }}
           >
             {departments.map((department) => {
               return (
@@ -279,12 +308,17 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             multiple
             labelId='location'
             value={employeeDetails?.location}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 location: e.target.value,
-              })
-            }
+              });
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  location: e.target.value,
+                }));
+            }}
           >
             {locations.map((location) => {
               return (
@@ -309,12 +343,18 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
               id='jobinfo-teamleader'
               labelId='teamleader'
               defaultValue={employeeDetails?.reportsTo}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   reportsTo: e.target.value,
-                })
-              }
+                });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    reportsTo: e.target.value,
+                  }));
+              }}
             >
               {getEmployeeItems
                 ?.filter(
@@ -342,12 +382,18 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             <Select
               labelId='rank'
               value={employeeDetails?.rank}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   rank: e.target.value,
-                })
-              }
+                });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    rank: e.target.value,
+                  }));
+              }}
             >
               {ranks.map((rank) => {
                 return <MenuItem value={rank.code}>{rank.name}</MenuItem>;
@@ -362,12 +408,18 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             <Select
               labelId='employment_type'
               value={employeeDetails?.employmentType}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   employmentType: e.target.value,
-                })
-              }
+                });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    employmentType: e.target.value,
+                  }));
+              }}
             >
               {employmentTypes.map((status) => {
                 return <MenuItem value={status.code}>{status.name}</MenuItem>;
@@ -382,12 +434,18 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             <Select
               labelId='employement_status'
               value={employeeDetails?.employmentStatus}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   employmentStatus: e.target.value,
-                })
-              }
+                });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    employmentStatus: e.target.value,
+                  }));
+              }}
             >
               {employmentStatus.map((status) => {
                 return <MenuItem value={status.code}>{status.name}</MenuItem>;

@@ -60,6 +60,8 @@ export type ProfileModel = {
   isOwner: boolean;
   enums: any;
   myTeam: any[] | undefined;
+  setUpdatedDetails: React.Dispatch<any>;
+  updatedDetails: any;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -77,11 +79,14 @@ export const ProfileCtx = createContext<ProfileModel>({
   isOwner: false,
   enums: {},
   myTeam: [],
+  setUpdatedDetails: () => {},
+  updatedDetails: null,
 });
 
 const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const dispatch = useDispatch();
 
+  const [updatedDetails, setUpdatedDetails] = useState<any>(null);
   const [index, setIndex] = useState<string>('0');
   const { isLoggedIn, userData, access_token } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
@@ -343,20 +348,26 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
     }
   };
 
+  useEffect(() => {
+    console.log({ updatedDetails });
+  }, [updatedDetails]);
+
   return (
     <ProfileCtx.Provider
       value={{
         index,
-        setIndex,
         isNew,
-        setEmployeeDetails,
         employeeDetails,
         isView,
-        setDisplayPhoto,
         displayPhoto,
         isOwner,
         enums,
         myTeam,
+        setIndex,
+        setEmployeeDetails,
+        setDisplayPhoto,
+        setUpdatedDetails,
+        updatedDetails,
       }}
     >
       <Dialog open={loading.status}>

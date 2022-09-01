@@ -15,8 +15,13 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const GovernmentDetails = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isOwner } =
-    useContext(ProfileCtx);
+  const {
+    employeeDetails,
+    setEmployeeDetails,
+    isOwner,
+    isView,
+    setUpdatedDetails,
+  } = useContext(ProfileCtx);
   console.log({ employeeDetails });
   const handleTaxExemption = () => {
     console.log({ dep: employeeDetails.NumberOfDependents });
@@ -68,12 +73,18 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             label='SSS'
             value={employeeDetails?.sss}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 sss: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  sss: e.target.value,
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -85,12 +96,18 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             label='PhilHealth'
             value={employeeDetails?.philHealth}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 philHealth: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  philHealth: e.target.value,
+                }));
+            }}
           />
         </div>
 
@@ -103,12 +120,18 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             label='Pag-IBIG/HMDF'
             value={employeeDetails?.pagIbig}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 pagIbig: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  pagIbig: e.target.value,
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -120,12 +143,18 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             label='TIN'
             value={employeeDetails?.tin}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 tin: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  tin: e.target.value,
+                }));
+            }}
           />
         </div>
 
@@ -139,12 +168,18 @@ const GovernmentDetails = (props: Props) => {
             type='number'
             label='Number of Dependents'
             value={employeeDetails?.NumberOfDependents}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 NumberOfDependents: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  NumberOfDependents: e.target.value,
+                }));
+            }}
           />
         </div>
 
@@ -158,12 +193,18 @@ const GovernmentDetails = (props: Props) => {
             disabled
             label='Tax Exemption'
             value={employeeDetails?.taxExemption}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 taxExemption: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  taxExemption: e.target.value,
+                }));
+            }}
           />
         </div>
       </GridWrapper>

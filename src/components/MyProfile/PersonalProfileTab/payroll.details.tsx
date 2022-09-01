@@ -8,7 +8,8 @@ import CollapseWrapper from './collapse.wrapper';
 type Props = {};
 
 const PayrollDetails = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { employeeDetails, setEmployeeDetails, isView, setUpdatedDetails } =
+    useContext(ProfileCtx);
 
   return (
     <CollapseWrapper
@@ -24,15 +25,24 @@ const PayrollDetails = (props: Props) => {
             variant='standard'
             label='Bank Name'
             defaultValue={employeeDetails?.payrollBankAccount?.bankName}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 payrollBankAccount: {
                   ...employeeDetails?.payrollBankAccount,
                   bankName: e.target.value,
                 },
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  payrollBankAccount: {
+                    ...employeeDetails?.payrollBankAccount,
+                    bankName: e.target.value,
+                  },
+                }));
+            }}
           />
         </div>
 
@@ -44,15 +54,24 @@ const PayrollDetails = (props: Props) => {
             variant='standard'
             label='Bank Branch'
             defaultValue={employeeDetails?.payrollBankAccount?.accountType}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 payrollBankAccount: {
                   ...employeeDetails?.payrollBankAccount,
                   bankBranch: e.target.value,
                 },
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  payrollBankAccount: {
+                    ...employeeDetails?.payrollBankAccount,
+                    bankBranch: e.target.value,
+                  },
+                }));
+            }}
           />
         </div>
 
@@ -64,15 +83,24 @@ const PayrollDetails = (props: Props) => {
             variant='standard'
             label='Account Name'
             defaultValue={employeeDetails?.payrollBankAccount?.accountName}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 payrollBankAccount: {
                   ...employeeDetails?.payrollBankAccount,
                   accountName: e.target.value,
                 },
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  payrollBankAccount: {
+                    ...employeeDetails?.payrollBankAccount,
+                    accountName: e.target.value,
+                  },
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -83,15 +111,24 @@ const PayrollDetails = (props: Props) => {
             variant='standard'
             label='Account Number'
             defaultValue={employeeDetails?.payrollBankAccount?.accountNumber}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 payrollBankAccount: {
                   ...employeeDetails?.payrollBankAccount,
                   accountNumber: e.target.value,
                 },
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  payrollBankAccount: {
+                    ...employeeDetails?.payrollBankAccount,
+                    accountNumber: e.target.value,
+                  },
+                }));
+            }}
           />
         </div>
       </GridWrapper>

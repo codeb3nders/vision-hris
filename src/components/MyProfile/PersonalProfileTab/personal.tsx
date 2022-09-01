@@ -21,8 +21,14 @@ const Address = lazy(() => import('./address'));
 type Props = {};
 
 const Personal = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails, isOwner, enums } =
-    useContext(ProfileCtx);
+  const {
+    setEmployeeDetails,
+    employeeDetails,
+    isOwner,
+    enums,
+    isView,
+    setUpdatedDetails,
+  } = useContext(ProfileCtx);
   const [otherReligion, setOtherReligion] = useState<boolean>(false);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
   const [philData, setPhilData] = useState<any>(null);
@@ -45,6 +51,15 @@ const Personal = (props: Props) => {
         permanentMunicipality: prev.presentMunicipality,
         permanentBarangay: prev.presentBarangay,
       }));
+
+      isView &&
+        setUpdatedDetails((prev: any) => ({
+          ...prev,
+          permanentRegion: prev.presentRegion,
+          permanentProvince: prev.presentProvince,
+          permanentMunicipality: prev.presentMunicipality,
+          permanentBarangay: prev.presentBarangay,
+        }));
     } else {
       setEmployeeDetails((prev: EmployeeI) => ({
         ...prev,
@@ -54,6 +69,16 @@ const Personal = (props: Props) => {
         permanentMunicipality: '',
         permanentBarangay: '',
       }));
+
+      isView &&
+        setUpdatedDetails((prev: any) => ({
+          ...prev,
+          permanentResidenceAddress: '',
+          permanentRegion: '',
+          permanentProvince: '',
+          permanentMunicipality: '',
+          permanentBarangay: '',
+        }));
     }
   }, [sameAddress]);
 
@@ -124,6 +149,12 @@ const Personal = (props: Props) => {
 
   const handleReligion = (e: any) => {
     if (e.target.value !== 'Others, please specify') {
+      isView &&
+        setUpdatedDetails((prev: any) => ({
+          ...prev,
+          religion: e.target.value,
+        }));
+
       setOtherReligion(false);
       setEmployeeDetails({
         ...employeeDetails,
@@ -154,12 +185,17 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails.firstName}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 firstName: e.target.value,
-              })
-            }
+              });
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  firstName: e.target.value,
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
@@ -170,12 +206,17 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails?.middleName}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 middleName: e.target.value,
-              })
-            }
+              });
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  middleName: e.target.value,
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
@@ -187,12 +228,17 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails?.lastName}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 lastName: e.target.value,
-              })
-            }
+              });
+
+              setUpdatedDetails((prev: any) => ({
+                ...prev,
+                lastName: e.target.value,
+              }));
+            }}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-7'>
@@ -203,12 +249,16 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails?.suffix}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 suffix: e.target.value,
-              })
-            }
+              });
+              setUpdatedDetails((prev: any) => ({
+                ...prev,
+                suffix: e.target.value,
+              }));
+            }}
           />
         </div>
 
@@ -221,6 +271,12 @@ const Personal = (props: Props) => {
                   ...prev,
                   birthDate: value,
                 }));
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    suffix: value,
+                  }));
               }}
               // disabled={loading}
               value={employeeDetails.birthDate}
@@ -249,6 +305,12 @@ const Personal = (props: Props) => {
                   ...employeeDetails,
                   gender: e.target.value,
                 });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    gender: e.target.value,
+                  }));
               }}
               value={employeeDetails?.gender}
             >
@@ -274,6 +336,12 @@ const Personal = (props: Props) => {
                   ...employeeDetails,
                   civilStatus: e.target.value,
                 });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    civilStatus: e.target.value,
+                  }));
               }}
               value={employeeDetails?.civilStatus}
             >
@@ -304,6 +372,12 @@ const Personal = (props: Props) => {
                     ...employeeDetails,
                     citizenship: e.target.value,
                   });
+
+                  isView &&
+                    setUpdatedDetails((prev: any) => ({
+                      ...prev,
+                      citizenship: e.target.value,
+                    }));
                 }}
                 value={employeeDetails?.citizenship || 'Philippines'}
               >
@@ -350,12 +424,18 @@ const Personal = (props: Props) => {
                   variant='standard'
                   fullWidth
                   // defaultValue={employeeDetails?.religion}
-                  onChange={(e: any) =>
+                  onChange={(e: any) => {
                     setEmployeeDetails({
                       ...employeeDetails,
                       religion: e.target.value,
-                    })
-                  }
+                    });
+
+                    isView &&
+                      setUpdatedDetails((prev: any) => ({
+                        ...prev,
+                        religion: e.target.value,
+                      }));
+                  }}
                 />
               </div>
             </>
@@ -370,12 +450,17 @@ const Personal = (props: Props) => {
               variant='standard'
               fullWidth
               value={employeeDetails?.personalContactNumber}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   personalContactNumber: e.target.value,
-                })
-              }
+                });
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    personalContactNumber: e.target.value,
+                  }));
+              }}
             />
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
@@ -387,12 +472,17 @@ const Personal = (props: Props) => {
               variant='standard'
               fullWidth
               value={employeeDetails?.personalEmail}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   personalEmail: e.target.value,
-                })
-              }
+                });
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    personalEmail: e.target.value,
+                  }));
+              }}
             />
           </div>
 

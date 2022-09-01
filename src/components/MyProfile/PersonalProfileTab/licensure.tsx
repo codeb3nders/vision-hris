@@ -13,7 +13,8 @@ import { EmployeeI } from 'slices/interfaces/employeeI';
 type Props = {};
 
 const Licensure = (props: Props) => {
-  const { setEmployeeDetails } = useContext(ProfileCtx);
+  const { setEmployeeDetails, isView, setUpdatedDetails } =
+    useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [exams, setExams] = useState<any[]>([]);
 
@@ -29,6 +30,13 @@ const Licensure = (props: Props) => {
       ...prev,
       govtProfExamsPassed: exams,
     }));
+
+    isView &&
+      exams.length > 0 &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        govtProfExamsPassed: exams,
+      }));
   }, [exams]);
 
   return (
