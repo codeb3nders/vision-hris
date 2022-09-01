@@ -63,6 +63,10 @@ export interface AllowanceDetailsI {
   amount: number;
 }
 
+export interface EmployeeDBI extends EmployeeI {
+  full_name: string;
+}
+
 export interface EmployeeI {
   employeeNo: string;
   firstName: string;
@@ -78,9 +82,10 @@ export interface EmployeeI {
   userGroup: string;
   reportsTo: any;
   dateHired: Date | Moment;
-  employmentStatus: any;
-  endOfProbationary: Date | Moment;
-  contractEndDate: Date | Moment;
+  employmentStatus: string;
+  employmentType: string;
+  endOfProbationary: Date | Moment | null;
+  contractEndDate: Date | Moment | null;
   gender: string;
   birthDate: Date | null;
   personalContactNumber: string;
@@ -100,7 +105,6 @@ export interface EmployeeI {
   govtProfExamsPassed: GovtProfExamsPassedI[] | null;
   familyBackground: FamilyBackgroundI[] | null;
   leave_requests?: any;
-  full_name: string;
   basicPay: number;
   dateInactive: Date | Moment | null;
   deductHMDF: number;

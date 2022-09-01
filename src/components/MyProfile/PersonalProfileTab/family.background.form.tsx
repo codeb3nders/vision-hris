@@ -20,7 +20,6 @@ type Props = {
 
 const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
   const [newFamily, setNewFamily] = useState<FamilyI>({
-    // id: family?.length + 1,
     company: '',
     name: '',
     occupation: '',
@@ -29,10 +28,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
   });
 
   const handleAddFamily = () => {
-    setFamily((family: FamilyI[]) => [
-      ...family,
-      { ...newFamily, id: `${newFamily.name}~${newFamily.relation}` },
-    ]);
+    setFamily((family: FamilyI[]) => [...family, newFamily]);
     setOpen(false);
   };
 

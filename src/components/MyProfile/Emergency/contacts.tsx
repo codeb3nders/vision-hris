@@ -11,26 +11,27 @@ import { Dialog, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { RELATION } from 'constants/Values';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {};
 
 type ContactsI = {
-  id: any;
   name: string;
   relation: string;
-  address: string;
   phoneNumber: string;
-  isNew: false;
+  occupation: string;
+  residence: string;
 };
 
 const Contacts = (props: Props) => {
   const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
   const [rows, setRows] = useState<ContactsI[]>([]);
   const [newContact, setNewContact] = useState<any>({
-    id: null,
     name: null,
-    address: null,
+    residence: null,
+    occupation: null,
     phoneNumber: null,
+    relation: null,
   });
 
   const [open, setOpen] = useState<boolean>(false);
@@ -70,28 +71,26 @@ const Contacts = (props: Props) => {
     },
   ];
 
-  useEffect(() => {
-    if (employeeDetails) {
-      setRows(employeeDetails.emergencyContact || []);
-    }
-    // rows.length <= 0 && employeeDetails?.emergencyContact && setRows(employeeDetails?.emergencyContact);
-  }, [employeeDetails]);
-
   const handleSaveNewContact = () => {
     setOpen(false);
 
-    setRows((prev: any) => [
-      ...prev,
-      { ...newContact, id: `${newContact.name}~${newContact.phoneNumber}` },
-    ]);
+    setRows((prev: any) => [...prev, newContact]);
 
-    setEmployeeDetails({
-      ...employeeDetails,
-      emergencyContact: rows,
+    setNewContact({
+      name: null,
+      residence: null,
+      phoneNumber: null,
+      relation: null,
+      occupation: null,
     });
-
-    setNewContact({ name: null, address: null, phoneNumber: null });
   };
+
+  useEffect(() => {
+    setEmployeeDetails((prev: EmployeeI) => ({
+      ...prev,
+      emergencyContact: rows,
+    }));
+  }, [rows]);
 
   const handleDelete = (params: any) => {
     setRows((prev: any) => {
@@ -101,7 +100,14 @@ const Contacts = (props: Props) => {
   };
 
   useEffect(() => {
-    !open && setNewContact({ name: null, address: null, phoneNumber: null });
+    !open &&
+      setNewContact({
+        name: null,
+        residence: null,
+        phoneNumber: null,
+        relation: null,
+        occupation: null,
+      });
   }, [open]);
 
   return (
@@ -134,15 +140,27 @@ const Contacts = (props: Props) => {
               })}
             </Select>
             <TextField
-              id='emergency-address'
+              id='emergency-occupation'
               fullWidth
               variant='standard'
               size='small'
               multiline
               minRows={2}
-              label='Address'
+              label='Occupation'
               onChange={(e: any) =>
-                setNewContact({ ...newContact, address: e.target.value })
+                setNewContact({ ...newContact, occupation: e.target.value })
+              }
+            />
+            <TextField
+              id='emergency-residence'
+              fullWidth
+              variant='standard'
+              size='small'
+              multiline
+              minRows={2}
+              label='Residence'
+              onChange={(e: any) =>
+                setNewContact({ ...newContact, residence: e.target.value })
               }
             />
             <TextField
@@ -159,8 +177,9 @@ const Contacts = (props: Props) => {
               <button
                 disabled={
                   !newContact.name ||
-                  !newContact.address ||
-                  !newContact.phoneNumber
+                  !newContact.residence ||
+                  !newContact.phoneNumber ||
+                  !newContact.relation
                 }
                 onClick={handleSaveNewContact}
                 className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
@@ -180,7 +199,7 @@ const Contacts = (props: Props) => {
 
         <div style={{ width: '100%' }}>
           <DataGrid
-            getRowId={(data: any) => data.id}
+            getRowId={(data: any) => data.name}
             autoHeight
             disableSelectionOnClick
             rows={rows}

@@ -2,8 +2,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, Button, Link } from '@mui/material';
-import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
+import { Card, Button, Link, Checkbox } from '@mui/material';
+import {
+  AddCircleOutlineTwoTone,
+  KeyTwoTone,
+  UploadTwoTone,
+} from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import {
   getAllEmployeesAction as _getEmployeesAction,
@@ -11,7 +15,7 @@ import {
   getEmployeeItems as _getEmployeeItems,
   getEmployeeError as _getEmployeeError,
 } from 'slices';
-import { EmployeeI } from 'slices/interfaces/employeeI';
+import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
@@ -46,8 +50,9 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const [loading, setIsLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
 
-  const [employees, setEmployees] = useState<EmployeeI[]>([]);
+  const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
   const [open, setOpen] = useState(false);
+  const [sendAccessList, setSendAccessList] = useState<string[]>([]);
 
   useEffect(() => {
     if (location.pathname === '/people/employees') {
@@ -67,10 +72,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
     console.log({ getEmployeeItems });
 
     setEmployees(
-      getEmployeeItems.map((r: any) => {
-        const mi = r?.middleName ? r?.middleName.charAt(0) : '';
-        const full_name = `${r?.lastName}, ${r?.firstName} ${mi}`;
-        return { ...r, id: r?.employeeNo, full_name };
+      getEmployeeItems.map((r: EmployeeDBI) => {
+        const mi = r.middleName ? r.middleName.charAt(0) : '';
+        const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+        return { ...r, id: r.employeeNo, full_name };
       })
     );
     setIsLoading(false);
@@ -123,7 +128,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
     {
       field: 'department',
       headerName: 'Department',
-      width: 250,
+      width: 180,
       renderCell: (cell) =>
         cell.row.department.map((o: any) => o.name).join(', '),
     },
@@ -152,7 +157,21 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 140,
       renderCell: (cell) => cell.row.reportsTo.employeeName,
     },
+    {
+      field: 'withUserCredentials',
+      headerName: 'Send Access?',
+      renderCell: (params) => (
+        <Checkbox
+          value={params.row.employeeNo}
+          onChange={(e: any) => handleSendAccess(e.target.value)}
+        />
+      ),
+    },
   ];
+
+  const handleSendAccess = (employeeNo) => {
+    setSendAccessList([...sendAccessList, employeeNo]);
+  };
 
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
@@ -163,6 +182,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
       />
 
       <Card sx={{ mt: 5, p: 2 }}>
+        <div style={{ marginBottom: 16, textAlign: 'left' }}>
+          <Button startIcon={<KeyTwoTone />} sx={{ mr: 1 }}>
+            Send Credentials
+          </Button>
+        </div>
         <div style={{ marginBottom: 16, textAlign: 'right' }}>
           <Button startIcon={<UploadTwoTone />} sx={{ mr: 1 }}>
             Upload Employee Details

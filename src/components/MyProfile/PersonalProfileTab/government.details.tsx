@@ -18,7 +18,7 @@ const GovernmentDetails = (props: Props) => {
   const { employeeDetails: details, setEmployeeDetails } =
     useContext(ProfileCtx);
 
-  const employeeDetails = useMemo(() => details, []);
+  const employeeDetails = useMemo(() => details, [details]);
 
   const handleTaxExemption = () => {
     switch (employeeDetails.civilStatus) {
@@ -68,7 +68,7 @@ const GovernmentDetails = (props: Props) => {
             size='small'
             fullWidth
             label='SSS'
-            defaultValue={employeeDetails?.sss}
+            value={employeeDetails?.sss}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -85,7 +85,7 @@ const GovernmentDetails = (props: Props) => {
             size='small'
             fullWidth
             label='PhilHealth'
-            defaultValue={employeeDetails?.philHealth}
+            value={employeeDetails?.philHealth}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -103,7 +103,7 @@ const GovernmentDetails = (props: Props) => {
             size='small'
             fullWidth
             label='Pag-IBIG/HMDF'
-            defaultValue={employeeDetails?.pagIbig}
+            value={employeeDetails?.pagIbig}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -120,7 +120,7 @@ const GovernmentDetails = (props: Props) => {
             size='small'
             fullWidth
             label='TIN'
-            defaultValue={employeeDetails?.tin}
+            value={employeeDetails?.tin}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -139,7 +139,7 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             type='number'
             label='Number of Dependents'
-            defaultValue={employeeDetails?.NumberOfDependents}
+            value={employeeDetails?.NumberOfDependents}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -157,7 +157,7 @@ const GovernmentDetails = (props: Props) => {
             size='small'
             fullWidth
             label='Tax Exemption'
-            defaultValue={employeeDetails?.taxExemption}
+            value={employeeDetails?.taxExemption}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,

@@ -59,7 +59,7 @@ const FamilyBackground = (props: Props) => {
       <GridWrapper colSize='1'>
         <div className='ww-full col-span-1 flex flex-col justify-end'>
           <DataGrid
-            getRowId={(data: any) => `${data?.name}`}
+            getRowId={(data: any) => data?.name}
             rows={family}
             columns={columns(handleDelete)}
             pageSize={5}

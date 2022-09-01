@@ -30,6 +30,7 @@ import {
   getEmployeeStatusOne as _getOneEmployeeStatus,
   getEmployeeDetails as _getOneEmployeeDetails,
 } from 'slices';
+import useRequiredChecker from 'hooks/useRequiredChecker';
 
 const ProfileDetails = lazy(() => import('./profile.details'));
 const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
@@ -95,6 +96,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   });
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [enums, setEnums] = useState<any>({});
+  const { validated } = useRequiredChecker({ employeeDetails });
 
   const memoizedEmployeeDetails = useMemo(
     () => employeeDetails,
@@ -128,10 +130,6 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo } }));
     }
   }, [access_token, employeeNo]);
-
-  useEffect(() => {
-    console.log({ employeeDetails });
-  }, [employeeDetails]);
 
   useEffect(() => {
     handleGetDisplayPhoto();
@@ -168,17 +166,14 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       assets: any = [],
       file201: any = [],
       allowance_types: any = [],
-      disciplinary_actions: any = [];
+      disciplinary_actions: any = [],
+      employment_types: any = [];
     enumsData.forEach((o: any) => {
-      console.log({ o: o.type });
-
       switch (o.type) {
         case 'position':
           positions.push(o);
           break;
         case 'civilStatus':
-          console.log({ civil: o });
-
           civil_status.push(o);
           break;
         case 'citizenship':
@@ -211,6 +206,9 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         case 'disciplinary_action':
           disciplinary_actions.push(o);
           break;
+        case 'employmentType':
+          employment_types.push(o);
+          break;
       }
     });
     setEnums({
@@ -226,6 +224,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       file201,
       allowance_types,
       disciplinary_actions,
+      employment_types,
     });
   }, [enumsData]);
 
@@ -391,7 +390,8 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         </section>
         {(isNew || isView) && (
           <button
-            className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10'
+            disabled={!validated}
+            className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10 disabled:bg-gray-300 disabled:cursor-not-allowed'
             onClick={handleEmployee}
           >
             {isNew ? 'Save' : 'Update'} Employee Profile

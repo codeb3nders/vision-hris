@@ -90,18 +90,9 @@ type JobInfoI = {
 
 const JobInfo = (props: Props) => {
   const [infos, setInfos] = useState<any[]>([]);
-  const {
-    isNew,
-    employeeDetails: details,
-    setEmployeeDetails,
-    enums,
-  } = useContext(ProfileCtx);
-
-  const employeeDetails = useMemo(() => details, [details]);
+  const { isNew, employeeDetails, setEmployeeDetails, enums } =
+    useContext(ProfileCtx);
   const values = { employeeDetails, setEmployeeDetails, enums };
-
-  console.log('JobInfo');
-
   useEffect(() => {
     setInfos([...infos, employeeDetails]);
   }, [employeeDetails]);
@@ -141,15 +132,16 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
   const [locations, setLocations] = useState<any[]>([]);
   const [positions, setPositions] = useState<any[]>([]);
   const [ranks, setRanks] = useState<any[]>([]);
-  console.log({ getEmployeeItems });
+  const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
+  const [isProjectEmployee, setIsProjectEmployee] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log({ enums });
     setDepartments(enums.departments);
     setEmploymentStatus(enums.employment_status);
     setLocations(enums.locations);
     setPositions(enums.positions);
     setRanks(enums.ranks);
+    setEmploymentTypes(enums.employment_types);
   }, [enums]);
 
   useEffect(() => {
@@ -167,6 +159,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             `${firstName[0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
         }));
       } else {
+        setIsProjectEmployee(false);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
           companyEmail:
@@ -223,13 +216,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
           <Select
             id='jobinfo-department'
             labelId='department'
-            defaultValue={
-              employeeDetails?.department.length > 0
-                ? employeeDetails?.department[
-                    employeeDetails?.department.length - 1
-                  ].code
-                : employeeDetails?.department
-            }
+            defaultValue={employeeDetails?.department}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -239,13 +226,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
           >
             {departments.map((department) => {
               return (
-                <MenuItem
-                  id={department._id}
-                  key={department._id}
-                  value={department.code}
-                >
-                  {department.name}
-                </MenuItem>
+                <MenuItem value={department.code}>{department.name}</MenuItem>
               );
             })}
           </Select>
@@ -282,7 +263,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         </FormControl>
       </div>
 
-      <GridWrapper colSize='3' className='col-span-2'>
+      <GridWrapper colSize='4' className='col-span-2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
           <FormControl variant='standard' fullWidth size='small' required>
             <InputLabel id='teamleader'>Team Leader</InputLabel>
@@ -317,11 +298,10 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
           </FormControl>
         </div>
 
-        {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
           <FormControl variant='standard' fullWidth size='small' required>
             <InputLabel id='rank'>Employment Rank</InputLabel>
             <Select
-              id='jobinfo-rank'
               labelId='rank'
               defaultValue={employeeDetails?.rank}
               onChange={(e: any) =>
@@ -332,29 +312,38 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
               }
             >
               {ranks.map((rank) => {
-                return (
-                  <MenuItem id={rank.code} value={rank.code}>
-                    {rank.name}
-                  </MenuItem>
-                );
+                return <MenuItem value={rank.code}>{rank.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
-        </div> */}
+        </div>
 
-        {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='employment_type'>Employment Type</InputLabel>
+            <Select
+              labelId='employment_type'
+              defaultValue={employeeDetails?.employmentType}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  employmentType: e.target.value,
+                })
+              }
+            >
+              {employmentTypes.map((status) => {
+                return <MenuItem value={status.code}>{status.name}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
           <FormControl variant='standard' fullWidth size='small' required>
             <InputLabel id='employement_status'>Employment Status</InputLabel>
             <Select
-              id='jobinfo-employment-status'
               labelId='employement_status'
-              // defaultValue={
-              //   employeeDetails?.employmentStatus.length > 0
-              //     ? employeeDetails?.employmentStatus[
-              //         employeeDetails?.employmentStatus.length - 1
-              //       ].code
-              //     : employeeDetails?.employmentStatus
-              // }
+              defaultValue={employeeDetails?.employmentStatus}
               onChange={(e: any) =>
                 setEmployeeDetails({
                   ...employeeDetails,
@@ -363,15 +352,11 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
               }
             >
               {employmentStatus.map((status) => {
-                return (
-                  <MenuItem id={status.code} value={status.code}>
-                    {status.name}
-                  </MenuItem>
-                );
+                return <MenuItem value={status.code}>{status.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
-        </div> */}
+        </div>
       </GridWrapper>
 
       <GridWrapper colSize='3' className='col-span-2'>
@@ -417,7 +402,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
                   size='small'
                   {...params}
                   fullWidth
-                  required
+                  required={!isProjectEmployee}
                   variant='standard'
                 />
               )}
@@ -442,7 +427,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
                   size='small'
                   {...params}
                   fullWidth
-                  required
+                  required={isProjectEmployee}
                   variant='standard'
                 />
               )}
@@ -450,54 +435,6 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
           </LocalizationProvider>
         </div>
       </GridWrapper>
-
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='rank'>Employment Rank</InputLabel>
-          <Select
-            labelId='rank'
-            defaultValue={employeeDetails?.rank}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                rank: e.target.value,
-              })
-            }
-          >
-            {ranks.map((rank) => {
-              return (
-                <MenuItem id={rank._id} key={rank._id} value={rank.code}>
-                  {rank.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      </div>
-
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='employment_status'>Employment Status</InputLabel>
-          <Select
-            labelId='employment_status'
-            value={employeeDetails?.employmentStatus}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                employmentStatus: e.target.value,
-              })
-            }
-          >
-            {employmentStatus.map((status) => {
-              return (
-                <MenuItem id={status._id} key={status._id} value={status.code}>
-                  {status.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      </div>
 
       <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <TextField
@@ -515,48 +452,22 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         />
       </div>
 
-      {employeeDetails.rank === 'RANK AND FILE' ? (
-        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-          <TextField
-            id='company-email-auto'
-            required
-            variant='standard'
-            label='Company Email Address'
-            fullWidth
-            disabled
-            value={`${employeeDetails.firstName}${employeeDetails.lastName}.vpdcph@gmail.com`.toLowerCase()}
-            helperText={
-              <span>
-                This is an auto-generated email for a{' '}
-                <strong>Rank and File</strong> employment rank.
-              </span>
-            }
-            // onChange={(e: any) =>
-            //   setEmployeeDetails((prev: EmployeeI) => ({
-            //     ...prev,
-            //     companyEmail: e.target.value,
-            //   }))
-            // }
-          />
-        </div>
-      ) : (
-        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-          <TextField
-            id='company-email'
-            required
-            variant='standard'
-            label='Company Email Address'
-            fullWidth
-            value={employeeDetails.companyEmail || null}
-            onChange={(e: any) =>
-              setEmployeeDetails((prev: EmployeeI) => ({
-                ...prev,
-                companyEmail: e.target.value,
-              }))
-            }
-          />
-        </div>
-      )}
+      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+        <TextField
+          required
+          variant='standard'
+          label='Company Email Address'
+          fullWidth
+          disabled
+          value={employeeDetails.companyEmail}
+          helperText={
+            <span>
+              This is an auto-generated email address according to the
+              employee's Rank.
+            </span>
+          }
+        />
+      </div>
 
       {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <FormControl variant='standard' fullWidth size='small' required>

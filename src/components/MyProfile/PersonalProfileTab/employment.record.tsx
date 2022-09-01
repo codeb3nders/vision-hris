@@ -1,19 +1,21 @@
 import { Add, BadgeTwoTone, Delete } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import moment from 'moment';
+import { ProfileCtx } from '../profile.main';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {};
 
 const EmploymentRecord = (props: Props) => {
+  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
   const [records, setRecords] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  console.log('EmploymentRecord');
 
   const handleDelete = (params: any) => {
     setRecords((prev: any) => {
@@ -21,6 +23,13 @@ const EmploymentRecord = (props: Props) => {
       return filtered;
     });
   };
+
+  useEffect(() => {
+    setEmployeeDetails((prev: EmployeeI) => ({
+      ...prev,
+      employmentRecords: records,
+    }));
+  }, [records]);
 
   return (
     <CollapseWrapper panelTitle='Employment Record' icon={BadgeTwoTone}>
@@ -53,17 +62,13 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
   const [data, setData] = useState<any>({});
 
   const handleSave = () => {
-    setRecords((prev: any) => [
-      ...prev,
-      { ...data, id: `${data?.company_name}~${data?.yrFrom}` },
-    ]);
+    setRecords((prev: any) => [...prev, data]);
     setOpen(false);
 
     setData({
       yrFrom: '',
       yrTo: '',
       companyName: '',
-      companyAddress: '',
       positionHeld: '',
     });
   };
@@ -74,7 +79,6 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
         yrFrom: '',
         yrTo: '',
         companyName: '',
-        companyAddress: '',
         positionHeld: '',
       });
   }, [open]);
@@ -149,7 +153,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
             setData((prev: any) => ({ ...prev, companyName: e.target.value }))
           }
         />
-        <TextField
+        {/* <TextField
           id='company-address'
           variant='standard'
           label='Company Address'
@@ -161,7 +165,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
               companyAddress: e.target.value,
             }))
           }
-        />
+        /> */}
         <TextField
           id='position-held'
           variant='standard'

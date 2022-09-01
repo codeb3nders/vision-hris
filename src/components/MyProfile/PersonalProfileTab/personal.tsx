@@ -134,7 +134,9 @@ const Personal = (props: Props) => {
     }
   };
 
-  const handleChange = (value: any) => {};
+  const handleChange = (value: any) => {
+    setEmployeeDetails({ ...employeeDetails, ...value });
+  };
 
   return (
     <CollapseWrapper
