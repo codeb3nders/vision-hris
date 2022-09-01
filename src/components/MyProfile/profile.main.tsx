@@ -2,7 +2,7 @@
 import { TabContext } from '@mui/lab';
 import { Alert, CircularProgress, Dialog, Snackbar } from '@mui/material';
 import { updateEmployeeEndpoint } from 'apis/employees';
-import { AppCtx } from 'App';
+import { AppCtx, consoler } from 'App';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import { initialState } from './employee.initialstate';
@@ -132,12 +132,13 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
 
   useEffect(() => {
     var positions: any = [], departments: any = [], ranks: any = [], civil_status: any = [], citizenship: any = [], religions: any = [], employment_status: any = [], locations: any = [], assets: any = [], file201: any = [], allowance_types: any = [], disciplinary_actions: any = [], employment_types: any = [];
+
     enumsData.forEach((o: any) => {
       switch (o.type.toLocaleLowerCase()) {
         case "position":
           positions.push(o);
           break;
-        case "civil_status":
+        case "civilstatus":
           civil_status.push(o);
           break;
         case "citizenship":
@@ -146,7 +147,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         case "religion":
           religions.push(o);
           break;
-        case "employment_status":
+        case "employmentstatus":
           employment_status.push(o);
           break;
         case "location":
@@ -170,7 +171,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         case "disciplinary_action":
           disciplinary_actions.push(o);
           break;
-        case "employmentType":
+        case "employmenttype":
           employment_types.push(o);
           break;
       }
@@ -233,12 +234,13 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const saveEmployee = async () => {
     setLoading({ status: true, action: 'Saving' });
     try {
-      const response = await dispatch(createEmployee(employeeDetails));
-
+      consoler(employeeDetails, "blue", "saveEmployee")
+      const response = await dispatch(createEmployee({ body: employeeDetails, access_token }));
+      console.log({ response }, "vvvvvvvvvvvvvvvvvvv")
       if (response.meta.requestStatus === 'fulfilled') {
         handleSaveDisplayPhoto(response.payload.employeeNo);
         setLoading({ status: false, action: '' });
-        setRefresh(true);
+        // setRefresh(true);
         setOpenNotif({
           message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully added.`,
           status: true,
@@ -252,7 +254,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
             status: false,
             severity: 'success',
           });
-          setOpen && setOpen(false);
+          // setOpen && setOpen(false);
         }, 2000);
       } else {
         setLoading({ status: false, action: '' });

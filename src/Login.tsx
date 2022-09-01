@@ -82,7 +82,7 @@ export default function SignInSide() {
         } else {
           setError({ status: false, message: '' });
           if (userData.userGroup == "HR ADMIN") {
-            dispatch(_getEnumsAction({ access_token }));
+            getEnums()
           }
           dispatch(setIsLoggedIn(true))
         }
@@ -101,6 +101,10 @@ export default function SignInSide() {
       dispatch(clearData());
     }
   }, [error])
+
+  const getEnums = async () => {
+    await dispatch(_getEnumsAction({ access_token }));
+  }
 
   const handleClickShowPassword = () => {
     setValues({

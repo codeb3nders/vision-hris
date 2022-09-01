@@ -15,40 +15,41 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const GovernmentDetails = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
-
+  const { employeeDetails, setEmployeeDetails, isOwner } = useContext(ProfileCtx);
+  console.log({ employeeDetails })
   const handleTaxExemption = () => {
-    switch (employeeDetails.civilStatus) {
-      case 'MARRIED':
-        console.log({ dep: employeeDetails.NumberOfDependents });
-
-        const marriedTax =
-          employeeDetails.NumberOfDependents > 0
-            ? `MARRIED-${employeeDetails.NumberOfDependents}`
-            : 'MARRIED';
-        setEmployeeDetails((prev: any) => ({
-          ...prev,
-          taxExemption: marriedTax,
-        }));
-        break;
-      default:
-        const singleTax =
-          employeeDetails.NumberOfDependents > 0
-            ? `SINGLE-${employeeDetails.NumberOfDependents}`
-            : 'SINGLE';
-        setEmployeeDetails((prev: any) => ({
-          ...prev,
-          taxExemption: singleTax,
-        }));
-        break;
+    console.log({ dep: employeeDetails.NumberOfDependents });
+    if (employeeDetails.civilStatus.toLocaleLowerCase() == 'married') {
+      const marriedTax =
+        employeeDetails.NumberOfDependents > 0
+          ? `MARRIED-${employeeDetails.NumberOfDependents}`
+          : 'MARRIED';
+      setEmployeeDetails((prev: any) => ({
+        ...prev,
+        taxExemption: marriedTax,
+      }));
+    } else {
+      const singleTax =
+        employeeDetails.NumberOfDependents > 0
+          ? `SINGLE-${employeeDetails.NumberOfDependents}`
+          : 'SINGLE';
+      setEmployeeDetails((prev: any) => ({
+        ...prev,
+        taxExemption: singleTax,
+      }));
     }
   };
 
   useEffect(() => {
-    employeeDetails.NumberOfDependents >= 0 &&
-      employeeDetails.civilStatus &&
+    if (employeeDetails.NumberOfDependents && employeeDetails.civilStatus) {
       handleTaxExemption();
-  }, [employeeDetails.NumberOfDependents]);
+    } else {
+      setEmployeeDetails((prev: any) => ({
+        ...prev,
+        taxExemption: "",
+      }));
+    }
+  }, [employeeDetails.NumberOfDependents, employeeDetails.civilStatus]);
 
   return (
     <CollapseWrapper
@@ -59,7 +60,7 @@ const GovernmentDetails = (props: Props) => {
       <GridWrapper colSize='2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
-            required
+            required={isOwner}
             variant='standard'
             size='small'
             fullWidth
@@ -75,7 +76,7 @@ const GovernmentDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
-            required
+            required={isOwner}
             variant='standard'
             size='small'
             fullWidth
@@ -92,7 +93,7 @@ const GovernmentDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
-            required
+            required={isOwner}
             variant='standard'
             size='small'
             fullWidth
@@ -108,7 +109,7 @@ const GovernmentDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
-            required
+            required={isOwner}
             variant='standard'
             size='small'
             fullWidth
@@ -125,7 +126,7 @@ const GovernmentDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
-            required
+            required={isOwner}
             variant='standard'
             size='small'
             fullWidth
@@ -143,18 +144,13 @@ const GovernmentDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
-            required
+            required={isOwner}
             variant='standard'
             size='small'
             fullWidth
+            disabled
             label='Tax Exemption'
-            defaultValue={employeeDetails?.sss}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                taxExemption: e.target.value,
-              })
-            }
+            value={employeeDetails.taxExemption}
           />
         </div>
       </GridWrapper>
