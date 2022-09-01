@@ -130,7 +130,7 @@ const Personal = (props: Props) => {
   };
 
   const handleChange = (value: any) => {
-    setEmployeeDetails(employeeDetails);
+    setEmployeeDetails({ ...employeeDetails, ...value });
   };
 
   return (
@@ -211,7 +211,7 @@ const Personal = (props: Props) => {
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
               label='Birthdate'
-              onChange={handleChange}
+              onChange={(date: any) => handleChange({ "birthDate": date })}
               // disabled={loading}
               value={employeeDetails.birthDate}
               renderInput={(params) => (

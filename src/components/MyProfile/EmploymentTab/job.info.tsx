@@ -159,6 +159,23 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
     }
   }, [employeeDetails.rank])
 
+  useEffect(() => {
+    if (employeeDetails.dateHired) {
+      const dateHired = moment(employeeDetails.dateHired);
+      if (employeeDetails.employmentStatus.toLowerCase() == "project employee") {
+        setEmployeeDetails((prev: EmployeeI) => ({
+          ...prev,
+          contractEndDate: dateHired.add(6, "months")
+        }))
+      } else {
+        setEmployeeDetails((prev: EmployeeI) => ({
+          ...prev,
+          endOfProbationary: dateHired.add(6, "months")
+        }))
+      }
+    }
+  }, [employeeDetails.employmentStatus, employeeDetails.dateHired])
+
   return (
     <GridWrapper colSize='2' className='items-center p-2'>
       <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
