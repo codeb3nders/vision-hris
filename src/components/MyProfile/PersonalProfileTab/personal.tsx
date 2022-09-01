@@ -15,21 +15,29 @@ import { AccountCircleTwoTone } from '@mui/icons-material';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import React, { lazy, Suspense, useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
-import moment from 'moment';
-import { CITIZENSHIP, CIVIL_STATUS, RELIGION } from 'constants/Values';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 const Address = lazy(() => import('./address'));
 
 type Props = {};
 
 const Personal = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
+  const { setEmployeeDetails, employeeDetails, isOwner, enums } =
+    useContext(ProfileCtx);
   const [otherReligion, setOtherReligion] = useState<boolean>(false);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
   const [philData, setPhilData] = useState<any>(null);
+  const [citizenship, setCitizenship] = useState<any[]>([]);
+  const [civilStatus, setCivilStatus] = useState<any[]>([]);
+  const [religion, setReligion] = useState<any[]>([]);
 
   useEffect(() => {
-    if (sameAddress && !employeeDetails.permanentRegion) {
+    setCitizenship(enums.citizenship);
+    setCivilStatus(enums.civil_status);
+    setReligion(enums.religions);
+  }, [enums]);
+
+  useEffect(() => {
+    if (sameAddress) {
       setEmployeeDetails((prev: any) => ({
         ...prev,
         permanentRegion: prev.presentRegion,
@@ -47,7 +55,7 @@ const Personal = (props: Props) => {
         permanentBarangay: '',
       }));
     }
-  }, [sameAddress, employeeDetails]);
+  }, [sameAddress]);
 
   useEffect(() => {
     getData();
@@ -126,17 +134,13 @@ const Personal = (props: Props) => {
     }
   };
 
-  const handleChange = (value: any) => {
-    setEmployeeDetails({
-      ...employeeDetails,
-      birthDate: moment(value).format('LL'),
-    });
-  };
+  const handleChange = (value: any) => {};
 
   return (
     <CollapseWrapper
       panelTitle='Personal Information'
       icon={AccountCircleTwoTone}
+      open
     >
       <GridWrapper colSize='7'>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
@@ -147,7 +151,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            defaultValue={employeeDetails?.firstName}
+            value={employeeDetails.firstName}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -163,7 +167,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            defaultValue={employeeDetails?.middleName}
+            value={employeeDetails?.middleName}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -180,7 +184,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            defaultValue={employeeDetails?.lastName}
+            value={employeeDetails?.lastName}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -196,7 +200,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            defaultValue={employeeDetails?.suffix}
+            value={employeeDetails?.suffix}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -209,10 +213,15 @@ const Personal = (props: Props) => {
         <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
-              label='Birthday'
-              onChange={handleChange}
+              label='Birthdate'
+              onChange={(value: any) => {
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  birthDate: value,
+                }));
+              }}
               // disabled={loading}
-              value={employeeDetails?.birthDate}
+              value={employeeDetails.birthDate}
               renderInput={(params) => (
                 <TextField
                   id='birthday'
@@ -239,7 +248,7 @@ const Personal = (props: Props) => {
                   gender: e.target.value,
                 });
               }}
-              defaultValue={employeeDetails?.gender}
+              value={employeeDetails?.gender}
             >
               <MenuItem id='male' value='MALE'>
                 Male
@@ -264,12 +273,12 @@ const Personal = (props: Props) => {
                   civilStatus: e.target.value,
                 });
               }}
-              defaultValue={employeeDetails?.civilStatus}
+              value={employeeDetails?.civilStatus}
             >
-              {CIVIL_STATUS.map((status) => {
+              {civilStatus.map((status) => {
                 return (
-                  <MenuItem id={status} value={status}>
-                    {status}
+                  <MenuItem key={status._id} value={status.code}>
+                    {status.name}
                   </MenuItem>
                 );
               })}
@@ -282,7 +291,7 @@ const Personal = (props: Props) => {
           className='desktop:col-span-7 laptop:col-span-7 phone:col-span-7'
         >
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
-            <FormControl fullWidth variant='standard'>
+            <FormControl required={isOwner} fullWidth variant='standard'>
               <InputLabel id='citizenship'>Citizenship</InputLabel>
               <Select
                 id='citizenship'
@@ -294,12 +303,12 @@ const Personal = (props: Props) => {
                     citizenship: e.target.value,
                   });
                 }}
-                defaultValue={employeeDetails?.citizenship}
+                value={employeeDetails?.citizenship || 'Philippines'}
               >
-                {CITIZENSHIP.map((c: string, idx: number) => {
+                {citizenship.map((c: any, idx: number) => {
                   return (
-                    <MenuItem key={`${c}~${idx}`} id={`${c}~${idx}`} value={c}>
-                      {c}
+                    <MenuItem id={c._id} key={c._id} value={c.code}>
+                      {c.name}
                     </MenuItem>
                   );
                 })}
@@ -308,19 +317,19 @@ const Personal = (props: Props) => {
           </div>
 
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
-            <FormControl fullWidth variant='standard'>
+            <FormControl required={isOwner} fullWidth variant='standard'>
               <InputLabel id='religion'>Religion</InputLabel>
               <Select
                 id='religion'
                 labelId='religion'
                 size='small'
                 onChange={handleReligion}
-                defaultValue={employeeDetails?.religion}
+                value={employeeDetails?.religion}
               >
-                {RELIGION.map((religion) => {
+                {religion.map((religion) => {
                   return (
-                    <MenuItem id={religion} value={religion}>
-                      {religion}
+                    <MenuItem key={religion._id} value={religion.code}>
+                      {religion.name}
                     </MenuItem>
                   );
                 })}
@@ -358,7 +367,7 @@ const Personal = (props: Props) => {
               size='small'
               variant='standard'
               fullWidth
-              defaultValue={employeeDetails?.personalContactNumber}
+              value={employeeDetails?.personalContactNumber}
               onChange={(e: any) =>
                 setEmployeeDetails({
                   ...employeeDetails,
@@ -375,7 +384,7 @@ const Personal = (props: Props) => {
               size='small'
               variant='standard'
               fullWidth
-              defaultValue={employeeDetails?.personalEmail}
+              value={employeeDetails?.personalEmail}
               onChange={(e: any) =>
                 setEmployeeDetails({
                   ...employeeDetails,
@@ -428,33 +437,6 @@ const Personal = (props: Props) => {
             </div>
           )}
         </GridWrapper>
-
-        {/* <div className='desktop:col-span-3 laptop:col-span-3 phone:col-span-6'>
-          <FormControl required fullWidth variant='standard'>
-            <InputLabel id='educational_attainment'>
-              Highest Educational Attainment
-            </InputLabel>
-            <Select
-              labelId='educational_attainment'
-              size='small'
-              onChange={(e: any) =>
-                setEmployeeDetails({
-                  ...employeeDetails,
-                  highestEducationalAttainment: e.target.value,
-                })
-              }
-              defaultValue={employeeDetails?.highestEducationalAttainment}
-            >
-              {HIGHEST_EDUCATION.map((education: any) => {
-                return (
-                  <MenuItem key={education} value={education}>
-                    {education}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-        </div> */}
       </GridWrapper>
     </CollapseWrapper>
   );

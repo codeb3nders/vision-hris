@@ -70,7 +70,7 @@ const Address = ({ data, isPermanent }: Props) => {
         <TextField
           id={`${isPermanent ? 'permanent' : 'present'}-addressline`}
           multiline
-          label={`${isPermanent ? 'Permanent' : 'Present'} Street Address 1`}
+          label={`${isPermanent ? 'Permanent' : 'Present'} Street Address`}
           size='small'
           variant='standard'
           fullWidth

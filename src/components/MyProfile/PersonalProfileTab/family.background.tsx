@@ -16,7 +16,7 @@ type Props = {};
 
 export type FamilyI = {
   //   id?: number;
-  fullname: string;
+  name: string;
   relation: string;
   occupation: string;
   company: string;
@@ -29,8 +29,8 @@ const FamilyBackground = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    employeeDetails?.familyBackground?.length > 0 &&
-      setFamily(employeeDetails?.familyBackground);
+    // employeeDetails?.familyBackground?.length > 0 &&
+    //   setFamily(employeeDetails?.familyBackground);
   }, [employeeDetails]);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const FamilyBackground = (props: Props) => {
       <GridWrapper colSize='1'>
         <div className='ww-full col-span-1 flex flex-col justify-end'>
           <DataGrid
-            getRowId={(data: any) => `${data?.fullname}`}
+            getRowId={(data: any) => `${data?.name}`}
             rows={family}
             columns={columns(handleDelete)}
             pageSize={5}
@@ -87,7 +87,7 @@ const FamilyBackground = (props: Props) => {
 
 const columns: any = (handleDelete: any) => [
   {
-    field: 'fullname',
+    field: 'name',
     headerName: 'Fullname',
     flex: 1,
   },

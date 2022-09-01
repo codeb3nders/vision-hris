@@ -5,17 +5,36 @@ const initialState: any = {
   employeeItems: [],
   status: "idle",
   error: null,
+  employeeDetails: null,
+  statusOne: "idle",
+  errorOne: null,
 };
 
-export const getEmployeesAction: any = createAsyncThunk(
-  "employees/getEmployees",
-  async (access_token: string) => {
+export const getAllEmployeesAction: any = createAsyncThunk(
+  "employees/getAllEmployees",
+  async (data: { access_token: string, params?: any }) => {
     try {
       const config = {
-        headers: { Authorization: `Bearer ${access_token}` },
+        headers: { Authorization: `Bearer ${data.access_token}` },
       };
       const response = await getEmployeesEndpoint(config);
       return [...response.data];
+    } catch (err: any) {
+      console.error("ERROR in getEmployees", err);
+      return err.message;
+    }
+  }
+);
+
+export const getOneEmployeeAction: any = createAsyncThunk(
+  "employees/getOneEmployee",
+  async (data: { access_token: string, params: any }) => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${data.access_token}` },
+      };
+      const response = await getEmployeesEndpoint(config, data.params.employeeNo);
+      return response.data;
     } catch (err: any) {
       console.error("ERROR in getEmployees", err);
       return err.message;
@@ -29,23 +48,37 @@ export const employeesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getEmployeesAction.pending, (state) => {
+      .addCase(getAllEmployeesAction.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(getEmployeesAction.fulfilled, (state, action) => {
+      .addCase(getAllEmployeesAction.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.employeeItems = action.payload;
       })
-      .addCase(getEmployeesAction.rejected, (state, action) => {
+      .addCase(getAllEmployeesAction.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-      });
+      })
+      .addCase(getOneEmployeeAction.pending, (state) => {
+        state.statusOne = "loading";
+      })
+      .addCase(getOneEmployeeAction.fulfilled, (state, action) => {
+        state.statusOne = "succeeded";
+        state.employeeDetails = action.payload;
+      })
+      .addCase(getOneEmployeeAction.rejected, (state, action) => {
+        state.statusOne = "failed";
+        state.errorOne = action.error.message;
+      })
   },
 });
 
 export const getEmployeeItems = (state: any) => state.employee.employeeItems;
 export const getEmployeeStatus = (state: any) => state.employee.status;
 export const getEmployeeError = (state: any) => state.employee.error;
+export const getEmployeeDetails = (state: any) => state.employee.employeeDetails;
+export const getEmployeeStatusOne = (state: any) => state.employee.statusOne;
+export const getEmployeeErrorOne = (state: any) => state.employee.errorOne;
 export const employeeStore = (state: any) => state.employee;
 
 export default employeesSlice.reducer;

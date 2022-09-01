@@ -4,13 +4,15 @@ import React from 'react';
 
 type Props = {
   viewDetails: {
-    details: any;
+    employeeNo: string;
     status: boolean;
+    myTeam: any[];
   };
   setViewDetails: React.Dispatch<
     React.SetStateAction<{
-      details: any;
+      employeeNo: string;
       status: boolean;
+      myTeam: any[];
     }>
   >;
 };
@@ -19,11 +21,11 @@ const ViewEmployeeProfile = ({ setViewDetails, viewDetails }: Props) => {
   return (
     <Dialog
       open={viewDetails.status}
-      onClose={() => setViewDetails({ details: null, status: false })}
+      onClose={() => setViewDetails({ employeeNo: "", status: false, myTeam: [] })}
       className='mx-auto [&>.MuiDialog-container>.MuiPaper-root]:!max-w-[1200px] [&>.MuiDialog-container>.MuiPaper-root]:w-full'
     >
       <div className='relative'>
-        <ProfileMain isView userDetails={viewDetails.details} />
+        <ProfileMain isView employeeNo={viewDetails.employeeNo} myTeam={viewDetails.myTeam} />
       </div>
     </Dialog>
   );

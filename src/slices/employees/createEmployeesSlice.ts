@@ -10,9 +10,12 @@ const initialState: any = {
 
 export const createEmployee: any = createAsyncThunk(
   'employees/createEmployee',
-  async (body: EmployeeI, config?: any) => {
+  async (data: { body: EmployeeI, access_token?: any }) => {
     try {
-      const response = await createEmployeeEndpoint(body, config);
+      const config = {
+        headers: { Authorization: `Bearer ${data.access_token}` },
+      };
+      const response = await createEmployeeEndpoint(data.body, config);
       return { ...response.data };
     } catch (err: any) {
       console.error('ERROR in createEmployee', err);

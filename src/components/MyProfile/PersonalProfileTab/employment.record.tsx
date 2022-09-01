@@ -94,6 +94,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                 <DatePicker
                   label='From'
                   value={data?.yrFrom || null}
+                  views={['year']}
                   onChange={(value: any) =>
                     setData((prev: any) => ({
                       ...prev,
@@ -116,6 +117,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
                   label='To'
+                  views={['year']}
                   value={data?.yrTo || null}
                   onChange={(value: any) =>
                     setData((prev: any) => ({
@@ -233,4 +235,4 @@ const columns: any = (handleDelete: any) => {
   ];
 };
 
-export default EmploymentRecord;
+export default React.memo(EmploymentRecord);

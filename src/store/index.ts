@@ -10,6 +10,7 @@ import {
 } from 'redux-persist';
 import userAccessSlice from "slices/userAccess/authSlice";
 import employeesSlice from "slices/employees/getEmployeesSlice";
+import enumsSlice from "slices/enums/enumsSlice";
 import employeeWithLeaveReducer from "slices/employees/getEmployeesWithLeaveSlice";
 
 const rootPersistConfig = {
@@ -22,6 +23,7 @@ const rootPersistConfig = {
 const appReducer = combineReducers({
   auth: userAccessSlice,
   employee: employeesSlice,
+  enums: enumsSlice,
   employeesWithLeave: employeeWithLeaveReducer,
 })
 

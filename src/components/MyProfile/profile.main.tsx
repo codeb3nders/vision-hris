@@ -19,8 +19,17 @@ import { initialState } from './employee.initialstate';
 import ProfileOther from './profile.other';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
-import { createEmployee } from './../../slices/employees/createEmployeesSlice';
-import { useDispatch } from 'react-redux';
+import {
+  createEmployee,
+  getEmployeeCreateStatus,
+} from './../../slices/employees/createEmployeesSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  enumsStore,
+  getOneEmployeeAction as _getOneEmployeeAction,
+  getEmployeeStatusOne as _getOneEmployeeStatus,
+  getEmployeeDetails as _getOneEmployeeDetails,
+} from 'slices';
 
 const ProfileDetails = lazy(() => import('./profile.details'));
 const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
@@ -28,8 +37,9 @@ const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
 type Props = {
   isNew?: boolean;
   isView?: boolean;
-  userDetails?: EmployeeI;
+  employeeNo?: string;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  myTeam?: any[];
 };
 
 export type ProfileModel = {
@@ -37,8 +47,8 @@ export type ProfileModel = {
   setIndex: React.Dispatch<React.SetStateAction<string>>;
   isNew?: boolean;
   isView?: boolean;
-  employeeDetails: any;
-  setEmployeeDetails: any;
+  employeeDetails: EmployeeI;
+  setEmployeeDetails: React.Dispatch<React.SetStateAction<EmployeeI>>;
   setDisplayPhoto: React.Dispatch<
     React.SetStateAction<{
       employeeNo: string;
@@ -46,6 +56,9 @@ export type ProfileModel = {
     }>
   >;
   displayPhoto: { employeeNo: string; photo: string };
+  isOwner: boolean;
+  enums: any;
+  myTeam: any[] | undefined;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -53,20 +66,23 @@ export const ProfileCtx = createContext<ProfileModel>({
   setIndex: () => {},
   isNew: false,
   isView: false,
-  employeeDetails: {},
+  employeeDetails: initialState,
   setEmployeeDetails: () => {},
   setDisplayPhoto: () => {},
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
+  isOwner: false,
+  enums: {},
+  myTeam: [],
 });
 
-const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
+const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const dispatch = useDispatch();
 
   const [index, setIndex] = useState<string>('0');
-  const { isLoggedIn } = useContext(AppCtx);
+  const { isLoggedIn, userData, access_token } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
   const [employeeDetails, setEmployeeDetails] =
     useState<EmployeeI>(initialState);
@@ -77,6 +93,8 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     employeeNo: '',
     photo: '',
   });
+  const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [enums, setEnums] = useState<any>({});
 
   const memoizedEmployeeDetails = useMemo(
     () => employeeDetails,
@@ -100,18 +118,35 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
     status: false,
     action: '',
   });
+  const { enumsData } = useSelector(enumsStore);
+  // Employees
+  const getEmployeeStatus = useSelector(_getOneEmployeeStatus);
+  const employeeData = useSelector(_getOneEmployeeDetails);
+
+  useEffect(() => {
+    if (access_token && employeeNo) {
+      dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo } }));
+    }
+  }, [access_token, employeeNo]);
+
+  useEffect(() => {
+    console.log({ employeeDetails });
+  }, [employeeDetails]);
 
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex('1');
     if (!isNew && isView) {
-      setEmployeeDetails(userDetails || initialState);
+      setEmployeeDetails({ ...initialState, ...employeeData });
+      if (employeeData?.employeeNo === userData.employeeNo) {
+        setIsOwner(true);
+      }
     } else if (!isNew && !isView) {
-      setEmployeeDetails(isLoggedIn.userData || initialState);
+      setEmployeeDetails(userData || initialState);
     } else {
       setEmployeeDetails(initialState);
     }
-  }, [userDetails, isLoggedIn, isNew, isView]);
+  }, [employeeData, isLoggedIn, isNew, isView]);
 
   const handleEmployee = async () => {
     if (!employeeDetails.employeeNo && isNew) {
@@ -120,6 +155,79 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
       updateEmployee();
     }
   };
+
+  useEffect(() => {
+    var positions: any = [],
+      departments: any = [],
+      ranks: any = [],
+      civil_status: any = [],
+      citizenship: any = [],
+      religions: any = [],
+      employment_status: any = [],
+      locations: any = [],
+      assets: any = [],
+      file201: any = [],
+      allowance_types: any = [],
+      disciplinary_actions: any = [];
+    enumsData.forEach((o: any) => {
+      console.log({ o: o.type });
+
+      switch (o.type) {
+        case 'position':
+          positions.push(o);
+          break;
+        case 'civilStatus':
+          console.log({ civil: o });
+
+          civil_status.push(o);
+          break;
+        case 'citizenship':
+          citizenship.push(o);
+          break;
+        case 'religion':
+          religions.push(o);
+          break;
+        case 'employmentStatus':
+          employment_status.push(o);
+          break;
+        case 'location':
+          locations.push(o);
+          break;
+        case 'department':
+          departments.push(o);
+          break;
+        case 'rank':
+          ranks.push(o);
+          break;
+        case 'asset':
+          assets.push(o);
+          break;
+        case '201_file_types':
+          file201.push(o);
+          break;
+        case 'allowance_type':
+          allowance_types.push(o);
+          break;
+        case 'disciplinary_action':
+          disciplinary_actions.push(o);
+          break;
+      }
+    });
+    setEnums({
+      positions,
+      departments,
+      ranks,
+      civil_status,
+      citizenship,
+      religions,
+      employment_status,
+      locations,
+      assets,
+      file201,
+      allowance_types,
+      disciplinary_actions,
+    });
+  }, [enumsData]);
 
   useEffect(() => {
     handleCompanyEmail();
@@ -228,11 +336,14 @@ const ProfileMain = ({ isNew, isView, userDetails, setOpen }: Props) => {
         index,
         setIndex,
         isNew,
-        setEmployeeDetails: setEmployeeDetailsCallback,
-        employeeDetails: memoizedEmployeeDetails,
+        setEmployeeDetails,
+        employeeDetails,
         isView,
         setDisplayPhoto,
         displayPhoto,
+        isOwner,
+        enums,
+        myTeam,
       }}
     >
       <Dialog open={loading.status}>

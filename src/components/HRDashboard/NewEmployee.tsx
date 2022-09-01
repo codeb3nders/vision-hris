@@ -28,8 +28,6 @@ import {
   DigitalBulletin,
   EmploymentStatus,
   NewEmployeeDetails,
-  TaxExemption,
-  TITLES,
   VaccineStatus,
 } from './EmployeeData';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -50,7 +48,7 @@ const NewEmployee: React.FC<Props> = ({ open, setOpen, id }) => {
 
   console.log({ open });
 
-  const handleDateChange = () => {};
+  const handleDateChange = () => { };
 
   const handleList = () => {
     const DateInput = (title) => (
@@ -127,8 +125,6 @@ const NewEmployee: React.FC<Props> = ({ open, setOpen, id }) => {
         switch (title.key) {
           case 'employment_status':
             return EmploymentStatus;
-          case 'tax_exemption':
-            return TaxExemption;
           case 'civil_status':
             return CivilStatus;
           case 'vaccine_status':
@@ -149,8 +145,8 @@ const NewEmployee: React.FC<Props> = ({ open, setOpen, id }) => {
             <span style={{ textTransform: 'uppercase' }}>{title.label}</span>
           </InputLabel>
           <Select fullWidth>
-            {menu().map((m) => {
-              return <MenuItem value={m}>{m}</MenuItem>;
+            {menu().map((m: any, i: number) => {
+              return <MenuItem key={i} value={m}>{m}</MenuItem>;
             })}
           </Select>
         </FormControl>

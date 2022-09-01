@@ -14,7 +14,6 @@ import { ProfileCtx } from './profile.main';
 import useResize from 'hooks/useResize';
 import { PHOTO_PLACEHOLDER } from 'assets';
 import moment from 'moment';
-import { DEPARTMENTS } from 'constants/Values';
 
 type Props = {};
 
@@ -26,9 +25,11 @@ const ProfileDetails = (props: Props) => {
     setEmployeeDetails,
     setDisplayPhoto,
     displayPhoto,
+    enums,
   } = useContext(ProfileCtx);
   const [img, setImg] = useState<any>(null);
   const { processfile, resized } = useResize({ quality: 0.9 });
+  const { departments } = enums;
 
   useEffect(() => {
     img && processfile(img);
@@ -115,10 +116,10 @@ const ProfileDetails = (props: Props) => {
                   });
                 }}
               >
-                {DEPARTMENTS.map((dept: string) => {
+                {departments.map((dept: any) => {
                   return (
-                    <MenuItem key={dept} value={dept}>
-                      {dept}
+                    <MenuItem key={dept.code} id={dept.code} value={dept.code}>
+                      {dept.name}
                     </MenuItem>
                   );
                 })}
@@ -129,20 +130,17 @@ const ProfileDetails = (props: Props) => {
           )}
 
           <p className='text-gray-500 mt-2'>
-            Started on{' '}
-            {employeeDetails?.dateHired
-              ? moment(employeeDetails?.dateHired).format('LL')
-              : 'April 17, 2019'}{' '}
-            ({moment(employeeDetails?.dateHired).fromNow() || '3.2 years ago'})
+            Started on {moment(employeeDetails.dateHired).format('LL')} (
+            {employeeDetails.yearsInService} year/s)
           </p>
         </section>
       )}
 
-      {isNew && (
-        <section className='laptop:col-span-9 desktop:col-span-9 tablet:col-span-9 phone:col-span-12 phone:text-xs flex flex-col justify-end phone:text-center tablet:text-left laptop:text-left desktop:text-left'>
-          <ProfileTabs className='phone:hidden laptop:block desktop:block tablet:hidden ' />
-        </section>
-      )}
+      {/* {isNew && ( */}
+      <section className='laptop:col-span-9 desktop:col-span-9 tablet:col-span-9 phone:col-span-12 phone:text-xs flex flex-col justify-end phone:text-center tablet:text-left laptop:text-left desktop:text-left'>
+        <ProfileTabs className='phone:hidden laptop:block desktop:block tablet:hidden ' />
+      </section>
+      {/* )} */}
     </CustomCard>
   );
 };

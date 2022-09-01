@@ -21,6 +21,7 @@ type Props = {
 
 const ProfileOther = ({ className }: Props) => {
   const { employeeDetails } = useContext(ProfileCtx);
+  console.log({ employeeDetails })
   return (
     <CustomCard className={`${className}`}>
       <List className='p-0'>
@@ -74,7 +75,7 @@ const ProfileOther = ({ className }: Props) => {
           </ListItemIcon>
           <ListItemText
             primary={
-              <span className='text-xs'>{employeeDetails?.location}</span>
+              employeeDetails?.location.map((o: any) => <span className='text-xs'>{o.name}</span>)
             }
           />
         </ListItem>

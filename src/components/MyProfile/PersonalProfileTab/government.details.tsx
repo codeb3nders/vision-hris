@@ -7,34 +7,26 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import CollapseWrapper from './collapse.wrapper';
-import { TaxExemption } from './../../HRDashboard/EmployeeData';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { ProfileCtx } from '../profile.main';
 
 type Props = {};
 
 const GovernmentDetails = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { employeeDetails: details, setEmployeeDetails } =
+    useContext(ProfileCtx);
+
+  const employeeDetails = useMemo(() => details, []);
 
   const handleTaxExemption = () => {
     switch (employeeDetails.civilStatus) {
-      case 'SINGLE':
-        const singleTax =
-          parseInt(employeeDetails.NumberOfDependents) > 0
-            ? `SINGLE-${employeeDetails.NumberOfDependents}`
-            : 'SINGLE';
-        setEmployeeDetails((prev: any) => ({
-          ...prev,
-          taxExemption: singleTax,
-        }));
-        break;
       case 'MARRIED':
-        console.log({ dep: parseInt(employeeDetails.NumberOfDependents) });
+        console.log({ dep: employeeDetails.NumberOfDependents });
 
         const marriedTax =
-          parseInt(employeeDetails.NumberOfDependents) > 0
+          employeeDetails.NumberOfDependents > 0
             ? `MARRIED-${employeeDetails.NumberOfDependents}`
             : 'MARRIED';
         setEmployeeDetails((prev: any) => ({
@@ -43,6 +35,14 @@ const GovernmentDetails = (props: Props) => {
         }));
         break;
       default:
+        const singleTax =
+          employeeDetails.NumberOfDependents > 0
+            ? `SINGLE-${employeeDetails.NumberOfDependents}`
+            : 'SINGLE';
+        setEmployeeDetails((prev: any) => ({
+          ...prev,
+          taxExemption: singleTax,
+        }));
         break;
     }
   };
@@ -62,6 +62,7 @@ const GovernmentDetails = (props: Props) => {
       <GridWrapper colSize='2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-sss'
             required
             variant='standard'
             size='small'
@@ -78,6 +79,7 @@ const GovernmentDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-philhealth'
             required
             variant='standard'
             size='small'
@@ -95,6 +97,7 @@ const GovernmentDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-pagibig'
             required
             variant='standard'
             size='small'
@@ -111,6 +114,7 @@ const GovernmentDetails = (props: Props) => {
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-tin'
             required
             variant='standard'
             size='small'
@@ -128,6 +132,7 @@ const GovernmentDetails = (props: Props) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-no-of-deps'
             required
             variant='standard'
             size='small'
@@ -145,23 +150,21 @@ const GovernmentDetails = (props: Props) => {
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-          <FormControl variant='standard' fullWidth size='small' required>
-            <InputLabel id='tax'>Tax Exemption</InputLabel>
-            <Select
-              labelId='tax'
-              value={employeeDetails.taxExemption}
-              onChange={(e: any) =>
-                setEmployeeDetails({
-                  ...employeeDetails,
-                  taxExemption: e.target.value,
-                })
-              }
-            >
-              {TaxExemption.map((tax) => {
-                return <MenuItem value={tax}>{tax}</MenuItem>;
-              })}
-            </Select>
-          </FormControl>
+          <TextField
+            id='gov-tax-exemp'
+            required
+            variant='standard'
+            size='small'
+            fullWidth
+            label='Tax Exemption'
+            defaultValue={employeeDetails?.taxExemption}
+            onChange={(e: any) =>
+              setEmployeeDetails({
+                ...employeeDetails,
+                taxExemption: e.target.value,
+              })
+            }
+          />
         </div>
       </GridWrapper>
     </CollapseWrapper>

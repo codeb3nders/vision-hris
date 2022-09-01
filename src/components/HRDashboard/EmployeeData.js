@@ -57,17 +57,6 @@ export const Departments = [
 
 export const EmploymentStatus = ['REGULAR', 'PROJECT EMPLOYEE'];
 
-export const TaxExemption = [
-  'SINGLE',
-  'SINGLE-1',
-  'SINGLE-2',
-  'MARRIED',
-  'MARRIED-1',
-  'MARRIED-2',
-  'MARRIED-3',
-  'MARRIED-4',
-  'MARRIED-5',
-];
 export const CivilStatus = ['SINGLE', 'MARRIED'];
 
 export const Groups = [

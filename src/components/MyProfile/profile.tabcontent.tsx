@@ -43,6 +43,7 @@ type Props = {
 
 const ProfileTabContent = ({ className }: Props) => {
   const { isNew, isView } = useContext(ProfileCtx);
+
   return (
     <CustomCard
       id='tab-content'
@@ -81,12 +82,7 @@ const ProfileTabContent = ({ className }: Props) => {
       <Suspense fallback={<div>Loading...</div>}>
         <TabPanel value='2' className='p-0 grid' id='EmploymentStatus'>
           <JobInfo />
-          {!isNew && (
-            <>
-              <EmployementStatus />
-              <Divider />
-            </>
-          )}
+          {!isNew && <EmployementStatus />}
         </TabPanel>
       </Suspense>
 

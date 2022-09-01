@@ -51,7 +51,6 @@ export const getEmployeesWithLeavesEndpoint = async (employeeNo?: string) => {
     const url = employeeNo
       ? `${URL_EMPLOYEES_WITH_LEAVES}${employeeNo}`
       : URL_EMPLOYEES_WITH_LEAVES;
-    console.log('URL', url);
     return await axios.get(url, { ...internalConfig });
   } catch (error: any) {
     console.error('ERROR in getEmployeesWithLeavesEndpoint', error);

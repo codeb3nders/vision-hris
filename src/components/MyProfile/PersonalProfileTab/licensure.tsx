@@ -14,6 +14,8 @@ const Licensure = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [exams, setExams] = useState<any[]>([]);
 
+  console.log('Licensure');
+
   const handleDelete = (params: any) => {
     setExams((prev: any) => {
       const filtered = prev.filter((a: any) => a.id !== params.row.id);

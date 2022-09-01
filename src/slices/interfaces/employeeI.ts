@@ -1,7 +1,66 @@
+import { Moment } from 'moment';
+
 export interface EmployeesWithLeaveSlice {
   employeeItems: EmployeeI[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null | undefined;
+}
+
+export interface AddressI {
+  addressLine: string;
+  barangay: string;
+  municipality: string;
+  province: string;
+  region: string;
+}
+
+export interface EducationI {
+  level: string;
+  yrFrom: number;
+  yrTo: number;
+  schoolAndAddress: string;
+  degree: string;
+  honors: string;
+}
+
+export interface EmploymentRecordsI {
+  yrFrom: number;
+  yrTo: number;
+  companyName: string;
+  positionHeld: string;
+}
+
+export interface GovtProfExamsPassedI {
+  examTitle: string;
+  dateTaken: Date;
+  Rating: string;
+}
+
+export interface LicensesCertificationsI {
+  name: string;
+  authorizingEntity: string;
+  validUntil: Date;
+  licenseCertNo: string;
+}
+
+export interface FamilyBackgroundI {
+  name: string;
+  relation: string;
+  occupation: string;
+  company: string;
+  residence: string;
+}
+
+export interface EmergencyContactI {
+  name: string;
+  relation: string;
+  address: string;
+  phoneNumber: string;
+}
+
+export interface AllowanceDetailsI {
+  code: string;
+  amount: number;
 }
 
 export interface EmployeeI {
@@ -13,23 +72,23 @@ export interface EmployeeI {
   citizenship: string;
   position: string;
   rank: string;
-  department: string;
-  locations: string[];
+  department: any;
+  location: any[];
   isActive: boolean;
   userGroup: string;
-  reportsTo: string;
-  dateHired: Date;
-  employmentStatus: string;
-  endOfProbationary: Date;
-  contractEndDate: Date;
+  reportsTo: any;
+  dateHired: Date | Moment;
+  employmentStatus: any;
+  endOfProbationary: Date | Moment;
+  contractEndDate: Date | Moment;
   gender: string;
-  birthDate: Date;
+  birthDate: Date | null;
   personalContactNumber: string;
   companyContactNumber: string;
   taxExemption: string;
   companyEmail: string;
   personalEmail: string;
-  payrollBankAccount: JSON | null;
+  payrollBankAccount: any | null;
   civilStatus: string;
   religion: string;
   NumberOfDependents: number;
@@ -37,46 +96,29 @@ export interface EmployeeI {
   philHealth: string;
   pagIbig: string;
   tin: string;
-  presentCity: string;
-  permanentCity: string;
-  presentZipCode: string;
-  permanentZipCode: string;
-  presentRegion: string;
-  permanentRegion: string;
-  permanentResidenceAddress: string;
-  presentResidenceAddress: string;
-  highestEducationalAttainment: string;
-  elementaryYrFrom: number;
-  elementaryYrTo: number;
-  elementarySchoolAndAddress: string;
-  elementaryHonors: string;
-  secondaryYrFrom: number;
-  secondaryYrTo: number;
-  secondarySchoolAndAddress: string;
-  secondaryHonors: string;
-  tertiaryYrFrom: number;
-  tertiaryYrTo: number;
-  tertiarySchoolAndAddress: string;
-  tertiaryDegree: string;
-  tertiaryHonors: string;
-  postGradYrFrom: number;
-  postGradYrTo: number;
-  postGradSchoolAndAddress: string;
-  postGradDegree: string;
-  postGradHonors: string;
-  othersYrFrom: number;
-  othersYrTo: number;
-  othersSchoolAndAddress: string;
-  othersDegree: string;
-  othersHonors: string;
-  licensure: string;
-  emergencyContact: JSON[] | null;
-  employmentRecords: JSON[] | null;
-  govtProfExamsPassed: JSON[] | null;
-  licensesCertifications: JSON[] | null;
-  familyBackground: JSON[] | null;
+  emergencyContact: any[] | null;
+  govtProfExamsPassed: GovtProfExamsPassedI[] | null;
+  familyBackground: FamilyBackgroundI[] | null;
   leave_requests?: any;
   full_name: string;
+  basicPay: number;
+  dateInactive: Date | Moment | null;
+  deductHMDF: number;
+  deductionSSS: number;
+  deductPhilhealth: string;
+  deductWithholdingTax: number;
+  employeeBenefits: string[] | null;
+  fixedContributionRate: string;
+  paymentMethod: string;
+  payRateType: string;
+  payrollGroup: string;
+  presentAddress: AddressI;
+  permanentAddress: AddressI;
+  educationalBackground: EducationI[] | null;
+  employmentRecords: EmploymentRecordsI[] | null;
+  licensesCertifications: LicensesCertificationsI[] | null;
+  allowanceDetails: AllowanceDetailsI[] | null;
+  yearsInService: number;
 }
 
 export interface LoginI {

@@ -35,8 +35,12 @@ const PayrollInformation = (props: Props) => {
           <FormControl variant='standard' size='small' fullWidth required>
             <InputLabel>Pay Rate Type</InputLabel>
             <Select label='Pay Rate Type' id='pay-rate-type'>
-              <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
-              <MenuItem value='Weekly'>Weekly</MenuItem>
+              <MenuItem id='type-bi-monthly' value='Bi monthly'>
+                Bi monthly
+              </MenuItem>
+              <MenuItem id='type-weekly' value='Weekly'>
+                Weekly
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -45,9 +49,15 @@ const PayrollInformation = (props: Props) => {
           <FormControl variant='standard' size='small' fullWidth required>
             <InputLabel>Payment Method</InputLabel>
             <Select label='Payment Method' id='payment-method'>
-              <MenuItem value='Cash'>Cash</MenuItem>
-              <MenuItem value='Check'>Check</MenuItem>
-              <MenuItem value='Payroll Account'>Payroll Account</MenuItem>
+              <MenuItem value='Cash' id='cash'>
+                Cash
+              </MenuItem>
+              <MenuItem value='Check' id='check'>
+                Check
+              </MenuItem>
+              <MenuItem value='Payroll Account' id='payroll-account'>
+                Payroll Account
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -56,8 +66,12 @@ const PayrollInformation = (props: Props) => {
           <FormControl variant='standard' size='small' fullWidth required>
             <InputLabel>Payroll Group</InputLabel>
             <Select label='Payroll Group' id='payroll-group'>
-              <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
-              <MenuItem value='Weekly'>Weekly</MenuItem>
+              <MenuItem id='group-bi-monthly' value='Bi monthly'>
+                Bi monthly
+              </MenuItem>
+              <MenuItem id='group-weekly' value='Weekly'>
+                Weekly
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -105,8 +119,12 @@ const PayrollInformation = (props: Props) => {
           <FormControl variant='standard' size='small' fullWidth required>
             <InputLabel>Fixed Contribution Rate</InputLabel>
             <Select label='Fixed Contribution Rate' id='deduct-philhealth'>
-              <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
-              <MenuItem value='Weekly'>Weekly</MenuItem>
+              <MenuItem id='contrib-bi-monthly' value='Bi monthly'>
+                Bi monthly
+              </MenuItem>
+              <MenuItem id='contrib-weekly' value='Weekly'>
+                Weekly
+              </MenuItem>
             </Select>
           </FormControl>
         </div>

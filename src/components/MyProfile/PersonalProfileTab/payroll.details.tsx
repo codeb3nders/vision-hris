@@ -47,9 +47,9 @@ const PayrollDetails = (props: Props) => {
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
-                payrollBankBranch: {
-                  ...employeeDetails?.payrollBankBranch,
-                  bankName: e.target.value,
+                payrollBankAccount: {
+                  ...employeeDetails?.payrollBankAccount,
+                  bankBranch: e.target.value,
                 },
               })
             }

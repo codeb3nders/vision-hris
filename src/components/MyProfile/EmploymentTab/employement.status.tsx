@@ -2,7 +2,7 @@
 import { WorkHistoryTwoTone } from '@mui/icons-material';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 
@@ -28,7 +28,9 @@ const columns: GridColDef[] = [
     headerName: 'Employment Status',
     flex: 1,
     renderCell: (params: GridCellParams) => {
-      return <div>{params.value}</div>;
+      console.log({ params });
+
+      return <div>{params.value[params.value.length - 1].name}</div>;
     },
   },
   {
@@ -41,9 +43,10 @@ const columns: GridColDef[] = [
 
 type EmploymentI = {
   id: any;
-  dateHired: string;
+  dateHired: Date | Moment;
   employmentStatus: string;
-  endOfProbationary: string;
+  endOfProbationary: Date | undefined | Moment;
+  contractEndDate: Date | undefined | Moment;
 };
 
 const EmployementStatus = (props: Props) => {
@@ -60,6 +63,7 @@ const EmployementStatus = (props: Props) => {
         dateHired: employeeDetails?.dateHired,
         employmentStatus: employeeDetails?.employmentStatus,
         endOfProbationary: employeeDetails?.endOfProbationary,
+        contractEndDate: employeeDetails?.contractEndDate,
       },
     ]);
   }, [employeeDetails]);

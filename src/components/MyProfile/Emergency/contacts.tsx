@@ -7,15 +7,17 @@ import {
   Delete,
   SaveTwoTone,
 } from '@mui/icons-material';
-import { Dialog, IconButton, TextField } from '@mui/material';
+import { Dialog, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
+import { RELATION } from 'constants/Values';
 
 type Props = {};
 
 type ContactsI = {
   id: any;
   name: string;
+  relation: string;
   address: string;
   phoneNumber: string;
   isNew: false;
@@ -33,8 +35,46 @@ const Contacts = (props: Props) => {
 
   const [open, setOpen] = useState<boolean>(false);
 
+  const columns: any = (handleDelete: any) => [
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+    },
+    {
+      field: 'relation',
+      headerName: 'Relation',
+      flex: 1,
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      flex: 1,
+    },
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      flex: 1,
+      renderCell: (params: any) => {
+        return (
+          <div className='flex flex-row items-center w-full gap-1'>
+            <span className='text-xs'>{params.value}</span>
+            <div className='flex-1 flex justify-end'>
+              <IconButton size='small' onClick={() => handleDelete(params)}>
+                <Delete />
+              </IconButton>
+            </div>
+          </div>
+        );
+      },
+    },
+  ];
+
   useEffect(() => {
-    rows.length <= 0 && setRows(employeeDetails?.emergencyContact);
+    if (employeeDetails) {
+      setRows(employeeDetails.emergencyContact || []);
+    }
+    // rows.length <= 0 && employeeDetails?.emergencyContact && setRows(employeeDetails?.emergencyContact);
   }, [employeeDetails]);
 
   const handleSaveNewContact = () => {
@@ -82,6 +122,17 @@ const Contacts = (props: Props) => {
                 setNewContact({ ...newContact, name: e.target.value })
               }
             />
+            <Select
+              id='relation'
+              labelId='relation'
+              onChange={(e: any) =>
+                setNewContact({ ...newContact, relation: e.target.value })
+              }
+            >
+              {RELATION.map((relation) => {
+                return <MenuItem value={relation}>{relation}</MenuItem>;
+              })}
+            </Select>
             <TextField
               id='emergency-address'
               fullWidth
@@ -153,35 +204,5 @@ const Contacts = (props: Props) => {
     </CollapseWrapper>
   );
 };
-
-const columns: any = (handleDelete: any) => [
-  {
-    field: 'name',
-    headerName: 'Name',
-    flex: 1,
-  },
-  {
-    field: 'address',
-    headerName: 'Address',
-    flex: 1,
-  },
-  {
-    field: 'phoneNumber',
-    headerName: 'Phone Number',
-    flex: 1,
-    renderCell: (params: any) => {
-      return (
-        <div className='flex flex-row items-center w-full gap-1'>
-          <span className='text-xs'>{params.value}</span>
-          <div className='flex-1 flex justify-end'>
-            <IconButton size='small' onClick={() => handleDelete(params)}>
-              <Delete />
-            </IconButton>
-          </div>
-        </div>
-      );
-    },
-  },
-];
 
 export default Contacts;

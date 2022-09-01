@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
@@ -13,14 +13,7 @@ import {
   TextField,
 } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import {
-  DEPARTMENTS,
-  EMPLOYMENT_STATUS,
-  LOCATIONS,
-  POSITIONS,
-  RANK,
-  // USER_GROUP,
-} from 'constants/Values';
+import { USER_GROUP } from 'constants/Values';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -43,19 +36,11 @@ const columns: GridColDef[] = [
     },
   },
   {
-    field: 'division',
-    headerName: 'Division',
-    width: 120,
-    renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
-    },
-  },
-  {
     field: 'location',
     headerName: 'Location',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.location.name}</div>;
     },
   },
   {
@@ -63,7 +48,7 @@ const columns: GridColDef[] = [
     headerName: 'Department',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.department.name}</div>;
     },
   },
   {
@@ -71,7 +56,7 @@ const columns: GridColDef[] = [
     headerName: 'Rank',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.rank.name}</div>;
     },
   },
   {
@@ -79,7 +64,7 @@ const columns: GridColDef[] = [
     headerName: 'Position',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return <div className='text-xs p-1'>{params.row.position.name}</div>;
     },
   },
   {
@@ -87,15 +72,9 @@ const columns: GridColDef[] = [
     headerName: 'Reports To',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
-    },
-  },
-  {
-    field: 'comment',
-    headerName: 'Comment',
-    width: 120,
-    renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
+      return (
+        <div className='text-xs p-1'>{params.row.reportsTo.employeeName}</div>
+      );
     },
   },
 ];
@@ -107,13 +86,21 @@ type JobInfoI = {
   rank: string;
   position: string;
   reportsTo: string;
-  comment: string;
 };
 
 const JobInfo = (props: Props) => {
-  const [infos, setInfos] = useState<JobInfoI[]>([]);
-  const { isNew, employeeDetails } = useContext(ProfileCtx);
-  const { employees } = useContext(EmployeeCtx);
+  const [infos, setInfos] = useState<any[]>([]);
+  const {
+    isNew,
+    employeeDetails: details,
+    setEmployeeDetails,
+    enums,
+  } = useContext(ProfileCtx);
+
+  const employeeDetails = useMemo(() => details, [details]);
+  const values = { employeeDetails, setEmployeeDetails, enums };
+
+  console.log('JobInfo');
 
   useEffect(() => {
     setInfos([...infos, employeeDetails]);
@@ -127,7 +114,7 @@ const JobInfo = (props: Props) => {
       open
     >
       {isNew ? (
-        <JobInfoFields employees={employees} />
+        <JobInfoFields {...values} />
       ) : (
         <div style={{ width: '100%' }}>
           <DataGrid
@@ -147,9 +134,47 @@ const JobInfo = (props: Props) => {
   );
 };
 
-const JobInfoFields = ({ employees }) => {
-  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
   const getEmployeeItems = useSelector(_getEmployeeItems);
+  const [departments, setDepartments] = useState<any[]>([]);
+  const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
+  const [locations, setLocations] = useState<any[]>([]);
+  const [positions, setPositions] = useState<any[]>([]);
+  const [ranks, setRanks] = useState<any[]>([]);
+  console.log({ getEmployeeItems });
+
+  useEffect(() => {
+    console.log({ enums });
+    setDepartments(enums.departments);
+    setEmploymentStatus(enums.employment_status);
+    setLocations(enums.locations);
+    setPositions(enums.positions);
+    setRanks(enums.ranks);
+  }, [enums]);
+
+  useEffect(() => {
+    if (
+      !employeeDetails.employeeNo &&
+      employeeDetails.rank &&
+      employeeDetails.firstName &&
+      employeeDetails.lastName
+    ) {
+      const firstName = employeeDetails.firstName.split(' ');
+      if (employeeDetails.rank.toLowerCase() === 'rank and file') {
+        setEmployeeDetails((prev: EmployeeI) => ({
+          ...prev,
+          companyEmail:
+            `${firstName[0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
+        }));
+      } else {
+        setEmployeeDetails((prev: EmployeeI) => ({
+          ...prev,
+          companyEmail:
+            `${firstName[0]}.${employeeDetails.lastName}@vcdcph.com`.toLowerCase(),
+        }));
+      }
+    }
+  }, [employeeDetails.rank]);
 
   return (
     <GridWrapper colSize='2' className='items-center p-2'>
@@ -172,6 +197,7 @@ const JobInfoFields = ({ employees }) => {
         <FormControl variant='standard' fullWidth size='small' required>
           <InputLabel id='position'>Position</InputLabel>
           <Select
+            id='jobinfo-position'
             labelId='position'
             defaultValue={employeeDetails?.position}
             onChange={(e: any) =>
@@ -181,10 +207,10 @@ const JobInfoFields = ({ employees }) => {
               })
             }
           >
-            {POSITIONS.map((position) => {
+            {positions.map((position) => {
               return (
-                <MenuItem id={position} value={position}>
-                  {position}
+                <MenuItem id={position._id} value={position.code}>
+                  {position.name}
                 </MenuItem>
               );
             })}
@@ -193,11 +219,17 @@ const JobInfoFields = ({ employees }) => {
       </div>
       <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='rank'>Department</InputLabel>
+          <InputLabel id='department'>Department</InputLabel>
           <Select
-            id='department'
+            id='jobinfo-department'
             labelId='department'
-            defaultValue={employeeDetails?.department}
+            defaultValue={
+              employeeDetails?.department.length > 0
+                ? employeeDetails?.department[
+                    employeeDetails?.department.length - 1
+                  ].code
+                : employeeDetails?.department
+            }
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -205,10 +237,14 @@ const JobInfoFields = ({ employees }) => {
               })
             }
           >
-            {DEPARTMENTS.map((department) => {
+            {departments.map((department) => {
               return (
-                <MenuItem value={department} id={department}>
-                  {department}
+                <MenuItem
+                  id={department._id}
+                  key={department._id}
+                  value={department.code}
+                >
+                  {department.name}
                 </MenuItem>
               );
             })}
@@ -220,48 +256,25 @@ const JobInfoFields = ({ employees }) => {
         <FormControl variant='standard' fullWidth size='small' required>
           <InputLabel id='location'>Locations</InputLabel>
           <Select
+            id='jobinfo-location'
             multiple
             labelId='location'
-            defaultValue={employeeDetails?.locations}
+            defaultValue={employeeDetails?.location}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
-                locations: e.target.value,
+                location: e.target.value,
               })
             }
           >
-            {LOCATIONS.map((location) => {
-              return (
-                <MenuItem value={location} id={location}>
-                  {location}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      </div>
-
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-        <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='teamLeader'>Team Leader</InputLabel>
-          <Select
-            labelId='teamLeader'
-            defaultValue={employeeDetails?.reportsTo}
-            onChange={(e: any) =>
-              setEmployeeDetails({
-                ...employeeDetails,
-                reportsTo: e.target.value,
-              })
-            }
-          >
-            {getEmployeeItems?.map((employee) => {
+            {locations.map((location) => {
               return (
                 <MenuItem
-                  key={employee.employeeNo}
-                  id={employee.employeeNo}
-                  value={employee.employeeNo}
+                  id={location._id}
+                  key={location._id}
+                  value={location.code}
                 >
-                  {employee.firstName} {employee.lastName}
+                  {location.name}
                 </MenuItem>
               );
             })}
@@ -269,7 +282,97 @@ const JobInfoFields = ({ employees }) => {
         </FormControl>
       </div>
 
-      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'></div>
+      <GridWrapper colSize='3' className='col-span-2'>
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='teamleader'>Team Leader</InputLabel>
+            <Select
+              id='jobinfo-teamleader'
+              labelId='teamleader'
+              defaultValue={employeeDetails?.reportsTo}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  reportsTo: e.target.value,
+                })
+              }
+            >
+              {getEmployeeItems
+                ?.filter(
+                  (x: any) =>
+                    x.department.code === employeeDetails.department.code
+                )
+                .map((employee) => {
+                  return (
+                    <MenuItem
+                      id={employee.employeeNo}
+                      key={employee.employeeNo}
+                      value={employee.employeeNo}
+                    >
+                      {employee.firstName} {employee.lastName}
+                    </MenuItem>
+                  );
+                })}
+            </Select>
+          </FormControl>
+        </div>
+
+        {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='rank'>Employment Rank</InputLabel>
+            <Select
+              id='jobinfo-rank'
+              labelId='rank'
+              defaultValue={employeeDetails?.rank}
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  rank: e.target.value,
+                })
+              }
+            >
+              {ranks.map((rank) => {
+                return (
+                  <MenuItem id={rank.code} value={rank.code}>
+                    {rank.name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </div> */}
+
+        {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
+          <FormControl variant='standard' fullWidth size='small' required>
+            <InputLabel id='employement_status'>Employment Status</InputLabel>
+            <Select
+              id='jobinfo-employment-status'
+              labelId='employement_status'
+              // defaultValue={
+              //   employeeDetails?.employmentStatus.length > 0
+              //     ? employeeDetails?.employmentStatus[
+              //         employeeDetails?.employmentStatus.length - 1
+              //       ].code
+              //     : employeeDetails?.employmentStatus
+              // }
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  employmentStatus: e.target.value,
+                })
+              }
+            >
+              {employmentStatus.map((status) => {
+                return (
+                  <MenuItem id={status.code} value={status.code}>
+                    {status.name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </div> */}
+      </GridWrapper>
 
       <GridWrapper colSize='3' className='col-span-2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
@@ -361,10 +464,10 @@ const JobInfoFields = ({ employees }) => {
               })
             }
           >
-            {RANK.map((rank) => {
+            {ranks.map((rank) => {
               return (
-                <MenuItem id={`rank-${rank}`} value={rank}>
-                  {rank}
+                <MenuItem id={rank._id} key={rank._id} value={rank.code}>
+                  {rank.name}
                 </MenuItem>
               );
             })}
@@ -374,10 +477,10 @@ const JobInfoFields = ({ employees }) => {
 
       <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
         <FormControl variant='standard' fullWidth size='small' required>
-          <InputLabel id='employement_status'>Employment Status</InputLabel>
+          <InputLabel id='employment_status'>Employment Status</InputLabel>
           <Select
-            labelId='employement_status'
-            value={employeeDetails?.employmentStatus || 'PROBATIONARY'}
+            labelId='employment_status'
+            value={employeeDetails?.employmentStatus}
             onChange={(e: any) =>
               setEmployeeDetails({
                 ...employeeDetails,
@@ -385,10 +488,10 @@ const JobInfoFields = ({ employees }) => {
               })
             }
           >
-            {EMPLOYMENT_STATUS.map((status) => {
+            {employmentStatus.map((status) => {
               return (
-                <MenuItem id={`employment-status-${status}`} value={status}>
-                  {status}
+                <MenuItem id={status._id} key={status._id} value={status.code}>
+                  {status.name}
                 </MenuItem>
               );
             })}
@@ -478,4 +581,4 @@ const JobInfoFields = ({ employees }) => {
   );
 };
 
-export default JobInfo;
+export default React.memo(JobInfo);
