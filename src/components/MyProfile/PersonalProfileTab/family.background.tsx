@@ -7,10 +7,10 @@ import {
 import { IconButton } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { useContext, useEffect, useState } from 'react';
+import { lazy, useContext, useEffect, useState, memo } from 'react';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
-import FamilyBackgroundForm from './family.background.form';
+const FamilyBackgroundForm = lazy(() => import('./family.background.form'));
 
 type Props = {};
 
@@ -24,7 +24,8 @@ export type FamilyI = {
 };
 
 const FamilyBackground = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { employeeDetails, setEmployeeDetails, isView, setUpdatedDetails } =
+    useContext(ProfileCtx);
   const [family, setFamily] = useState<FamilyI[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -35,6 +36,12 @@ const FamilyBackground = (props: Props) => {
 
   useEffect(() => {
     setEmployeeDetails({ ...employeeDetails, familyBackground: family });
+    isView &&
+      family.length > 0 &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        familyBackground: family,
+      }));
   }, [family]);
 
   const handleDelete = (params: any) => {
@@ -59,7 +66,7 @@ const FamilyBackground = (props: Props) => {
       <GridWrapper colSize='1'>
         <div className='ww-full col-span-1 flex flex-col justify-end'>
           <DataGrid
-            getRowId={(data: any) => `${data?.name}`}
+            getRowId={(data: any) => data?.name}
             rows={family}
             columns={columns(handleDelete)}
             pageSize={5}
@@ -128,4 +135,4 @@ const columns: any = (handleDelete: any) => [
   },
 ];
 
-export default FamilyBackground;
+export default memo(FamilyBackground);

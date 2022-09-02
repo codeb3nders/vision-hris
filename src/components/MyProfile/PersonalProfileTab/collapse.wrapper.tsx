@@ -56,7 +56,7 @@ const CollapseWrapper = ({
         </Typography>
       </AccordionSummary>
       <AccordionDetails className={contentClassName}>
-        {children}
+        {expanded && children}
       </AccordionDetails>
     </Accordion>
   );

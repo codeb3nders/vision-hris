@@ -7,7 +7,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { ProfileCtx } from '../profile.main';
@@ -15,8 +15,14 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const GovernmentDetails = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isOwner } = useContext(ProfileCtx);
-  console.log({ employeeDetails })
+  const {
+    employeeDetails,
+    setEmployeeDetails,
+    isOwner,
+    isView,
+    setUpdatedDetails,
+  } = useContext(ProfileCtx);
+  console.log({ employeeDetails });
   const handleTaxExemption = () => {
     console.log({ dep: employeeDetails.NumberOfDependents });
     if (employeeDetails.civilStatus.toLocaleLowerCase() == 'married') {
@@ -46,7 +52,7 @@ const GovernmentDetails = (props: Props) => {
     } else {
       setEmployeeDetails((prev: any) => ({
         ...prev,
-        taxExemption: "",
+        taxExemption: '',
       }));
     }
   }, [employeeDetails.NumberOfDependents, employeeDetails.civilStatus]);
@@ -60,97 +66,145 @@ const GovernmentDetails = (props: Props) => {
       <GridWrapper colSize='2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-sss'
             required={isOwner}
             variant='standard'
             size='small'
             fullWidth
             label='SSS'
-            defaultValue={employeeDetails?.sss}
-            onChange={(e: any) =>
+            value={employeeDetails?.sss}
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 sss: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  sss: e.target.value,
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-philhealth'
             required={isOwner}
             variant='standard'
             size='small'
             fullWidth
             label='PhilHealth'
-            defaultValue={employeeDetails?.philHealth}
-            onChange={(e: any) =>
+            value={employeeDetails?.philHealth}
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 philHealth: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  philHealth: e.target.value,
+                }));
+            }}
           />
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-pagibig'
             required={isOwner}
             variant='standard'
             size='small'
             fullWidth
             label='Pag-IBIG/HMDF'
-            defaultValue={employeeDetails?.pagIbig}
-            onChange={(e: any) =>
+            value={employeeDetails?.pagIbig}
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 pagIbig: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  pagIbig: e.target.value,
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-tin'
             required={isOwner}
             variant='standard'
             size='small'
             fullWidth
             label='TIN'
-            defaultValue={employeeDetails?.tin}
-            onChange={(e: any) =>
+            value={employeeDetails?.tin}
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 tin: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  tin: e.target.value,
+                }));
+            }}
           />
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-no-of-deps'
             required={isOwner}
             variant='standard'
             size='small'
             fullWidth
             type='number'
             label='Number of Dependents'
-            defaultValue={employeeDetails?.NumberOfDependents}
-            onChange={(e: any) =>
+            value={employeeDetails?.NumberOfDependents}
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 NumberOfDependents: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  NumberOfDependents: e.target.value,
+                }));
+            }}
           />
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
+            id='gov-tax-exemp'
             required={isOwner}
             variant='standard'
             size='small'
             fullWidth
             disabled
             label='Tax Exemption'
-            value={employeeDetails.taxExemption}
+            value={employeeDetails?.taxExemption}
+            onChange={(e: any) => {
+              setEmployeeDetails({
+                ...employeeDetails,
+                taxExemption: e.target.value,
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  taxExemption: e.target.value,
+                }));
+            }}
           />
         </div>
       </GridWrapper>
@@ -158,4 +212,4 @@ const GovernmentDetails = (props: Props) => {
   );
 };
 
-export default GovernmentDetails;
+export default React.memo(GovernmentDetails);

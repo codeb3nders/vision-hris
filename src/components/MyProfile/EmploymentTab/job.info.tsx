@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
@@ -13,9 +13,7 @@ import {
   TextField,
 } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import {
-  USER_GROUP,
-} from 'constants/Values';
+import { USER_GROUP } from 'constants/Values';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -42,7 +40,11 @@ const columns: GridColDef[] = [
     headerName: 'Location',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.location.map((o: any) => o.name).join(", ")}</div>;
+      return (
+        <div className='text-xs p-1'>
+          {params.row.location.map((o: any) => o.name).join(', ')}
+        </div>
+      );
     },
   },
   {
@@ -74,7 +76,9 @@ const columns: GridColDef[] = [
     headerName: 'Reports To',
     width: 120,
     renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.row.reportsTo.employeeName}</div>;
+      return (
+        <div className='text-xs p-1'>{params.row.reportsTo.employeeName}</div>
+      );
     },
   },
 ];
@@ -90,8 +94,21 @@ type JobInfoI = {
 
 const JobInfo = (props: Props) => {
   const [infos, setInfos] = useState<any[]>([]);
-  const { isNew, employeeDetails, setEmployeeDetails, enums } = useContext(ProfileCtx);
-  const values = { employeeDetails, setEmployeeDetails, enums };
+  const {
+    isNew,
+    employeeDetails,
+    setEmployeeDetails,
+    enums,
+    isView,
+    setUpdatedDetails,
+  } = useContext(ProfileCtx);
+  const values = {
+    employeeDetails,
+    setEmployeeDetails,
+    enums,
+    isView,
+    setUpdatedDetails,
+  };
 
   useEffect(() => {
     setInfos([...infos, employeeDetails]);
@@ -125,65 +142,88 @@ const JobInfo = (props: Props) => {
   );
 };
 
-const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
+const JobInfoFields = ({
+  employeeDetails,
+  setEmployeeDetails,
+  enums,
+  isView,
+  setUpdatedDetails,
+}) => {
   const getEmployeeItems = useSelector(_getEmployeeItems);
-  const [departments, setDepartments] = useState<any[]>([])
-  const [employmentStatus, setEmploymentStatus] = useState<any[]>([])
-  const [locations, setLocations] = useState<any[]>([])
-  const [positions, setPositions] = useState<any[]>([])
-  const [ranks, setRanks] = useState<any[]>([])
-  const [employmentTypes, setEmploymentTypes] = useState<any[]>([])
+  const [departments, setDepartments] = useState<any[]>([]);
+  const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
+  const [locations, setLocations] = useState<any[]>([]);
+  const [positions, setPositions] = useState<any[]>([]);
+  const [ranks, setRanks] = useState<any[]>([]);
+  const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
   const [isProjectEmployee, setIsProjectEmployee] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log({ enums })
     setDepartments(enums.departments);
     setEmploymentStatus(enums.employment_status);
     setLocations(enums.locations);
     setPositions(enums.positions);
     setRanks(enums.ranks);
     setEmploymentTypes(enums.employment_types);
-  }, [enums])
+  }, [enums]);
 
   useEffect(() => {
-    if (!employeeDetails.employeeNo && employeeDetails.rank && employeeDetails.firstName && employeeDetails.lastName) {
-      const firstName = employeeDetails.firstName.split(" ")
-      if (employeeDetails.rank.toLowerCase() === "rank and file") {
+    if (
+      !employeeDetails.employeeNo &&
+      employeeDetails.rank &&
+      employeeDetails.firstName &&
+      employeeDetails.lastName
+    ) {
+      const firstName = employeeDetails.firstName.split(' ');
+      if (employeeDetails.rank.toLowerCase() === 'rank and file') {
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
-          companyEmail: `${firstName[0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
-        }))
+          companyEmail:
+            `${firstName[0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
+        }));
       } else {
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
-          companyEmail: `${firstName[0]}.${employeeDetails.lastName}@vcdcph.com`.toLowerCase(),
-        }))
+          companyEmail:
+            `${firstName[0]}.${employeeDetails.lastName}@vcdcph.com`.toLowerCase(),
+        }));
       }
     }
-  }, [employeeDetails.rank])
-  console.log({ employeeDetails })
+  }, [employeeDetails.rank]);
+  console.log({ employeeDetails });
   useEffect(() => {
     if (employeeDetails.dateHired && employeeDetails.employmentType) {
-      const employement_type = employmentTypes.find((x: any) => x.code.toLowerCase() == employeeDetails.employmentType.toLowerCase())
+      const employement_type = employmentTypes.find(
+        (x: any) =>
+          x.code.toLowerCase() == employeeDetails.employmentType.toLowerCase()
+      );
 
-      if (employement_type && employement_type.code.toLowerCase() == "project") {
+      if (
+        employement_type &&
+        employement_type.code.toLowerCase() == 'project'
+      ) {
         setIsProjectEmployee(true);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
-          contractEndDate: moment(employeeDetails.dateHired).endOf("day")
-            .add(6, "months").endOf("day"),
-          endOfProbationary: null
-        }))
+          contractEndDate: moment(employeeDetails.dateHired)
+            .endOf('day')
+            .add(6, 'months')
+            .endOf('day'),
+          endOfProbationary: null,
+        }));
       } else {
         setIsProjectEmployee(false);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
-          endOfProbationary: moment(employeeDetails.dateHired).endOf("day").add(6, "months").endOf("day"),
-          contractEndDate: null
-        }))
+          endOfProbationary: moment(employeeDetails.dateHired)
+            .endOf('day')
+            .add(6, 'months')
+            .endOf('day'),
+          contractEndDate: null,
+        }));
       }
     }
-  }, [employeeDetails.employmentType, employeeDetails.dateHired])
+  }, [employeeDetails.employmentType, employeeDetails.dateHired]);
 
   return (
     <GridWrapper colSize='2' className='items-center p-2'>
@@ -206,17 +246,27 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         <FormControl variant='standard' fullWidth size='small' required>
           <InputLabel id='position'>Position</InputLabel>
           <Select
+            id='jobinfo-position'
             labelId='position'
             value={employeeDetails?.position}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 position: e.target.value,
-              })
-            }
+              });
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  position: e.target.value,
+                }));
+            }}
           >
             {positions.map((position) => {
-              return <MenuItem value={position.code}>{position.name}</MenuItem>;
+              return (
+                <MenuItem id={position._id} value={position.code}>
+                  {position.name}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -225,17 +275,26 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         <FormControl variant='standard' fullWidth size='small' required>
           <InputLabel id='department'>Department</InputLabel>
           <Select
+            id='jobinfo-department'
             labelId='department'
             value={employeeDetails?.department}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 department: e.target.value,
-              })
-            }
+              });
+
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  department: e.target.value,
+                }));
+            }}
           >
             {departments.map((department) => {
-              return <MenuItem value={department.code}>{department.name}</MenuItem>;
+              return (
+                <MenuItem value={department.code}>{department.name}</MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -245,18 +304,32 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
         <FormControl variant='standard' fullWidth size='small' required>
           <InputLabel id='location'>Locations</InputLabel>
           <Select
+            id='jobinfo-location'
             multiple
             labelId='location'
             value={employeeDetails?.location}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 location: e.target.value,
-              })
-            }
+              });
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  location: e.target.value,
+                }));
+            }}
           >
             {locations.map((location) => {
-              return <MenuItem value={location.code}>{location.name}</MenuItem>;
+              return (
+                <MenuItem
+                  id={location._id}
+                  key={location._id}
+                  value={location.code}
+                >
+                  {location.name}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -265,24 +338,40 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
       <GridWrapper colSize='4' className='col-span-2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
           <FormControl variant='standard' fullWidth size='small' required>
-            <InputLabel id='teamLeader'>Team Leader</InputLabel>
+            <InputLabel id='teamleader'>Team Leader</InputLabel>
             <Select
-              labelId='teamLeader'
-              value={employeeDetails?.reportsTo}
-              onChange={(e: any) =>
+              id='jobinfo-teamleader'
+              labelId='teamleader'
+              defaultValue={employeeDetails?.reportsTo}
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   reportsTo: e.target.value,
-                })
-              }
+                });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    reportsTo: e.target.value,
+                  }));
+              }}
             >
-              {getEmployeeItems?.filter((x: any) => x.department.code === employeeDetails.department.code).map((employee) => {
-                return (
-                  <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
-                    {employee.firstName} {employee.lastName}
-                  </MenuItem>
-                );
-              })}
+              {getEmployeeItems
+                ?.filter(
+                  (x: any) =>
+                    x.department.code === employeeDetails.department.code
+                )
+                .map((employee) => {
+                  return (
+                    <MenuItem
+                      id={employee.employeeNo}
+                      key={employee.employeeNo}
+                      value={employee.employeeNo}
+                    >
+                      {employee.firstName} {employee.lastName}
+                    </MenuItem>
+                  );
+                })}
             </Select>
           </FormControl>
         </div>
@@ -293,12 +382,18 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             <Select
               labelId='rank'
               value={employeeDetails?.rank}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   rank: e.target.value,
-                })
-              }
+                });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    rank: e.target.value,
+                  }));
+              }}
             >
               {ranks.map((rank) => {
                 return <MenuItem value={rank.code}>{rank.name}</MenuItem>;
@@ -309,16 +404,22 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
 
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
           <FormControl variant='standard' fullWidth size='small' required>
-            <InputLabel id='employement_type'>Employment Type</InputLabel>
+            <InputLabel id='employment_type'>Employment Type</InputLabel>
             <Select
-              labelId='employement_type'
+              labelId='employment_type'
               value={employeeDetails?.employmentType}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   employmentType: e.target.value,
-                })
-              }
+                });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    employmentType: e.target.value,
+                  }));
+              }}
             >
               {employmentTypes.map((status) => {
                 return <MenuItem value={status.code}>{status.name}</MenuItem>;
@@ -333,12 +434,18 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             <Select
               labelId='employement_status'
               value={employeeDetails?.employmentStatus}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   employmentStatus: e.target.value,
-                })
-              }
+                });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    employmentStatus: e.target.value,
+                  }));
+              }}
             >
               {employmentStatus.map((status) => {
                 return <MenuItem value={status.code}>{status.name}</MenuItem>;
@@ -362,6 +469,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
               }
               renderInput={(params) => (
                 <TextField
+                  id='date-hired'
                   size='small'
                   {...params}
                   fullWidth
@@ -386,6 +494,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
               }
               renderInput={(params) => (
                 <TextField
+                  id='end-of-probation'
                   size='small'
                   {...params}
                   fullWidth
@@ -410,6 +519,7 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
               }
               renderInput={(params) => (
                 <TextField
+                  id='end-of-contract'
                   size='small'
                   {...params}
                   fullWidth
@@ -448,7 +558,8 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
             value={employeeDetails.companyEmail}
             helperText={
               <span>
-                This is an auto-generated email address according to the employee's Rank.
+                This is an auto-generated email address according to the
+                employee's Rank.
               </span>
             }
           />
@@ -479,4 +590,4 @@ const JobInfoFields = ({ employeeDetails, setEmployeeDetails, enums }) => {
   );
 };
 
-export default JobInfo;
+export default React.memo(JobInfo);

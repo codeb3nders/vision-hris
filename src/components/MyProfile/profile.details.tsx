@@ -24,7 +24,8 @@ const ProfileDetails = (props: Props) => {
     employeeDetails,
     setEmployeeDetails,
     setDisplayPhoto,
-    displayPhoto, enums
+    displayPhoto,
+    enums,
   } = useContext(ProfileCtx);
   const [img, setImg] = useState<any>(null);
   const { processfile, resized } = useResize({ quality: 0.9 });
@@ -38,12 +39,11 @@ const ProfileDetails = (props: Props) => {
     resized && setDisplayPhoto({ employeeNo: '', photo: resized });
   }, [resized]);
 
-  console.log({ displayPhoto });
-
   return (
     <CustomCard
-      className={`grid grid-cols-12 pb-0 phone:p-4 phone:pt-0  tablet:pb-0 laptop:pb-0 desktop:pb-0 tablet:pt-0 laptop:pt-0 desktop:pt-0 ${isNew ? '!rounded-none' : ''
-        }`}
+      className={`grid grid-cols-12 pb-0 phone:p-4 phone:pt-0  tablet:pb-0 laptop:pb-0 desktop:pb-0 tablet:pt-0 laptop:pt-0 desktop:pt-0 ${
+        isNew ? '!rounded-none' : ''
+      }`}
     >
       <section className='laptop:col-span-3 desktop:col-span-3 tablet:col-span-3 phone:col-span-12 flex items-start justify-center'>
         <div className='relative pb-5'>
@@ -70,8 +70,9 @@ const ProfileDetails = (props: Props) => {
       {!isNew && (
         <section className='laptop:col-span-9 desktop:col-span-9 tablet:col-span-9 phone:col-span-12 phone:text-xs flex flex-col justify-center phone:text-center tablet:text-left laptop:text-left desktop:text-left'>
           <p
-            className={`font-bold text-xl phone:text-sm ${isNew ? '' : 'desktop:mb-4 laptop:mb-4 tablet:mb-4 phone:mb-0'
-              } uppercase min-h-[20px]`}
+            className={`font-bold text-xl phone:text-sm ${
+              isNew ? '' : 'desktop:mb-4 laptop:mb-4 tablet:mb-4 phone:mb-0'
+            } uppercase min-h-[20px]`}
           >
             <div className='font-bold desktop:text-xl laptop:text-xl tablet:text-xl phone:text-md phone:mb-0 flex flex-row gap-2 items-center phone:justify-center desktop:justify-start laptop:justify-start tablet:justify-start'>
               <span>
@@ -107,9 +108,8 @@ const ProfileDetails = (props: Props) => {
           <p className='text-sm '>{employeeDetails.department}</p>
 
           <p className='text-gray-500 mt-2'>
-            Started on{' '}
-            {moment(employeeDetails.dateHired).format('LL')}{' '}
-            ({employeeDetails.yearsInService} year/s)
+            Started on {moment(employeeDetails.dateHired).format('LL')} (
+            {employeeDetails.yearsInService} year/s)
           </p>
         </section>
       )}

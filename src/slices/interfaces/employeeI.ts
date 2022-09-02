@@ -1,4 +1,4 @@
-import { Moment } from "moment";
+import { Moment } from 'moment';
 
 export interface EmployeesWithLeaveSlice {
   employeeItems: EmployeeI[];
@@ -76,7 +76,7 @@ export interface EmployeeI {
   citizenship: string;
   position: string;
   rank: string;
-  department: string;
+  department: any;
   location: any[];
   isActive: boolean;
   userGroup: string;

@@ -3,12 +3,20 @@ import { TabContext } from '@mui/lab';
 import { Alert, CircularProgress, Dialog, Snackbar } from '@mui/material';
 import { updateEmployeeEndpoint } from 'apis/employees';
 import { AppCtx, consoler } from 'App';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  lazy,
+  Suspense,
+  useMemo,
+  useCallback,
+} from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import { initialState } from './employee.initialstate';
-import ProfileDetails from './profile.details';
+// import ProfileDetails from './profile.details';
 import ProfileOther from './profile.other';
-import ProfileTabContent from './profile.tabcontent';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import {
@@ -22,6 +30,10 @@ import {
   getEmployeeStatusOne as _getOneEmployeeStatus,
   getEmployeeDetails as _getOneEmployeeDetails,
 } from 'slices';
+import useRequiredChecker from 'hooks/useRequiredChecker';
+
+const ProfileDetails = lazy(() => import('./profile.details'));
+const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
 
 type Props = {
   isNew?: boolean;
@@ -48,28 +60,33 @@ export type ProfileModel = {
   isOwner: boolean;
   enums: any;
   myTeam: any[] | undefined;
+  setUpdatedDetails: React.Dispatch<any>;
+  updatedDetails: any;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => { },
+  setIndex: () => {},
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => { },
-  setDisplayPhoto: () => { },
+  setEmployeeDetails: () => {},
+  setDisplayPhoto: () => {},
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
   isOwner: false,
   enums: {},
-  myTeam: []
+  myTeam: [],
+  setUpdatedDetails: () => {},
+  updatedDetails: null,
 });
 
 const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const dispatch = useDispatch();
 
+  const [updatedDetails, setUpdatedDetails] = useState<any>(null);
   const [index, setIndex] = useState<string>('0');
   const { isLoggedIn, userData, access_token } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
@@ -84,6 +101,18 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   });
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [enums, setEnums] = useState<any>({});
+  const { validated } = useRequiredChecker({ employeeDetails });
+
+  const memoizedEmployeeDetails = useMemo(
+    () => employeeDetails,
+    [employeeDetails]
+  );
+
+  const setEmployeeDetailsCallback = useCallback(
+    (data: EmployeeI) => setEmployeeDetails(data),
+    []
+  );
+
   const [displayPhotos, setDisplayPhotos] = useState<any[]>([]);
 
   const [openNotif, setOpenNotif] = useState<{
@@ -96,14 +125,14 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
     status: false,
     action: '',
   });
-  const { enumsData } = useSelector(enumsStore)
+  const { enumsData } = useSelector(enumsStore);
   // Employees
   const getEmployeeStatus = useSelector(_getOneEmployeeStatus);
   const employeeData = useSelector(_getOneEmployeeDetails);
 
   useEffect(() => {
     if (access_token && employeeNo) {
-      dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo } }))
+      dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo } }));
     }
   }, [access_token, employeeNo]);
 
@@ -111,7 +140,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
     handleGetDisplayPhoto();
     setIndex('1');
     if (!isNew && isView && employeeData) {
-      console.log({ employeeData })
+      console.log({ employeeData });
       setEmployeeDetails(() => {
         return {
           ...initialState,
@@ -119,8 +148,8 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
           department: employeeData.department.name,
           // position: employeeData.name,
           employmentType: employeeData.employmentType.name,
-          employmentStatus: employeeData.employmentStatus.name
-        }
+          employmentStatus: employeeData.employmentStatus.name,
+        };
       });
       if (employeeData?.employeeNo === userData.employeeNo) {
         setIsOwner(true);
@@ -141,53 +170,79 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   };
 
   useEffect(() => {
-    var positions: any = [], departments: any = [], ranks: any = [], civil_status: any = [], citizenship: any = [], religions: any = [], employment_status: any = [], locations: any = [], assets: any = [], file201: any = [], allowance_types: any = [], disciplinary_actions: any = [], employment_types: any = [];
+    var positions: any = [],
+      departments: any = [],
+      ranks: any = [],
+      civil_status: any = [],
+      citizenship: any = [],
+      religions: any = [],
+      employment_status: any = [],
+      locations: any = [],
+      assets: any = [],
+      file201: any = [],
+      allowance_types: any = [],
+      disciplinary_actions: any = [],
+      employment_types: any = [];
 
     enumsData.forEach((o: any) => {
-      switch (o.type.toLocaleLowerCase()) {
-        case "position":
+      switch (o.type) {
+        case 'position':
           positions.push(o);
           break;
-        case "civilstatus":
+        case 'civilstatus':
           civil_status.push(o);
           break;
-        case "citizenship":
+        case 'citizenship':
           citizenship.push(o);
           break;
-        case "religion":
+        case 'religion':
           religions.push(o);
           break;
-        case "employmentstatus":
+        case 'employmentstatus':
           employment_status.push(o);
           break;
-        case "location":
+        case 'location':
           locations.push(o);
           break;
-        case "department":
+        case 'department':
           departments.push(o);
           break;
-        case "rank":
+        case 'rank':
           ranks.push(o);
           break;
-        case "asset":
+        case 'asset':
           assets.push(o);
           break;
-        case "201_file_types":
+        case '201_file_types':
           file201.push(o);
           break;
-        case "allowance_type":
+        case 'allowance_type':
           allowance_types.push(o);
           break;
-        case "disciplinary_action":
+        case 'disciplinary_action':
           disciplinary_actions.push(o);
           break;
-        case "employmenttype":
+        case 'employmenttype':
           employment_types.push(o);
           break;
       }
-    })
-    setEnums({ positions, departments, ranks, civil_status, citizenship, religions, employment_status, locations, assets, file201, allowance_types, disciplinary_actions, employment_types })
-  }, [enumsData])
+    });
+    setEnums({
+      positions,
+      departments,
+      ranks,
+      civil_status,
+      citizenship,
+      religions,
+      employment_status,
+      locations,
+      assets,
+      file201,
+      allowance_types,
+      disciplinary_actions,
+      employment_types,
+    });
+  }, [enumsData]);
 
   useEffect(() => {
     handleCompanyEmail();
@@ -225,18 +280,18 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-            ...displayPhotos,
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+              ...displayPhotos,
+            ]
           : [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+            ]
       )
     );
   };
@@ -244,9 +299,11 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const saveEmployee = async () => {
     setLoading({ status: true, action: 'Saving' });
     try {
-      consoler(employeeDetails, "blue", "saveEmployee")
-      const response = await dispatch(createEmployee({ body: employeeDetails, access_token }));
-      console.log({ response }, "vvvvvvvvvvvvvvvvvvv")
+      consoler(employeeDetails, 'blue', 'saveEmployee');
+      const response = await dispatch(
+        createEmployee({ body: employeeDetails, access_token })
+      );
+      console.log({ response }, 'vvvvvvvvvvvvvvvvvvv');
       if (response.meta.requestStatus === 'fulfilled') {
         handleSaveDisplayPhoto(response.payload.employeeNo);
         setLoading({ status: false, action: '' });
@@ -291,20 +348,26 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
     }
   };
 
+  useEffect(() => {
+    console.log({ updatedDetails });
+  }, [updatedDetails]);
+
   return (
     <ProfileCtx.Provider
       value={{
         index,
-        setIndex,
         isNew,
-        setEmployeeDetails,
         employeeDetails,
         isView,
-        setDisplayPhoto,
         displayPhoto,
         isOwner,
         enums,
-        myTeam
+        myTeam,
+        setIndex,
+        setEmployeeDetails,
+        setDisplayPhoto,
+        setUpdatedDetails,
+        updatedDetails,
       }}
     >
       <Dialog open={loading.status}>
@@ -326,7 +389,9 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         <section
           className={`mt-4 grid gap-4 pb-0 w-full ${isNew ? '!pb-0' : ''}`}
         >
-          <ProfileDetails />
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProfileDetails />
+          </Suspense>
           <section className='grid grid-cols-12 w-full gap-4'>
             {!isNew && (
               <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>
@@ -336,18 +401,22 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
-                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                : ''
-                }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
+                isNew
+                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                  : ''
+              }`}
             >
-              <ProfileTabContent className='self-stretch' />
+              <Suspense fallback={<div>Loading...</div>}>
+                <ProfileTabContent className='self-stretch' />
+              </Suspense>
             </article>
           </section>
         </section>
         {(isNew || isView) && (
           <button
-            className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10'
+            disabled={!validated}
+            className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10 disabled:bg-gray-300 disabled:cursor-not-allowed'
             onClick={handleEmployee}
           >
             {isNew ? 'Save' : 'Update'} Employee Profile

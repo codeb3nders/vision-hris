@@ -1,16 +1,20 @@
 import { Add, AdminPanelSettingsTwoTone, Delete } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
+import { ProfileCtx } from '../profile.main';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {};
 
 const Licensure = (props: Props) => {
+  const { setEmployeeDetails, isView, setUpdatedDetails } =
+    useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [exams, setExams] = useState<any[]>([]);
 
@@ -20,6 +24,20 @@ const Licensure = (props: Props) => {
       return filtered;
     });
   };
+
+  useEffect(() => {
+    setEmployeeDetails((prev: EmployeeI) => ({
+      ...prev,
+      govtProfExamsPassed: exams,
+    }));
+
+    isView &&
+      exams.length > 0 &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        govtProfExamsPassed: exams,
+      }));
+  }, [exams]);
 
   return (
     <CollapseWrapper
@@ -62,7 +80,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
     setOpen(false);
 
     setData({
-      examinationTitle: '',
+      examTitle: '',
       dateTaken: '',
       rating: '',
     });
@@ -71,7 +89,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
   useEffect(() => {
     !open &&
       setData({
-        examinationTitle: '',
+        examTitle: '',
         dateTaken: '',
         rating: '',
       });
@@ -90,11 +108,11 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
           variant='standard'
           size='small'
           label='Title of Government Exam/Professional Licensure Exam'
-          value={data.examinationTitle}
+          value={data.examTitle}
           onChange={(e: any) =>
             setData((prev: any) => ({
               ...prev,
-              examinationTitle: e.target.value,
+              examTitle: e.target.value,
             }))
           }
         />
@@ -149,7 +167,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
 const columns: any = (handleDelete: any) => {
   return [
     {
-      field: 'examinationTitle',
+      field: 'examTitle',
       headerName: 'Title of Government Exam/Professional Licensure Exam',
       flex: 1,
     },
@@ -178,4 +196,4 @@ const columns: any = (handleDelete: any) => {
   ];
 };
 
-export default Licensure;
+export default React.memo(Licensure);

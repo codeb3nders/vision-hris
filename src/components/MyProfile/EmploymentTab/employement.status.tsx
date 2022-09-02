@@ -22,7 +22,9 @@ const columns: GridColDef[] = [
     headerName: 'Employment Type',
     flex: 1,
     renderCell: (params: GridCellParams) => {
-      return <div>{params.value}</div>;
+      console.log({ params });
+
+      return <div>{params.value[params.value.length - 1].name}</div>;
     },
   },
   {

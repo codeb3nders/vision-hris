@@ -1,18 +1,22 @@
 import { Add, Delete, WorkspacePremiumTwoTone } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
+import { ProfileCtx } from '../profile.main';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {};
 
 const Certificates = (props: Props) => {
+  const { setEmployeeDetails, isView, setUpdatedDetails } =
+    useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
-  const [exams, setCertificates] = useState<any[]>([]);
+  const [certificates, setCertificates] = useState<any[]>([]);
 
   const handleDelete = (params: any) => {
     setCertificates((prev: any) => {
@@ -20,6 +24,19 @@ const Certificates = (props: Props) => {
       return filtered;
     });
   };
+
+  useEffect(() => {
+    setEmployeeDetails((prev: EmployeeI) => ({
+      ...prev,
+      licensesCertifications: certificates,
+    }));
+
+    isView &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        licensesCertifications: certificates,
+      }));
+  }, [certificates]);
 
   return (
     <CollapseWrapper
@@ -33,10 +50,10 @@ const Certificates = (props: Props) => {
       />
       <div style={{ width: '100%' }}>
         <DataGrid
-          getRowId={(data: any) => data?.certificateNumber}
+          getRowId={(data: any) => data?.licenseCertNo}
           autoHeight
           disableSelectionOnClick
-          rows={exams}
+          rows={certificates}
           columns={columns(handleDelete)}
           pageSize={5}
           rowsPerPageOptions={[5]}
@@ -61,25 +78,25 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
   const handleSave = () => {
     setCertificates((prev: any) => [
       ...prev,
-      { ...data, id: data.certificateNumber },
+      { ...data, id: data.licenseCertNo },
     ]);
     setOpen(false);
 
     setData({
-      certificate: '',
+      name: '',
       authorizingEntity: '',
-      certificateValidUntil: '',
-      certificateNumber: '',
+      validUntil: '',
+      licenseCertNo: '',
     });
   };
 
   useEffect(() => {
     !open &&
       setData({
-        certificate: '',
+        name: '',
         authorizingEntity: '',
-        certificateValidUntil: '',
-        certificateNumber: '',
+        validUntil: '',
+        licenseCertNo: '',
       });
   }, [open]);
 
@@ -95,11 +112,11 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
           variant='standard'
           size='small'
           label='License/Certification'
-          value={data.certificate}
+          value={data.name}
           onChange={(e: any) =>
             setData((prev: any) => ({
               ...prev,
-              certificate: e.target.value,
+              name: e.target.value,
             }))
           }
         />
@@ -120,11 +137,11 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DatePicker
             label='License/Certification Valid Until'
-            value={data?.certificateValidUntil || null}
+            value={data?.validUntil || null}
             onChange={(value: any) =>
               setData((prev: any) => ({
                 ...prev,
-                certificateValidUntil: moment(value).format('LL'),
+                validUntil: moment(value).format('LL'),
               }))
             }
             renderInput={(params) => (
@@ -144,11 +161,11 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
           variant='standard'
           size='small'
           label='License/Certification Number'
-          value={data.certificateNumber}
+          value={data.licenseCertNo}
           onChange={(e: any) =>
             setData((prev: any) => ({
               ...prev,
-              certificateNumber: e.target.value,
+              licenseCertNo: e.target.value,
             }))
           }
         />
@@ -181,7 +198,7 @@ const columns: any = (handleDelete: any) => [
     flex: 1,
   },
   {
-    field: 'certificateNumber',
+    field: 'licenseCertNo',
     headerName: 'License/Certification Number',
     flex: 1,
     renderCell: (params: any) => {
@@ -199,4 +216,4 @@ const columns: any = (handleDelete: any) => [
   },
 ];
 
-export default Certificates;
+export default React.memo(Certificates);

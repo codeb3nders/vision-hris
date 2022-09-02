@@ -3,13 +3,17 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, Button, Link, Checkbox } from '@mui/material';
-import { AddCircleOutlineTwoTone, KeyTwoTone, UploadTwoTone } from '@mui/icons-material';
+import {
+  AddCircleOutlineTwoTone,
+  KeyTwoTone,
+  UploadTwoTone,
+} from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import {
   getAllEmployeesAction as _getEmployeesAction,
   getEmployeeStatus as _getEmployeeStatus,
   getEmployeeItems as _getEmployeeItems,
-  getEmployeeError as _getEmployeeError
+  getEmployeeError as _getEmployeeError,
 } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
@@ -17,6 +21,7 @@ import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
 import createUserAccess from 'slices/userAccess/createUserAccess';
+import { AnyMxRecord } from 'dns';
 
 type Props = {};
 
@@ -39,9 +44,9 @@ const EmployeeDatabase: React.FC<Props> = () => {
     status: boolean;
     myTeam: any[];
   }>({
-    employeeNo: "",
+    employeeNo: '',
     status: false,
-    myTeam: []
+    myTeam: [],
   });
   const [loading, setIsLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -65,6 +70,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [access_token]);
 
   useEffect(() => {
+    console.log({ getEmployeeItems });
+
     setEmployees(
       getEmployeeItems.map((r: EmployeeDBI) => {
         const mi = r.middleName ? r.middleName.charAt(0) : '';
@@ -76,8 +83,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [getEmployeeItems]);
 
   const getMyTeam = (teamLeader, employeeNo) => {
-    return employees.filter((x: any) => x.reportsTo === teamLeader && x.employeeNo !== employeeNo)
-  }
+    return employees.filter(
+      (x: any) => x.reportsTo === teamLeader && x.employeeNo !== employeeNo
+    );
+  };
 
   const columns = (setViewDetails: any) => [
     {
@@ -90,7 +99,13 @@ const EmployeeDatabase: React.FC<Props> = () => {
             underline='none'
             variant='button'
             style={{ cursor: 'pointer' }}
-            onClick={() => setViewDetails({ employeeNo: cell.row.employeeNo, myTeam: getMyTeam(cell.row.reportsTo, cell.row.employeeNo), status: true })}
+            onClick={() =>
+              setViewDetails({
+                employeeNo: cell.row.employeeNo,
+                myTeam: getMyTeam(cell.row.reportsTo, cell.row.employeeNo),
+                status: true,
+              })
+            }
           >
             <div className='whitespace-normal'>{cell.value}</div>
           </Link>
@@ -117,25 +132,32 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'department',
       headerName: 'Department',
       width: 180,
-      renderCell: (cell) => cell.row.department.name
+      renderCell: (cell) => cell.row.department.name,
     },
     {
       field: 'location',
       headerName: 'Location',
       width: 140,
-      renderCell: (cell) => cell.row.location.map((o: any) => o.name).join(", ")
+      renderCell: (cell) =>
+        cell.row.location.map((o: any) => o.name).join(', '),
     },
     {
       field: 'employmentStatus',
       headerName: 'Employment Status',
       width: 140,
-      //   renderCell: (cell) => cell,
+      renderCell: (cell: any) => {
+        console.log({ cell });
+        const employmentStatus = cell?.value;
+        console.log({ employmentStatus });
+
+        return employmentStatus[employmentStatus.length - 1]?.name;
+      },
     },
     {
       field: 'reportsTo',
       headerName: 'Team Leader',
       width: 140,
-      renderCell: (cell) => cell.row.reportsTo.employeeName
+      renderCell: (cell) => cell.row.reportsTo.employeeName,
     },
     {
       field: 'withUserCredentials',
@@ -146,12 +168,12 @@ const EmployeeDatabase: React.FC<Props> = () => {
           onChange={(e: any) => handleSendAccess(e.target.value)}
         />
       ),
-    }
+    },
   ];
 
   const handleSendAccess = (employeeNo) => {
-    setSendAccessList([...sendAccessList, employeeNo])
-  }
+    setSendAccessList([...sendAccessList, employeeNo]);
+  };
 
   const sendCredentials = async () => {
     if (sendAccessList.length > 0) {
@@ -182,6 +204,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
           <Button
             startIcon={<AddCircleOutlineTwoTone />}
             onClick={() => setOpen(true)}
+            id='add-new-employee-btn'
           >
             Add New Employee
           </Button>
@@ -190,7 +213,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
         {/* <div style={{ height: 'auto', width: '100%' }}> */}
         <DataGrid
           autoHeight
-          density="compact"
+          density='compact'
           disableSelectionOnClick
           rows={employees || []}
           columns={columns(setViewDetails)}
@@ -198,7 +221,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
           rowsPerPageOptions={[30]}
           checkboxSelection={false}
           loading={loading}
-          getRowId={(row) => row.employeeNo}
+          getRowId={(row: any) => row.employeeNo}
         />
         {/* </div> */}
       </Card>

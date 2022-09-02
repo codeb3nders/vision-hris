@@ -59,7 +59,7 @@ const CelebrationsToday = ({ className }: Props) => {
                 className='text-sm'
                 primary={
                   <>
-                    <div>
+                    <span>
                       {/* <Chip
                         variant='outlined'
                         color='secondary'
@@ -68,8 +68,8 @@ const CelebrationsToday = ({ className }: Props) => {
                         icon={<TimeToLeaveTwoTone fontSize='small' />}
                         className='w-[inherit] ml-0 text-xs mb-1'
                       /> */}
-                    </div>
-                    <div className='text-xs'>{off.name}</div>
+                    </span>
+                    <span className='text-xs'>{off.name}</span>
                   </>
                 }
                 secondary={

@@ -13,27 +13,34 @@ import {
 import CollapseWrapper from './collapse.wrapper';
 import { AccountCircleTwoTone } from '@mui/icons-material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { useContext, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
-import Address from './address';
+const Address = lazy(() => import('./address'));
 
 type Props = {};
 
 const Personal = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails, isOwner, enums } = useContext(ProfileCtx);
+  const {
+    setEmployeeDetails,
+    employeeDetails,
+    isOwner,
+    enums,
+    isView,
+    setUpdatedDetails,
+  } = useContext(ProfileCtx);
   const [otherReligion, setOtherReligion] = useState<boolean>(false);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
   const [philData, setPhilData] = useState<any>(null);
-  const [citizenship, setCitizenship] = useState<any[]>([])
-  const [civilStatus, setCivilStatus] = useState<any[]>([])
-  const [religion, setReligion] = useState<any[]>([])
+  const [citizenship, setCitizenship] = useState<any[]>([]);
+  const [civilStatus, setCivilStatus] = useState<any[]>([]);
+  const [religion, setReligion] = useState<any[]>([]);
 
   useEffect(() => {
-    setCitizenship(enums.citizenship)
-    setCivilStatus(enums.civil_status)
-    setReligion(enums.religions)
-  }, [enums])
+    setCitizenship(enums.citizenship);
+    setCivilStatus(enums.civil_status);
+    setReligion(enums.religions);
+  }, [enums]);
 
   useEffect(() => {
     if (sameAddress) {
@@ -44,11 +51,34 @@ const Personal = (props: Props) => {
         permanentMunicipality: prev.presentMunicipality,
         permanentBarangay: prev.presentBarangay,
       }));
+
+      isView &&
+        setUpdatedDetails((prev: any) => ({
+          ...prev,
+          permanentRegion: prev.presentRegion,
+          permanentProvince: prev.presentProvince,
+          permanentMunicipality: prev.presentMunicipality,
+          permanentBarangay: prev.presentBarangay,
+        }));
     } else {
       setEmployeeDetails((prev: EmployeeI) => ({
         ...prev,
         permanentResidenceAddress: '',
+        permanentRegion: '',
+        permanentProvince: '',
+        permanentMunicipality: '',
+        permanentBarangay: '',
       }));
+
+      isView &&
+        setUpdatedDetails((prev: any) => ({
+          ...prev,
+          permanentResidenceAddress: '',
+          permanentRegion: '',
+          permanentProvince: '',
+          permanentMunicipality: '',
+          permanentBarangay: '',
+        }));
     }
   }, [sameAddress]);
 
@@ -119,6 +149,12 @@ const Personal = (props: Props) => {
 
   const handleReligion = (e: any) => {
     if (e.target.value !== 'Others, please specify') {
+      isView &&
+        setUpdatedDetails((prev: any) => ({
+          ...prev,
+          religion: e.target.value,
+        }));
+
       setOtherReligion(false);
       setEmployeeDetails({
         ...employeeDetails,
@@ -149,12 +185,17 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails.firstName}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 firstName: e.target.value,
-              })
-            }
+              });
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  firstName: e.target.value,
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
@@ -165,12 +206,17 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails?.middleName}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 middleName: e.target.value,
-              })
-            }
+              });
+              isView &&
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  middleName: e.target.value,
+                }));
+            }}
           />
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
@@ -182,12 +228,17 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails?.lastName}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 lastName: e.target.value,
-              })
-            }
+              });
+
+              setUpdatedDetails((prev: any) => ({
+                ...prev,
+                lastName: e.target.value,
+              }));
+            }}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-7'>
@@ -198,12 +249,16 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails?.suffix}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
                 suffix: e.target.value,
-              })
-            }
+              });
+              setUpdatedDetails((prev: any) => ({
+                ...prev,
+                suffix: e.target.value,
+              }));
+            }}
           />
         </div>
 
@@ -211,7 +266,18 @@ const Personal = (props: Props) => {
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
               label='Birthdate'
-              onChange={(date: any) => handleChange({ "birthDate": date })}
+              onChange={(value: any) => {
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  birthDate: value,
+                }));
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    suffix: value,
+                  }));
+              }}
               // disabled={loading}
               value={employeeDetails.birthDate}
               renderInput={(params) => (
@@ -239,11 +305,21 @@ const Personal = (props: Props) => {
                   ...employeeDetails,
                   gender: e.target.value,
                 });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    gender: e.target.value,
+                  }));
               }}
               value={employeeDetails?.gender}
             >
-              <MenuItem value='MALE'>Male</MenuItem>
-              <MenuItem value='FEMALE'>Female</MenuItem>
+              <MenuItem id='male' value='MALE'>
+                Male
+              </MenuItem>
+              <MenuItem id='female' value='FEMALE'>
+                Female
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -260,11 +336,21 @@ const Personal = (props: Props) => {
                   ...employeeDetails,
                   civilStatus: e.target.value,
                 });
+
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    civilStatus: e.target.value,
+                  }));
               }}
               value={employeeDetails?.civilStatus}
             >
               {civilStatus.map((status) => {
-                return <MenuItem key={status._id} value={status.code}>{status.name}</MenuItem>;
+                return (
+                  <MenuItem key={status._id} value={status.code}>
+                    {status.name}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>
@@ -286,12 +372,18 @@ const Personal = (props: Props) => {
                     ...employeeDetails,
                     citizenship: e.target.value,
                   });
+
+                  isView &&
+                    setUpdatedDetails((prev: any) => ({
+                      ...prev,
+                      citizenship: e.target.value,
+                    }));
                 }}
-                value={employeeDetails?.citizenship || "Philippines"}
+                value={employeeDetails?.citizenship || 'Philippines'}
               >
                 {citizenship.map((c: any, idx: number) => {
                   return (
-                    <MenuItem key={`${c._id}~${idx}`} value={c.code}>
+                    <MenuItem id={c._id} key={c._id} value={c.code}>
                       {c.name}
                     </MenuItem>
                   );
@@ -311,7 +403,11 @@ const Personal = (props: Props) => {
                 value={employeeDetails?.religion}
               >
                 {religion.map((religion) => {
-                  return <MenuItem key={religion._id} value={religion.code}>{religion.name}</MenuItem>;
+                  return (
+                    <MenuItem key={religion._id} value={religion.code}>
+                      {religion.name}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </FormControl>
@@ -328,12 +424,18 @@ const Personal = (props: Props) => {
                   variant='standard'
                   fullWidth
                   // defaultValue={employeeDetails?.religion}
-                  onChange={(e: any) =>
+                  onChange={(e: any) => {
                     setEmployeeDetails({
                       ...employeeDetails,
                       religion: e.target.value,
-                    })
-                  }
+                    });
+
+                    isView &&
+                      setUpdatedDetails((prev: any) => ({
+                        ...prev,
+                        religion: e.target.value,
+                      }));
+                  }}
                 />
               </div>
             </>
@@ -348,12 +450,17 @@ const Personal = (props: Props) => {
               variant='standard'
               fullWidth
               value={employeeDetails?.personalContactNumber}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   personalContactNumber: e.target.value,
-                })
-              }
+                });
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    personalContactNumber: e.target.value,
+                  }));
+              }}
             />
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
@@ -365,12 +472,17 @@ const Personal = (props: Props) => {
               variant='standard'
               fullWidth
               value={employeeDetails?.personalEmail}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
                   personalEmail: e.target.value,
-                })
-              }
+                });
+                isView &&
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    personalEmail: e.target.value,
+                  }));
+              }}
             />
           </div>
 
@@ -378,7 +490,9 @@ const Personal = (props: Props) => {
             <h5 className='text-sm col-span-2 mt-4'>
               Present Residence Address
             </h5>
-            <Address data={philData} />
+            <Suspense fallback={<div>Loading...</div>}>
+              <Address data={philData} />
+            </Suspense>
           </div>
 
           <h5 className='text-sm col-span-2'>Permanent Residence Address</h5>
@@ -415,10 +529,9 @@ const Personal = (props: Props) => {
             </div>
           )}
         </GridWrapper>
-
       </GridWrapper>
     </CollapseWrapper>
   );
 };
 
-export default Personal;
+export default React.memo(Personal);

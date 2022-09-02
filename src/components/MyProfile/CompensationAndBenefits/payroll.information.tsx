@@ -7,11 +7,16 @@ import {
   TextField,
 } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
+import { useContext } from 'react';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
+import { ProfileCtx } from '../profile.main';
 
 type Props = {};
 
 const PayrollInformation = (props: Props) => {
+  const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
+
   return (
     <CollapseWrapper
       panelTitle='Payroll Information'
@@ -28,15 +33,36 @@ const PayrollInformation = (props: Props) => {
             size='small'
             label='Basic Pay Amount'
             fullWidth
+            value={employeeDetails.basicPay}
+            onChange={(e: any) =>
+              setEmployeeDetails((prev: EmployeeI) => ({
+                ...prev,
+                basicPay: e.target.value,
+              }))
+            }
           />
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2 flex flex-row items-center gap-1'>
           <FormControl variant='standard' size='small' fullWidth required>
             <InputLabel>Pay Rate Type</InputLabel>
-            <Select label='Pay Rate Type' id='pay-rate-type'>
-              <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
-              <MenuItem value='Weekly'>Weekly</MenuItem>
+            <Select
+              label='Pay Rate Type'
+              id='pay-rate-type'
+              value={employeeDetails.payRateType}
+              onChange={(e: any) =>
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  payRateType: e.target.value,
+                }))
+              }
+            >
+              <MenuItem id='type-bi-monthly' value='Bi monthly'>
+                Bi monthly
+              </MenuItem>
+              <MenuItem id='type-weekly' value='Weekly'>
+                Weekly
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -44,10 +70,26 @@ const PayrollInformation = (props: Props) => {
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2 flex flex-row items-center gap-1'>
           <FormControl variant='standard' size='small' fullWidth required>
             <InputLabel>Payment Method</InputLabel>
-            <Select label='Payment Method' id='payment-method'>
-              <MenuItem value='Cash'>Cash</MenuItem>
-              <MenuItem value='Check'>Check</MenuItem>
-              <MenuItem value='Payroll Account'>Payroll Account</MenuItem>
+            <Select
+              label='Payment Method'
+              id='payment-method'
+              value={employeeDetails.paymentMethod}
+              onChange={(e: any) =>
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  paymentMethod: e.target.value,
+                }))
+              }
+            >
+              <MenuItem value='Cash' id='cash'>
+                Cash
+              </MenuItem>
+              <MenuItem value='Check' id='check'>
+                Check
+              </MenuItem>
+              <MenuItem value='Payroll Account' id='payroll-account'>
+                Payroll Account
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -55,9 +97,23 @@ const PayrollInformation = (props: Props) => {
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2 flex flex-row items-center gap-1'>
           <FormControl variant='standard' size='small' fullWidth required>
             <InputLabel>Payroll Group</InputLabel>
-            <Select label='Payroll Group' id='payroll-group'>
-              <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
-              <MenuItem value='Weekly'>Weekly</MenuItem>
+            <Select
+              label='Payroll Group'
+              value={employeeDetails.payrollGroup}
+              id='payroll-group'
+              onChange={(e: any) =>
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  payrollGroup: e.target.value,
+                }))
+              }
+            >
+              <MenuItem id='group-bi-monthly' value='Bi monthly'>
+                Bi monthly
+              </MenuItem>
+              <MenuItem id='group-weekly' value='Weekly'>
+                Weekly
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -72,7 +128,14 @@ const PayrollInformation = (props: Props) => {
             variant='standard'
             size='small'
             label='Deduct For SSS Contribution'
+            value={employeeDetails.deductionSSS}
             fullWidth
+            onChange={(e: any) =>
+              setEmployeeDetails((prev: EmployeeI) => ({
+                ...prev,
+                deductionSSS: e.target.value,
+              }))
+            }
           />
         </div>
 
@@ -81,7 +144,14 @@ const PayrollInformation = (props: Props) => {
             <InputLabel>Deduct Philhealth Contribution</InputLabel>
             <Select
               label='Deduct Philhealth Contribution'
+              value={employeeDetails.deductPhilhealth}
               id='deduct-philhealth'
+              onChange={(e: any) =>
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  deductPhilhealth: e.target.value,
+                }))
+              }
             >
               <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
               <MenuItem value='Weekly'>Weekly</MenuItem>
@@ -97,16 +167,37 @@ const PayrollInformation = (props: Props) => {
             variant='standard'
             size='small'
             label='Deduct Pag-IBIG/HMDF Contribution'
+            value={employeeDetails.deductHMDF}
             fullWidth
+            onChange={(e: any) =>
+              setEmployeeDetails((prev: EmployeeI) => ({
+                ...prev,
+                deductHMDF: e.target.value,
+              }))
+            }
           />
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2 flex flex-row items-center gap-1'>
           <FormControl variant='standard' size='small' fullWidth required>
             <InputLabel>Fixed Contribution Rate</InputLabel>
-            <Select label='Fixed Contribution Rate' id='deduct-philhealth'>
-              <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
-              <MenuItem value='Weekly'>Weekly</MenuItem>
+            <Select
+              label='Fixed Contribution Rate'
+              id='deduct-philhealth'
+              value={employeeDetails.fixedContributionRate}
+              onChange={(e: any) =>
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  fixedContributionRate: e.target.value,
+                }))
+              }
+            >
+              <MenuItem id='contrib-bi-monthly' value='Bi monthly'>
+                Bi monthly
+              </MenuItem>
+              <MenuItem id='contrib-weekly' value='Weekly'>
+                Weekly
+              </MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -120,6 +211,13 @@ const PayrollInformation = (props: Props) => {
             size='small'
             label='Deduct Withholding Tax'
             fullWidth
+            value={employeeDetails.deductWithholdingTax}
+            onChange={(e: any) =>
+              setEmployeeDetails((prev: EmployeeI) => ({
+                ...prev,
+                deductWithholdingTax: e.target.value,
+              }))
+            }
           />
         </div>
       </GridWrapper>

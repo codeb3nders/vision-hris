@@ -14,7 +14,6 @@ const ProfileTabs = ({ className }: Props) => {
 
   useEffect(() => {
     window.addEventListener('resize', (e: any) => {
-      console.log(e.target.innerWidth);
       if (e.target.innerWidth <= 768) {
         setIsMobile(true);
       } else {
@@ -22,10 +21,6 @@ const ProfileTabs = ({ className }: Props) => {
       }
     });
   }, [window]);
-
-  useEffect(() => {
-    console.log({ isMobile });
-  }, [isMobile]);
 
   return isNew ? (
     <HRTabs
@@ -72,18 +67,24 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
             }`}
           label='Personal'
           {...a11yProps('1')}
+          id='personal-tab'
+          itemID='personal-tab'
         />
         <Tab
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '2' ? '!text-v-red' : ''
             }`}
           label='Employment'
           {...a11yProps('2')}
+          id='employment-tab'
+          itemID='employment-tab'
         />
         <Tab
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '3' ? '!text-v-red' : ''
             }`}
           label='Compensation and Benefits'
           {...a11yProps('3')}
+          id='compensation-tab'
+          itemID='compensation-tab'
         />
       </TabList>
     </Box>
