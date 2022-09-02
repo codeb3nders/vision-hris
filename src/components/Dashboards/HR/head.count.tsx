@@ -1,16 +1,19 @@
 import CardWTitle from 'CustomComponents/CardWTitle';
+import { stringToColour } from 'utils/functions';
 import { VictoryChart, VictoryBar } from 'victory';
 
 type Props = {
   className?: string;
+  data: any[];
 };
 
-const HeadCount = ({ className }: Props) => {
+const HeadCount = ({ className, data }: Props) => {
+  console.log({ data })
   return (
     <CardWTitle title='Headcount' className={`${className}`}>
       <div className=''>
         <VictoryChart
-          height={400}
+          height={500}
           // theme={VictoryTheme.material}
           domainPadding={{ x: 20 }}
           animate={{
@@ -22,41 +25,14 @@ const HeadCount = ({ className }: Props) => {
             horizontal
             barRatio={1}
             labels={({ datum }) => datum.y}
-            categories={{ y: ['0%', '10%', '20%', '30%', '40%', '50%'] }}
+            // categories={{ y: ['0%', '10%', '20%', '30%', '40%', '50%'] }}
             style={{
               data: {
-                fill: ({ datum }) =>
-                  datum.x === 'Administration'
-                    ? 'forestgreen'
-                    : datum.x === 'Operations'
-                    ? 'dodgerblue'
-                    : datum.x === 'Marketing'
-                    ? 'gold'
-                    : datum.x === 'Finance'
-                    ? 'orangered'
-                    : datum.x === 'Human Resources'
-                    ? 'red'
-                    : datum.x === 'Sales'
-                    ? ''
-                    : '#ccc',
+                fill: ({ datum }) => stringToColour(datum.name)
               },
             }}
-            data={[
-              { x: 'Administration', y: '30%' },
-              { x: 'Operations', y: '20%' },
-              { x: 'Finance', y: '40%' },
-              { x: 'Human Resources', y: '30%' },
-              { x: 'Sales', y: '50%' },
-              { x: 'Marketing', y: '10%' },
-            ]}
+            data={data}
           />
-          {/* <VictoryAxis
-            label='Ratings'
-            style={{
-              axisLabel: {},
-              tickLabels: { fontSize: 12, width: 50, wordWrap: 'break-word' },
-            }}
-          /> */}
         </VictoryChart>
       </div>
     </CardWTitle>

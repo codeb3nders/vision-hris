@@ -6,35 +6,55 @@ import {
   Avatar,
   ListItemButton,
 } from '@mui/material';
-import { ProfilePhoto } from 'components/Dashboards/Employee/profile.preview';
+import { AppCtx } from 'App';
+import {
+  getEmployeeItems as _getEmployeeItems
+} from 'slices';
 import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { getAvatar } from 'utils/functions';
 import { ProfileCtx } from './profile.main';
 
 type Props = {
   className?: string;
+  setViewDetails?: React.Dispatch<
+    React.SetStateAction<{
+      employeeNo: string;
+      status: boolean;
+    }>
+  >;
 };
 
-const ProfileTeam = ({ className }: Props) => {
-  const { employeeDetails, myTeam } = useContext(ProfileCtx);
+const ProfileTeam = ({ className, setViewDetails }: Props) => {
+  const { employeeDetails } = useContext(ProfileCtx);
+  const { isHRLogin } = useContext(AppCtx);
   const [myTeammates, setMyTeammates] = useState<any[]>([])
-  console.log({ myTeam }, { myTeammates })
+  const getEmployeeItems = useSelector(_getEmployeeItems);
 
   useEffect(() => {
-    if (myTeam) {
-      setMyTeammates(myTeam || [])
+    if (employeeDetails) {
+      setMyTeammates(getEmployeeItems.filter(
+        (x: any) => x.reportsTo.employeeNo === employeeDetails.reportsTo.employeeNo
+          && x.employeeNo !== employeeDetails.employeeNo
+          && x.employeeNo !== employeeDetails.reportsTo.employeeNo
+      ).sort((a: any, b: any) => a.lastName.localeCompare(b.lastName)))
     }
-  }, [myTeam])
+  }, [getEmployeeItems, employeeDetails])
 
   const getMyTeamMates = () => {
     return myTeammates.map((o: any, i: number) => {
-      return <ListItemButton key={i} className='p-0 px-1'>
+      return <ListItemButton key={i} className='p-0 px-1' onClick={() => {
+        isHRLogin && setViewDetails && setViewDetails({
+          employeeNo: o.employeeNo,
+          status: true,
+        })
+      }}>
         <ListItemIcon>
           <Avatar src={getAvatar(o.gender)} />
         </ListItemIcon>
         <ListItemText
-          primary={<span className='text-sm font-bold'>{o.full_name}</span>}
+          primary={<span className='text-xs font-bold'>{o.lastName}, {o.firstName}</span>}
           secondary={<span className='text-xs '>{o.position}</span>}
         />
       </ListItemButton>
@@ -45,7 +65,12 @@ const ProfileTeam = ({ className }: Props) => {
     <CustomCard className={`${className}`}>
       <List className='p-0'>
         <p className='text-xs font-bold text-gray-500 mt-2'>REPORTS TO</p>
-        <ListItemButton className='p-0 px-1'>
+        <ListItemButton className='p-0 px-1' onClick={() => {
+          isHRLogin && setViewDetails && setViewDetails({
+            employeeNo: employeeDetails.reportsTo.employeeNo,
+            status: true,
+          })
+        }} >
           <ListItemIcon>
             <Avatar src={getAvatar(employeeDetails.reportsTo.gender)} />
           </ListItemIcon>

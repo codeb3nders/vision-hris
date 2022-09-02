@@ -18,7 +18,7 @@ const rootPersistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['employee', 'employeesWithLeave', 'userAccess']
+  blacklist: ['employeesWithLeave', 'userAccess']
 }
 
 const appReducer = combineReducers({

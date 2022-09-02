@@ -1,3 +1,4 @@
+import { Circle } from '@mui/icons-material';
 import CardWTitle from 'CustomComponents/CardWTitle';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -5,40 +6,48 @@ import { Path } from './../../../constants/Path';
 
 type Props = {
   className?: string;
+  countContract: number;
+  countProbation: number;
 };
 
-const EndContract = ({ className }: Props) => {
+const EndContract = ({ className, countContract, countProbation }: Props) => {
   const [value, setValue] = useState(0);
-
-  const max = 12;
+  const [value1, setValue1] = useState(0);
 
   useEffect(() => {
     let x = 0;
     setInterval(() => {
-      if (x <= max) {
+      if (x <= countContract) {
         setValue(x);
         x++;
       }
     }, 1);
-  }, []);
+  }, [countContract]);
+
+  useEffect(() => {
+    let x = 0;
+    setInterval(() => {
+      if (x <= countProbation) {
+        setValue1(x);
+        x++;
+      }
+    }, 1);
+  }, [countProbation]);
 
   return (
-    <CardWTitle
-      title='End-Contract Soon'
-      className={`flex flex-col ${className}`}
-    >
-      <strong className='text-3xl'>{value}</strong>
-      <div className=' mt-2  h-[100%] grid grid-cols-5 gap-2 items-end '>
-        <div className='col-span-3 p-1 text-green-700 text-xs bg-green-100 self-end w-full rounded-sm'>
-          + 3 new end-contracts
-        </div>
-        <div className='col-span-2 '>
-          <Link to={Path.HR.Dashboard}>
-            <div className='p-1 bg-sky-600 hover:bg-sky-700 text-white text-xs w-full text-center rounded-sm'>
-              See members
-            </div>
-          </Link>
-        </div>
+    <CardWTitle className={`${className}`} title={'Ending Soon'}>
+      <div className='text-xs mb-2'>Less than 1 month</div>
+      <div className='grid grid-cols-3 text-sm content-center'>
+        <span className='col-span-2 flex flex-row items-center gap-2'>
+          <Circle color='success' className='text-[10px]' /> Contracts
+        </span>
+        <span className='self-end text-right font-bold'>{value}</span>
+      </div>
+      <div className='grid grid-cols-3 text-sm content-center mt-2'>
+        <span className='col-span-2 flex flex-row items-center gap-2'>
+          <Circle color='warning' className='text-[10px]' /> Probationary
+        </span>
+        <span className='self-end text-right font-bold'>{value1}</span>
       </div>
     </CardWTitle>
   );

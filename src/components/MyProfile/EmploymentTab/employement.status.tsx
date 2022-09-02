@@ -43,7 +43,7 @@ const EmployementStatus = (props: Props) => {
     []
   );
   const { isNew, employeeDetails } = useContext(ProfileCtx);
-  console.log({ employeeDetails })
+
   useEffect(() => {
     setEmployementDetails([
       ...employmentDetails,

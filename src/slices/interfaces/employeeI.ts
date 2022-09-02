@@ -65,6 +65,7 @@ export interface AllowanceDetailsI {
 
 export interface EmployeeDBI extends EmployeeI {
   full_name: string;
+  employmentType: any;
 }
 
 export interface EmployeeI {

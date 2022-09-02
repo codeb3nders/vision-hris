@@ -10,10 +10,7 @@ import {
 } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import {
-  getAllEmployeesAction as _getEmployeesAction,
-  getEmployeeStatus as _getEmployeeStatus,
   getEmployeeItems as _getEmployeeItems,
-  getEmployeeError as _getEmployeeError,
   createUserAccess
 } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
@@ -35,19 +32,15 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const { access_token } = useContext(AppCtx);
 
   // Employees
-  const getEmployeeStatus = useSelector(_getEmployeeStatus);
   const getEmployeeItems = useSelector(_getEmployeeItems);
-  const getEmployeeError = useSelector(_getEmployeeError);
 
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
     employeeNo: string;
     status: boolean;
-    myTeam: any[];
   }>({
     employeeNo: '',
     status: false,
-    myTeam: [],
   });
   const [loading, setIsLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -65,12 +58,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [location]);
 
   useEffect(() => {
-    if (access_token && getEmployeeStatus === 'idle') {
-      dispatch(_getEmployeesAction({ access_token }));
-    }
-  }, [access_token]);
-
-  useEffect(() => {
     console.log({ getEmployeeItems });
 
     setEmployees(
@@ -82,15 +69,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
     );
     setIsLoading(false);
   }, [getEmployeeItems]);
-
-  const getMyTeam = (teamLeader, employeeNo) => {
-    console.log({ teamLeader }, { employeeNo }, { employees })
-    return employees.filter(
-      (x: any) => x.reportsTo.employeeNo === teamLeader.employeeNo
-        && x.employeeNo !== employeeNo
-        && x.employeeNo !== teamLeader.employeeNo
-    ).sort((a: any, b: any) => a.lastName.localeCompare(b.lastName))
-  };
 
   const columns = (setViewDetails: any) => [
     {
@@ -107,7 +85,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
               onClick={() =>
                 setViewDetails({
                   employeeNo: cell.row.employeeNo,
-                  myTeam: getMyTeam(cell.row.reportsTo, cell.row.employeeNo),
+                  // myTeam: getMyTeam(cell.row.reportsTo, cell.row.employeeNo),
                   status: true,
                 })
               }

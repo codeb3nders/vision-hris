@@ -6,22 +6,21 @@ import { Path } from 'constants/Path';
 
 type Props = {
   className?: string;
+  count: number;
 };
 
-const Employees = ({ className }: Props) => {
+const Employees = ({ className, count }: Props) => {
   const [value, setValue] = useState(0);
-
-  const max = 128;
 
   useEffect(() => {
     let x = 0;
     setInterval(() => {
-      if (x <= max) {
+      if (x <= count) {
         setValue(x);
         x++;
       }
     }, 1);
-  }, []);
+  }, [count]);
 
   return (
     <div className={className}>

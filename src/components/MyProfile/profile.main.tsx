@@ -40,7 +40,12 @@ type Props = {
   isView?: boolean;
   employeeNo?: string;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  myTeam?: any[];
+  setViewDetails?: React.Dispatch<
+    React.SetStateAction<{
+      employeeNo: string;
+      status: boolean;
+    }>
+  >;
 };
 
 export type ProfileModel = {
@@ -59,7 +64,6 @@ export type ProfileModel = {
   displayPhoto: { employeeNo: string; photo: string };
   isOwner: boolean;
   enums: any;
-  myTeam: any[] | undefined;
   setUpdatedDetails: React.Dispatch<any>;
   updatedDetails: any;
 };
@@ -78,12 +82,11 @@ export const ProfileCtx = createContext<ProfileModel>({
   },
   isOwner: false,
   enums: {},
-  myTeam: [],
   setUpdatedDetails: () => { },
   updatedDetails: null,
 });
 
-const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
+const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Props) => {
   const dispatch = useDispatch();
 
   const [updatedDetails, setUpdatedDetails] = useState<any>(null);
@@ -361,7 +364,6 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
         displayPhoto,
         isOwner,
         enums,
-        myTeam,
         setIndex,
         setEmployeeDetails,
         setDisplayPhoto,
@@ -395,7 +397,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
             {!isNew && (
               <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>
                 <ProfileOther />
-                <ProfileTeam />
+                <ProfileTeam setViewDetails={setViewDetails} />
               </article>
             )}
 

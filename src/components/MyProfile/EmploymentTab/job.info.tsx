@@ -189,7 +189,7 @@ const JobInfoFields = ({
       }
     }
   }, [employeeDetails.rank]);
-  console.log({ employeeDetails });
+
   useEffect(() => {
     if (employeeDetails.dateHired && employeeDetails.employmentType) {
       const employement_type = employmentTypes.find(

@@ -2,8 +2,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, Button, Link, Tooltip } from '@mui/material';
-import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
+import { Card, Button, Link, Tooltip, Avatar, Chip, Typography } from '@mui/material';
+import { AddCircleOutlineTwoTone, EmailTwoTone, LocationOnTwoTone, PhoneTwoTone, UploadTwoTone } from '@mui/icons-material';
 import {
     getAllEmployeesAction as _getEmployeesAction,
     getEmployeeStatus as _getEmployeeStatus,
@@ -13,26 +13,14 @@ import {
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
+import { getAvatar } from 'utils/functions';
+import { VISION_RED } from 'constants/Colors';
 
 type Props = {};
 
 const EmployeeDirectory: React.FC<Props> = () => {
-    const dispatch = useDispatch();
-
-    const { access_token } = useContext(AppCtx);
-
-    // Employees
-    const getEmployeeStatus = useSelector(_getEmployeeStatus);
     const getEmployeeItems = useSelector(_getEmployeeItems);
-    const getEmployeeError = useSelector(_getEmployeeError)
-
     const [employees, setEmployees] = useState<EmployeeI[]>([]);
-
-    useEffect(() => {
-        if (access_token && getEmployeeStatus === "idle") {
-            dispatch(_getEmployeesAction(access_token))
-        }
-    }, [access_token]);
 
     useEffect(() => {
         setEmployees(
@@ -48,7 +36,8 @@ const EmployeeDirectory: React.FC<Props> = () => {
         <Card sx={{ mt: 5, p: 2 }}>
             <DataGrid
                 autoHeight
-                density="compact"
+                getRowHeight={() => 'auto'}
+                // density="compact"
                 disableSelectionOnClick
                 rows={employees || []}
                 columns={columns()}
@@ -64,54 +53,46 @@ const EmployeeDirectory: React.FC<Props> = () => {
 
 const columns = () => [
     {
+        field: 'gender',
+        headerName: '', width: 50,
+        renderCell: (cell) => {
+            return <Avatar src={getAvatar(cell.value)} className='mr-2 w-[28px] h-[28px]' />
+        },
+        sortable: false,
+        filterable: false
+    },
+    {
         field: 'full_name',
-        headerName: 'Employee name', flex: 1,
+        headerName: 'Employee', flex: 1,
         renderCell: (cell) => {
-            return cell.value;
-        },
-    },
-    {
-        field: 'position', headerName: 'Position', flex: 1,
-        renderCell: (cell) => {
-            return cell.value;
-        },
-    },
-    {
-        field: 'department',
-        headerName: 'Department', flex: 1,
-        renderCell: (cell) => {
-            return (
-                <Tooltip title={cell.row?.department.name}>
-                    <span>{cell.row?.department.code}</span>
-                </Tooltip>
-            );
-        },
-        sortComparator: (v1, v2) => v1.code.localeCompare(v2.code)
-    },
-    {
-        field: 'location',
-        headerName: 'Location', flex: 1,
-        renderCell: (cell) => {
-            return cell.row.location.map((o: any) => o.name).join(", ");
+            return <div style={{ marginTop: 5 }}>
+                <Typography variant="subtitle2" color={VISION_RED} > {cell.value}</Typography>
+                <Typography variant="caption" display={"block"}> {cell.row.position}</Typography>
+                <Typography variant="caption" display={"block"} > {cell.row.department.name}</Typography>
+                <Typography variant="caption" display={"block"} gutterBottom ><LocationOnTwoTone fontSize="small" /> {cell.row.location.map((o: any) => o.name).join(", ")}</Typography>
+            </div>
         },
         sortable: false
     },
     {
         field: 'companyEmail',
-        headerName: 'Company Email', flex: 1,
-    },
-    {
-        field: 'companyContactNumber',
-        headerName: 'Viber Number', flex: 1,
-    },
-    {
-        field: 'reportsTo',
-        headerName: 'Reports To', flex: 1,
+        headerName: 'Contact Details', flex: 1,
         renderCell: (cell) => {
-            return cell.row.reportsTo.employeeName;
+            return <div>
+                <Typography variant="body2" gutterBottom><EmailTwoTone fontSize='small' /> {cell.value}</Typography>
+                <Typography variant="body2"><PhoneTwoTone fontSize='small' /> {cell.row.companyContactNumber}</Typography>
+            </div>
         },
-        sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName)
+        sortable: false
     },
+    // {
+    //     field: 'reportsTo',
+    //     headerName: 'Reports To', flex: 1,
+    //     renderCell: (cell) => {
+    //         return cell.row.reportsTo.employeeName;
+    //     },
+    //     sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName)
+    // },
 ];
 
 export default EmployeeDirectory;

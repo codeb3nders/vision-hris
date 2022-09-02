@@ -19,10 +19,83 @@ import CelebrationsToday from '../Common/celebrations.today';
 import OffsToday from '../Common/offs.today';
 import AttendanceStatus from './attendance.status';
 import HeadCount from './head.count';
+import { useContext, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppCtx } from 'App';
+import {
+  getAllEmployeesAction as _getEmployeesAction,
+  getEmployeeStatus as _getEmployeeStatus,
+  getEmployeeItems as _getEmployeeItems,
+} from 'slices';
+import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
+import moment from 'moment';
 
 type Props = {};
 
 const HRMainDashboard = (props: Props) => {
+  const dispatch = useDispatch();
+  const { access_token } = useContext(AppCtx);
+  const [activeEmployeesCount, setActiveEmployeesCount] = useState<number>(0);
+  const [countContract, setCountContract] = useState<number>(0);
+  const [countProbation, setCountProbation] = useState<number>(0);
+  const [celebrations, setCelebrations] = useState<any[]>([]);
+  const [headCount, setHeadCount] = useState<any[]>([]);
+
+  const getEmployeeStatus = useSelector(_getEmployeeStatus);
+  const getEmployeeItems = useSelector(_getEmployeeItems);
+
+  useEffect(() => {
+    if (access_token && getEmployeeStatus === 'idle') {
+      dispatch(_getEmployeesAction({ access_token }));
+    }
+  }, [access_token]);
+
+  useEffect(() => {
+    console.log({ getEmployeeItems })
+    let active = 0, contractEnd = 0, probationaryEnd = 0, countPerDept: any[] = [];
+    const activeEmployees = getEmployeeItems.filter((x: EmployeeI) => x.isActive)
+    activeEmployees.map((o: any) => {
+      const key = o.department.code;
+      active++;
+      if (o.employmentType.code.toLocaleLowerCase() == "project") {
+        if (moment(o.contractEndDate).endOf("day").diff(moment().endOf("day"), "month") < 1) {
+          contractEnd++;
+        }
+      } else if (o.employmentType.code.toLocaleLowerCase() == "probationary") {
+        if (moment(o.endOfProbationary).endOf("day").diff(moment().endOf("day"), "month") < 1) {
+          probationaryEnd++;
+        }
+      }
+      const bdayToday = moment(o.birthDate).endOf("day").isSame(moment().endOf("day"));
+      const dateHired = moment(o.dateHired);
+      const annivToday = dateHired.date() === moment().date() && dateHired.month() === moment().month()
+      if (bdayToday || annivToday) {
+        celebrations.push({
+          ...o,
+          isBirthday: bdayToday
+        });
+        setCelebrations(celebrations);
+      }
+
+      const index = countPerDept.findIndex((c: any) => c.x === key);
+      if (index < 0) {
+        countPerDept.push({
+          x: key,
+          y: 1,
+          name: o.department.name
+        })
+      } else {
+        countPerDept[index].y++;
+      }
+    });
+
+    setActiveEmployeesCount(active);
+    setCountContract(contractEnd);
+    setCountProbation(probationaryEnd);
+    setHeadCount(countPerDept);
+
+  }, [getEmployeeItems])
+
   return (
     <main className='grid grid-cols-12 items-start gap-4 mt-4 pb-20 '>
       <div className='desktop:col-span-9 tablet:col-span-12 laptop:col-span-8 phone:col-span-12 grid gap-4 grid-cols-12'>
@@ -33,7 +106,7 @@ const HRMainDashboard = (props: Props) => {
         />
 
         <RowWrapper className='justify-items-stretch'>
-          <Employees className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
+          <Employees count={activeEmployeesCount} className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
           <Workers className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3 h-[100%]' />
           <OnLeave className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
           <OTHours className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
@@ -43,7 +116,7 @@ const HRMainDashboard = (props: Props) => {
           <AttendancePreview className='laptop:col-span-4 phone:col-span-12 tablet:col-span-6' />
           <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4'>
             <Sickleave />
-            <EndContract />
+            <EndContract countContract={countContract} countProbation={countProbation} />
           </ColumnWrapper>
 
           <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4 tablet:col-span-12 grid grid-cols-2 space-y-0 gap-4'>
@@ -54,7 +127,7 @@ const HRMainDashboard = (props: Props) => {
 
         <RowWrapper>
           <EmployeeSatisfaction className='col-span-4 phone:col-span-12 tablet:col-span-6 laptop:col-span-4' />
-          <HeadCount className='col-span-4 phone:col-span-12 tablet:col-span-6 laptop:col-span-4' />
+          <HeadCount data={headCount} className='col-span-4 phone:col-span-12 tablet:col-span-6 laptop:col-span-4' />
           <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4 tablet:col-span-12 grid grid-cols-2 gap-4 space-y-0'>
             <Requests className='tablet:col-span-1 laptop:col-span-2  ' />
             <AttendanceStatus className='tablet:col-span-1 laptop:col-span-2  ' />
@@ -64,7 +137,7 @@ const HRMainDashboard = (props: Props) => {
 
       <div className='desktop:col-span-3 tablet:col-span-12 laptop:col-span-4 phone:col-span-12 space-y-4'>
         <Shortcuts />
-        <CelebrationsToday />
+        <CelebrationsToday celebrations={celebrations} />
         <OffsToday />
       </div>
     </main>
