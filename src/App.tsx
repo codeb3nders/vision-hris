@@ -4,8 +4,28 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import SignInSide from './Login';
 import Main from './components/Main';
 import { useSelector } from 'react-redux';
+import { EmployeeDBI } from 'slices/interfaces/employeeI';
+import { initialState } from 'components/MyProfile/employee.initialstate';
 
-export const AppCtx: any = createContext(null);
+type AppModel = {
+  access_token: string;
+  isLoggedIn: boolean;
+  userData: EmployeeDBI;
+  setIsHRLogin: React.Dispatch<React.SetStateAction<boolean>>;
+  isHRLogin: boolean;
+  setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
+  currentPage: string;
+};
+
+export const AppCtx = createContext<AppModel>({
+  access_token: "",
+  isLoggedIn: false,
+  userData: { ...initialState, full_name: "" },
+  setIsHRLogin: () => { },
+  isHRLogin: false,
+  setCurrentPage: () => { },
+  currentPage: "login",
+});
 
 type Props = {};
 
