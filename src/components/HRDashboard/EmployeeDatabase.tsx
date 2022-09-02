@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, Button, Link, Checkbox } from '@mui/material';
+import { Card, Button, Link, Checkbox, Tooltip } from '@mui/material';
 import {
   AddCircleOutlineTwoTone,
   KeyTwoTone,
@@ -14,14 +14,15 @@ import {
   getEmployeeStatus as _getEmployeeStatus,
   getEmployeeItems as _getEmployeeItems,
   getEmployeeError as _getEmployeeError,
+  createUserAccess
 } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
-import createUserAccess from 'slices/userAccess/createUserAccess';
 import { AnyMxRecord } from 'dns';
+import { getAvatar } from 'utils/functions';
 
 type Props = {};
 
@@ -83,56 +84,74 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [getEmployeeItems]);
 
   const getMyTeam = (teamLeader, employeeNo) => {
+    console.log({ teamLeader }, { employeeNo }, { employees })
     return employees.filter(
-      (x: any) => x.reportsTo === teamLeader && x.employeeNo !== employeeNo
-    );
+      (x: any) => x.reportsTo.employeeNo === teamLeader.employeeNo
+        && x.employeeNo !== employeeNo
+        && x.employeeNo !== teamLeader.employeeNo
+    ).sort((a: any, b: any) => a.lastName.localeCompare(b.lastName))
   };
 
   const columns = (setViewDetails: any) => [
     {
       field: 'full_name',
       headerName: 'Employee name',
-      width: 300,
+      width: 200,
       renderCell: (cell) => {
         return (
-          <Link
-            underline='none'
-            variant='button'
-            style={{ cursor: 'pointer' }}
-            onClick={() =>
-              setViewDetails({
-                employeeNo: cell.row.employeeNo,
-                myTeam: getMyTeam(cell.row.reportsTo, cell.row.employeeNo),
-                status: true,
-              })
-            }
-          >
-            <div className='whitespace-normal'>{cell.value}</div>
-          </Link>
+          <Tooltip title={cell.value}>
+            <Link
+              underline='none'
+              variant='button'
+              style={{ cursor: 'pointer' }}
+              onClick={() =>
+                setViewDetails({
+                  employeeNo: cell.row.employeeNo,
+                  myTeam: getMyTeam(cell.row.reportsTo, cell.row.employeeNo),
+                  status: true,
+                })
+              }
+            >
+              {cell.value}
+            </Link>
+          </Tooltip>
         );
       },
+      sortComparator: (v1, v2) => v1.localeCompare(v2)
     },
     {
       field: 'employeeNo',
       headerName: 'Employee No.',
-      width: 100,
-      renderCell: (cell) => (
-        <span title={cell.value} className='MuiDataGrid-cellContent'>
-          {cell.value}
-        </span>
-      ),
+      width: 80,
     },
-    { field: 'position', headerName: 'Position', width: 200 },
+    {
+      field: 'position', headerName: 'Position', width: 200,
+      renderCell: (cell) => {
+        return (
+          <Tooltip title={cell.value}>
+            <span>{cell.value}</span>
+          </Tooltip>
+        );
+      },
+      sortComparator: (v1, v2) => v1.localeCompare(v2)
+    },
     {
       field: 'rank',
       headerName: 'Rank',
-      width: 140,
+      width: 120,
     },
     {
       field: 'department',
       headerName: 'Department',
-      width: 180,
-      renderCell: (cell) => cell.row.department.name,
+      width: 100,
+      renderCell: (cell) => {
+        return (
+          <Tooltip title={cell.row?.department.name}>
+            <span>{cell.row?.department.code}</span>
+          </Tooltip>
+        );
+      },
+      sortComparator: (v1, v2) => v1.code.localeCompare(v2.code)
     },
     {
       field: 'location',
@@ -140,24 +159,28 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 140,
       renderCell: (cell) =>
         cell.row.location.map((o: any) => o.name).join(', '),
+      sortable: false
+    },
+    {
+      field: 'employmentType',
+      headerName: 'Employment Type',
+      width: 140,
+      renderCell: (cell: any) => cell.row.employmentType.name,
+      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name)
     },
     {
       field: 'employmentStatus',
       headerName: 'Employment Status',
       width: 140,
-      renderCell: (cell: any) => {
-        console.log({ cell });
-        const employmentStatus = cell?.value;
-        console.log({ employmentStatus });
-
-        return employmentStatus[employmentStatus.length - 1]?.name;
-      },
+      renderCell: (cell: any) => cell.row.employmentStatus.name,
+      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name)
     },
     {
       field: 'reportsTo',
       headerName: 'Team Leader',
       width: 140,
       renderCell: (cell) => cell.row.reportsTo.employeeName,
+      sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName)
     },
     {
       field: 'withUserCredentials',
@@ -178,7 +201,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const sendCredentials = async () => {
     if (sendAccessList.length > 0) {
       Promise.all(sendAccessList.map(async (employeeNo: string) => {
-        await dispatch(createUserAccess({ body: employeeNo, access_token }))
+        await dispatch(createUserAccess({ body: { employeeNo }, access_token }))
       }))
     }
   }

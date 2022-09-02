@@ -81,9 +81,7 @@ export default function SignInSide() {
           setError({ status: true, message: `Sorry, your account is inactive.` });
         } else {
           setError({ status: false, message: '' });
-          if (userData.userGroup == "HR ADMIN") {
-            getEnums()
-          }
+          getEnums();
           dispatch(setIsLoggedIn(true))
         }
       } else {

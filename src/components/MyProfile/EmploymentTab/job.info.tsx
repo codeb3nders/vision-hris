@@ -129,9 +129,8 @@ const JobInfo = (props: Props) => {
             getRowId={(data: any) => `${data?.reportsTo}~${data?.dateHired}`}
             rows={isNew ? [] : infos}
             columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            checkboxSelection
+            checkboxSelection={false}
+            hideFooter={true}
             getRowHeight={() => 'auto'}
             autoHeight
             className='border-0'

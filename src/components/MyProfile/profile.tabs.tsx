@@ -102,7 +102,7 @@ const EmployeeTabs = ({ className, index, setIndex, isMobile }) => {
 
   return (
     <Box
-      className={`mt-8 ${className} phone:mb-4 tablet:mb-4 laptop:mb-0 desktop:mb-0`}
+      className={`${className} phone:mb-4 tablet:mb-4 laptop:mb-0 desktop:mb-0`}
     >
       <TabList
         value={index}
@@ -135,27 +135,44 @@ const EmployeeTabs = ({ className, index, setIndex, isMobile }) => {
         <Tab
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '4' ? '!text-v-red' : ''
             }`}
-          label='Leaves'
+          label='Learning and Development'
           {...a11yProps('4')}
         />
         <Tab
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '5' ? '!text-v-red' : ''
             }`}
-          label='Assets'
+          label='201 File'
           {...a11yProps('5')}
         />
         <Tab
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '6' ? '!text-v-red' : ''
             }`}
-          label='201 Checklist'
+          label='Asset Management'
           {...a11yProps('6')}
         />
         <Tab
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '7' ? '!text-v-red' : ''
             }`}
-          label='Disciplinary Actions'
-          disabled
+          label='Leaves'
           {...a11yProps('7')}
+        />
+        <Tab
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '8' ? '!text-v-red' : ''
+            }`}
+          label='Official Business'
+          {...a11yProps('8')}
+        />
+        <Tab
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '9' ? '!text-v-red' : ''
+            }`}
+          label='Overtime'
+          {...a11yProps('9')}
+        />
+        <Tab
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '10' ? '!text-v-red' : ''
+            }`}
+          label='Disciplinary Cases'
+          {...a11yProps('10')}
         />
       </TabList>
     </Box>

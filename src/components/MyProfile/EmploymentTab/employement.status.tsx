@@ -20,20 +20,12 @@ const columns: GridColDef[] = [
   {
     field: 'employmentType',
     headerName: 'Employment Type',
-    flex: 1,
-    renderCell: (params: GridCellParams) => {
-      console.log({ params });
-
-      return <div>{params.value[params.value.length - 1].name}</div>;
-    },
+    flex: 1
   },
   {
     field: 'employmentStatus',
     headerName: 'Employment Status',
-    flex: 1,
-    renderCell: (params: GridCellParams) => {
-      return <div>{params.value}</div>;
-    },
+    flex: 1
   }
 ];
 
@@ -51,7 +43,7 @@ const EmployementStatus = (props: Props) => {
     []
   );
   const { isNew, employeeDetails } = useContext(ProfileCtx);
-
+  console.log({ employeeDetails })
   useEffect(() => {
     setEmployementDetails([
       ...employmentDetails,
@@ -79,9 +71,8 @@ const EmployementStatus = (props: Props) => {
           }
           rows={isNew ? [] : employmentDetails}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          checkboxSelection
+          checkboxSelection={false}
+          hideFooter={true}
           autoHeight
           getRowHeight={() => 'auto'}
           className='border-0'

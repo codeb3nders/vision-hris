@@ -47,11 +47,10 @@ const ProfileTabContent = ({ className }: Props) => {
   return (
     <CustomCard
       id='tab-content'
-      className={`${
-        isNew || isView
-          ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
-          : ''
-      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
+      className={`${isNew || isView
+        ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
+        : ''
+        } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
     >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
@@ -102,23 +101,33 @@ const ProfileTabContent = ({ className }: Props) => {
         </Suspense>
       </TabPanel>
 
-      <TabPanel value='4' className='p-0 grid' id='Leaves'>
+      <TabPanel value='4' className='p-0 grid' id='LearningAndDevelopment'>
+        Learning And Development
+      </TabPanel>
+
+      <TabPanel value='5' className='p-0 grid' id='201File'>
+        <ChecklistTable />
+      </TabPanel>
+
+      <TabPanel value='6' className='p-0 grid' id='Assets'>
+        <AssetsTable />
+      </TabPanel>
+
+      <TabPanel value='7' className='p-0 grid' id='Leaves'>
         <LeaveBalances />
         <Divider />
         <UpcomingLeaves />
         <Divider />
         <History />
       </TabPanel>
-
-      <TabPanel value='5' className='p-0 grid' id='Assets'>
-        <AssetsTable />
+      <TabPanel value='8' className='p-0 grid' id='OfficialBusiness'>
+        Official Business
       </TabPanel>
-
-      <TabPanel value='6' className='p-0 grid' id='201Checklist'>
-        <ChecklistTable />
+      <TabPanel value='9' className='p-0 grid' id='Overtime'>
+        Overtime
       </TabPanel>
-      <TabPanel value='7' className='p-0 grid' id='DisciplinaryActions'>
-        Disciplinary Actions
+      <TabPanel value='10' className='p-0 grid' id='DisciplinaryCases'>
+        Disciplinary Cases
       </TabPanel>
     </CustomCard>
   );

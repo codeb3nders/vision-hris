@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, Button, Link } from '@mui/material';
+import { Card, Button, Link, Tooltip } from '@mui/material';
 import { AddCircleOutlineTwoTone, UploadTwoTone } from '@mui/icons-material';
 import {
     getAllEmployeesAction as _getEmployeesAction,
@@ -65,27 +65,52 @@ const EmployeeDirectory: React.FC<Props> = () => {
 const columns = () => [
     {
         field: 'full_name',
-        headerName: 'Employee name', flex: 1, sortable: false,
+        headerName: 'Employee name', flex: 1,
         renderCell: (cell) => {
             return cell.value;
         },
     },
-    { field: 'position', headerName: 'Position', flex: 1, sortable: false },
+    {
+        field: 'position', headerName: 'Position', flex: 1,
+        renderCell: (cell) => {
+            return cell.value;
+        },
+    },
     {
         field: 'department',
-        headerName: 'Department', flex: 1, sortable: false
+        headerName: 'Department', flex: 1,
+        renderCell: (cell) => {
+            return (
+                <Tooltip title={cell.row?.department.name}>
+                    <span>{cell.row?.department.code}</span>
+                </Tooltip>
+            );
+        },
+        sortComparator: (v1, v2) => v1.code.localeCompare(v2.code)
     },
     {
         field: 'location',
-        headerName: 'Location', flex: 1, sortable: false
+        headerName: 'Location', flex: 1,
+        renderCell: (cell) => {
+            return cell.row.location.map((o: any) => o.name).join(", ");
+        },
+        sortable: false
     },
     {
         field: 'companyEmail',
-        headerName: 'Email', flex: 1, sortable: false
+        headerName: 'Company Email', flex: 1,
     },
     {
         field: 'companyContactNumber',
-        headerName: 'Mobile', flex: 1, sortable: false
+        headerName: 'Viber Number', flex: 1,
+    },
+    {
+        field: 'reportsTo',
+        headerName: 'Reports To', flex: 1,
+        renderCell: (cell) => {
+            return cell.row.reportsTo.employeeName;
+        },
+        sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName)
     },
 ];
 

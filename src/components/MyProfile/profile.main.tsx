@@ -66,12 +66,12 @@ export type ProfileModel = {
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => {},
+  setIndex: () => { },
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => {},
-  setDisplayPhoto: () => {},
+  setEmployeeDetails: () => { },
+  setDisplayPhoto: () => { },
   displayPhoto: {
     employeeNo: '',
     photo: '',
@@ -79,7 +79,7 @@ export const ProfileCtx = createContext<ProfileModel>({
   isOwner: false,
   enums: {},
   myTeam: [],
-  setUpdatedDetails: () => {},
+  setUpdatedDetails: () => { },
   updatedDetails: null,
 });
 
@@ -112,15 +112,12 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
     (data: EmployeeI) => setEmployeeDetails(data),
     []
   );
-
   const [displayPhotos, setDisplayPhotos] = useState<any[]>([]);
-
   const [openNotif, setOpenNotif] = useState<{
     message: string;
     status: boolean;
     severity: any;
   }>({ message: '', status: false, severity: '' });
-
   const [loading, setLoading] = useState<{ status: boolean; action: string }>({
     status: false,
     action: '',
@@ -131,34 +128,36 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
   const employeeData = useSelector(_getOneEmployeeDetails);
 
   useEffect(() => {
-    if (access_token && employeeNo) {
-      dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo } }));
+    if (access_token) {
+      var employee_number = employeeNo;
+      if (!employeeNo) {
+        employee_number = userData.employeeNo;
+      }
+      dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo: employee_number } }));
     }
   }, [access_token, employeeNo]);
 
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex('1');
-    if (!isNew && isView && employeeData) {
-      console.log({ employeeData });
+    let is_owner = false;
+    if (employeeData?.employeeNo === userData.employeeNo && userData.userGroup.toLowerCase() == "employee") {
+      is_owner = true;
+    }
+    if (employeeData) {
       setEmployeeDetails(() => {
         return {
           ...initialState,
           ...employeeData,
           department: employeeData.department.name,
-          // position: employeeData.name,
           employmentType: employeeData.employmentType.name,
           employmentStatus: employeeData.employmentStatus.name,
         };
       });
-      if (employeeData?.employeeNo === userData.employeeNo) {
-        setIsOwner(true);
-      }
-    } else if (!isNew && !isView) {
-      setEmployeeDetails(userData || initialState);
     } else {
       setEmployeeDetails(initialState);
     }
+    setIsOwner(is_owner);
   }, [employeeData, isLoggedIn, isNew, isView]);
 
   const handleEmployee = async () => {
@@ -185,7 +184,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       employment_types: any = [];
 
     enumsData.forEach((o: any) => {
-      switch (o.type) {
+      switch (o.type.toLowerCase()) {
         case 'position':
           positions.push(o);
           break;
@@ -280,18 +279,18 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-              ...displayPhotos,
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+            ...displayPhotos,
+          ]
           : [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+          ]
       )
     );
   };
@@ -401,11 +400,10 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, myTeam }: Props) => {
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
-                isNew
-                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                  : ''
-              }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
+                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                : ''
+                }`}
             >
               <Suspense fallback={<div>Loading...</div>}>
                 <ProfileTabContent className='self-stretch' />

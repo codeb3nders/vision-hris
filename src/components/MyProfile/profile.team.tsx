@@ -9,6 +9,7 @@ import {
 import { ProfilePhoto } from 'components/Dashboards/Employee/profile.preview';
 import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, useEffect, useState } from 'react';
+import { getAvatar } from 'utils/functions';
 import { ProfileCtx } from './profile.main';
 
 type Props = {
@@ -23,8 +24,6 @@ const ProfileTeam = ({ className }: Props) => {
   useEffect(() => {
     if (myTeam) {
       setMyTeammates(myTeam || [])
-    } else {
-      //get employees where reportsTo = employeeDetails.reportsTo
     }
   }, [myTeam])
 
@@ -32,7 +31,7 @@ const ProfileTeam = ({ className }: Props) => {
     return myTeammates.map((o: any, i: number) => {
       return <ListItemButton key={i} className='p-0 px-1'>
         <ListItemIcon>
-          <Avatar src={ProfilePhoto} />
+          <Avatar src={getAvatar(o.gender)} />
         </ListItemIcon>
         <ListItemText
           primary={<span className='text-sm font-bold'>{o.full_name}</span>}
@@ -45,21 +44,10 @@ const ProfileTeam = ({ className }: Props) => {
   return (
     <CustomCard className={`${className}`}>
       <List className='p-0'>
-        {/* <p className='text-xs font-bold text-gray-500'>MANAGER</p>
-        <ListItemButton className='p-0 px-1'>
-          <ListItemIcon>
-            <Avatar src={ProfilePhoto} />
-          </ListItemIcon>
-          <ListItemText
-            primary={<span className='text-sm font-bold'>Amber Valencia</span>}
-            secondary={<span className='text-xs '>Director of Design</span>}
-          />
-        </ListItemButton> */}
-
         <p className='text-xs font-bold text-gray-500 mt-2'>REPORTS TO</p>
         <ListItemButton className='p-0 px-1'>
           <ListItemIcon>
-            <Avatar src={ProfilePhoto} />
+            <Avatar src={getAvatar(employeeDetails.reportsTo.gender)} />
           </ListItemIcon>
           <ListItemText
             primary={<span className='text-sm font-bold'>{employeeDetails.reportsTo.employeeName}</span>}
