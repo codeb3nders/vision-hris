@@ -16,6 +16,7 @@ import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
+import createUserAccess from 'slices/userAccess/createUserAccess';
 
 type Props = {};
 
@@ -152,6 +153,14 @@ const EmployeeDatabase: React.FC<Props> = () => {
     setSendAccessList([...sendAccessList, employeeNo])
   }
 
+  const sendCredentials = async () => {
+    if (sendAccessList.length > 0) {
+      Promise.all(sendAccessList.map(async (employeeNo: string) => {
+        await dispatch(createUserAccess({ body: employeeNo, access_token }))
+      }))
+    }
+  }
+
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
       <NewEmployeeProfile open={open} setOpen={setOpen} />
@@ -162,7 +171,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
       <Card sx={{ mt: 5, p: 2 }}>
         <div style={{ marginBottom: 16, textAlign: 'left' }}>
-          <Button startIcon={<KeyTwoTone />} sx={{ mr: 1 }}>
+          <Button onClick={sendCredentials} startIcon={<KeyTwoTone />} sx={{ mr: 1 }}>
             Send Credentials
           </Button>
         </div>
