@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Card, Button, Link, Checkbox, Tooltip } from '@mui/material';
 import {
   AddCircleOutlineTwoTone,
   KeyTwoTone,
+  SupervisedUserCircleTwoTone,
   UploadTwoTone,
 } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
@@ -116,7 +117,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
     {
       field: 'rank',
       headerName: 'Rank',
-      width: 120,
+      width: 120
     },
     {
       field: 'department',
@@ -129,7 +130,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
           </Tooltip>
         );
       },
-      sortComparator: (v1, v2) => v1.code.localeCompare(v2.code)
+      sortComparator: (v1, v2) => v1.code.localeCompare(v2.code),
+      valueGetter: (params) => {
+        return params.row.department.name
+      }
     },
     {
       field: 'location',
@@ -137,28 +141,40 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 140,
       renderCell: (cell) =>
         cell.row.location.map((o: any) => o.name).join(', '),
-      sortable: false
+      sortable: false,
+      valueGetter: (params) => {
+        return params.row.location.map((o: any) => o.name).join(', ')
+      }
     },
     {
       field: 'employmentType',
       headerName: 'Employment Type',
       width: 140,
       renderCell: (cell: any) => cell.row.employmentType.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name)
+      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      valueGetter: (params) => {
+        return params.row.employmentType.name
+      }
     },
     {
       field: 'employmentStatus',
       headerName: 'Employment Status',
       width: 140,
       renderCell: (cell: any) => cell.row.employmentStatus.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name)
+      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      valueGetter: (params) => {
+        return params.row.employmentStatus.name
+      }
     },
     {
       field: 'reportsTo',
       headerName: 'Team Leader',
       width: 140,
       renderCell: (cell) => cell.row.reportsTo.employeeName,
-      sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName)
+      sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName),
+      valueGetter: (params) => {
+        return params.row.reportsTo.employeeName
+      }
     },
     {
       field: 'withUserCredentials',
@@ -198,6 +214,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
             Send Credentials
           </Button>
         </div>
+        <div style={{ marginBottom: 16, textAlign: 'left' }}>
+          <Button onClick={sendCredentials} startIcon={<SupervisedUserCircleTwoTone />} sx={{ mr: 1 }}>
+            Change Team Leader
+          </Button>
+        </div>
         <div style={{ marginBottom: 16, textAlign: 'right' }}>
           <Button startIcon={<UploadTwoTone />} sx={{ mr: 1 }}>
             Upload Employee Details
@@ -213,6 +234,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
         {/* <div style={{ height: 'auto', width: '100%' }}> */}
         <DataGrid
+          components={{ Toolbar: GridToolbar }}
           autoHeight
           density='compact'
           disableSelectionOnClick
@@ -220,7 +242,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
           columns={columns(setViewDetails)}
           pageSize={30}
           rowsPerPageOptions={[30]}
-          checkboxSelection={false}
+          checkboxSelection={true}
           loading={loading}
           getRowId={(row: any) => row.employeeNo}
         />
