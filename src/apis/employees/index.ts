@@ -6,14 +6,9 @@ import {
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
 export const createEmployeeEndpoint = async (body: EmployeeI, config = {}) => {
-  try {
-    return await axios.post(URL_EMPLOYEES, body, {
-      ...config,
-    });
-  } catch (error: any) {
-    console.error('ERROR in getEmployeesEndpoint', error);
-    return error.message;
-  }
+  return await axios.post(URL_EMPLOYEES, body, {
+    ...config,
+  });
 };
 
 export const updateEmployeeEndpoint = async (body: EmployeeI, config?: any) => {

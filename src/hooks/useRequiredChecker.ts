@@ -23,25 +23,25 @@ const useRequiredChecker = ({ employeeDetails }) => {
       location,
       reportsTo,
       dateHired,
-      endOfProbationary,
+      // endOfProbationary,
       rank,
       employmentStatus,
       companyEmail,
       companyContactNumber,
-      deductionSSS,
-      deductHMDF,
-      deductPhilhealth,
-      deductWithholdingTax,
-      NumberOfDependents,
-      basicPay,
-      payRateType,
-      paymentMethod,
-      payrollGroup,
-      payrollBankAccount,
-      sss,
-      philHealth,
-      pagIbig,
-      tin,
+      // deductionSSS,
+      // deductHMDF,
+      // deductPhilhealth,
+      // deductWithholdingTax,
+      // NumberOfDependents,
+      // basicPay,
+      // payRateType,
+      // paymentMethod,
+      // payrollGroup,
+      // payrollBankAccount,
+      // sss,
+      // philHealth,
+      // pagIbig,
+      // tin,
     } = employeeDetails;
 
     return (
@@ -57,28 +57,28 @@ const useRequiredChecker = ({ employeeDetails }) => {
       location.length > 0 &&
       reportsTo &&
       dateHired &&
-      endOfProbationary &&
+      // endOfProbationary &&
       rank &&
       employmentStatus &&
       companyEmail &&
-      companyContactNumber &&
-      deductionSSS &&
-      deductHMDF &&
-      deductPhilhealth &&
-      deductWithholdingTax &&
-      tin &&
-      NumberOfDependents &&
-      basicPay &&
-      payRateType &&
-      paymentMethod &&
-      payrollGroup &&
-      payrollBankAccount.accountName &&
-      payrollBankAccount.accountNumber &&
-      payrollBankAccount.bankBranch &&
-      payrollBankAccount.bankName &&
-      sss &&
-      philHealth &&
-      pagIbig
+      companyContactNumber
+      // deductionSSS &&
+      // deductHMDF &&
+      // deductPhilhealth &&
+      // deductWithholdingTax &&
+      // tin &&
+      // NumberOfDependents &&
+      // basicPay &&
+      // payRateType &&
+      // paymentMethod &&
+      // payrollGroup &&
+      // payrollBankAccount.accountName &&
+      // payrollBankAccount.accountNumber &&
+      // payrollBankAccount.bankBranch &&
+      // payrollBankAccount.bankName &&
+      // sss &&
+      // philHealth &&
+      // pagIbig
     );
   };
 

@@ -13,12 +13,13 @@ import employeesSlice from "slices/employees/getEmployeesSlice";
 import enumsSlice from "slices/enums/enumsSlice";
 import employeeWithLeaveReducer from "slices/employees/getEmployeesWithLeaveSlice";
 import userAccessReducer from "slices/userAccess/authSlice";
+import NewEmployeeSlice from "slices/employees/createEmployeesSlice";
 
 const rootPersistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['employeesWithLeave', 'userAccess']
+  blacklist: ['employeesWithLeave', 'userAccess', 'newEmployee']
 }
 
 const appReducer = combineReducers({
@@ -26,7 +27,8 @@ const appReducer = combineReducers({
   employee: employeesSlice,
   enums: enumsSlice,
   employeesWithLeave: employeeWithLeaveReducer,
-  userAccess: userAccessReducer
+  userAccess: userAccessReducer,
+  newEmployee: NewEmployeeSlice
 })
 
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);

@@ -21,6 +21,8 @@ import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import {
   createEmployee,
+  getEmployeeCreatedItem,
+  getEmployeeCreateError,
   getEmployeeCreateStatus,
 } from './../../slices/employees/createEmployeesSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -126,9 +128,45 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
     action: '',
   });
   const { enumsData } = useSelector(enumsStore);
+  const newEmployeeStatus = useSelector(getEmployeeCreateStatus)
+  const newEmployeeData = useSelector(getEmployeeCreatedItem)
+  const newEmployeeError = useSelector(getEmployeeCreateError)
+
   // Employees
-  const getEmployeeStatus = useSelector(_getOneEmployeeStatus);
   const employeeData = useSelector(_getOneEmployeeDetails);
+
+  useEffect(() => {
+    console.log({ newEmployeeData }, { newEmployeeStatus })
+    if (newEmployeeStatus !== "idle") {
+      if (newEmployeeData && newEmployeeStatus === "succeeded") {
+        // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
+        setLoading({ status: false, action: '' });
+        setRefresh(true);
+        setOpenNotif({
+          message: `${newEmployeeData.firstName} ${newEmployeeData.lastName} has been successfully added.`,
+          status: true,
+          severity: 'success',
+        });
+
+        setTimeout(() => {
+          setRefresh(false);
+          setOpenNotif({
+            message: '',
+            status: false,
+            severity: 'success',
+          });
+          setOpen && setOpen(false);
+        }, 2000);
+      } else {
+        setLoading({ status: false, action: '' });
+        setOpenNotif({
+          message: newEmployeeError,
+          status: true,
+          severity: 'error',
+        });
+      }
+    }
+  }, [newEmployeeStatus])
 
   useEffect(() => {
     if (access_token) {
@@ -143,24 +181,26 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex('1');
-    let is_owner = false;
-    if (employeeData?.employeeNo === userData.employeeNo && userData.userGroup.toLowerCase() == "employee") {
-      is_owner = true;
-    }
-    if (employeeData) {
-      setEmployeeDetails(() => {
-        return {
-          ...initialState,
-          ...employeeData,
-          department: employeeData.department.name,
-          employmentType: employeeData.employmentType.name,
-          employmentStatus: employeeData.employmentStatus.name,
-        };
-      });
-    } else {
+    if (isNew) {
       setEmployeeDetails(initialState);
+    } else {
+      let is_owner = false;
+      if (employeeData?.employeeNo === userData.employeeNo && userData.userGroup.toLowerCase() == "employee") {
+        is_owner = true;
+      }
+      if (employeeData) {
+        setEmployeeDetails(() => {
+          return {
+            ...initialState,
+            ...employeeData,
+            department: employeeData.department.name,
+            employmentType: employeeData.employmentType.name,
+            employmentStatus: employeeData.employmentStatus.name,
+          };
+        });
+      }
+      setIsOwner(is_owner);
     }
-    setIsOwner(is_owner);
   }, [employeeData, isLoggedIn, isNew, isView]);
 
   const handleEmployee = async () => {
@@ -302,37 +342,9 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
     setLoading({ status: true, action: 'Saving' });
     try {
       consoler(employeeDetails, 'blue', 'saveEmployee');
-      const response = await dispatch(
+      await dispatch(
         createEmployee({ body: employeeDetails, access_token })
       );
-      console.log({ response }, 'vvvvvvvvvvvvvvvvvvv');
-      if (response.meta.requestStatus === 'fulfilled') {
-        handleSaveDisplayPhoto(response.payload.employeeNo);
-        setLoading({ status: false, action: '' });
-        setRefresh(true);
-        setOpenNotif({
-          message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully added.`,
-          status: true,
-          severity: 'success',
-        });
-
-        setTimeout(() => {
-          setRefresh(false);
-          setOpenNotif({
-            message: '',
-            status: false,
-            severity: 'success',
-          });
-          setOpen && setOpen(false);
-        }, 2000);
-      } else {
-        setLoading({ status: false, action: '' });
-        setOpenNotif({
-          message: `Something's wrong.`,
-          status: true,
-          severity: 'error',
-        });
-      }
     } catch (error: any) {
       setLoading({ status: false, action: '' });
       console.log(error);

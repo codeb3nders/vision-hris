@@ -3,7 +3,7 @@ import { createEmployeeEndpoint } from 'apis/employees';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
 const initialState: any = {
-  employeeItems: {},
+  employeeCreatedItem: null,
   status: 'idle',
   error: null,
 };
@@ -15,11 +15,10 @@ export const createEmployee: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await createEmployeeEndpoint(data.body, config);
-      return response;
+      return await createEmployeeEndpoint(data.body, config);
     } catch (err: any) {
       console.error('ERROR in createEmployee', err);
-      return err.message;
+      return err;
     }
   }
 );
@@ -34,8 +33,15 @@ export const createEmployeesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(createEmployee.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.employeeItems = action.payload;
+        console.log({ action })
+        if (action.payload.response) {
+          const { status, data } = action.payload.response;
+          state.status = 'failed';
+          state.error = data.error;
+        } else {
+          state.status = 'succeeded';
+          state.employeeCreatedItem = action.payload.data;
+        }
       })
       .addCase(createEmployee.rejected, (state, action) => {
         state.status = 'failed';
@@ -45,8 +51,8 @@ export const createEmployeesSlice = createSlice({
 });
 
 export const getEmployeeCreatedItem = (state: any) =>
-  state.employee.employeeCreatedItem;
-export const getEmployeeCreateStatus = (state: any) => state.employee.status;
-export const getEmployeeCreateError = (state: any) => state.employee.error;
+  state.newEmployee.employeeCreatedItem;
+export const getEmployeeCreateStatus = (state: any) => state.newEmployee.status;
+export const getEmployeeCreateError = (state: any) => state.newEmployee.error;
 
 export default createEmployeesSlice.reducer;

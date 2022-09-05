@@ -165,7 +165,7 @@ const JobInfoFields = ({
     setRanks(enums.ranks);
     setEmploymentTypes(enums.employment_types);
   }, [enums]);
-
+  console.log({ employeeDetails })
   useEffect(() => {
     if (
       !employeeDetails.employeeNo &&
@@ -358,7 +358,7 @@ const JobInfoFields = ({
               {getEmployeeItems
                 ?.filter(
                   (x: any) =>
-                    x.department.code === employeeDetails.department.code
+                    x.department.code === employeeDetails.department
                 )
                 .map((employee) => {
                   return (
@@ -538,6 +538,7 @@ const JobInfoFields = ({
             variant='standard'
             label='Company Contact Number'
             fullWidth
+            value={employeeDetails.companyContactNumber}
             onChange={(e: any) =>
               setEmployeeDetails((prev: EmployeeI) => ({
                 ...prev,
