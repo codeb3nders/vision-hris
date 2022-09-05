@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createEmployeeEndpoint } from 'apis/employees';
+import { createEmployeeEndpoint, updateEmployeeEndpoint } from 'apis/employees';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
 const initialState: any = {
@@ -10,12 +10,27 @@ const initialState: any = {
 
 export const createEmployee: any = createAsyncThunk(
   'employees/createEmployee',
-  async (data: { body: EmployeeI, access_token: string }) => {
+  async (data: { body: EmployeeI; access_token: string }) => {
     try {
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
       return await createEmployeeEndpoint(data.body, config);
+    } catch (err: any) {
+      console.error('ERROR in createEmployee', err);
+      return err;
+    }
+  }
+);
+
+export const updateEmployee: any = createAsyncThunk(
+  'employees/updateEmployee',
+  async (data: { body: EmployeeI; access_token: string }) => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${data.access_token}` },
+      };
+      return await updateEmployeeEndpoint(data.body, config);
     } catch (err: any) {
       console.error('ERROR in createEmployee', err);
       return err;
@@ -33,7 +48,7 @@ export const createEmployeesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(createEmployee.fulfilled, (state, action) => {
-        console.log({ action })
+        console.log({ action });
         if (action.payload.response) {
           const { status, data } = action.payload.response;
           state.status = 'failed';

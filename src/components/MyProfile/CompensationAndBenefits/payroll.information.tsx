@@ -15,7 +15,8 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const PayrollInformation = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
+  const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails } =
+    useContext(ProfileCtx);
 
   return (
     <CollapseWrapper
@@ -34,28 +35,39 @@ const PayrollInformation = (props: Props) => {
             label='Basic Pay Amount'
             fullWidth
             value={employeeDetails.basicPay}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails((prev: EmployeeI) => ({
                 ...prev,
                 basicPay: e.target.value,
-              }))
-            }
+              }));
+
+              !isNew &&
+                setUpdatedDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  basicPay: e.target.value,
+                }));
+            }}
           />
         </div>
 
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2 flex flex-row items-center gap-1'>
-          <FormControl variant='standard' size='small' fullWidth >
+          <FormControl variant='standard' size='small' fullWidth>
             <InputLabel>Pay Rate Type</InputLabel>
             <Select
               label='Pay Rate Type'
               id='pay-rate-type'
               value={employeeDetails.payRateType}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails((prev: EmployeeI) => ({
                   ...prev,
                   payRateType: e.target.value,
-                }))
-              }
+                }));
+                !isNew &&
+                  setUpdatedDetails((prev: EmployeeI) => ({
+                    ...prev,
+                    payRateType: e.target.value,
+                  }));
+              }}
             >
               <MenuItem id='type-bi-monthly' value='Bi monthly'>
                 Bi monthly
@@ -74,12 +86,18 @@ const PayrollInformation = (props: Props) => {
               label='Payment Method'
               id='payment-method'
               value={employeeDetails.paymentMethod}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails((prev: EmployeeI) => ({
                   ...prev,
                   paymentMethod: e.target.value,
-                }))
-              }
+                }));
+
+                !isNew &&
+                  setUpdatedDetails((prev: EmployeeI) => ({
+                    ...prev,
+                    paymentMethod: e.target.value,
+                  }));
+              }}
             >
               <MenuItem value='Cash' id='cash'>
                 Cash
@@ -101,12 +119,18 @@ const PayrollInformation = (props: Props) => {
               label='Payroll Group'
               value={employeeDetails.payrollGroup}
               id='payroll-group'
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails((prev: EmployeeI) => ({
                   ...prev,
                   payrollGroup: e.target.value,
-                }))
-              }
+                }));
+
+                !isNew &&
+                  setUpdatedDetails((prev: EmployeeI) => ({
+                    ...prev,
+                    payrollGroup: e.target.value,
+                  }));
+              }}
             >
               <MenuItem id='group-bi-monthly' value='Bi monthly'>
                 Bi monthly
@@ -130,12 +154,18 @@ const PayrollInformation = (props: Props) => {
             label='Deduct For SSS Contribution'
             value={employeeDetails.deductionSSS}
             fullWidth
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails((prev: EmployeeI) => ({
                 ...prev,
                 deductionSSS: e.target.value,
-              }))
-            }
+              }));
+
+              !isNew &&
+                setUpdatedDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  deductionSSS: e.target.value,
+                }));
+            }}
           />
         </div>
 
@@ -146,12 +176,18 @@ const PayrollInformation = (props: Props) => {
               label='Deduct Philhealth Contribution'
               value={employeeDetails.deductPhilhealth}
               id='deduct-philhealth'
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails((prev: EmployeeI) => ({
                   ...prev,
                   deductPhilhealth: e.target.value,
-                }))
-              }
+                }));
+
+                !isNew &&
+                  setUpdatedDetails((prev: EmployeeI) => ({
+                    ...prev,
+                    deductPhilhealth: e.target.value,
+                  }));
+              }}
             >
               <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
               <MenuItem value='Weekly'>Weekly</MenuItem>
@@ -169,12 +205,18 @@ const PayrollInformation = (props: Props) => {
             label='Deduct Pag-IBIG/HMDF Contribution'
             value={employeeDetails.deductHMDF}
             fullWidth
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails((prev: EmployeeI) => ({
                 ...prev,
                 deductHMDF: e.target.value,
-              }))
-            }
+              }));
+
+              !isNew &&
+                setUpdatedDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  deductHMDF: e.target.value,
+                }));
+            }}
           />
         </div>
 
@@ -185,12 +227,18 @@ const PayrollInformation = (props: Props) => {
               label='Fixed Contribution Rate'
               id='deduct-philhealth'
               value={employeeDetails.fixedContributionRate}
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setEmployeeDetails((prev: EmployeeI) => ({
                   ...prev,
                   fixedContributionRate: e.target.value,
-                }))
-              }
+                }));
+
+                !isNew &&
+                  setUpdatedDetails((prev: EmployeeI) => ({
+                    ...prev,
+                    fixedContributionRate: e.target.value,
+                  }));
+              }}
             >
               <MenuItem id='contrib-bi-monthly' value='Bi monthly'>
                 Bi monthly
@@ -212,12 +260,18 @@ const PayrollInformation = (props: Props) => {
             label='Deduct Withholding Tax'
             fullWidth
             value={employeeDetails.deductWithholdingTax}
-            onChange={(e: any) =>
+            onChange={(e: any) => {
               setEmployeeDetails((prev: EmployeeI) => ({
                 ...prev,
                 deductWithholdingTax: e.target.value,
-              }))
-            }
+              }));
+
+              !isNew &&
+                setUpdatedDetails((prev: EmployeeI) => ({
+                  ...prev,
+                  deductWithholdingTax: e.target.value,
+                }));
+            }}
           />
         </div>
       </GridWrapper>

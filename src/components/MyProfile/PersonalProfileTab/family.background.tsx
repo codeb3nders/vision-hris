@@ -24,7 +24,7 @@ export type FamilyI = {
 };
 
 const FamilyBackground = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isView, setUpdatedDetails } =
+  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails } =
     useContext(ProfileCtx);
   const [family, setFamily] = useState<FamilyI[]>([]);
   const [open, setOpen] = useState<boolean>(false);
@@ -36,7 +36,7 @@ const FamilyBackground = (props: Props) => {
 
   useEffect(() => {
     setEmployeeDetails({ ...employeeDetails, familyBackground: family });
-    isView &&
+    !isNew &&
       family.length > 0 &&
       setUpdatedDetails((prev: any) => ({
         ...prev,

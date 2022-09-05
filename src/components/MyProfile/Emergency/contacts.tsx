@@ -7,7 +7,15 @@ import {
   Delete,
   SaveTwoTone,
 } from '@mui/icons-material';
-import { Dialog, IconButton, MenuItem, Select, TextField } from '@mui/material';
+import {
+  Dialog,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { RELATION } from 'constants/Values';
@@ -24,7 +32,8 @@ type ContactsI = {
 };
 
 const Contacts = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { isNew, setUpdatedDetails, setEmployeeDetails } =
+    useContext(ProfileCtx);
   const [rows, setRows] = useState<ContactsI[]>([]);
   const [newContact, setNewContact] = useState<any>({
     name: null,
@@ -90,6 +99,13 @@ const Contacts = (props: Props) => {
       ...prev,
       emergencyContact: rows,
     }));
+
+    !isNew &&
+      rows.length > 0 &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        emergencyContact: rows,
+      }));
   }, [rows]);
 
   const handleDelete = (params: any) => {
@@ -128,17 +144,20 @@ const Contacts = (props: Props) => {
                 setNewContact({ ...newContact, name: e.target.value })
               }
             />
-            <Select
-              id='relation'
-              labelId='relation'
-              onChange={(e: any) =>
-                setNewContact({ ...newContact, relation: e.target.value })
-              }
-            >
-              {RELATION.map((relation) => {
-                return <MenuItem value={relation}>{relation}</MenuItem>;
-              })}
-            </Select>
+            <FormControl variant='standard'>
+              <InputLabel id='relation'>Relation</InputLabel>
+              <Select
+                id='relation'
+                labelId='relation'
+                onChange={(e: any) =>
+                  setNewContact({ ...newContact, relation: e.target.value })
+                }
+              >
+                {RELATION.map((relation) => {
+                  return <MenuItem value={relation}>{relation}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
             <TextField
               id='emergency-occupation'
               fullWidth

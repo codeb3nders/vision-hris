@@ -8,7 +8,7 @@ import CollapseWrapper from './collapse.wrapper';
 type Props = {};
 
 const PayrollDetails = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isView, setUpdatedDetails } =
+  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails } =
     useContext(ProfileCtx);
 
   return (
@@ -34,11 +34,11 @@ const PayrollDetails = (props: Props) => {
                 },
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   payrollBankAccount: {
-                    ...employeeDetails?.payrollBankAccount,
+                    ...prev?.payrollBankAccount,
                     bankName: e.target.value,
                   },
                 }));
@@ -63,11 +63,11 @@ const PayrollDetails = (props: Props) => {
                 },
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   payrollBankAccount: {
-                    ...employeeDetails?.payrollBankAccount,
+                    ...prev?.payrollBankAccount,
                     bankBranch: e.target.value,
                   },
                 }));
@@ -92,11 +92,11 @@ const PayrollDetails = (props: Props) => {
                 },
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   payrollBankAccount: {
-                    ...employeeDetails?.payrollBankAccount,
+                    ...prev?.payrollBankAccount,
                     accountName: e.target.value,
                   },
                 }));
@@ -120,11 +120,11 @@ const PayrollDetails = (props: Props) => {
                 },
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   payrollBankAccount: {
-                    ...employeeDetails?.payrollBankAccount,
+                    ...prev?.payrollBankAccount,
                     accountNumber: e.target.value,
                   },
                 }));

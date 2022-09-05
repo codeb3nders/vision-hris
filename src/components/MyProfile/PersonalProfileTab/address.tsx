@@ -17,37 +17,39 @@ type Props = {
 };
 
 const Address = ({ data, isPermanent }: Props) => {
-  const { setEmployeeDetails, employeeDetails } = useContext(ProfileCtx);
+  const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails } =
+    useContext(ProfileCtx);
 
   const [selectedRegion, setSelectedRegion] = useState<any>('');
   const [selectedProvince, setSelectedProvince] = useState<any>('');
   const [selectedMunicipality, setSelectedMunicipality] = useState<any>('');
   const [selectedBarangay, setSelectedBarangay] = useState<any>('');
-  const [streetAddress1, setStreetAddress1] = useState<string>('');
-  const [streetAddress2, setStreetAddress2] = useState<string>('');
+  const [addressLine, setAddressLine] = useState<string>('');
 
   useEffect(() => {
     isPermanent
-      ? setEmployeeDetails((prev: EmployeeI) => ({
-          ...prev,
-          permanentRegion: selectedRegion.region_name,
-          permanentProvince: selectedProvince.id,
-          permanentMunicipality: selectedMunicipality.id,
-          permanentBarangay: selectedBarangay,
-        }))
-      : setEmployeeDetails((prev: EmployeeI) => ({
-          ...prev,
-          presentRegion: selectedRegion.region_name,
-          presentProvince: selectedProvince.id,
-          presentMunicipality: selectedMunicipality.id,
-          presentBarangay: selectedBarangay,
-        }));
+      ? handleAddress('permanentAddress')
+      : handleAddress('presentAddress');
   }, [
     selectedRegion,
     selectedProvince,
     selectedMunicipality,
     selectedBarangay,
+    addressLine,
   ]);
+
+  const handleAddress = (type: string) => {
+    setEmployeeDetails((prev: EmployeeI) => ({
+      ...prev,
+      [type]: {
+        addressLine,
+        region: selectedRegion.region_name,
+        province: selectedProvince.id,
+        municipality: selectedMunicipality.id,
+        barangay: selectedBarangay,
+      },
+    }));
+  };
 
   useEffect(() => {
     setSelectedProvince('');
@@ -64,6 +66,17 @@ const Address = ({ data, isPermanent }: Props) => {
   //   });
   // }, [streetAddress1, streetAddress2]);
 
+  const handleUpdateAddress = (value: string, col: string) => {
+    !isNew &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        [isPermanent ? 'permanentAddress' : 'presentAddress']: {
+          ...prev[isPermanent ? 'permanentAddress' : 'presentAddress'],
+          [col]: value,
+        },
+      }));
+  };
+
   return (
     <GridWrapper colSize='8'>
       <div className='col-span-8'>
@@ -74,21 +87,12 @@ const Address = ({ data, isPermanent }: Props) => {
           size='small'
           variant='standard'
           fullWidth
-          defaultValue={
-            employeeDetails[
-              isPermanent
-                ? 'permanentResidenceAddress'
-                : 'presentResidenceAddress'
-            ]?.addressLine
-          }
-          onChange={(e: any) =>
-            setEmployeeDetails((prev: any) => ({
-              ...prev,
-              [isPermanent
-                ? 'permanentResidenceAddress'
-                : 'presentResidenceAddress']: e.target.value,
-            }))
-          }
+          defaultValue={addressLine}
+          onChange={(e: any) => {
+            setAddressLine(e.target.value);
+
+            handleUpdateAddress(e.target.value, 'addressLine');
+          }}
         />
       </div>
       {/* <div className='col-span-4'>
@@ -112,7 +116,10 @@ const Address = ({ data, isPermanent }: Props) => {
           <InputLabel>Region</InputLabel>
           <Select
             id={`${isPermanent ? 'permanent' : 'present'}-region`}
-            onChange={(e: any) => setSelectedRegion(e.target.value)}
+            onChange={(e: any) => {
+              setSelectedRegion(e.target.value);
+              handleUpdateAddress(e.target.value.region_name, 'region');
+            }}
           >
             {data
               ?.sort((a: any, b: any) =>
@@ -139,7 +146,10 @@ const Address = ({ data, isPermanent }: Props) => {
           <InputLabel>Province</InputLabel>
           <Select
             id={`${isPermanent ? 'permanent' : 'present'}-province`}
-            onChange={(e: any) => setSelectedProvince(e.target.value)}
+            onChange={(e: any) => {
+              setSelectedProvince(e.target.value);
+              handleUpdateAddress(e.target.value.id, 'province');
+            }}
           >
             {selectedRegion?.province_list?.map((province: any) => {
               return (
@@ -162,7 +172,10 @@ const Address = ({ data, isPermanent }: Props) => {
           <InputLabel>Municipality</InputLabel>
           <Select
             id={`${isPermanent ? 'permanent' : 'present'}-municipality`}
-            onChange={(e: any) => setSelectedMunicipality(e.target.value)}
+            onChange={(e: any) => {
+              setSelectedMunicipality(e.target.value);
+              handleUpdateAddress(e.target.value.id, 'municipality');
+            }}
           >
             {selectedProvince?.municipality_list?.map((municipality: any) => {
               return (
@@ -185,7 +198,10 @@ const Address = ({ data, isPermanent }: Props) => {
           <InputLabel>Barangay</InputLabel>
           <Select
             id={`${isPermanent ? 'permanent' : 'present'}-barangay`}
-            onChange={(e: any) => setSelectedBarangay(e.target.value)}
+            onChange={(e: any) => {
+              setSelectedBarangay(e.target.value);
+              handleUpdateAddress(e.target.value, 'barangay');
+            }}
           >
             {selectedMunicipality?.barangay_list?.map((barangay: any) => {
               return (
