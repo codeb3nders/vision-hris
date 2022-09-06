@@ -13,8 +13,12 @@ import { EducationI, EmployeeI } from 'slices/interfaces/employeeI';
 type Props = {};
 
 const Education = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails: details } =
-    useContext(ProfileCtx);
+  const {
+    setEmployeeDetails,
+    employeeDetails: details,
+    setUpdatedDetails,
+    isNew,
+  } = useContext(ProfileCtx);
   const [selectedLevels, setSelectedLevels] = useState<any>('');
 
   const employeeDetails = useMemo(() => details, [details]);
@@ -80,6 +84,29 @@ const Education = (props: Props) => {
           ),
         };
       });
+
+      !isNew &&
+        setUpdatedDetails((prev: any) => {
+          return {
+            ...prev,
+            educationalBackground: prev?.educationalBackground?.map(
+              (education: EducationI) => {
+                console.log({ education, level });
+
+                if (education.level === level) {
+                  console.log({ education });
+
+                  return {
+                    ...education,
+                    [col]: value,
+                  };
+                }
+
+                return education;
+              }
+            ),
+          };
+        });
     } else if (exist === -1) {
       setEmployeeDetails((prev: EmployeeI | any) => ({
         ...prev,
@@ -88,11 +115,25 @@ const Education = (props: Props) => {
           { [col]: value, level },
         ],
       }));
+
+      !isNew &&
+        setUpdatedDetails((prev: any) => ({
+          ...prev,
+          educationalBackground: prev?.educationalBackground
+            ? [...prev?.educationalBackground, { [col]: value, level }]
+            : [{ [col]: value, level }],
+        }));
     } else {
       setEmployeeDetails((prev: EmployeeI | any) => ({
         ...prev,
         educationalBackground: [{ [col]: value, level }],
       }));
+
+      !isNew &&
+        setUpdatedDetails((prev: any) => ({
+          ...prev,
+          educationalBackground: [{ [col]: value, level }],
+        }));
     }
   };
 

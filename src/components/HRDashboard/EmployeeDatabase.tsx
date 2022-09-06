@@ -12,7 +12,7 @@ import {
 import NewEmployeeProfile from './new.employee.profile';
 import {
   getEmployeeItems as _getEmployeeItems,
-  createUserAccess
+  createUserAccess,
 } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
@@ -96,7 +96,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
           </Tooltip>
         );
       },
-      sortComparator: (v1, v2) => v1.localeCompare(v2)
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
     },
     {
       field: 'employeeNo',
@@ -104,7 +104,9 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 80,
     },
     {
-      field: 'position', headerName: 'Position', width: 200,
+      field: 'position',
+      headerName: 'Position',
+      width: 200,
       renderCell: (cell) => {
         return (
           <Tooltip title={cell.value}>
@@ -112,12 +114,12 @@ const EmployeeDatabase: React.FC<Props> = () => {
           </Tooltip>
         );
       },
-      sortComparator: (v1, v2) => v1.localeCompare(v2)
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
     },
     {
       field: 'rank',
       headerName: 'Rank',
-      width: 120
+      width: 120,
     },
     {
       field: 'department',
@@ -132,8 +134,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
       },
       sortComparator: (v1, v2) => v1.code.localeCompare(v2.code),
       valueGetter: (params) => {
-        return params.row.department.name
-      }
+        return params.row.department.name;
+      },
     },
     {
       field: 'location',
@@ -143,18 +145,18 @@ const EmployeeDatabase: React.FC<Props> = () => {
         cell.row.location.map((o: any) => o.name).join(', '),
       sortable: false,
       valueGetter: (params) => {
-        return params.row.location.map((o: any) => o.name).join(', ')
-      }
+        return params.row.location.map((o: any) => o.name).join(', ');
+      },
     },
     {
       field: 'employmentType',
       headerName: 'Employment Type',
       width: 140,
-      renderCell: (cell: any) => cell.row.employmentType.name,
+      renderCell: (cell: any) => cell.row.employmentType?.name,
       sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
       valueGetter: (params) => {
-        return params.row.employmentType.name
-      }
+        return params.row.employmentType?.name;
+      },
     },
     {
       field: 'employmentStatus',
@@ -163,18 +165,19 @@ const EmployeeDatabase: React.FC<Props> = () => {
       renderCell: (cell: any) => cell.row.employmentStatus.name,
       sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
       valueGetter: (params) => {
-        return params.row.employmentStatus.name
-      }
+        return params.row.employmentStatus?.name;
+      },
     },
     {
       field: 'reportsTo',
       headerName: 'Team Leader',
       width: 140,
       renderCell: (cell) => cell.row.reportsTo.employeeName,
-      sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName),
+      sortComparator: (v1, v2) =>
+        v1.employeeName.localeCompare(v2.employeeName),
       valueGetter: (params) => {
-        return params.row.reportsTo.employeeName
-      }
+        return params.row.reportsTo.employeeName;
+      },
     },
     {
       field: 'withUserCredentials',
@@ -194,11 +197,15 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   const sendCredentials = async () => {
     if (sendAccessList.length > 0) {
-      Promise.all(sendAccessList.map(async (employeeNo: string) => {
-        await dispatch(createUserAccess({ body: { employeeNo }, access_token }))
-      }))
+      Promise.all(
+        sendAccessList.map(async (employeeNo: string) => {
+          await dispatch(
+            createUserAccess({ body: { employeeNo }, access_token })
+          );
+        })
+      );
     }
-  }
+  };
 
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
@@ -210,12 +217,20 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
       <Card sx={{ mt: 5, p: 2 }}>
         <div style={{ marginBottom: 16, textAlign: 'left' }}>
-          <Button onClick={sendCredentials} startIcon={<KeyTwoTone />} sx={{ mr: 1 }}>
+          <Button
+            onClick={sendCredentials}
+            startIcon={<KeyTwoTone />}
+            sx={{ mr: 1 }}
+          >
             Send Credentials
           </Button>
         </div>
         <div style={{ marginBottom: 16, textAlign: 'left' }}>
-          <Button onClick={sendCredentials} startIcon={<SupervisedUserCircleTwoTone />} sx={{ mr: 1 }}>
+          <Button
+            onClick={sendCredentials}
+            startIcon={<SupervisedUserCircleTwoTone />}
+            sx={{ mr: 1 }}
+          >
             Change Team Leader
           </Button>
         </div>

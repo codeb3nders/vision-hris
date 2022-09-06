@@ -27,6 +27,7 @@ const Personal = (props: Props) => {
     isOwner,
     enums,
     isView,
+    isNew,
     setUpdatedDetails,
   } = useContext(ProfileCtx);
   const [otherReligion, setOtherReligion] = useState<boolean>(false);
@@ -46,38 +47,48 @@ const Personal = (props: Props) => {
     if (sameAddress) {
       setEmployeeDetails((prev: any) => ({
         ...prev,
-        permanentRegion: prev.presentRegion,
-        permanentProvince: prev.presentProvince,
-        permanentMunicipality: prev.presentMunicipality,
-        permanentBarangay: prev.presentBarangay,
+        permanentAddress: {
+          addressLine: prev.presentAddress.addressLine,
+          region: prev.presentAddress.region,
+          province: prev.presentAddress.province,
+          municipality: prev.presentAddress.municipality,
+          barangay: prev.presentAddress.barangay,
+        },
       }));
 
-      isView &&
+      !isNew &&
         setUpdatedDetails((prev: any) => ({
           ...prev,
-          permanentRegion: prev.presentRegion,
-          permanentProvince: prev.presentProvince,
-          permanentMunicipality: prev.presentMunicipality,
-          permanentBarangay: prev.presentBarangay,
+          permanentAddress: {
+            addressLine: prev.presentAddress.addressLine,
+            region: prev.presentAddress.region,
+            province: prev.presentAddress.province,
+            municipality: prev.presentAddress.municipality,
+            barangay: prev.presentAddress.barangay,
+          },
         }));
     } else {
       setEmployeeDetails((prev: EmployeeI) => ({
         ...prev,
-        permanentResidenceAddress: '',
-        permanentRegion: '',
-        permanentProvince: '',
-        permanentMunicipality: '',
-        permanentBarangay: '',
+        permanentAddress: {
+          addressLine: '',
+          region: '',
+          province: '',
+          municipality: '',
+          barangay: '',
+        },
       }));
 
       isView &&
         setUpdatedDetails((prev: any) => ({
           ...prev,
-          permanentResidenceAddress: '',
-          permanentRegion: '',
-          permanentProvince: '',
-          permanentMunicipality: '',
-          permanentBarangay: '',
+          permanentAddress: {
+            addressLine: '',
+            region: '',
+            province: '',
+            municipality: '',
+            barangay: '',
+          },
         }));
     }
   }, [sameAddress]);
@@ -148,7 +159,7 @@ const Personal = (props: Props) => {
 
   const handleReligion = (e: any) => {
     if (e.target.value !== 'Others, please specify') {
-      isView &&
+      !isNew &&
         setUpdatedDetails((prev: any) => ({
           ...prev,
           religion: e.target.value,
@@ -189,7 +200,7 @@ const Personal = (props: Props) => {
                 ...employeeDetails,
                 firstName: e.target.value,
               });
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   firstName: e.target.value,
@@ -210,7 +221,7 @@ const Personal = (props: Props) => {
                 ...employeeDetails,
                 middleName: e.target.value,
               });
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   middleName: e.target.value,
@@ -271,7 +282,7 @@ const Personal = (props: Props) => {
                   birthDate: value,
                 }));
 
-                isView &&
+                !isNew &&
                   setUpdatedDetails((prev: any) => ({
                     ...prev,
                     suffix: value,
@@ -305,7 +316,7 @@ const Personal = (props: Props) => {
                   gender: e.target.value,
                 });
 
-                isView &&
+                !isNew &&
                   setUpdatedDetails((prev: any) => ({
                     ...prev,
                     gender: e.target.value,
@@ -336,7 +347,7 @@ const Personal = (props: Props) => {
                   civilStatus: e.target.value,
                 });
 
-                isView &&
+                !isNew &&
                   setUpdatedDetails((prev: any) => ({
                     ...prev,
                     civilStatus: e.target.value,
@@ -372,7 +383,7 @@ const Personal = (props: Props) => {
                     citizenship: e.target.value,
                   });
 
-                  isView &&
+                  !isNew &&
                     setUpdatedDetails((prev: any) => ({
                       ...prev,
                       citizenship: e.target.value,
@@ -429,7 +440,7 @@ const Personal = (props: Props) => {
                       religion: e.target.value,
                     });
 
-                    isView &&
+                    !isNew &&
                       setUpdatedDetails((prev: any) => ({
                         ...prev,
                         religion: e.target.value,
@@ -454,7 +465,7 @@ const Personal = (props: Props) => {
                   ...employeeDetails,
                   personalContactNumber: e.target.value,
                 });
-                isView &&
+                !isNew &&
                   setUpdatedDetails((prev: any) => ({
                     ...prev,
                     personalContactNumber: e.target.value,
@@ -476,7 +487,7 @@ const Personal = (props: Props) => {
                   ...employeeDetails,
                   personalEmail: e.target.value,
                 });
-                isView &&
+                !isNew &&
                   setUpdatedDetails((prev: any) => ({
                     ...prev,
                     personalEmail: e.target.value,

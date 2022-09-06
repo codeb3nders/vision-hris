@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Add, Delete, WorkspacePremiumTwoTone } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
@@ -13,7 +14,7 @@ import { EmployeeI } from 'slices/interfaces/employeeI';
 type Props = {};
 
 const Certificates = (props: Props) => {
-  const { setEmployeeDetails, isView, setUpdatedDetails } =
+  const { setEmployeeDetails, isNew, setUpdatedDetails } =
     useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [certificates, setCertificates] = useState<any[]>([]);
@@ -31,7 +32,8 @@ const Certificates = (props: Props) => {
       licensesCertifications: certificates,
     }));
 
-    isView &&
+    !isNew &&
+      certificates.length > 0 &&
       setUpdatedDetails((prev: any) => ({
         ...prev,
         licensesCertifications: certificates,

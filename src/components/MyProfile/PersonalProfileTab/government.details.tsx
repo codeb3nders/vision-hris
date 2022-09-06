@@ -19,7 +19,7 @@ const GovernmentDetails = (props: Props) => {
     employeeDetails,
     setEmployeeDetails,
     isOwner,
-    isView,
+    isNew,
     setUpdatedDetails,
   } = useContext(ProfileCtx);
   console.log({ employeeDetails });
@@ -79,7 +79,7 @@ const GovernmentDetails = (props: Props) => {
                 sss: e.target.value,
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   sss: e.target.value,
@@ -102,7 +102,7 @@ const GovernmentDetails = (props: Props) => {
                 philHealth: e.target.value,
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   philHealth: e.target.value,
@@ -126,7 +126,7 @@ const GovernmentDetails = (props: Props) => {
                 pagIbig: e.target.value,
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   pagIbig: e.target.value,
@@ -149,7 +149,7 @@ const GovernmentDetails = (props: Props) => {
                 tin: e.target.value,
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   tin: e.target.value,
@@ -174,7 +174,7 @@ const GovernmentDetails = (props: Props) => {
                 NumberOfDependents: e.target.value,
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   NumberOfDependents: e.target.value,
@@ -199,7 +199,7 @@ const GovernmentDetails = (props: Props) => {
                 taxExemption: e.target.value,
               });
 
-              isView &&
+              !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
                   taxExemption: e.target.value,

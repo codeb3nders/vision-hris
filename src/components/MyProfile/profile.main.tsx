@@ -24,6 +24,7 @@ import {
   getEmployeeCreatedItem,
   getEmployeeCreateError,
   getEmployeeCreateStatus,
+  updateEmployee,
 } from './../../slices/employees/createEmployeesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -72,23 +73,29 @@ export type ProfileModel = {
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => { },
+  setIndex: () => {},
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => { },
-  setDisplayPhoto: () => { },
+  setEmployeeDetails: () => {},
+  setDisplayPhoto: () => {},
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
   isOwner: false,
   enums: {},
-  setUpdatedDetails: () => { },
+  setUpdatedDetails: () => {},
   updatedDetails: null,
 });
 
-const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Props) => {
+const ProfileMain = ({
+  isNew,
+  isView,
+  employeeNo,
+  setOpen,
+  setViewDetails,
+}: Props) => {
   const dispatch = useDispatch();
 
   const [updatedDetails, setUpdatedDetails] = useState<any>(null);
@@ -128,17 +135,17 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
     action: '',
   });
   const { enumsData } = useSelector(enumsStore);
-  const newEmployeeStatus = useSelector(getEmployeeCreateStatus)
-  const newEmployeeData = useSelector(getEmployeeCreatedItem)
-  const newEmployeeError = useSelector(getEmployeeCreateError)
+  const newEmployeeStatus = useSelector(getEmployeeCreateStatus);
+  const newEmployeeData = useSelector(getEmployeeCreatedItem);
+  const newEmployeeError = useSelector(getEmployeeCreateError);
 
   // Employees
   const employeeData = useSelector(_getOneEmployeeDetails);
 
   useEffect(() => {
-    console.log({ newEmployeeData }, { newEmployeeStatus })
-    if (newEmployeeStatus !== "idle") {
-      if (newEmployeeData && newEmployeeStatus === "succeeded") {
+    console.log({ newEmployeeData }, { newEmployeeStatus });
+    if (newEmployeeStatus !== 'idle') {
+      if (newEmployeeData && newEmployeeStatus === 'succeeded') {
         // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
         setLoading({ status: false, action: '' });
         setRefresh(true);
@@ -166,7 +173,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
         });
       }
     }
-  }, [newEmployeeStatus])
+  }, [newEmployeeStatus]);
 
   useEffect(() => {
     if (access_token) {
@@ -174,7 +181,12 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
       if (!employeeNo) {
         employee_number = userData.employeeNo;
       }
-      dispatch(_getOneEmployeeAction({ access_token, params: { employeeNo: employee_number } }));
+      dispatch(
+        _getOneEmployeeAction({
+          access_token,
+          params: { employeeNo: employee_number },
+        })
+      );
     }
   }, [access_token, employeeNo]);
 
@@ -185,7 +197,10 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
       setEmployeeDetails(initialState);
     } else {
       let is_owner = false;
-      if (employeeData?.employeeNo === userData.employeeNo && userData.userGroup.toLowerCase() == "employee") {
+      if (
+        employeeData?.employeeNo === userData.employeeNo &&
+        userData.userGroup.toLowerCase() == 'employee'
+      ) {
         is_owner = true;
       }
       if (employeeData) {
@@ -193,7 +208,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
           return {
             ...initialState,
             ...employeeData,
-            department: employeeData.department.name,
+            department: employeeData.department?.name,
             employmentType: employeeData.employmentType.name,
             employmentStatus: employeeData.employmentStatus.name,
           };
@@ -207,7 +222,7 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
     if (!employeeDetails.employeeNo && isNew) {
       saveEmployee();
     } else {
-      updateEmployee();
+      handleUpdateEmployee();
     }
   };
 
@@ -322,18 +337,18 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-            ...displayPhotos,
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+              ...displayPhotos,
+            ]
           : [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+            ]
       )
     );
   };
@@ -342,23 +357,20 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
     setLoading({ status: true, action: 'Saving' });
     try {
       consoler(employeeDetails, 'blue', 'saveEmployee');
-      await dispatch(
-        createEmployee({ body: employeeDetails, access_token })
-      );
+      await dispatch(createEmployee({ body: employeeDetails, access_token }));
     } catch (error: any) {
       setLoading({ status: false, action: '' });
       console.log(error);
     }
   };
 
-  const updateEmployee = async () => {
+  const handleUpdateEmployee = async () => {
     try {
-      const response = await updateEmployeeEndpoint(
-        employeeDetails,
-        employeeDetails.employeeNo
-      );
-    } catch (error) {
-      console.log(error);
+      consoler(updatedDetails, 'orange', 'updateEmployee');
+      await dispatch(updateEmployee({ body: updatedDetails, access_token }));
+    } catch (error: any) {
+      setLoading({ status: false, action: '' });
+      consoler(updatedDetails, 'red', 'Update Employee Error');
     }
   };
 
@@ -414,10 +426,11 @@ const ProfileMain = ({ isNew, isView, employeeNo, setOpen, setViewDetails }: Pro
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
-                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                : ''
-                }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
+                isNew
+                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                  : ''
+              }`}
             >
               <Suspense fallback={<div>Loading...</div>}>
                 <ProfileTabContent className='self-stretch' />

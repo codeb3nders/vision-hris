@@ -27,7 +27,10 @@ export const updateEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
   }
 };
 
-export const getEmployeesEndpoint = async (config?: any, employeeNo?: string) => {
+export const getEmployeesEndpoint = async (
+  config?: any,
+  employeeNo?: string
+) => {
   try {
     const url = employeeNo ? `${URL_EMPLOYEES}${employeeNo}` : URL_EMPLOYEES;
     return await axios.get(url, { ...config });

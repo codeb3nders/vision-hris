@@ -1,12 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Add, AttachMoneyTwoTone, Delete } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
+import { ProfileCtx } from '../profile.main';
 
 type Props = {};
 
 const AllowanceDetails = (props: Props) => {
+  const { setUpdatedDetails, isNew } = useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [allowances, setAllowances] = useState<any[]>([]);
 
@@ -16,6 +19,15 @@ const AllowanceDetails = (props: Props) => {
       return filtered;
     });
   };
+
+  useEffect(() => {
+    !isNew &&
+      allowances.length > 0 &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        allowanceDetails: allowances,
+      }));
+  }, [allowances]);
 
   return (
     <CollapseWrapper
@@ -30,7 +42,7 @@ const AllowanceDetails = (props: Props) => {
       />
       <div style={{ width: '100%' }}>
         <DataGrid
-          getRowId={(data: any) => data?.id}
+          getRowId={(data: any) => data?.allowanceType}
           autoHeight
           disableSelectionOnClick
           rows={allowances}
@@ -60,10 +72,7 @@ const AllowanceDialog = ({ open, setOpen, setAllowances }) => {
 
   const handleSave = () => {
     setOpen(false);
-    setAllowances((prev: any) => [
-      ...prev,
-      { ...allowance, id: prev.length + 1 },
-    ]);
+    setAllowances((prev: any) => [...prev, { ...allowance }]);
   };
 
   return (

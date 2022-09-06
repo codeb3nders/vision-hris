@@ -51,28 +51,45 @@ const HRMainDashboard = (props: Props) => {
   }, [access_token]);
 
   useEffect(() => {
-    console.log({ getEmployeeItems })
-    let active = 0, contractEnd = 0, probationaryEnd = 0, countPerDept: any[] = [];
-    const activeEmployees = getEmployeeItems.filter((x: EmployeeI) => x.isActive)
+    console.log({ getEmployeeItems });
+    let active = 0,
+      contractEnd = 0,
+      probationaryEnd = 0,
+      countPerDept: any[] = [];
+    const activeEmployees = getEmployeeItems.filter(
+      (x: EmployeeI) => x.isActive
+    );
     activeEmployees.map((o: any) => {
       const key = o.department.code;
       active++;
-      if (o.employmentType.code.toLocaleLowerCase() == "project") {
-        if (moment(o.contractEndDate).endOf("day").diff(moment().endOf("day"), "month") < 1) {
+      if (o.employmentType?.code.toLocaleLowerCase() == 'project') {
+        if (
+          moment(o.contractEndDate)
+            .endOf('day')
+            .diff(moment().endOf('day'), 'month') < 1
+        ) {
           contractEnd++;
         }
-      } else if (o.employmentType.code.toLocaleLowerCase() == "probationary") {
-        if (moment(o.endOfProbationary).endOf("day").diff(moment().endOf("day"), "month") < 1) {
+      } else if (o.employmentType?.code.toLocaleLowerCase() == 'probationary') {
+        if (
+          moment(o.endOfProbationary)
+            .endOf('day')
+            .diff(moment().endOf('day'), 'month') < 1
+        ) {
           probationaryEnd++;
         }
       }
-      const bdayToday = moment(o.birthDate).endOf("day").isSame(moment().endOf("day"));
+      const bdayToday = moment(o.birthDate)
+        .endOf('day')
+        .isSame(moment().endOf('day'));
       const dateHired = moment(o.dateHired);
-      const annivToday = dateHired.date() === moment().date() && dateHired.month() === moment().month()
+      const annivToday =
+        dateHired.date() === moment().date() &&
+        dateHired.month() === moment().month();
       if (bdayToday || annivToday) {
         celebrations.push({
           ...o,
-          isBirthday: bdayToday
+          isBirthday: bdayToday,
         });
         setCelebrations(celebrations);
       }
@@ -82,8 +99,8 @@ const HRMainDashboard = (props: Props) => {
         countPerDept.push({
           x: key,
           y: 1,
-          name: o.department.name
-        })
+          name: o.department.name,
+        });
       } else {
         countPerDept[index].y++;
       }
@@ -93,8 +110,7 @@ const HRMainDashboard = (props: Props) => {
     setCountContract(contractEnd);
     setCountProbation(probationaryEnd);
     setHeadCount(countPerDept);
-
-  }, [getEmployeeItems])
+  }, [getEmployeeItems]);
 
   return (
     <main className='grid grid-cols-12 items-start gap-4 mt-4 pb-20 '>
@@ -106,7 +122,10 @@ const HRMainDashboard = (props: Props) => {
         />
 
         <RowWrapper className='justify-items-stretch'>
-          <Employees count={activeEmployeesCount} className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
+          <Employees
+            count={activeEmployeesCount}
+            className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3'
+          />
           <Workers className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3 h-[100%]' />
           <OnLeave className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
           <OTHours className='desktop:col-span-3 phone:col-span-6 laptop:col-span-3' />
@@ -116,7 +135,10 @@ const HRMainDashboard = (props: Props) => {
           <AttendancePreview className='laptop:col-span-4 phone:col-span-12 tablet:col-span-6' />
           <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4'>
             <Sickleave />
-            <EndContract countContract={countContract} countProbation={countProbation} />
+            <EndContract
+              countContract={countContract}
+              countProbation={countProbation}
+            />
           </ColumnWrapper>
 
           <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4 tablet:col-span-12 grid grid-cols-2 space-y-0 gap-4'>
@@ -127,7 +149,10 @@ const HRMainDashboard = (props: Props) => {
 
         <RowWrapper>
           <EmployeeSatisfaction className='col-span-4 phone:col-span-12 tablet:col-span-6 laptop:col-span-4' />
-          <HeadCount data={headCount} className='col-span-4 phone:col-span-12 tablet:col-span-6 laptop:col-span-4' />
+          <HeadCount
+            data={headCount}
+            className='col-span-4 phone:col-span-12 tablet:col-span-6 laptop:col-span-4'
+          />
           <ColumnWrapper className='desktop:col-span-4 laptop:col-span-4 tablet:col-span-12 grid grid-cols-2 gap-4 space-y-0'>
             <Requests className='tablet:col-span-1 laptop:col-span-2  ' />
             <AttendanceStatus className='tablet:col-span-1 laptop:col-span-2  ' />
