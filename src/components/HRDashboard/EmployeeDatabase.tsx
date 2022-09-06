@@ -86,7 +86,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
               onClick={() =>
                 setViewDetails({
                   employeeNo: cell.row.employeeNo,
-                  // myTeam: getMyTeam(cell.row.reportsTo, cell.row.employeeNo),
                   status: true,
                 })
               }
@@ -179,21 +178,17 @@ const EmployeeDatabase: React.FC<Props> = () => {
         return params.row.reportsTo.employeeName;
       },
     },
-    {
-      field: 'withUserCredentials',
-      headerName: 'Send Access?',
-      renderCell: (params) => (
-        <Checkbox
-          value={params.row.employeeNo}
-          onChange={(e: any) => handleSendAccess(e.target.value)}
-        />
-      ),
-    },
+    // {
+    //   field: 'withUserCredentials',
+    //   headerName: 'Send Access?',
+    //   renderCell: (params) => (
+    //     <Checkbox
+    //       value={params.row.employeeNo}
+    //       onChange={(e: any) => handleSendAccess(e.target.value)}
+    //     />
+    //   ),
+    // },
   ];
-
-  const handleSendAccess = (employeeNo) => {
-    setSendAccessList([...sendAccessList, employeeNo]);
-  };
 
   const sendCredentials = async () => {
     if (sendAccessList.length > 0) {
@@ -253,7 +248,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
           autoHeight
           density='compact'
           disableSelectionOnClick
-          rows={employees || []}
+          onSelectionModelChange={(ids: any[]) => {
+            setSendAccessList(ids)
+          }}
+          rows={employees}
           columns={columns(setViewDetails)}
           pageSize={30}
           rowsPerPageOptions={[30]}
