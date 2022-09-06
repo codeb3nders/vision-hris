@@ -8,6 +8,7 @@ import { LoginI } from "slices/interfaces/employeeI";
 const initialState: any = {
     access_token: "",
     userData: null,
+    userGroup: "",
     status: 'idle',
     error: null,
     isLoggedIn: false
@@ -32,8 +33,11 @@ export const authSlice = createSlice({
         setIsLoggedIn: (state, action) => {
             return { ...state, isLoggedIn: action.payload };
         },
-        clearData: () => {
-            return initialState;
+        setUserGroup: (state, action) => {
+            return { ...state, userGroup: action.payload };
+        },
+        clearAuthData: () => {
+            storage.removeItem('persist:root')
         }
     },
     extraReducers: (builder) => {
@@ -46,19 +50,17 @@ export const authSlice = createSlice({
                 if (action.payload.access_token) {
                     state.access_token = action.payload.access_token;
                     state.userData = action.payload.userInfo;
+                    state.userGroup = action.payload.userInfo.userGroup;
                 }
             })
             .addCase(authAction.rejected, (state, action) => {
                 state.status = "failed";
                 state.error = action.error.message;
             })
-            .addCase(PURGE, (state) => {
-                storage.removeItem('root')
-            });
     },
 });
 
 export const authStore = (state: any) => state.userAccess;
-export const { setIsLoggedIn, clearData } = authSlice.actions;
+export const { setIsLoggedIn, clearAuthData, setUserGroup } = authSlice.actions;
 
 export default authSlice.reducer;

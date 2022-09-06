@@ -5,7 +5,8 @@ import { AppCtx } from '../../App';
 import { Link, useHistory } from 'react-router-dom';
 import { Path } from 'constants/Path';
 import { useDispatch } from 'react-redux';
-import { clearData } from 'slices/userAccess/authSlice';
+import { clearAuthData, setUserGroup } from 'slices/userAccess/authSlice';
+import { clearEmployeesData, clearEnumsData } from 'slices';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -14,12 +15,57 @@ function classNames(...classes) {
 const ProfileDropdown = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { userData } = useContext(AppCtx);
+  const { userData, userGroup, isHRLogin } = useContext(AppCtx);
 
   const handleLogout = () => {
-    dispatch(clearData());
-    history.push('/');
+    dispatch(clearAuthData());
+    window.location.href = Path.Dashboard;
   };
+
+  const getEmployeeLink = (active) => <Link
+    to={Path.Employee.Profile}
+    className={classNames(
+      active ? 'bg-gray-100' : '',
+      'block px-4 py-2 text-sm text-gray-700'
+    )}
+  >
+    My Profile
+  </Link>
+
+  const switchToEmployee = async () => {
+    await dispatch(setUserGroup("EMPLOYEE"))
+    history.push(Path.Dashboard);
+  }
+
+  const switchToHR = async () => {
+    await dispatch(setUserGroup("HR ADMIN"))
+    history.push(Path.Dashboard);
+  }
+
+  const getSwitchLink = (active) => {
+    if (isHRLogin && userGroup == "EMPLOYEE") {
+      return <Link
+        component={"button"}
+        onClick={switchToHR}
+        className={classNames(
+          active ? 'bg-gray-100' : '',
+          'block px-4 py-2 text-sm text-gray-700'
+        )}
+      >
+        Switch to HR ADMIN Portal
+      </Link>
+    }
+    return <Link
+      component={"button"}
+      onClick={switchToEmployee}
+      className={classNames(
+        active ? 'bg-gray-100' : '',
+        'block px-4 py-2 text-sm text-gray-700'
+      )}
+    >
+      Switch to EMPLOYEE Portal
+    </Link>
+  }
 
   return (
     <Menu as='div' className='ml-3 relative z-10'>
@@ -54,19 +100,16 @@ const ProfileDropdown = () => {
           <div className='w-full p-2 bg-slate-100 text-xs text-center'>
             {userData.firstName} {userData.lastName}
           </div>
-          <Menu.Item>
-            {({ active }) => (
-              <Link
-                to={Path.Employee.Profile}
-                className={classNames(
-                  active ? 'bg-gray-100' : '',
-                  'block px-4 py-2 text-sm text-gray-700'
-                )}
-              >
-                My Profile
-              </Link>
-            )}
-          </Menu.Item>
+          {isHRLogin &&
+            <Menu.Item>
+              {({ active }) => getSwitchLink(active)}
+            </Menu.Item>
+          }
+          {userGroup.toLocaleLowerCase() === "employee" &&
+            <Menu.Item>
+              {({ active }) => getEmployeeLink(active)}
+            </Menu.Item>
+          }
           <Menu.Item>
             {({ active }) => (
               <a

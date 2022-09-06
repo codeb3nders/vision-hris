@@ -26,7 +26,7 @@ import {
   enumsStore
 } from 'slices';
 import { useDispatch, useSelector } from 'react-redux';
-import { authAction, setIsLoggedIn, clearData } from 'slices/userAccess/authSlice';
+import { authAction, setIsLoggedIn, clearAuthData } from 'slices/userAccess/authSlice';
 
 function Copyright(props) {
   return (
@@ -96,7 +96,7 @@ export default function SignInSide() {
 
   useEffect(() => {
     if (error.status) {
-      dispatch(clearData());
+      dispatch(clearAuthData());
     }
   }, [error])
 

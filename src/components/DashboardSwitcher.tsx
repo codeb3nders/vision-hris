@@ -1,18 +1,37 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { AppCtx } from '../App';
 import AdminMainDashboard from './Dashboards/Admin/admin.main.dashboard';
 import EmployeeDashboard from './Dashboards/Employee/main.dashboard';
-// import DashboardImg from '../assets/images/dashboard.png';
 import HRMainDashboard from './Dashboards/HR/hr.main.dashboard';
 import ManagerMainDashboard from './Dashboards/Manager/manager.main.dashboard';
 import { MainCtx } from './Main';
+import {
+  getAllEmployeesAction as _getEmployeesAction,
+  getEmployeeStatus as _getEmployeeStatus,
+  getEmployeeItems as _getEmployeeItems,
+  filteredEmployeeStore,
+  getFilteredEmployeesAction,
+} from 'slices';
+import { EmployeeI } from 'slices/interfaces/employeeI';
+import moment from 'moment';
 
 const Dashboard = () => {
-  const { isLoggedIn, userData } = useContext(AppCtx);
-  const { setIsTable } = useContext(MainCtx);
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { userGroup, access_token } = useContext(AppCtx);
+  const { setIsTable } = useContext(MainCtx);
+  const [isHR, setIsHR] = useState<boolean>(false);
+  const [celebrations, setCelebrations] = useState<any[]>([]);
+  const [activeEmployeesCount, setActiveEmployeesCount] = useState<number>(0);
+  const [countContract, setCountContract] = useState<number>(0);
+  const [countProbation, setCountProbation] = useState<number>(0);
+  const [headCount, setHeadCount] = useState<any[]>([]);
+
+  const getEmployeeStatus = useSelector(_getEmployeeStatus);
+  const getEmployeeItems = useSelector(_getEmployeeItems);
 
   useEffect(() => {
     if (location.pathname === '/people/employees') {
@@ -22,14 +41,128 @@ const Dashboard = () => {
     }
   }, [location]);
 
+  const { filteredData, status } = useSelector(filteredEmployeeStore);
+
+  useEffect(() => {
+    if (userGroup.toLocaleUpperCase() === "HR ADMIN") {
+      setIsHR(true);
+    }
+  }, [userGroup])
+
+  useEffect(() => {
+    if (access_token) {
+      if (userGroup.toUpperCase() === "HR ADMIN") {
+        dispatch(_getEmployeesAction({ access_token }));
+      } else {
+        dispatch(getFilteredEmployeesAction({ access_token }));
+      }
+    }
+  }, [access_token]);
+
+  useEffect(() => {
+    if (!isHR) {
+
+      const activeEmployees = filteredData.filter(
+        (x: EmployeeI) => x.isActive
+      );
+      getCelebrations(activeEmployees);
+    }
+  }, [filteredData]);
+
+  useEffect(() => {
+    let active = 0,
+      contractEnd = 0,
+      probationaryEnd = 0,
+      countPerDept: any[] = [];
+    const activeEmployees = getEmployeeItems.filter(
+      (x: EmployeeI) => x.isActive
+    );
+    activeEmployees.map((o: any) => {
+      const key = o.department.code;
+      active++;
+      if (o.employmentType?.code.toLocaleLowerCase() == 'project') {
+        if (
+          moment(o.contractEndDate)
+            .endOf('day')
+            .diff(moment().endOf('day'), 'month') < 1
+        ) {
+          contractEnd++;
+        }
+      } else if (o.employmentType?.code.toLocaleLowerCase() == 'probationary') {
+        if (
+          moment(o.endOfProbationary)
+            .endOf('day')
+            .diff(moment().endOf('day'), 'month') < 1
+        ) {
+          probationaryEnd++;
+        }
+      }
+      const bdayToday = moment(o.birthDate)
+        .endOf('day')
+        .isSame(moment().endOf('day'));
+      const dateHired = moment(o.dateHired);
+      const annivToday =
+        dateHired.date() === moment().date() &&
+        dateHired.month() === moment().month();
+      if (bdayToday || annivToday) {
+        celebrations.push({
+          ...o,
+          isBirthday: bdayToday,
+        });
+        setCelebrations(celebrations);
+      }
+
+      const index = countPerDept.findIndex((c: any) => c.x === key);
+      if (index < 0) {
+        countPerDept.push({
+          x: key,
+          y: 1,
+          name: o.department.name,
+        });
+      } else {
+        countPerDept[index].y++;
+      }
+    });
+
+    setActiveEmployeesCount(active);
+    setCountContract(contractEnd);
+    setCountProbation(probationaryEnd);
+    setHeadCount(countPerDept);
+  }, [getEmployeeItems]);
+
+  const getCelebrations = async (activeEmployees: any[]) => {
+    activeEmployees.map((o: any) => {
+      const bdayToday = moment(o.birthDate)
+        .endOf('day')
+        .isSame(moment().endOf('day'));
+      const dateHired = moment(o.dateHired);
+      const annivToday =
+        dateHired.date() === moment().date() &&
+        dateHired.month() === moment().month();
+      if (bdayToday || annivToday) {
+        celebrations.push({
+          ...o,
+          isBirthday: bdayToday,
+        });
+        setCelebrations(celebrations);
+      }
+    });
+  }
+
   const switcher = () => {
-    switch (userData.userGroup) {
+    switch (userGroup.toUpperCase()) {
       case 'EMPLOYEE':
-        return <EmployeeDashboard />;
+        const valuesE: any = {
+          celebrations
+        }
+        return <EmployeeDashboard {...valuesE} />;
       case 'APPROVER':
         return <ManagerMainDashboard />;
       case 'HR ADMIN':
-        return <HRMainDashboard />;
+        const values: any = {
+          activeEmployeesCount, countContract, countProbation, headCount, celebrations
+        }
+        return <HRMainDashboard {...values} />;
       case 'SYSTEM ADMIN':
         return <AdminMainDashboard />;
 

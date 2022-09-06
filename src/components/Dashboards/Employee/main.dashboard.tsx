@@ -10,7 +10,12 @@ import CelebrationsToday from '../Common/celebrations.today';
 import Attendance from './attendance';
 import WorkStatus from './work.status';
 
-const MainDashboard = () => {
+type Props = {
+  celebrations: []
+}
+
+const MainDashboard = (props: Props) => {
+  const { celebrations } = props;
   return (
     <main className='grid grid-cols-12 items-start gap-4 mt-4 pb-20 '>
       <Welcome
@@ -31,7 +36,7 @@ const MainDashboard = () => {
       </div>
 
       <div className='col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4 grid space-y-4'>
-        <CelebrationsToday className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
+        <CelebrationsToday celebrations={celebrations} className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
         <OffsToday className='col-span-4 tablet:col-span-6 laptop:col-span-5 desktop:col-span-4 phone:col-span-12 self-stretch' />
       </div>
     </main>
