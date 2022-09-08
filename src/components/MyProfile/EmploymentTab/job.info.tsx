@@ -3,7 +3,12 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import moment, { Moment } from 'moment';
-import { EditTwoTone, EngineeringTwoTone, PersonTwoTone, SaveTwoTone } from '@mui/icons-material';
+import {
+  EditTwoTone,
+  EngineeringTwoTone,
+  PersonTwoTone,
+  SaveTwoTone,
+} from '@mui/icons-material';
 import { ProfileCtx } from '../profile.main';
 import {
   Button,
@@ -70,28 +75,31 @@ const JobInfo = (props: Props) => {
     isView,
     setUpdatedDetails,
   };
-  console.log({ editJob }, { jobUpdate })
+  console.log({ editJob }, { jobUpdate });
 
   useEffect(() => {
-    let data: any[] = [{
-      index: 0,
-      effectiveDate: employeeDetails.jobLastUpdate,
-      location: employeeDetails.location,
-      department: employeeDetails.department,
-      rank: employeeDetails.rank,
-      position: employeeDetails.position,
-      reportsTo: employeeDetails.reportsTo,
-    }];
+    let data: any[] = [
+      {
+        index: 0,
+        effectiveDate: employeeDetails.jobLastUpdate,
+        location: employeeDetails.location,
+        department: employeeDetails.department,
+        rank: employeeDetails.rank,
+        position: employeeDetails.position,
+        reportsTo: employeeDetails.reportsTo,
+      },
+    ];
     if (employeeDetails.employment_history.length > 0) {
-      employeeDetails.employment_history.filter((x: any) => x.type?.toLowerCase() == "job")
+      employeeDetails.employment_history
+        .filter((x: any) => x.type?.toLowerCase() == 'job')
         .map((o: any, i: number = 1) => {
           data.push({
             ...o,
-            index: i
-          })
-        })
+            index: i,
+          });
+        });
     }
-    data.sort((a: any, b: any) => a.index - b.index)
+    data.sort((a: any, b: any) => a.index - b.index);
     setInfos(data);
   }, [employeeDetails]);
 
@@ -155,224 +163,244 @@ const JobInfo = (props: Props) => {
     {
       field: 'remarks',
       headerName: 'Remarks',
-      flex: 1
+      flex: 1,
     },
     {
       field: 'action',
       headerName: 'Actions',
       flex: 1,
       renderCell: (params: any) => {
-        if (params.row.index === (infos.length - 1)) {
-          return <Button variant="outlined" size='small' onClick={() => setEditJob(params.row)} startIcon={<EditTwoTone />}>
-            Edit
-          </Button>
+        if (params.row.index === infos.length - 1) {
+          return (
+            <Button
+              variant='outlined'
+              size='small'
+              onClick={() => setEditJob(params.row)}
+              startIcon={<EditTwoTone />}
+            >
+              Edit
+            </Button>
+          );
         }
-        return "";
+        return '';
       },
     },
   ];
 
-  const getDialog = () => <Dialog open={editJob !== null} onClose={() => setEditJob(null)}>
-    <div className='p-6 flex flex-col gap-4 w-[350px]'>
-      <p className='text-md font-bold '>
-        <PersonTwoTone /> Job Update
-      </p>
-      <FormControl variant='standard' fullWidth size='small' required>
-        <InputLabel id='loc'>Locations</InputLabel>
-        <Select
-          id='jobinfo-location-update'
-          multiple
-          labelId='loc'
-          value={editJob?.location.map((o: any) => o.code)}
-          onChange={(e: any, option: any) => {
-            setJobUpdate((prev: any) => ({
-              ...prev,
-              location: e.target.value,
-            }));
-            setEditJob((prev: any) => ({
-              ...prev,
-              location: [...prev.location, option.props['data-obj']]
-            }))
-          }}
-        >
-          {locations.map((location) => {
-            return (
-              <MenuItem
-                id={location._id}
-                key={location._id}
-                value={location.code}
-                data-obj={location}
-              >
-                {location.name}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
-      <FormControl variant='standard' fullWidth size='small' required>
-        <InputLabel id='dept'>Department</InputLabel>
-        <Select
-          id='jobinfo-department-update'
-          labelId='dept'
-          value={editJob?.department.code}
-          onChange={(e: any, option: any) => {
-            setJobUpdate((prev: any) => ({
-              ...prev,
-              department: e.target.value,
-            }));
-            setEditJob((prev: any) => ({
-              ...prev,
-              department: option.props['data-obj']
-            }))
-          }}
-        >
-          {departments.map((department: any, i: number) => {
-            return (
-              <MenuItem key={i} value={department.code} data-obj={department}>{department.name}</MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
-      <FormControl variant='standard' fullWidth size='small' required>
-        <InputLabel id='rankLbl'>Employment Rank</InputLabel>
-        <Select
-          labelId='rankLbl'
-          id="rank-update"
-          value={editJob?.rank}
-          onChange={(e: any, option: any) => {
-            setJobUpdate((prev: any) => ({
-              ...prev,
-              rank: e.target.value,
-            }));
-            setEditJob((prev: any) => ({
-              ...prev,
-              // rank: option.props['data-obj']
-              rank: e.target.value
-            }))
-          }}
-        >
-          {ranks.map((rank: any, i: number) => {
-            return <MenuItem key={i} value={rank.code} data-obj={rank}>{rank.name}</MenuItem>;
-          })}
-        </Select>
-      </FormControl>
-      <FormControl variant='standard' fullWidth size='small' required>
-        <InputLabel id='positionLbl'>Position</InputLabel>
-        <Select
-          id='jobinfo-position-update'
-          labelId='positionLbl'
-          value={editJob?.position}
-          onChange={(e: any, option: any) => {
-            setJobUpdate((prev: any) => ({
-              ...prev,
-              position: e.target.value,
-            }));
-            setEditJob((prev: any) => ({
-              ...prev,
-              // position: option.props['data-obj']
-              position: e.target.value,
-            }))
-          }}
-        >
-          {positions.map((position) => {
-            return (
-              <MenuItem id={position._id} value={position.code} data-obj={position}>
-                {position.name}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
-      <FormControl variant='standard' fullWidth size='small' required>
-        <InputLabel id='tl'>Team Leader</InputLabel>
-        <Select
-          id='jobinfo-teamleader-update'
-          labelId='tl'
-          value={editJob?.reportsTo.employeeNo}
-          onChange={(e: any, option: any) => {
-            setJobUpdate((prev: any) => ({
-              ...prev,
-              reportsTo: e.target.value,
-            }));
-            setEditJob((prev: any) => ({
-              ...prev,
-              reportsTo: option.props['data-obj']
-            }))
-          }}
-        >
-          {getEmployeeItems
-            ?.filter(
-              (x: any) =>
-                x.department.code === (jobUpdate?.department || editJob.department.code)
-            )
-            .map((employee) => {
+  const getDialog = () => (
+    <Dialog open={editJob !== null} onClose={() => setEditJob(null)}>
+      <div className='p-6 flex flex-col gap-4 w-[350px]'>
+        <p className='text-md font-bold '>
+          <PersonTwoTone /> Job Update
+        </p>
+        <FormControl variant='standard' fullWidth size='small' required>
+          <InputLabel id='loc'>Locations</InputLabel>
+          <Select
+            id='jobinfo-location-update'
+            multiple
+            labelId='loc'
+            value={editJob?.location.map((o: any) => o.code)}
+            onChange={(e: any, option: any) => {
+              setJobUpdate((prev: any) => ({
+                ...prev,
+                location: e.target.value,
+              }));
+              setEditJob((prev: any) => ({
+                ...prev,
+                location: [...prev.location, option.props['data-obj']],
+              }));
+            }}
+          >
+            {locations.map((location) => {
               return (
                 <MenuItem
-                  id={employee.employeeNo}
-                  key={employee.employeeNo}
-                  value={employee.employeeNo}
-                  data-obj={employee}
+                  id={location._id}
+                  key={location._id}
+                  value={location.code}
+                  data-obj={location}
                 >
-                  {employee.firstName} {employee.lastName}
+                  {location.name}
                 </MenuItem>
               );
             })}
-        </Select>
-      </FormControl>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <DatePicker
-          label='Effective Date'
-          onChange={(value) => {
-            setJobUpdate({
-              ...jobUpdate,
-              effectiveDate: value
-            });
-            setEditJob((prev: any) => ({
-              ...prev,
-              effectiveDate: value
-            }))
-          }}
-          value={editJob?.effectiveDate || new Date()}
-          renderInput={(params) => (
-            <TextField {...params} fullWidth required variant='standard' />
-          )}
+          </Select>
+        </FormControl>
+        <FormControl variant='standard' fullWidth size='small' required>
+          <InputLabel id='dept'>Department</InputLabel>
+          <Select
+            id='jobinfo-department-update'
+            labelId='dept'
+            value={editJob?.department.code}
+            onChange={(e: any, option: any) => {
+              setJobUpdate((prev: any) => ({
+                ...prev,
+                department: e.target.value,
+              }));
+              setEditJob((prev: any) => ({
+                ...prev,
+                department: option.props['data-obj'],
+              }));
+            }}
+          >
+            {departments.map((department: any, i: number) => {
+              return (
+                <MenuItem key={i} value={department.code} data-obj={department}>
+                  {department.name}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <FormControl variant='standard' fullWidth size='small' required>
+          <InputLabel id='rankLbl'>Employment Rank</InputLabel>
+          <Select
+            labelId='rankLbl'
+            id='rank-update'
+            value={editJob?.rank}
+            onChange={(e: any, option: any) => {
+              setJobUpdate((prev: any) => ({
+                ...prev,
+                rank: e.target.value,
+              }));
+              setEditJob((prev: any) => ({
+                ...prev,
+                // rank: option.props['data-obj']
+                rank: e.target.value,
+              }));
+            }}
+          >
+            {ranks.map((rank: any, i: number) => {
+              return (
+                <MenuItem key={i} value={rank.code} data-obj={rank}>
+                  {rank.name}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <FormControl variant='standard' fullWidth size='small' required>
+          <InputLabel id='positionLbl'>Position</InputLabel>
+          <Select
+            id='jobinfo-position-update'
+            labelId='positionLbl'
+            value={editJob?.position}
+            onChange={(e: any, option: any) => {
+              setJobUpdate((prev: any) => ({
+                ...prev,
+                position: e.target.value,
+              }));
+              setEditJob((prev: any) => ({
+                ...prev,
+                // position: option.props['data-obj']
+                position: e.target.value,
+              }));
+            }}
+          >
+            {positions.map((position) => {
+              return (
+                <MenuItem
+                  id={position._id}
+                  value={position.code}
+                  data-obj={position}
+                >
+                  {position.name}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <FormControl variant='standard' fullWidth size='small' required>
+          <InputLabel id='tl'>Team Leader</InputLabel>
+          <Select
+            id='jobinfo-teamleader-update'
+            labelId='tl'
+            value={editJob?.reportsTo.employeeNo}
+            onChange={(e: any, option: any) => {
+              setJobUpdate((prev: any) => ({
+                ...prev,
+                reportsTo: e.target.value,
+              }));
+              setEditJob((prev: any) => ({
+                ...prev,
+                reportsTo: option.props['data-obj'],
+              }));
+            }}
+          >
+            {getEmployeeItems
+              ?.filter(
+                (x: any) =>
+                  x.department.code ===
+                  (jobUpdate?.department || editJob.department.code)
+              )
+              .map((employee) => {
+                return (
+                  <MenuItem
+                    id={employee.employeeNo}
+                    key={employee.employeeNo}
+                    value={employee.employeeNo}
+                    data-obj={employee}
+                  >
+                    {employee.firstName} {employee.lastName}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </FormControl>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <DatePicker
+            label='Effective Date'
+            onChange={(value) => {
+              setJobUpdate({
+                ...jobUpdate,
+                effectiveDate: value,
+              });
+              setEditJob((prev: any) => ({
+                ...prev,
+                effectiveDate: value,
+              }));
+            }}
+            value={editJob?.effectiveDate || new Date()}
+            renderInput={(params) => (
+              <TextField {...params} fullWidth required variant='standard' />
+            )}
+          />
+        </LocalizationProvider>
+        <TextField
+          fullWidth
+          variant='standard'
+          size='small'
+          label='Remarks'
+          multiline
+          onChange={(e: any) =>
+            setJobUpdate({ ...jobUpdate, remarks: e.target.value })
+          }
         />
-      </LocalizationProvider>
-      <TextField
-        fullWidth
-        variant='standard'
-        size='small'
-        label='Remarks'
-        multiline
-        onChange={(e: any) =>
-          setJobUpdate({ ...jobUpdate, remarks: e.target.value })
-        }
-      />
 
-      <div className='grid grid-cols-5'>
-        <button
-          // disabled={
-          //   !jobUpdate.category ||
-          //   !newAsset.description ||
-          //   !newAsset.serial_no ||
-          //   !newAsset.date_assigned ||
-          //   !newAsset.date_returned
-          // }
-          // onClick={handleSaveNewAsset}
-          className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
-        >
-          <SaveTwoTone fontSize='small' className='mr-2' />
-          Save Changes
-        </button>
-        <button
-          className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-          onClick={() => setEditJob(null)}
-        >
-          Cancel
-        </button>
+        <div className='grid grid-cols-5'>
+          <button
+            // disabled={
+            //   !jobUpdate.category ||
+            //   !newAsset.description ||
+            //   !newAsset.serial_no ||
+            //   !newAsset.date_assigned ||
+            //   !newAsset.date_returned
+            // }
+            // onClick={handleSaveNewAsset}
+            className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+          >
+            <SaveTwoTone fontSize='small' className='mr-2' />
+            Save Changes
+          </button>
+          <button
+            className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+            onClick={() => setEditJob(null)}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
-    </div>
-  </Dialog>
+    </Dialog>
+  );
 
   return (
     <CollapseWrapper
@@ -426,7 +454,7 @@ const JobInfoFields = ({
     setRanks(enums.ranks);
     setEmploymentTypes(enums.employment_types);
   }, [enums]);
-  console.log({ employeeDetails })
+  console.log({ employeeDetails });
   useEffect(() => {
     if (
       !employeeDetails.employeeNo &&
@@ -458,10 +486,7 @@ const JobInfoFields = ({
           x.code.toLowerCase() == employeeDetails.employmentType.toLowerCase()
       );
 
-      if (
-        employment_type &&
-        employment_type.code.toLowerCase() == 'project'
-      ) {
+      if (employment_type && employment_type.code.toLowerCase() == 'project') {
         setIsProjectEmployee(true);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
@@ -618,8 +643,7 @@ const JobInfoFields = ({
             >
               {getEmployeeItems
                 ?.filter(
-                  (x: any) =>
-                    x.department.code === employeeDetails.department
+                  (x: any) => x.department?.code === employeeDetails.department
                 )
                 .map((employee) => {
                   return (
@@ -796,7 +820,7 @@ const JobInfoFields = ({
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             required
-            id="companyContactNumber"
+            id='companyContactNumber'
             variant='standard'
             label='Company Contact Number'
             fullWidth
@@ -816,7 +840,7 @@ const JobInfoFields = ({
             variant='standard'
             label='Company Email Address'
             fullWidth
-            id="companyEmail"
+            id='companyEmail'
             disabled
             value={employeeDetails.companyEmail}
             helperText={
