@@ -37,6 +37,10 @@ const PayrollDetails = lazy(
   () => import('./PersonalProfileTab/payroll.details')
 );
 
+const SpecialTrainingsAttended = lazy(
+  () => import('./LearningAndDevelopment/special.trainings.attended')
+);
+
 type Props = {
   className?: string;
 };
@@ -47,10 +51,11 @@ const ProfileTabContent = ({ className }: Props) => {
   return (
     <CustomCard
       id='tab-content'
-      className={`${isNew || isView
-        ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
-        : ''
-        } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
+      className={`${
+        isNew || isView
+          ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
+          : ''
+      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
     >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
@@ -102,7 +107,12 @@ const ProfileTabContent = ({ className }: Props) => {
       </TabPanel>
 
       <TabPanel value='4' className='p-0 grid' id='LearningAndDevelopment'>
-        Learning And Development
+        <Suspense fallback={<div>Loading...</div>}>
+          <SpecialTrainingsAttended type='Attended' />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SpecialTrainingsAttended type='Taught' />
+        </Suspense>
       </TabPanel>
 
       <TabPanel value='5' className='p-0 grid' id='201File'>

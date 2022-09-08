@@ -133,14 +133,14 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 100,
       renderCell: (cell) => {
         return (
-          <Tooltip title={cell.row?.department.name}>
-            <span>{cell.row?.department.code}</span>
+          <Tooltip title={cell.row?.department?.name}>
+            <span>{cell.row?.department?.code}</span>
           </Tooltip>
         );
       },
       sortComparator: (v1, v2) => v1.code.localeCompare(v2.code),
       valueGetter: (params) => {
-        return params.row.department.name;
+        return params.row.department?.name;
       },
     },
     {

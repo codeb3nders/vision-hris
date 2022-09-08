@@ -44,14 +44,14 @@ const Dashboard = () => {
   const { filteredData, status } = useSelector(filteredEmployeeStore);
 
   useEffect(() => {
-    if (userGroup.toLocaleUpperCase() === "HR ADMIN") {
+    if (userGroup.toLocaleUpperCase() === 'HR ADMIN') {
       setIsHR(true);
     }
-  }, [userGroup])
+  }, [userGroup]);
 
   useEffect(() => {
     if (access_token) {
-      if (userGroup.toUpperCase() === "HR ADMIN") {
+      if (userGroup.toUpperCase() === 'HR ADMIN') {
         dispatch(_getEmployeesAction({ access_token }));
       } else {
         dispatch(getFilteredEmployeesAction({ access_token }));
@@ -77,7 +77,7 @@ const Dashboard = () => {
       (x: EmployeeI) => x.isActive
     );
     activeEmployees.map((o: any) => {
-      const key = o.department.code;
+      const key = o.department?.code;
       active++;
       if (o.employmentType?.code.toLocaleLowerCase() == 'project') {
         if (
@@ -101,7 +101,7 @@ const Dashboard = () => {
         countPerDept.push({
           x: key,
           y: 1,
-          name: o.department.name,
+          name: o.department?.name,
         });
       } else {
         countPerDept[index].y++;
@@ -139,15 +139,19 @@ const Dashboard = () => {
     switch (userGroup.toUpperCase()) {
       case 'EMPLOYEE':
         const valuesE: any = {
-          celebrations
-        }
+          celebrations,
+        };
         return <EmployeeDashboard {...valuesE} />;
       case 'APPROVER':
         return <ManagerMainDashboard />;
       case 'HR ADMIN':
         const values: any = {
-          activeEmployeesCount, countContract, countProbation, headCount, celebrations
-        }
+          activeEmployeesCount,
+          countContract,
+          countProbation,
+          headCount,
+          celebrations,
+        };
         return <HRMainDashboard {...values} />;
       case 'SYSTEM ADMIN':
         return <AdminMainDashboard />;
