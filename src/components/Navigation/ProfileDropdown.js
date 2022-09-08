@@ -22,50 +22,56 @@ const ProfileDropdown = () => {
     window.location.href = Path.Dashboard;
   };
 
-  const getEmployeeLink = (active) => <Link
-    to={Path.Employee.Profile}
-    className={classNames(
-      active ? 'bg-gray-100' : '',
-      'block px-4 py-2 text-sm text-gray-700'
-    )}
-  >
-    My Profile
-  </Link>
-
-  const switchToEmployee = async () => {
-    await dispatch(setUserGroup("EMPLOYEE"))
-    history.push(Path.Dashboard);
-  }
-
-  const switchToHR = async () => {
-    await dispatch(setUserGroup("HR ADMIN"))
-    history.push(Path.Dashboard);
-  }
-
-  const getSwitchLink = (active) => {
-    if (isHRLogin && userGroup == "EMPLOYEE") {
-      return <Link
-        component={"button"}
-        onClick={switchToHR}
-        className={classNames(
-          active ? 'bg-gray-100' : '',
-          'block px-4 py-2 text-sm text-gray-700'
-        )}
-      >
-        Switch to HR ADMIN Portal
-      </Link>
-    }
-    return <Link
-      component={"button"}
-      onClick={switchToEmployee}
+  const getEmployeeLink = (active) => (
+    <Link
+      to={Path.Employee.Profile}
       className={classNames(
         active ? 'bg-gray-100' : '',
         'block px-4 py-2 text-sm text-gray-700'
       )}
     >
-      Switch to EMPLOYEE Portal
+      My Profile
     </Link>
-  }
+  );
+
+  const switchToEmployee = async () => {
+    await dispatch(setUserGroup('EMPLOYEE'));
+    history.push(Path.Dashboard);
+  };
+
+  const switchToHR = async () => {
+    await dispatch(setUserGroup('HR ADMIN'));
+    history.push(Path.Dashboard);
+  };
+
+  const getSwitchLink = (active) => {
+    if (isHRLogin && userGroup == 'EMPLOYEE') {
+      return (
+        <Link
+          component={'button'}
+          onClick={switchToHR}
+          className={classNames(
+            active ? 'bg-gray-100' : '',
+            'block px-4 py-2 text-sm text-gray-700'
+          )}
+        >
+          Switch to HR ADMIN Portal
+        </Link>
+      );
+    }
+    return (
+      <Link
+        component={'button'}
+        onClick={switchToEmployee}
+        className={classNames(
+          active ? 'bg-gray-100' : '',
+          'block px-4 py-2 text-sm text-gray-700'
+        )}
+      >
+        Switch to EMPLOYEE Portal
+      </Link>
+    );
+  };
 
   return (
     <Menu as='div' className='ml-3 relative z-10'>
@@ -78,12 +84,8 @@ const ProfileDropdown = () => {
             alt=''
           /> */}
           <div className='w-8 h-8 rounded-full flex justify-center items-center font-medium hover:text-red-600'>
-            {userData?.firstName
-              ? userData?.firstName?.split('')[0]
-              : 'V'}
-            {userData?.lastName
-              ? userData?.lastName?.split('')[0]
-              : 'S'}
+            {userData?.firstName ? userData?.firstName?.split('')[0] : 'V'}
+            {userData?.lastName ? userData?.lastName?.split('')[0] : 'S'}
           </div>
         </Menu.Button>
       </div>
@@ -100,16 +102,12 @@ const ProfileDropdown = () => {
           <div className='w-full p-2 bg-slate-100 text-xs text-center'>
             {userData.firstName} {userData.lastName}
           </div>
-          {isHRLogin &&
-            <Menu.Item>
-              {({ active }) => getSwitchLink(active)}
-            </Menu.Item>
-          }
-          {userGroup.toLocaleLowerCase() === "employee" &&
-            <Menu.Item>
-              {({ active }) => getEmployeeLink(active)}
-            </Menu.Item>
-          }
+          {isHRLogin && (
+            <Menu.Item>{({ active }) => getSwitchLink(active)}</Menu.Item>
+          )}
+          {userGroup?.toLocaleLowerCase() === 'employee' && (
+            <Menu.Item>{({ active }) => getEmployeeLink(active)}</Menu.Item>
+          )}
           <Menu.Item>
             {({ active }) => (
               <a

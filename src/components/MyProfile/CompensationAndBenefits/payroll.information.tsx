@@ -34,7 +34,7 @@ const PayrollInformation = (props: Props) => {
             size='small'
             label='Basic Pay Amount'
             fullWidth
-            value={employeeDetails.basicPay}
+            value={employeeDetails.basicPay || null}
             onChange={(e: any) => {
               setEmployeeDetails((prev: EmployeeI) => ({
                 ...prev,
@@ -152,7 +152,7 @@ const PayrollInformation = (props: Props) => {
             variant='standard'
             size='small'
             label='Deduct For SSS Contribution'
-            value={employeeDetails.deductionSSS}
+            value={employeeDetails.deductionSSS || null}
             fullWidth
             onChange={(e: any) => {
               setEmployeeDetails((prev: EmployeeI) => ({
@@ -203,7 +203,7 @@ const PayrollInformation = (props: Props) => {
             variant='standard'
             size='small'
             label='Deduct Pag-IBIG/HMDF Contribution'
-            value={employeeDetails.deductHMDF}
+            value={employeeDetails.deductHMDF || null}
             fullWidth
             onChange={(e: any) => {
               setEmployeeDetails((prev: EmployeeI) => ({
@@ -259,7 +259,7 @@ const PayrollInformation = (props: Props) => {
             size='small'
             label='Deduct Withholding Tax'
             fullWidth
-            value={employeeDetails.deductWithholdingTax}
+            value={employeeDetails.deductWithholdingTax || null}
             onChange={(e: any) => {
               setEmployeeDetails((prev: EmployeeI) => ({
                 ...prev,

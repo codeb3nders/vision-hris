@@ -34,7 +34,13 @@ type Props = {
 };
 
 const HRMainDashboard = (props: Props) => {
-  const { activeEmployeesCount, countContract, countProbation, headCount, celebrations } = props;
+  const {
+    activeEmployeesCount,
+    countContract,
+    countProbation,
+    headCount,
+    celebrations,
+  } = props;
 
   return (
     <main className='grid grid-cols-12 items-start gap-4 mt-4 pb-20 '>
