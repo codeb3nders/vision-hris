@@ -78,7 +78,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 200,
       renderCell: (cell) => {
         return (
-          <Tooltip title={cell.value}>
+          <Tooltip title={cell.value || 'Employee Name'}>
             <Link
               underline='none'
               variant='button'
@@ -108,7 +108,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 200,
       renderCell: (cell) => {
         return (
-          <Tooltip title={cell.value}>
+          <Tooltip title={cell.value || 'Position'}>
             <span>{cell.value}</span>
           </Tooltip>
         );
@@ -126,7 +126,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 100,
       renderCell: (cell) => {
         return (
-          <Tooltip title={cell.row?.department?.name}>
+          <Tooltip title={cell.row?.department?.name || 'Department'}>
             <span>{cell.row?.department?.code}</span>
           </Tooltip>
         );
@@ -249,7 +249,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
           density='compact'
           disableSelectionOnClick
           onSelectionModelChange={(ids: any[]) => {
-            setSendAccessList(ids)
+            setSendAccessList(ids);
           }}
           rows={employees}
           columns={columns(setViewDetails)}

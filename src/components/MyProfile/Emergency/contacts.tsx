@@ -20,6 +20,7 @@ import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { RELATION } from 'constants/Values';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import AddButton from 'CustomComponents/AddButton';
 
 type Props = {};
 
@@ -132,7 +133,7 @@ const Contacts = (props: Props) => {
         <Dialog open={open} onClose={() => setOpen(false)}>
           <div className='p-6 flex flex-col gap-4 w-[350px]'>
             <p className='text-md font-bold '>
-              <AddIcCallTwoTone fontSize='small' /> New Contact
+              <AddIcCallTwoTone fontSize='small' /> New Emergency Contact
             </p>
             <TextField
               id='emergency-name'
@@ -230,14 +231,7 @@ const Contacts = (props: Props) => {
           />
         </div>
 
-        <div className='flex flex-row items-center justify-end mb-4 '>
-          <button
-            onClick={() => setOpen(true)}
-            className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
-          >
-            <AddIcCallTwoTone className='mr-2' fontSize='small' /> Add Contact
-          </button>
-        </div>
+        <AddButton text='Add Emergency Contact' setOpen={setOpen} />
       </div>
     </CollapseWrapper>
   );
