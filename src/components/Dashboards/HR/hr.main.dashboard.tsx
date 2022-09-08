@@ -60,7 +60,7 @@ const HRMainDashboard = (props: Props) => {
       (x: EmployeeI) => x.isActive
     );
     activeEmployees.map((o: any) => {
-      const key = o.department.code;
+      const key = o.department?.code;
       active++;
       if (o.employmentType?.code.toLocaleLowerCase() == 'project') {
         if (
@@ -99,7 +99,7 @@ const HRMainDashboard = (props: Props) => {
         countPerDept.push({
           x: key,
           y: 1,
-          name: o.department.name,
+          name: o.department?.name,
         });
       } else {
         countPerDept[index].y++;

@@ -23,7 +23,8 @@ const Dashboard = () => {
   }, [location]);
 
   const switcher = () => {
-    switch (userData.userGroup) {
+    console.log({ user: userData.userGroup });
+    switch (userData.userGroup.toUpperCase()) {
       case 'EMPLOYEE':
         return <EmployeeDashboard />;
       case 'APPROVER':

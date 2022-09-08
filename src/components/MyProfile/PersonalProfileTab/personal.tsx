@@ -68,6 +68,8 @@ const Personal = (props: Props) => {
           },
         }));
     } else {
+      console.log('ELSE');
+
       setEmployeeDetails((prev: EmployeeI) => ({
         ...prev,
         permanentAddress: {
@@ -79,7 +81,8 @@ const Personal = (props: Props) => {
         },
       }));
 
-      isView &&
+      !isNew &&
+        employeeDetails.presentAddress.addressLine &&
         setUpdatedDetails((prev: any) => ({
           ...prev,
           permanentAddress: {
