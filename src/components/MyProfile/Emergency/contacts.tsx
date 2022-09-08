@@ -107,6 +107,12 @@ const Contacts = (props: Props) => {
         ...prev,
         emergencyContact: rows,
       }));
+
+    rows.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.emergencyContact;
+        return prev;
+      });
   }, [rows]);
 
   const handleDelete = (params: any) => {
@@ -155,7 +161,11 @@ const Contacts = (props: Props) => {
                 }
               >
                 {RELATION.map((relation: any, i: number) => {
-                  return <MenuItem key={i} value={relation}>{relation}</MenuItem>;
+                  return (
+                    <MenuItem key={i} value={relation}>
+                      {relation}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </FormControl>

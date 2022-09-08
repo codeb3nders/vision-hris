@@ -38,6 +38,12 @@ const EmploymentRecord = (props: Props) => {
         ...prev,
         employmentRecords: records,
       }));
+
+    records.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.employmentRecords;
+        return prev;
+      });
   }, [records]);
 
   return (

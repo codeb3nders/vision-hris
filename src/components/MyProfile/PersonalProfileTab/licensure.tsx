@@ -39,6 +39,12 @@ const Licensure = (props: Props) => {
         ...prev,
         govtProfExamsPassed: exams,
       }));
+
+    exams.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.govtProfExamsPassed;
+        return prev;
+      });
   }, [exams]);
 
   return (

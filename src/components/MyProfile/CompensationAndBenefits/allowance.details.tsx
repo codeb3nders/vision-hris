@@ -27,6 +27,12 @@ const AllowanceDetails = (props: Props) => {
         ...prev,
         allowanceDetails: allowances,
       }));
+
+    allowances.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.allowanceDetails;
+        return prev;
+      });
   }, [allowances]);
 
   return (

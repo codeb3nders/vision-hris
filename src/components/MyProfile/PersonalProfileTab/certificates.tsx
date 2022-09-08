@@ -39,6 +39,12 @@ const Certificates = (props: Props) => {
         ...prev,
         licensesCertifications: certificates,
       }));
+
+    certificates.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.licensesCertifications;
+        return prev;
+      });
   }, [certificates]);
 
   return (
