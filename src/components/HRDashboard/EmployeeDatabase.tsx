@@ -12,6 +12,8 @@ import {
 import NewEmployeeProfile from './new.employee.profile';
 import {
   getEmployeeItems as _getEmployeeItems,
+  getAllEmployeesAction as _getEmployeesAction,
+  getEmployeeStatus as _getEmployeeStatus,
   createUserAccess,
 } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
@@ -34,6 +36,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   // Employees
   const getEmployeeItems = useSelector(_getEmployeeItems);
+  const getEmployeeStatus = useSelector(_getEmployeeStatus);
 
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
@@ -59,8 +62,12 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [location]);
 
   useEffect(() => {
-    console.log({ getEmployeeItems });
+    if (access_token) {
+      dispatch(_getEmployeesAction({ access_token }));
+    }
+  }, [access_token, refresh]);
 
+  useEffect(() => {
     setEmployees(
       getEmployeeItems.map((r: EmployeeDBI) => {
         const mi = r.middleName ? r.middleName.charAt(0) : '';

@@ -26,8 +26,6 @@ const Navbar = () => {
   const [navigation, setNavigation] = useState(EmployeeNavigation);
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  console.log({ userGroup });
-
   useEffect(() => {
     switch (userGroup.toUpperCase()) {
       case 'EMPLOYEE':

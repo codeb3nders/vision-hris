@@ -6,7 +6,7 @@ export const initialState: EmployeeI = {
   lastName: '',
   middleName: '',
   suffix: '',
-  citizenship: '',
+  citizenship: 'Philippines',
   position: '',
   rank: '',
   department: '',
@@ -38,7 +38,7 @@ export const initialState: EmployeeI = {
   },
   civilStatus: '',
   religion: '',
-  NumberOfDependents: 0,
+  NumberOfDependents: undefined,
   sss: '',
   philHealth: '',
   pagIbig: '',
@@ -76,5 +76,10 @@ export const initialState: EmployeeI = {
   employmentRecords: [],
   licensesCertifications: [],
   allowanceDetails: [],
-  yearsInService: 0
+  yearsInService: 0,
+  employment_history: [],
+  employmentLastUpdate: undefined,
+  jobLastUpdate: undefined,
+  lastModifiedDate: undefined,
+  dateCreated: undefined
 };

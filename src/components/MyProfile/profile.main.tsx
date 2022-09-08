@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { TabContext } from '@mui/lab';
 import { Alert, CircularProgress, Dialog, Snackbar } from '@mui/material';
-import { updateEmployeeEndpoint } from 'apis/employees';
 import { AppCtx, consoler } from 'App';
 import React, {
   createContext,
@@ -24,14 +23,17 @@ import {
   getEmployeeCreatedItem,
   getEmployeeCreateError,
   getEmployeeCreateStatus,
+  resetCreate,
+  resetUpdate,
   updateEmployee,
-} from './../../slices/employees/createEmployeesSlice';
+} from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   enumsStore,
   getOneEmployeeAction as _getOneEmployeeAction,
   getEmployeeStatusOne as _getOneEmployeeStatus,
   getEmployeeDetails as _getOneEmployeeDetails,
+  getEmployeeUpdateStatus as _getEmployeeUpdateStatus,
 } from 'slices';
 import useRequiredChecker from 'hooks/useRequiredChecker';
 
@@ -141,39 +143,30 @@ const ProfileMain = ({
 
   // Employees
   const employeeData = useSelector(_getOneEmployeeDetails);
+  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus)
 
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
     if (newEmployeeStatus !== 'idle') {
       if (newEmployeeData && newEmployeeStatus === 'succeeded') {
         // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
-        setLoading({ status: false, action: '' });
-        setRefresh(true);
-        setOpenNotif({
-          message: `${newEmployeeData.firstName} ${newEmployeeData.lastName} has been successfully added.`,
-          status: true,
-          severity: 'success',
-        });
-
-        setTimeout(() => {
-          setRefresh(false);
-          setOpenNotif({
-            message: '',
-            status: false,
-            severity: 'success',
-          });
-          setOpen && setOpen(false);
-        }, 2000);
+        success();
       } else {
-        setLoading({ status: false, action: '' });
-        setOpenNotif({
-          message: newEmployeeError,
-          status: true,
-          severity: 'error',
-        });
+        failed();
       }
     }
   }, [newEmployeeStatus]);
+
+  useEffect(() => {
+    console.log({ employeeUpdatedStatus });
+    if (employeeUpdatedStatus !== 'idle') {
+      if (employeeUpdatedStatus === 'succeeded') {
+        success();
+      } else {
+        failed();
+      }
+    }
+  }, [employeeUpdatedStatus]);
 
   useEffect(() => {
     if (access_token) {
@@ -208,15 +201,55 @@ const ProfileMain = ({
           return {
             ...initialState,
             ...employeeData,
-            department: employeeData.department?.name,
-            employmentType: employeeData.employmentType.name,
-            employmentStatus: employeeData.employmentStatus.name,
+            // department: employeeData.department?.name,
+            // employmentType: employeeData.employmentType.name,
+            // employmentStatus: employeeData.employmentStatus.name,
           };
         });
       }
       setIsOwner(is_owner);
     }
   }, [employeeData, isLoggedIn, isNew, isView]);
+
+  const success = () => {
+    setLoading({ status: false, action: '' });
+    setRefresh(true);
+    const type = isNew ? "created" : "updated";
+    if (isNew) {
+      setOpenNotif({
+        message: `${newEmployeeData.firstName} ${newEmployeeData.lastName} has been successfully ${type}.`,
+        status: true,
+        severity: 'success',
+      });
+      dispatch(resetCreate());
+    } else {
+      setOpenNotif({
+        message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully ${type}.`,
+        status: true,
+        severity: 'success',
+      });
+      dispatch(resetUpdate());
+    }
+
+    setTimeout(() => {
+      setRefresh(false);
+      setOpenNotif({
+        message: '',
+        status: false,
+        severity: 'success',
+      });
+      setOpen && setOpen(false);
+    }, 2000);
+  }
+
+  const failed = () => {
+    setLoading({ status: false, action: '' });
+    setOpenNotif({
+      message: newEmployeeError,
+      status: true,
+      severity: 'error',
+    });
+  }
 
   const handleEmployee = async () => {
     if (!employeeDetails.employeeNo && isNew) {
@@ -367,7 +400,11 @@ const ProfileMain = ({
   const handleUpdateEmployee = async () => {
     try {
       consoler(updatedDetails, 'orange', 'updateEmployee');
-      await dispatch(updateEmployee({ body: updatedDetails, access_token }));
+      await dispatch(updateEmployee(
+        {
+          params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo },
+          access_token
+        }));
     } catch (error: any) {
       setLoading({ status: false, action: '' });
       consoler(updatedDetails, 'red', 'Update Employee Error');
@@ -427,8 +464,8 @@ const ProfileMain = ({
 
             <article
               className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
-                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                  : ''
+                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                : ''
                 }`}
             >
               <Suspense fallback={<div>Loading...</div>}>

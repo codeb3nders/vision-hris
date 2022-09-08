@@ -27,7 +27,7 @@ const GovernmentDetails = (props: Props) => {
     console.log({ dep: employeeDetails.NumberOfDependents });
     if (employeeDetails.civilStatus.toLocaleLowerCase() == 'married') {
       const marriedTax =
-        employeeDetails.NumberOfDependents > 0
+        employeeDetails.NumberOfDependents !== undefined && employeeDetails.NumberOfDependents > 0
           ? `MARRIED-${employeeDetails.NumberOfDependents}`
           : 'MARRIED';
       setEmployeeDetails((prev: any) => ({
@@ -36,7 +36,7 @@ const GovernmentDetails = (props: Props) => {
       }));
     } else {
       const singleTax =
-        employeeDetails.NumberOfDependents > 0
+        employeeDetails.NumberOfDependents !== undefined && employeeDetails.NumberOfDependents > 0
           ? `SINGLE-${employeeDetails.NumberOfDependents}`
           : 'SINGLE';
       setEmployeeDetails((prev: any) => ({

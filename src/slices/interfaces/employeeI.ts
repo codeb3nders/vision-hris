@@ -83,8 +83,8 @@ export interface EmployeeI {
   userGroup: string;
   reportsTo: any;
   dateHired: Date | Moment;
-  employmentStatus: string;
-  employmentType: string;
+  employmentStatus: any;
+  employmentType: any;
   endOfProbationary: Date | Moment | null;
   contractEndDate: Date | Moment | null;
   gender: string;
@@ -97,7 +97,7 @@ export interface EmployeeI {
   payrollBankAccount: any | null;
   civilStatus: string;
   religion: string;
-  NumberOfDependents: number;
+  NumberOfDependents: undefined | number;
   sss: string;
   philHealth: string;
   pagIbig: string;
@@ -124,6 +124,11 @@ export interface EmployeeI {
   licensesCertifications: LicensesCertificationsI[] | null;
   allowanceDetails: AllowanceDetailsI[] | null;
   yearsInService: number;
+  employment_history: any[];
+  employmentLastUpdate: Date | Moment | undefined;
+  jobLastUpdate: Date | Moment | undefined;
+  lastModifiedDate: Date | Moment | undefined;
+  dateCreated: Date | Moment | undefined;
 }
 
 export interface LoginI {
