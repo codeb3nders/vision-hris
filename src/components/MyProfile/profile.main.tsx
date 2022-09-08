@@ -75,21 +75,60 @@ export type ProfileModel = {
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => { },
+  setIndex: () => {},
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => { },
-  setDisplayPhoto: () => { },
+  setEmployeeDetails: () => {},
+  setDisplayPhoto: () => {},
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
   isOwner: false,
   enums: {},
-  setUpdatedDetails: () => { },
+  setUpdatedDetails: () => {},
   updatedDetails: null,
 });
+
+export type EnumI = {
+  _id: string;
+  type: string;
+  code: string;
+  name: string;
+};
+
+export type EnumsI = {
+  positions: EnumI[];
+  departments: EnumI[];
+  ranks: EnumI[];
+  civil_status: EnumI[];
+  citizenship: EnumI[];
+  religions: EnumI[];
+  employment_status: EnumI[];
+  locations: EnumI[];
+  assets: EnumI[];
+  file201: EnumI[];
+  allowance_types: EnumI[];
+  disciplinary_actions: EnumI[];
+  employment_types: EnumI[];
+};
+
+const enumsInitialState = {
+  positions: [],
+  departments: [],
+  ranks: [],
+  civil_status: [],
+  citizenship: [],
+  religions: [],
+  employment_status: [],
+  locations: [],
+  assets: [],
+  file201: [],
+  allowance_types: [],
+  disciplinary_actions: [],
+  employment_types: [],
+};
 
 const ProfileMain = ({
   isNew,
@@ -114,7 +153,7 @@ const ProfileMain = ({
     photo: '',
   });
   const [isOwner, setIsOwner] = useState<boolean>(false);
-  const [enums, setEnums] = useState<any>({});
+  const [enums, setEnums] = useState<EnumsI>(enumsInitialState);
   const { validated } = useRequiredChecker({ employeeDetails });
 
   const memoizedEmployeeDetails = useMemo(
@@ -143,7 +182,7 @@ const ProfileMain = ({
 
   // Employees
   const employeeData = useSelector(_getOneEmployeeDetails);
-  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus)
+  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus);
 
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
@@ -156,6 +195,17 @@ const ProfileMain = ({
       }
     }
   }, [newEmployeeStatus]);
+
+  useEffect(() => {
+    console.log({ employeeUpdatedStatus });
+    if (employeeUpdatedStatus !== 'idle') {
+      if (employeeUpdatedStatus === 'succeeded') {
+        success();
+      } else {
+        failed();
+      }
+    }
+  }, [employeeUpdatedStatus]);
 
   useEffect(() => {
     console.log({ employeeUpdatedStatus });
@@ -214,7 +264,7 @@ const ProfileMain = ({
   const success = () => {
     setLoading({ status: false, action: '' });
     setRefresh(true);
-    const type = isNew ? "created" : "updated";
+    const type = isNew ? 'created' : 'updated';
     if (isNew) {
       setOpenNotif({
         message: `${newEmployeeData.firstName} ${newEmployeeData.lastName} has been successfully ${type}.`,
@@ -240,7 +290,7 @@ const ProfileMain = ({
       });
       setOpen && setOpen(false);
     }, 2000);
-  }
+  };
 
   const failed = () => {
     setLoading({ status: false, action: '' });
@@ -249,7 +299,7 @@ const ProfileMain = ({
       status: true,
       severity: 'error',
     });
-  }
+  };
 
   const handleEmployee = async () => {
     if (!employeeDetails.employeeNo && isNew) {
@@ -370,18 +420,18 @@ const ProfileMain = ({
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-            ...displayPhotos,
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+              ...displayPhotos,
+            ]
           : [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+            ]
       )
     );
   };
@@ -400,11 +450,12 @@ const ProfileMain = ({
   const handleUpdateEmployee = async () => {
     try {
       consoler(updatedDetails, 'orange', 'updateEmployee');
-      await dispatch(updateEmployee(
-        {
+      await dispatch(
+        updateEmployee({
           params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo },
-          access_token
-        }));
+          access_token,
+        })
+      );
     } catch (error: any) {
       setLoading({ status: false, action: '' });
       consoler(updatedDetails, 'red', 'Update Employee Error');
@@ -463,10 +514,11 @@ const ProfileMain = ({
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
-                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                : ''
-                }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
+                isNew
+                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                  : ''
+              }`}
             >
               <Suspense fallback={<div>Loading...</div>}>
                 <ProfileTabContent className='self-stretch' />

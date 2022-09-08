@@ -6,6 +6,7 @@ import {
 } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import AddButton from 'CustomComponents/AddButton';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { lazy, useContext, useEffect, useState, memo } from 'react';
 import { ProfileCtx } from '../profile.main';
@@ -79,15 +80,7 @@ const FamilyBackground = (props: Props) => {
           />
         </div>
       </GridWrapper>
-      <div className='flex justify-end'>
-        <button
-          onClick={() => setOpen(true)}
-          className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
-        >
-          <PersonAddTwoTone fontSize='small' className='mr-1' /> Add Family
-          Member
-        </button>
-      </div>
+      <AddButton text='Add Family Member' setOpen={setOpen} />
     </CollapseWrapper>
   );
 };
