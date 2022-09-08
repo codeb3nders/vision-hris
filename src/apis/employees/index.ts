@@ -11,13 +11,17 @@ export const createEmployeeEndpoint = async (body: EmployeeI, config = {}) => {
   });
 };
 
-export const updateEmployeeEndpoint = async (body: EmployeeI, config?: any) => {
+export const updateEmployeeEndpoint = async (data: EmployeeI, config?: any) => {
   const access_token = localStorage.getItem('access_token');
   const internalConfig = {
     headers: { Authorization: `Bearer ${access_token}` },
   };
+  const employeeNo = data.employeeNo;
+  let tmp_body: any = data;
+  delete tmp_body.employeeNo;
+  const body = tmp_body;
   try {
-    return await axios.patch(`${URL_EMPLOYEES}${body.employeeNo}`, body, {
+    return await axios.patch(`${URL_EMPLOYEES}${employeeNo}`, body, {
       ...internalConfig,
       ...config,
     });

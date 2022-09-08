@@ -68,14 +68,16 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
           label='Personal'
           {...a11yProps('1')}
           id='personal-tab'
+          key='personal-tab'
           itemID='personal-tab'
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '2' ? '!text-v-red' : ''
+          className={`employment-tab p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '2' ? '!text-v-red' : ''
             }`}
           label='Employment'
           {...a11yProps('2')}
           id='employment-tab'
+          key='employment-tab'
           itemID='employment-tab'
         />
         <Tab
@@ -84,6 +86,7 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
           label='Compensation and Benefits'
           {...a11yProps('3')}
           id='compensation-tab'
+          key='compensation-tab'
           itemID='compensation-tab'
         />
       </TabList>

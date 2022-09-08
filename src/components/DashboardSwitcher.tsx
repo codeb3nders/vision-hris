@@ -61,7 +61,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!isHR) {
-      const activeEmployees = filteredData.filter((x: EmployeeI) => x.isActive);
+      const activeEmployees = filteredData.filter(
+        (x: EmployeeI) => x.isActive
+      );
       getCelebrations(activeEmployees);
     }
   }, [filteredData]);
@@ -94,21 +96,6 @@ const Dashboard = () => {
           probationaryEnd++;
         }
       }
-      const bdayToday = moment(o.birthDate)
-        .endOf('day')
-        .isSame(moment().endOf('day'));
-      const dateHired = moment(o.dateHired);
-      const annivToday =
-        dateHired.date() === moment().date() &&
-        dateHired.month() === moment().month();
-      if (bdayToday || annivToday) {
-        celebrations.push({
-          ...o,
-          isBirthday: bdayToday,
-        });
-        setCelebrations(celebrations);
-      }
-
       const index = countPerDept.findIndex((c: any) => c.x === key);
       if (index < 0) {
         countPerDept.push({
@@ -120,7 +107,7 @@ const Dashboard = () => {
         countPerDept[index].y++;
       }
     });
-
+    getCelebrations(activeEmployees)
     setActiveEmployeesCount(active);
     setCountContract(contractEnd);
     setCountProbation(probationaryEnd);
@@ -128,6 +115,7 @@ const Dashboard = () => {
   }, [getEmployeeItems]);
 
   const getCelebrations = async (activeEmployees: any[]) => {
+    let celeb: any[] = [];
     activeEmployees.map((o: any) => {
       const bdayToday = moment(o.birthDate)
         .endOf('day')
@@ -137,14 +125,15 @@ const Dashboard = () => {
         dateHired.date() === moment().date() &&
         dateHired.month() === moment().month();
       if (bdayToday || annivToday) {
-        celebrations.push({
+        celeb.push({
           ...o,
-          isBirthday: bdayToday,
+          isBirthdayToday: bdayToday,
+          isAnnivToday: annivToday,
         });
-        setCelebrations(celebrations);
       }
     });
-  };
+    setCelebrations(celeb);
+  }
 
   const switcher = () => {
     switch (userGroup.toUpperCase()) {

@@ -103,7 +103,7 @@ const ProfileDetails = (props: Props) => {
             )}
           </p>
 
-          <p className='text-sm '>{employeeDetails.department}</p>
+          <p className='text-sm '>{employeeDetails.department.name}</p>
 
           <p className='text-gray-500 mt-2'>
             Started on {moment(employeeDetails.dateHired).format('LL')} (

@@ -20,42 +20,66 @@ const Address = ({ data, isPermanent }: Props) => {
   const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails } =
     useContext(ProfileCtx);
 
-  const [selectedRegion, setSelectedRegion] = useState<any>('');
-  const [selectedProvince, setSelectedProvince] = useState<any>('');
-  const [selectedMunicipality, setSelectedMunicipality] = useState<any>('');
-  const [selectedBarangay, setSelectedBarangay] = useState<any>('');
+  const [regionList, setRegionList] = useState<any[]>([]);
+  const [provinceList, setProvinceList] = useState<any>({});
+  const [municipalityList, setMunicipalityList] = useState<any>({});
+  const [barangayList, setBarangayList] = useState<any>({});
   const [addressLine, setAddressLine] = useState<string>('');
+  const [regionFile, setRegionFile] = useState<any[]>([]);
 
   useEffect(() => {
-    isPermanent
-      ? handleAddress('permanentAddress')
-      : handleAddress('presentAddress');
-  }, [
-    selectedRegion,
-    selectedProvince,
-    selectedMunicipality,
-    selectedBarangay,
-    addressLine,
-  ]);
-
-  const handleAddress = (type: string) => {
-    setEmployeeDetails((prev: EmployeeI) => ({
-      ...prev,
-      [type]: {
-        addressLine,
-        region: selectedRegion.region_name,
-        province: selectedProvince.id,
-        municipality: selectedMunicipality.id,
-        barangay: selectedBarangay,
-      },
-    }));
-  };
+    if (data) {
+      setRegionFile(data)
+    }
+  }, [data])
 
   useEffect(() => {
-    setSelectedProvince('');
-    setSelectedMunicipality('');
-    setSelectedBarangay('');
-  }, [selectedRegion]);
+    console.log({ isPermanent }, { regionFile }, { employeeDetails })
+    if (!isNew && regionFile.length > 0 && employeeDetails) {
+      const region = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].region,
+        province = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].province,
+        municipality = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].municipality;
+      console.log({ isPermanent }, { region }, { province }, { municipality })
+      let provinceList: any[] = [], municipalityList: any[] = [], barangayList: any[] = [];
+      const regionIdx = regionFile.findIndex((o: any) => o.region_name === region);
+      if (regionIdx >= 0) {
+        provinceList = regionFile[regionIdx].province_list;
+        const provinceIdx = provinceList.findIndex((o: any) => o.id === province);
+
+        if (provinceIdx >= 0) {
+          municipalityList = provinceList[provinceIdx].municipality_list;
+          const municipalityIdx = municipalityList.findIndex((o: any) => o.id === municipality);
+
+          if (municipalityIdx >= 0) {
+            barangayList = municipalityList[municipalityIdx].barangay_list;
+          }
+        }
+      }
+      setRegionList(regionFile);
+      setProvinceList({
+        [`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]: provinceList
+      });
+      setMunicipalityList({
+        [`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]: municipalityList
+      });
+      setBarangayList({
+        [`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]: barangayList
+      });
+    }
+  }, [regionFile])
+
+  // const handleAddress = (type: string) => {
+  //   setEmployeeDetails((prev: EmployeeI) => ({
+  //     ...prev,
+  //     [type]: {
+  //       addressLine,
+  //       region: selectedRegion.region_name,
+  //       province: selectedProvince.id,
+  //       municipality: selectedMunicipality.id,
+  //       barangay: selectedBarangay,
+  //     },
+  //   }));
+  // };
 
   // useEffect(() => {
   //   setEmployeeDetails({
@@ -65,6 +89,22 @@ const Address = ({ data, isPermanent }: Props) => {
   //     },
   //   });
   // }, [streetAddress1, streetAddress2]);
+
+  const handleChange = (obj: any) => {
+    console.log({ obj })
+    if (Object.keys(obj).length > 0) {
+      const key = Object.keys(obj)[0];
+      const [column, subColumn] = key.split("-");
+      console.log({ column }, { subColumn })
+      setEmployeeDetails({
+        ...employeeDetails,
+        [column]: {
+          ...employeeDetails[column],
+          [subColumn]: obj[key]
+        }
+      })
+    }
+  }
 
   const handleUpdateAddress = (value: string, col: string) => {
     !isNew &&
@@ -81,53 +121,44 @@ const Address = ({ data, isPermanent }: Props) => {
     <GridWrapper colSize='8'>
       <div className='col-span-8'>
         <TextField
-          id={`${isPermanent ? 'permanent' : 'present'}-addressline`}
+          id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-addressLine`}
           multiline
           label={`${isPermanent ? 'Permanent' : 'Present'} Street Address`}
           size='small'
           variant='standard'
           fullWidth
-          defaultValue={addressLine}
+          value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['addressLine']}
           onChange={(e: any) => {
-            setAddressLine(e.target.value);
+            handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-addressLine`]: e.target.value });
 
             handleUpdateAddress(e.target.value, 'addressLine');
           }}
         />
       </div>
-      {/* <div className='col-span-4'>
-        <TextField
-          multiline
-          id={`${isPermanent ? 'permanent' : 'present'}-address-2`}
-          label={`${isPermanent ? 'Permanent' : 'Present'} Street Address 2`}
-          size='small'
-          variant='standard'
-          fullWidth
-          defaultValue={
-            employeeDetails[isPermanent ? 'permanent' : 'present']
-              ?.streetAddress2
-          }
-          onChange={(e: any) => setStreetAddress2(e.target.value)}
-        />
-      </div> */}
 
       <div className='col-span-2'>
         <FormControl variant='standard' size='small' fullWidth>
           <InputLabel>Region</InputLabel>
           <Select
-            id={`${isPermanent ? 'permanent' : 'present'}-region`}
-            onChange={(e: any) => {
-              setSelectedRegion(e.target.value);
+            value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['region']}
+            id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-region`}
+            onChange={(e: any, options: any) => {
+              handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-region`]: e.target.value });
+              setProvinceList({
+                [`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]: options.props[`data-list`].province_list
+              });
+              setMunicipalityList({});
+              setBarangayList({});
               handleUpdateAddress(e.target.value.region_name, 'region');
             }}
           >
-            {data
+            {regionList
               ?.sort((a: any, b: any) =>
                 a.region_name.localeCompare(b.region_name)
               )
               ?.map((d: any) => {
                 return (
-                  <MenuItem key={d.region_name} id={d.region_name} value={d}>
+                  <MenuItem key={d.region_name} id={d.region_name} data-list={d} value={d.region_name}>
                     {d.region_name}
                   </MenuItem>
                 );
@@ -141,19 +172,24 @@ const Address = ({ data, isPermanent }: Props) => {
           variant='standard'
           size='small'
           fullWidth
-          disabled={!selectedRegion}
+          disabled={!provinceList}
         >
           <InputLabel>Province</InputLabel>
           <Select
-            id={`${isPermanent ? 'permanent' : 'present'}-province`}
-            onChange={(e: any) => {
-              setSelectedProvince(e.target.value);
+            value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['province']}
+            id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-province`}
+            onChange={(e: any, options: any) => {
+              handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-province`]: e.target.value });
+              setMunicipalityList({
+                [`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]: options.props[`data-list`].municipality_list
+              });
+              setBarangayList({});
               handleUpdateAddress(e.target.value.id, 'province');
             }}
           >
-            {selectedRegion?.province_list?.map((province: any) => {
+            {provinceList[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.map((province: any) => {
               return (
-                <MenuItem key={province.id} id={province.id} value={province}>
+                <MenuItem key={province.id} id={province.id} data-list={province} value={province.id}>
                   {province.id}
                 </MenuItem>
               );
@@ -167,19 +203,23 @@ const Address = ({ data, isPermanent }: Props) => {
           variant='standard'
           size='small'
           fullWidth
-          disabled={!selectedProvince}
+          disabled={!municipalityList}
         >
           <InputLabel>Municipality</InputLabel>
           <Select
-            id={`${isPermanent ? 'permanent' : 'present'}-municipality`}
-            onChange={(e: any) => {
-              setSelectedMunicipality(e.target.value);
+            value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['municipality']}
+            id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-municipality`}
+            onChange={(e: any, options: any) => {
+              handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-municipality`]: e.target.value });
+              setBarangayList({
+                [`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]: options.props[`data-list`].barangay_list
+              });
               handleUpdateAddress(e.target.value.id, 'municipality');
             }}
           >
-            {selectedProvince?.municipality_list?.map((municipality: any) => {
+            {municipalityList[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.map((municipality: any) => {
               return (
-                <MenuItem value={municipality} id={municipality.id}>
+                <MenuItem value={municipality.id} data-list={municipality} id={municipality.id}>
                   {municipality.id}
                 </MenuItem>
               );
@@ -193,17 +233,18 @@ const Address = ({ data, isPermanent }: Props) => {
           variant='standard'
           size='small'
           fullWidth
-          disabled={!selectedMunicipality}
+          disabled={!barangayList}
         >
           <InputLabel>Barangay</InputLabel>
           <Select
-            id={`${isPermanent ? 'permanent' : 'present'}-barangay`}
+            value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['barangay']}
+            id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-barangay`}
             onChange={(e: any) => {
-              setSelectedBarangay(e.target.value);
+              handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-barangay`]: e.target.value });
               handleUpdateAddress(e.target.value, 'barangay');
             }}
           >
-            {selectedMunicipality?.barangay_list?.map((barangay: any) => {
+            {barangayList[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.map((barangay: any) => {
               return (
                 <MenuItem value={barangay} id={barangay}>
                   {barangay}

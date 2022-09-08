@@ -15,12 +15,13 @@ import employeeWithLeaveReducer from "slices/employees/getEmployeesWithLeaveSlic
 import userAccessReducer from "slices/userAccess/authSlice";
 import NewEmployeeSlice from "slices/employees/createEmployeesSlice";
 import FilteredEmployeeSlice from "slices/employees/filteredEmployeesSlice";
+import UpdateEmployeeSlice from "slices/employees/updateEmployeesSlice";
 
 const rootPersistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['employeesWithLeave', 'userAccess', 'newEmployee', 'filteredEmployees']
+  blacklist: ['employeesWithLeave', 'userAccess', 'newEmployee', 'filteredEmployees', 'updatedEmployee']
 }
 
 const appReducer = combineReducers({
@@ -31,6 +32,7 @@ const appReducer = combineReducers({
   userAccess: userAccessReducer,
   newEmployee: NewEmployeeSlice,
   filteredEmployees: FilteredEmployeeSlice,
+  updatedEmployee: UpdateEmployeeSlice
 })
 
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);

@@ -23,25 +23,14 @@ export const createEmployee: any = createAsyncThunk(
   }
 );
 
-export const updateEmployee: any = createAsyncThunk(
-  'employees/updateEmployee',
-  async (data: { body: EmployeeI; access_token: string }) => {
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${data.access_token}` },
-      };
-      return await updateEmployeeEndpoint(data.body, config);
-    } catch (err: any) {
-      console.error('ERROR in createEmployee', err);
-      return err;
-    }
-  }
-);
-
 export const createEmployeesSlice = createSlice({
   name: 'employees-create',
   initialState,
-  reducers: {},
+  reducers: {
+    resetCreate: () => {
+      return initialState;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createEmployee.pending, (state) => {
@@ -69,5 +58,6 @@ export const getEmployeeCreatedItem = (state: any) =>
   state.newEmployee.employeeCreatedItem;
 export const getEmployeeCreateStatus = (state: any) => state.newEmployee.status;
 export const getEmployeeCreateError = (state: any) => state.newEmployee.error;
+export const { resetCreate } = createEmployeesSlice.actions;
 
 export default createEmployeesSlice.reducer;

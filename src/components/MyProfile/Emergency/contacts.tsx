@@ -154,8 +154,8 @@ const Contacts = (props: Props) => {
                   setNewContact({ ...newContact, relation: e.target.value })
                 }
               >
-                {RELATION.map((relation) => {
-                  return <MenuItem value={relation}>{relation}</MenuItem>;
+                {RELATION.map((relation: any, i: number) => {
+                  return <MenuItem key={i} value={relation}>{relation}</MenuItem>;
                 })}
               </Select>
             </FormControl>

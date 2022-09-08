@@ -1,0 +1,1 @@
+export const INCOMPLETE_FORM_MESSAGE = "Please complete the form";
