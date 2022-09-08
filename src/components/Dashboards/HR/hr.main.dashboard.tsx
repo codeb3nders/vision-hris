@@ -22,95 +22,25 @@ import HeadCount from './head.count';
 import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppCtx } from 'App';
-import {
-  getAllEmployeesAction as _getEmployeesAction,
-  getEmployeeStatus as _getEmployeeStatus,
-  getEmployeeItems as _getEmployeeItems,
-} from 'slices';
 import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
 import moment from 'moment';
 
-type Props = {};
+type Props = {
+  activeEmployeesCount: number;
+  countContract: number;
+  countProbation: number;
+  headCount: any[];
+  celebrations: number;
+};
 
 const HRMainDashboard = (props: Props) => {
-  const dispatch = useDispatch();
-  const { access_token } = useContext(AppCtx);
-  const [activeEmployeesCount, setActiveEmployeesCount] = useState<number>(0);
-  const [countContract, setCountContract] = useState<number>(0);
-  const [countProbation, setCountProbation] = useState<number>(0);
-  const [celebrations, setCelebrations] = useState<any[]>([]);
-  const [headCount, setHeadCount] = useState<any[]>([]);
-
-  const getEmployeeStatus = useSelector(_getEmployeeStatus);
-  const getEmployeeItems = useSelector(_getEmployeeItems);
-
-  useEffect(() => {
-    if (access_token && getEmployeeStatus === 'idle') {
-      dispatch(_getEmployeesAction({ access_token }));
-    }
-  }, [access_token]);
-
-  useEffect(() => {
-    console.log({ getEmployeeItems });
-    let active = 0,
-      contractEnd = 0,
-      probationaryEnd = 0,
-      countPerDept: any[] = [];
-    const activeEmployees = getEmployeeItems.filter(
-      (x: EmployeeI) => x.isActive
-    );
-    activeEmployees.map((o: any) => {
-      const key = o.department?.code;
-      active++;
-      if (o.employmentType?.code.toLocaleLowerCase() == 'project') {
-        if (
-          moment(o.contractEndDate)
-            .endOf('day')
-            .diff(moment().endOf('day'), 'month') < 1
-        ) {
-          contractEnd++;
-        }
-      } else if (o.employmentType?.code.toLocaleLowerCase() == 'probationary') {
-        if (
-          moment(o.endOfProbationary)
-            .endOf('day')
-            .diff(moment().endOf('day'), 'month') < 1
-        ) {
-          probationaryEnd++;
-        }
-      }
-      const bdayToday = moment(o.birthDate)
-        .endOf('day')
-        .isSame(moment().endOf('day'));
-      const dateHired = moment(o.dateHired);
-      const annivToday =
-        dateHired.date() === moment().date() &&
-        dateHired.month() === moment().month();
-      if (bdayToday || annivToday) {
-        celebrations.push({
-          ...o,
-          isBirthday: bdayToday,
-        });
-        setCelebrations(celebrations);
-      }
-
-      const index = countPerDept.findIndex((c: any) => c.x === key);
-      if (index < 0) {
-        countPerDept.push({
-          x: key,
-          y: 1,
-          name: o.department?.name,
-        });
-      } else {
-        countPerDept[index].y++;
-      }
-    });
-
-    setActiveEmployeesCount(active);
-    setCountContract(contractEnd);
-    setCountProbation(probationaryEnd);
-    setHeadCount(countPerDept);
-  }, [getEmployeeItems]);
+  const {
+    activeEmployeesCount,
+    countContract,
+    countProbation,
+    headCount,
+    celebrations,
+  } = props;
 
   return (
     <main className='grid grid-cols-12 items-start gap-4 mt-4 pb-20 '>

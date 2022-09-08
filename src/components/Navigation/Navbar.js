@@ -22,12 +22,14 @@ function classNames(...classes) {
 
 const Navbar = () => {
   const location = useLocation();
-  const { isLoggedIn, userData } = useContext(AppCtx);
+  const { isLoggedIn, userGroup } = useContext(AppCtx);
   const [navigation, setNavigation] = useState(EmployeeNavigation);
   const [openDrawer, setOpenDrawer] = useState(false);
 
+  console.log({ userGroup });
+
   useEffect(() => {
-    switch (userData.userGroup.toUpperCase()) {
+    switch (userGroup.toUpperCase()) {
       case 'EMPLOYEE':
         setNavigation(EmployeeNavigation);
         break;
@@ -45,7 +47,7 @@ const Navbar = () => {
       default:
         break;
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, userGroup]);
 
   return (
     <Disclosure as='nav' className='bg-v-red'>

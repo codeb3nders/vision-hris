@@ -76,7 +76,7 @@ const shortcuts = [
 ];
 
 const Shortcuts: React.FC<Props> = ({ className }) => {
-  const { userData } = useContext(AppCtx);
+  const { userGroup } = useContext(AppCtx);
   return (
     <CardWTitle
       title={
@@ -87,7 +87,7 @@ const Shortcuts: React.FC<Props> = ({ className }) => {
       className={`p-4 flex flex-col space-y-1 basis-1 min-w-max ${className}`}
     >
       {shortcuts
-        .filter((s) => s.type === userData.userGroup || s.type === 'ALL')
+        .filter((s) => s.type === userGroup || s.type === 'ALL')
         .map((s) => {
           return s.in_app ? (
             <Link to={s.url} className='no-underline text-inherit'>

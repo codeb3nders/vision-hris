@@ -73,19 +73,19 @@ export type ProfileModel = {
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => {},
+  setIndex: () => { },
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => {},
-  setDisplayPhoto: () => {},
+  setEmployeeDetails: () => { },
+  setDisplayPhoto: () => { },
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
   isOwner: false,
   enums: {},
-  setUpdatedDetails: () => {},
+  setUpdatedDetails: () => { },
   updatedDetails: null,
 });
 
@@ -100,7 +100,7 @@ const ProfileMain = ({
 
   const [updatedDetails, setUpdatedDetails] = useState<any>(null);
   const [index, setIndex] = useState<string>('0');
-  const { isLoggedIn, userData, access_token } = useContext(AppCtx);
+  const { isLoggedIn, userData, access_token, userGroup } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
   const [employeeDetails, setEmployeeDetails] =
     useState<EmployeeI>(initialState);
@@ -199,7 +199,7 @@ const ProfileMain = ({
       let is_owner = false;
       if (
         employeeData?.employeeNo === userData.employeeNo &&
-        userData.userGroup.toLowerCase() == 'employee'
+        userGroup.toLowerCase() == 'employee'
       ) {
         is_owner = true;
       }
@@ -337,18 +337,18 @@ const ProfileMain = ({
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-              ...displayPhotos,
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+            ...displayPhotos,
+          ]
           : [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+          ]
       )
     );
   };
@@ -426,11 +426,10 @@ const ProfileMain = ({
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
-                isNew
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
                   ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
                   : ''
-              }`}
+                }`}
             >
               <Suspense fallback={<div>Loading...</div>}>
                 <ProfileTabContent className='self-stretch' />

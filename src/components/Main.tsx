@@ -73,7 +73,7 @@ const Main: React.FC<Props> = ({ role }) => {
               }`}
           >
             <Switch>
-              <PrivateRoute is_allowed={isAllowed('hr_dashboard')} exact path={Employee.Dashboard} component={Dashboard} />
+              <PrivateRoute is_allowed={isAllowed('dashboard')} module_id="dashboard" exact path={Path.Dashboard} component={Dashboard} />
               <PrivateRoute is_allowed={isAllowed('employees_db')} path={HR.People.Employees} component={EmployeeDatabase} />
               <PrivateRoute is_allowed={isAllowed('employee_directory')} path={HR.People.Directory} component={EmployeeDirectory} />
               <Route path={Employee.Profile} component={ProfileMain} />

@@ -1,4 +1,5 @@
 export const Path = {
+  Dashboard: '/',
   Employee: {
     Dashboard: '/',
     ESS: {
