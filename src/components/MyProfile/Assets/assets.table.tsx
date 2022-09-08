@@ -52,7 +52,7 @@ const AssetsTable = (props: Props) => {
     !isNew &&
       rows.length > 0 &&
       setUpdatedDetails((prev: any) => ({ ...prev, assetManagement: rows }));
-
+      
     rows.length <= 0 &&
       setUpdatedDetails((prev: any) => {
         delete prev?.assetManagement;
