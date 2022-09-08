@@ -51,13 +51,13 @@ const ProfileTabContent = ({ className }: Props) => {
   return (
     <CustomCard
       id='tab-content'
-      className={`${
-        isNew || isView
+      className={`${isNew || isView
           ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
           : ''
-      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
+        } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
     >
-      <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
+      <ProfileTabs className='phone:visible' />
+      {/* <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' /> */}
 
       <TabPanel value='1' className='p-0 grid' id='Personal'>
         <Suspense fallback={<div>Loading...</div>}>

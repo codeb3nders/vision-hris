@@ -51,7 +51,7 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
         })
       }}>
         <ListItemIcon>
-          <Avatar src={getAvatar(o.gender)} />
+          <Avatar src={getAvatar(o.gender.code)} />
         </ListItemIcon>
         <ListItemText
           primary={<span className='text-xs font-bold'>{o.lastName}, {o.firstName}</span>}

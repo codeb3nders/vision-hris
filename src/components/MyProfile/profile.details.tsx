@@ -55,7 +55,7 @@ const ProfileDetails = (props: Props) => {
             onChange={(e: any) => setImg(e.target.files[0])}
           />
           <Avatar
-            src={displayPhoto?.photo ? displayPhoto?.photo : getAvatar(employeeDetails.gender)}
+            src={displayPhoto?.photo ? displayPhoto?.photo : getAvatar(employeeDetails.gender?.code)}
             className='desktop:w-[100px] laptop:w-[100px] tablet:w-[100px] phone:w-[100px] desktop:h-[100px] laptop:h-[100px] tablet:h-[100px] phone:h-[100px] relative'
           />
           <div className='cursor-pointer absolute bottom-[16px] right-[10px] z-10 w-[36px] h-[36px] bg-white/75 rounded-full flex items-center justify-center'>
@@ -103,7 +103,7 @@ const ProfileDetails = (props: Props) => {
             )}
           </p>
 
-          <p className='text-sm '>{employeeDetails.department.name}</p>
+          <p className='text-sm '>{employeeDetails?.department?.name}</p>
 
           <p className='text-gray-500 mt-2'>
             Started on {moment(employeeDetails.dateHired).format('LL')} (
@@ -114,7 +114,7 @@ const ProfileDetails = (props: Props) => {
 
       {/* {isNew && ( */}
       <section className='laptop:col-span-12 desktop:col-span-12 tablet:col-span-12 phone:col-span-12 phone:text-xs flex flex-col justify-end phone:text-center tablet:text-left laptop:text-left desktop:text-left'>
-        <ProfileTabs className='phone:hidden laptop:block desktop:block tablet:hidden ' />
+        {/* <ProfileTabs className='phone:hidden laptop:block desktop:block tablet:hidden ' /> */}
       </section>
       {/* )} */}
     </CustomCard>

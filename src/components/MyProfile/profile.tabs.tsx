@@ -59,8 +59,10 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
         }
         className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${isMobile ? 'border-b border-gray-200' : ''
           }`}
-        scrollButtons={isMobile}
-        variant={isMobile ? 'scrollable' : 'fullWidth'}
+        scrollButtons={true}
+        // scrollButtons={isMobile}
+        variant={"scrollable"}
+      // variant={isMobile ? 'scrollable' : 'fullWidth'}
       >
         <Tab
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '1' ? '!text-v-red' : ''

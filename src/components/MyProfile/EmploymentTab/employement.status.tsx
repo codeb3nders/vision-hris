@@ -38,7 +38,7 @@ const EmployementStatus = (props: Props) => {
   const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
   const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
   const [editEmployment, setEditEmployment] = useState<any>(); //display
-  const [employmentUpdate, setEmploymentUpdate] = useState<any>({ effectiveDate: new Date() }); //save to employees table
+  const [employmentUpdate, setEmploymentUpdate] = useState<any>(); //save to employees table
   const [openNotif, setOpenNotif] = useState<{
     message: string;
     status: boolean;
@@ -85,10 +85,10 @@ const EmployementStatus = (props: Props) => {
   useEffect(() => {
     console.log({ employeeUpdatedStatus });
     if (employeeUpdatedStatus !== 'idle') {
-      if (employeeUpdatedStatus === 'succeeded') {
-        success();
-      } else {
+      if (employeeUpdatedError) {
         failed(employeeUpdatedError);
+      } else {
+        success();
       }
     }
   }, [employeeUpdatedStatus]);
@@ -190,7 +190,7 @@ const EmployementStatus = (props: Props) => {
         setLoading({ status: true, action: 'Saving' });
         try {
           employmentUpdate.employmentLastUpdate = employmentUpdate?.effectiveDate || new Date();
-          employmentUpdate.lastModifiedDate = new Date();
+          // employmentUpdate.lastModifiedDate = new Date();
           consoler(employmentUpdate, 'blue', 'updateEmployment');
           await dispatch(updateEmployee(
             {
@@ -203,19 +203,6 @@ const EmployementStatus = (props: Props) => {
         }
       };
 
-      // const handleUpdateEmployee = async () => {
-      //   try {
-      //     consoler(employmentUpdate, 'orange', 'updateEmployee');
-      //     await dispatch(updateEmployee(
-      //       {
-      //         params: { ...employmentUpdate, employeeNo: employeeDetails.employeeNo },
-      //         access_token
-      //       }));
-      //   } catch (error: any) {
-      //     setLoading({ status: false, action: '' });
-      //     consoler(employmentUpdate, 'red', 'Update Employee Error');
-      //   }
-      // };
       const validateFields = async () => {
         const dialog: any = document.getElementById("dialog-employment");
         const required = dialog.querySelectorAll("[required]");
@@ -404,7 +391,10 @@ const EmployementStatus = (props: Props) => {
           </button>
           <button
             className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-            onClick={() => setEditEmployment(null)}
+            onClick={() => {
+              setEditEmployment(null);
+              dispatch(resetUpdate())
+            }}
           >
             Cancel
           </button>

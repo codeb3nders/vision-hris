@@ -65,7 +65,7 @@ const ProfileOther = ({ className }: Props) => {
           </ListItemIcon>
           <ListItemText
             primary={
-              <span className='text-xs'>{employeeDetails?.position}</span>
+              <span className='text-xs'>{employeeDetails?.position?.name}</span>
             }
           />
         </ListItem>

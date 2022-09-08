@@ -14,7 +14,6 @@ import React, {
 } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import { initialState } from './employee.initialstate';
-// import ProfileDetails from './profile.details';
 import ProfileOther from './profile.other';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
@@ -23,6 +22,7 @@ import {
   getEmployeeCreatedItem,
   getEmployeeCreateError,
   getEmployeeCreateStatus,
+  getEmployeeUpdateError,
   resetCreate,
   resetUpdate,
   updateEmployee,
@@ -144,6 +144,7 @@ const ProfileMain = ({
   // Employees
   const employeeData = useSelector(_getOneEmployeeDetails);
   const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus)
+  const employeeUpdateError = useSelector(getEmployeeUpdateError)
 
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
@@ -152,7 +153,7 @@ const ProfileMain = ({
         // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
         success();
       } else {
-        failed();
+        failed(newEmployeeError);
       }
     }
   }, [newEmployeeStatus]);
@@ -160,10 +161,10 @@ const ProfileMain = ({
   useEffect(() => {
     console.log({ employeeUpdatedStatus });
     if (employeeUpdatedStatus !== 'idle') {
-      if (employeeUpdatedStatus === 'succeeded') {
-        success();
+      if (employeeUpdateError) {
+        failed(employeeUpdateError);
       } else {
-        failed();
+        success();
       }
     }
   }, [employeeUpdatedStatus]);
@@ -200,10 +201,7 @@ const ProfileMain = ({
         setEmployeeDetails(() => {
           return {
             ...initialState,
-            ...employeeData,
-            // department: employeeData.department?.name,
-            // employmentType: employeeData.employmentType.name,
-            // employmentStatus: employeeData.employmentStatus.name,
+            ...employeeData
           };
         });
       }
@@ -242,10 +240,10 @@ const ProfileMain = ({
     }, 2000);
   }
 
-  const failed = () => {
+  const failed = (message: string) => {
     setLoading({ status: false, action: '' });
     setOpenNotif({
-      message: newEmployeeError,
+      message: message,
       status: true,
       severity: 'error',
     });
@@ -272,7 +270,8 @@ const ProfileMain = ({
       file201: any = [],
       allowance_types: any = [],
       disciplinary_actions: any = [],
-      employment_types: any = [];
+      employment_types: any = [],
+      gender: any = [];
 
     enumsData.forEach((o: any) => {
       switch (o.type.toLowerCase()) {
@@ -281,6 +280,9 @@ const ProfileMain = ({
           break;
         case 'civilstatus':
           civil_status.push(o);
+          break;
+        case 'gender':
+          gender.push(o);
           break;
         case 'citizenship':
           citizenship.push(o);
@@ -318,7 +320,7 @@ const ProfileMain = ({
       }
     });
     setEnums({
-      positions,
+      positions, gender,
       departments,
       ranks,
       civil_status,

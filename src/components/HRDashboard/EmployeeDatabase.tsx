@@ -113,19 +113,21 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'position',
       headerName: 'Position',
       width: 200,
-      renderCell: (cell) => {
-        return (
-          <Tooltip title={cell.value}>
-            <span>{cell.value}</span>
-          </Tooltip>
-        );
+      renderCell: (cell: any) => cell.row.position?.name,
+      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      valueGetter: (params) => {
+        return params.row.position?.name;
       },
-      sortComparator: (v1, v2) => v1.localeCompare(v2),
     },
     {
       field: 'rank',
       headerName: 'Rank',
       width: 120,
+      renderCell: (cell: any) => cell.row.rank?.name,
+      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      valueGetter: (params) => {
+        return params.row.rank?.name;
+      },
     },
     {
       field: 'department',
@@ -218,7 +220,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       />
 
       <Card sx={{ mt: 5, p: 2 }}>
-        <div style={{ marginBottom: 16, textAlign: 'left' }}>
+        <div style={{ marginBottom: 16, textAlign: 'right' }}>
           <Button
             onClick={sendCredentials}
             startIcon={<KeyTwoTone />}
@@ -226,8 +228,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
           >
             Send Credentials
           </Button>
-        </div>
-        <div style={{ marginBottom: 16, textAlign: 'left' }}>
           <Button
             onClick={sendCredentials}
             startIcon={<SupervisedUserCircleTwoTone />}
@@ -235,8 +235,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
           >
             Change Team Leader
           </Button>
-        </div>
-        <div style={{ marginBottom: 16, textAlign: 'right' }}>
           <Button startIcon={<UploadTwoTone />} sx={{ mr: 1 }}>
             Upload Employee Details
           </Button>

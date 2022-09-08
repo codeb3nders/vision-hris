@@ -17,7 +17,7 @@ type Props = {
 };
 
 const Address = ({ data, isPermanent }: Props) => {
-  const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails } =
+  const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails, updatedDetails } =
     useContext(ProfileCtx);
 
   const [regionList, setRegionList] = useState<any[]>([]);
@@ -34,12 +34,11 @@ const Address = ({ data, isPermanent }: Props) => {
   }, [data])
 
   useEffect(() => {
-    console.log({ isPermanent }, { regionFile }, { employeeDetails })
     if (!isNew && regionFile.length > 0 && employeeDetails) {
       const region = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].region,
         province = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].province,
         municipality = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].municipality;
-      console.log({ isPermanent }, { region }, { province }, { municipality })
+
       let provinceList: any[] = [], municipalityList: any[] = [], barangayList: any[] = [];
       const regionIdx = regionFile.findIndex((o: any) => o.region_name === region);
       if (regionIdx >= 0) {
@@ -91,11 +90,9 @@ const Address = ({ data, isPermanent }: Props) => {
   // }, [streetAddress1, streetAddress2]);
 
   const handleChange = (obj: any) => {
-    console.log({ obj })
     if (Object.keys(obj).length > 0) {
       const key = Object.keys(obj)[0];
       const [column, subColumn] = key.split("-");
-      console.log({ column }, { subColumn })
       setEmployeeDetails({
         ...employeeDetails,
         [column]: {
@@ -108,13 +105,24 @@ const Address = ({ data, isPermanent }: Props) => {
 
   const handleUpdateAddress = (value: string, col: string) => {
     !isNew &&
-      setUpdatedDetails((prev: any) => ({
-        ...prev,
-        [isPermanent ? 'permanentAddress' : 'presentAddress']: {
-          ...prev[isPermanent ? 'permanentAddress' : 'presentAddress'],
-          [col]: value,
-        },
-      }));
+      setUpdatedDetails((prev: any) => {
+        if (updatedDetails && updatedDetails[isPermanent ? 'permanentAddress' : 'presentAddress']) {
+          return {
+            ...prev,
+            [isPermanent ? 'permanentAddress' : 'presentAddress']: {
+              ...prev[isPermanent ? 'permanentAddress' : 'presentAddress'],
+              [col]: value,
+            },
+          }
+        } else {
+          return {
+            ...prev,
+            [isPermanent ? 'permanentAddress' : 'presentAddress']: {
+              [col]: value,
+            },
+          }
+        }
+      });
   };
 
   return (
@@ -149,7 +157,7 @@ const Address = ({ data, isPermanent }: Props) => {
               });
               setMunicipalityList({});
               setBarangayList({});
-              handleUpdateAddress(e.target.value.region_name, 'region');
+              handleUpdateAddress(e.target.value, 'region');
             }}
           >
             {regionList
@@ -184,7 +192,7 @@ const Address = ({ data, isPermanent }: Props) => {
                 [`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]: options.props[`data-list`].municipality_list
               });
               setBarangayList({});
-              handleUpdateAddress(e.target.value.id, 'province');
+              handleUpdateAddress(e.target.value, 'province');
             }}
           >
             {provinceList[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.map((province: any) => {
@@ -214,7 +222,7 @@ const Address = ({ data, isPermanent }: Props) => {
               setBarangayList({
                 [`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]: options.props[`data-list`].barangay_list
               });
-              handleUpdateAddress(e.target.value.id, 'municipality');
+              handleUpdateAddress(e.target.value, 'municipality');
             }}
           >
             {municipalityList[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.map((municipality: any) => {
