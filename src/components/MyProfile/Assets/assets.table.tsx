@@ -20,6 +20,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import AddButton from 'CustomComponents/AddButton';
 import { ProfileCtx } from '../profile.main';
+import GridWrapper from 'CustomComponents/GridWrapper';
 
 type Props = {};
 
@@ -51,6 +52,12 @@ const AssetsTable = (props: Props) => {
     !isNew &&
       rows.length > 0 &&
       setUpdatedDetails((prev: any) => ({ ...prev, assetManagement: rows }));
+      
+    rows.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.assetManagement;
+        return prev;
+      });
   }, [rows]);
 
   return (
@@ -97,104 +104,116 @@ const AssetDialog = ({ open, setOpen, setRows }) => {
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
-      <div className='p-6 flex flex-col gap-4 w-[350px]'>
+      <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
           <LaptopChromebookTwoTone /> New Asset
         </p>
 
-        <TextField
-          required
-          fullWidth
-          variant='standard'
-          size='small'
-          multiline
-          label='Asset Name'
-          onChange={(e: any) =>
-            setNewAsset({ ...newAsset, assetName: e.target.value })
-          }
-        />
-
-        <TextField
-          required
-          fullWidth
-          variant='standard'
-          size='small'
-          multiline
-          label='Asset Details'
-          onChange={(e: any) =>
-            setNewAsset({ ...newAsset, assetDetails: e.target.value })
-          }
-        />
-
-        <FormControl variant='standard' size='small' fullWidth required>
-          <InputLabel id='asset-type'>Asset Type</InputLabel>
-          <Select
-            label='Asset Type'
-            labelId='asset-type'
-            onChange={(e: any) =>
-              setNewAsset({ ...newAsset, assetType: e.target.value })
-            }
-          >
-            {enums.assets.map((asset) => {
-              return (
-                <MenuItem key={asset.code} value={asset.code}>
-                  {asset.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-
-        <TextField
-          fullWidth
-          variant='standard'
-          size='small'
-          label='Serial #'
-          onChange={(e: any) =>
-            setNewAsset({ ...newAsset, assetSerialNumber: e.target.value })
-          }
-        />
-
-        <LocalizationProvider dateAdapter={AdapterMoment}>
-          <DatePicker
-            label='Date Assigned'
-            onChange={(value) =>
-              setNewAsset({
-                ...newAsset,
-                dateAssigned: moment(value).format('LL'),
-              })
-            }
-            value={new Date()}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth variant='standard' />
-            )}
-          />
-        </LocalizationProvider>
-        <LocalizationProvider dateAdapter={AdapterMoment}>
-          <DatePicker
-            label='Date Returned'
-            onChange={(value) =>
-              setNewAsset({
-                ...newAsset,
-                dateReturned: moment(value).format('LL'),
-              })
-            }
-            value={new Date()}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth variant='standard' />
-            )}
-          />
-        </LocalizationProvider>
-        <TextField
-          fullWidth
-          variant='standard'
-          size='small'
-          label='Remarks'
-          multiline
-          onChange={(e: any) =>
-            setNewAsset({ ...newAsset, remarks: e.target.value })
-          }
-        />
+        <GridWrapper colSize='2'>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              required
+              fullWidth
+              variant='standard'
+              size='small'
+              multiline
+              label='Asset Name'
+              onChange={(e: any) =>
+                setNewAsset({ ...newAsset, assetName: e.target.value })
+              }
+            />
+          </div>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              required
+              fullWidth
+              variant='standard'
+              size='small'
+              multiline
+              label='Asset Details'
+              onChange={(e: any) =>
+                setNewAsset({ ...newAsset, assetDetails: e.target.value })
+              }
+            />
+          </div>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <FormControl variant='standard' size='small' fullWidth required>
+              <InputLabel id='asset-type'>Asset Type</InputLabel>
+              <Select
+                label='Asset Type'
+                labelId='asset-type'
+                onChange={(e: any) =>
+                  setNewAsset({ ...newAsset, assetType: e.target.value })
+                }
+              >
+                {enums.assets.map((asset) => {
+                  return (
+                    <MenuItem key={asset.code} value={asset.code}>
+                      {asset.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </div>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              label='Serial #'
+              onChange={(e: any) =>
+                setNewAsset({ ...newAsset, assetSerialNumber: e.target.value })
+              }
+            />
+          </div>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label='Date Assigned'
+                onChange={(value) =>
+                  setNewAsset({
+                    ...newAsset,
+                    dateAssigned: moment(value).format('LL'),
+                  })
+                }
+                value={new Date()}
+                renderInput={(params) => (
+                  <TextField {...params} fullWidth variant='standard' />
+                )}
+              />
+            </LocalizationProvider>
+          </div>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label='Date Returned'
+                onChange={(value) =>
+                  setNewAsset({
+                    ...newAsset,
+                    dateReturned: moment(value).format('LL'),
+                  })
+                }
+                value={new Date()}
+                renderInput={(params) => (
+                  <TextField {...params} fullWidth variant='standard' />
+                )}
+              />
+            </LocalizationProvider>
+          </div>
+          <div className='col-span-2'>
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              label='Remarks'
+              multiline
+              onChange={(e: any) =>
+                setNewAsset({ ...newAsset, remarks: e.target.value })
+              }
+            />
+          </div>
+        </GridWrapper>
 
         <div className='grid grid-cols-5'>
           <button

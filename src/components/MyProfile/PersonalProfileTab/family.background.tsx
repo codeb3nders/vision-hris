@@ -43,6 +43,12 @@ const FamilyBackground = (props: Props) => {
         ...prev,
         familyBackground: family,
       }));
+
+    family.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.familyBackground;
+        return prev;
+      });
   }, [family]);
 
   const handleDelete = (params: any) => {

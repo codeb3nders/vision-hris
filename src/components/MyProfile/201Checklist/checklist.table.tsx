@@ -1,216 +1,292 @@
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { DataGrid } from '@mui/x-data-grid';
 import moment from 'moment';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Dialog,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   TextField,
 } from '@mui/material';
-import { AddTaskTwoTone, AddTwoTone, SaveTwoTone } from '@mui/icons-material';
+import { AddTaskTwoTone, Delete, SaveTwoTone } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { ProfileCtx } from '../profile.main';
+import AddButton from 'CustomComponents/AddButton';
+import GridWrapper from 'CustomComponents/GridWrapper';
 
 type Props = {};
 
 type ChecklistModel = {
-  id: any | null;
-  category: string | null;
-  description: string | null;
-  url: string | null;
-  date_completed: string | null;
+  documentCode: string;
+  documentDescription?: string;
+  dateUploaded: string;
+  fileType?: string;
+  url?: string;
+  remarks?: string;
 };
 
-const dummyRows = [
-  {
-    id: 1,
-    category: 'HR Tasks',
-    description:
-      'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, totam?',
-    url: null,
-    date_completed: moment().format('LL'),
-  },
-  {
-    id: 2,
-    category: 'IT Setup',
-    description:
-      'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, totam?',
-    url: 'resource@website.com',
-    date_completed: moment().format('LL'),
-  },
-];
-
 const ChecklistTable = (props: Props) => {
-  const [rows, setRows] = useState<ChecklistModel[]>(dummyRows);
+  const { isNew, setUpdatedDetails } = useContext(ProfileCtx);
+  const [rows, setRows] = useState<ChecklistModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  const [newChecklist, setNewChecklist] = useState<ChecklistModel>({
-    id: null,
-    category: null,
-    description: null,
-    url: null,
-    date_completed: null,
-  });
 
-  const columns: GridColDef[] = [
-    {
-      field: 'category',
-      headerName: 'Category',
-      flex: 1,
-      renderCell: (params: any) => {
-        return params.value;
-      },
-    },
-    {
-      field: 'description',
-      headerName: 'Description',
-      flex: 1,
-      renderCell: (params: any) => {
-        return params.value;
-      },
-    },
-    {
-      field: 'url',
-      headerName: 'URL',
-      flex: 1,
-      renderCell: (params: any) => {
-        return (
-          <a
-            href={params.value}
-            target='_blank'
-            rel='noreferrer'
-            className='text-sky-500'
-          >
-            {params.value}
-          </a>
-        );
-      },
-    },
-    {
-      field: 'date_completed',
-      headerName: 'Date Completed',
-      flex: 1,
-      renderCell: (params: any) => {
-        return params.value;
-      },
-    },
-  ];
-
-  const handleSaveNewCheclist = () => {
-    setOpen(false);
-    setRows([...rows, { ...newChecklist, id: rows.length + 1 }]);
-    setNewChecklist({
-      id: null,
-      category: null,
-      date_completed: null,
-      url: null,
-      description: null,
+  const handleDelete = (params: any) => {
+    setUpdatedDetails((prev: any) => ({ ...prev, employee201Files: rows }));
+    setRows((prev: any) => {
+      const filtered = prev.filter(
+        (a: any) => a.documentCode !== params.row.documentCode
+      );
+      return filtered;
     });
   };
 
+  useEffect(() => {
+    !isNew &&
+      rows.length > 0 &&
+      setUpdatedDetails((prev: any) => ({ ...prev, employee201Files: rows }));
+
+    rows.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.employee201Files;
+        return prev;
+      });
+  }, [rows]);
+
   return (
     <div>
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <div className='p-6 flex flex-col gap-4 w-[350px]'>
-          <p className='text-md font-bold '>
-            <AddTaskTwoTone /> New Task
-          </p>
-          <FormControl variant='standard' size='small' fullWidth required>
-            <InputLabel id='cat'>Category</InputLabel>
-            <Select
-              label='Category'
-              labelId='cat'
-              onChange={(e: any) =>
-                setNewChecklist({ ...newChecklist, category: e.target.value })
-              }
-            >
-              <MenuItem value='HR Tasks'>HR Tasks</MenuItem>
-              <MenuItem value='IT Setup'>IT Setup</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            required
-            fullWidth
-            variant='standard'
-            size='small'
-            multiline
-            label='Description'
-            onChange={(e: any) =>
-              setNewChecklist({ ...newChecklist, description: e.target.value })
-            }
-          />
-          <TextField
-            fullWidth
-            variant='standard'
-            size='small'
-            label='URL'
-            onChange={(e: any) =>
-              setNewChecklist({ ...newChecklist, url: e.target.value })
-            }
-          />
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <DatePicker
-              label='Date Completed'
-              onChange={(value) =>
-                setNewChecklist({
-                  ...newChecklist,
-                  date_completed: moment(value).format('LL'),
-                })
-              }
-              value={new Date()}
-              renderInput={(params) => (
-                <TextField {...params} fullWidth required variant='standard' />
-              )}
-            />
-          </LocalizationProvider>
-
-          <div className='grid grid-cols-5'>
-            <button
-              disabled={
-                !newChecklist.category ||
-                !newChecklist.description ||
-                !newChecklist.date_completed
-              }
-              onClick={handleSaveNewCheclist}
-              className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
-            >
-              <SaveTwoTone fontSize='small' className='mr-2' />
-              Save Task
-            </button>
-            <button
-              className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </Dialog>
-
-      <div className='flex flex-row items-center justify-end mb-4 '>
-        <button
-          onClick={() => setOpen(true)}
-          className='px-2 py-1 bg-sky-500 text-white rounded-md w-[140px] flex items-center justify-center self-end hover:bg-sky-400 transition duration-150'
-        >
-          <AddTwoTone /> Add Task
-        </button>
-      </div>
+      <File201Dialog open={open} setOpen={setOpen} setRows={setRows} />
 
       <div style={{ width: '100%' }}>
         <DataGrid
           autoHeight
           disableSelectionOnClick
           rows={rows}
-          columns={columns}
+          columns={columns(handleDelete)}
           pageSize={5}
           rowsPerPageOptions={[5]}
           checkboxSelection
           getRowHeight={() => 'auto'}
+          getRowId={(data) => data.documentCode}
         />
       </div>
+
+      <AddButton text='Add 201 File' setOpen={setOpen} />
     </div>
   );
 };
+
+const file201InitialState = {
+  dateUploaded: '',
+  documentCode: '',
+  documentDescription: '',
+  fileType: '',
+  remarks: '',
+  url: '',
+};
+
+const File201Dialog = ({ open, setOpen, setRows }) => {
+  const { enums } = useContext(ProfileCtx);
+  const [newChecklist, setNewChecklist] =
+    useState<ChecklistModel>(file201InitialState);
+
+  const handleSave201File = () => {
+    setRows((prev) => [...prev, newChecklist]);
+    setNewChecklist(file201InitialState);
+    setOpen(false);
+  };
+
+  return (
+    <Dialog open={open} onClose={() => setOpen(false)}>
+      <div className='p-6 flex flex-col gap-4 w-[550px]'>
+        <p className='text-md font-bold '>
+          <AddTaskTwoTone /> New 201 File
+        </p>
+        <GridWrapper colSize='2'>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <FormControl variant='standard' size='small' fullWidth required>
+              <InputLabel id='cat'>Document</InputLabel>
+              <Select
+                label='Document'
+                labelId='cat'
+                onChange={(e: any) =>
+                  setNewChecklist({
+                    ...newChecklist,
+                    documentCode: e.target.value,
+                  })
+                }
+              >
+                {enums.file201.map((document: any) => {
+                  return (
+                    <MenuItem
+                      key={document.code}
+                      id={document.code}
+                      value={document.code}
+                    >
+                      {document.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </div>
+
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              multiline
+              label='Document Description'
+              onChange={(e: any) =>
+                setNewChecklist({
+                  ...newChecklist,
+                  documentDescription: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              label='File Type'
+              onChange={(e: any) =>
+                setNewChecklist({
+                  ...newChecklist,
+                  fileType: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              label='URL'
+              onChange={(e: any) =>
+                setNewChecklist({ ...newChecklist, url: e.target.value })
+              }
+            />
+          </div>
+
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label='Date Uploaded'
+                onChange={(value) =>
+                  setNewChecklist({
+                    ...newChecklist,
+                    dateUploaded: moment(value).format('LL'),
+                  })
+                }
+                value={new Date()}
+                renderInput={(params) => (
+                  <TextField {...params} fullWidth variant='standard' />
+                )}
+              />
+            </LocalizationProvider>
+          </div>
+
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              multiline
+              fullWidth
+              variant='standard'
+              size='small'
+              label='Remarks'
+              onChange={(e: any) =>
+                setNewChecklist({ ...newChecklist, remarks: e.target.value })
+              }
+            />
+          </div>
+        </GridWrapper>
+
+        <div className='grid grid-cols-5'>
+          <button
+            disabled={!newChecklist.documentCode}
+            onClick={handleSave201File}
+            className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+          >
+            <SaveTwoTone fontSize='small' className='mr-2' />
+            Save Task
+          </button>
+          <button
+            className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </Dialog>
+  );
+};
+
+const columns: any = (handleDelete: any) => [
+  {
+    field: 'documentCode',
+    headerName: 'Document',
+    flex: 1,
+    renderCell: (params: any) => {
+      return params.value;
+    },
+  },
+  {
+    field: 'documentDescription',
+    headerName: 'Description',
+    flex: 1,
+    renderCell: (params: any) => {
+      return params.value;
+    },
+  },
+  {
+    field: 'fileType',
+    headerName: 'File Type',
+    flex: 1,
+    renderCell: (params: any) => {
+      return params.value;
+    },
+  },
+
+  {
+    field: 'dateUploaded',
+    headerName: 'Date Uploaded',
+    flex: 1,
+  },
+  {
+    field: 'url',
+    headerName: 'URL',
+    flex: 1,
+    renderCell: (params: any) => {
+      return (
+        <div className='flex flex-row items-center w-full gap-1'>
+          <span className='text-xs'>
+            <a
+              href={params.value}
+              target='_blank'
+              rel='noreferrer'
+              className='text-sky-500'
+            >
+              {params.value}
+            </a>
+          </span>
+          <div className='flex-1 flex justify-end'>
+            <IconButton size='small' onClick={() => handleDelete(params)}>
+              <Delete />
+            </IconButton>
+          </div>
+        </div>
+      );
+    },
+  },
+];
 
 export default ChecklistTable;

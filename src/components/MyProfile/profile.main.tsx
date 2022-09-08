@@ -500,7 +500,9 @@ const ProfileMain = ({
 
       <TabContext value={index}>
         <section
-          className={`mt-4 grid gap-4 pb-0 w-full ${isNew ? '!pb-0' : ''}`}
+          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${
+            isNew ? '!pb-0' : ''
+          }`}
         >
           <Suspense fallback={<div>Loading...</div>}>
             <ProfileDetails />
@@ -526,6 +528,7 @@ const ProfileMain = ({
             </article>
           </section>
         </section>
+
         {(isNew || isView) && (
           <button
             disabled={!validated}
