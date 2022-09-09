@@ -10,6 +10,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import AddButton from 'CustomComponents/AddButton';
 
 type Props = {};
 
@@ -38,6 +39,12 @@ const Certificates = (props: Props) => {
         ...prev,
         licensesCertifications: certificates,
       }));
+
+    certificates.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.licensesCertifications;
+        return prev;
+      });
   }, [certificates]);
 
   return (
@@ -62,14 +69,7 @@ const Certificates = (props: Props) => {
           getRowHeight={() => 'auto'}
         />
       </div>
-      <div className='flex justify-end'>
-        <button
-          className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
-          onClick={() => setOpen(true)}
-        >
-          <Add fontSize='small' /> Add License/Certificate
-        </button>
-      </div>
+      <AddButton text='Add License/Certificate' setOpen={setOpen} />
     </CollapseWrapper>
   );
 };

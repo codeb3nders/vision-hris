@@ -7,14 +7,13 @@ import {
   ListItemButton,
 } from '@mui/material';
 import { AppCtx } from 'App';
-import {
-  getEmployeeItems as _getEmployeeItems
-} from 'slices';
+import { getEmployeeItems as _getEmployeeItems } from 'slices';
 import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getAvatar } from 'utils/functions';
 import { ProfileCtx } from './profile.main';
+import CollapseWrapper from './PersonalProfileTab/collapse.wrapper';
 
 type Props = {
   className?: string;
@@ -29,18 +28,23 @@ type Props = {
 const ProfileTeam = ({ className, setViewDetails }: Props) => {
   const { employeeDetails } = useContext(ProfileCtx);
   const { isHRLogin } = useContext(AppCtx);
-  const [myTeammates, setMyTeammates] = useState<any[]>([])
+  const [myTeammates, setMyTeammates] = useState<any[]>([]);
   const getEmployeeItems = useSelector(_getEmployeeItems);
 
   useEffect(() => {
     if (employeeDetails) {
-      setMyTeammates(getEmployeeItems.filter(
-        (x: any) => x.reportsTo.employeeNo === employeeDetails.reportsTo.employeeNo
-          && x.employeeNo !== employeeDetails.employeeNo
-          && x.employeeNo !== employeeDetails.reportsTo.employeeNo
-      ).sort((a: any, b: any) => a.lastName.localeCompare(b.lastName)))
+      setMyTeammates(
+        getEmployeeItems
+          .filter(
+            (x: any) =>
+              x.reportsTo.employeeNo === employeeDetails.reportsTo.employeeNo &&
+              x.employeeNo !== employeeDetails.employeeNo &&
+              x.employeeNo !== employeeDetails.reportsTo.employeeNo
+          )
+          .sort((a: any, b: any) => a.lastName.localeCompare(b.lastName))
+      );
     }
-  }, [getEmployeeItems, employeeDetails])
+  }, [getEmployeeItems, employeeDetails]);
 
   const getMyTeamMates = () => {
     return myTeammates.map((o: any, i: number) => {
@@ -65,25 +69,43 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
     <CustomCard className={`${className}`}>
       <List className='p-0'>
         <p className='text-xs font-bold text-gray-500 mt-2'>REPORTS TO</p>
-        <ListItemButton className='p-0 px-1' onClick={() => {
-          isHRLogin && setViewDetails && setViewDetails({
-            employeeNo: employeeDetails.reportsTo.employeeNo,
-            status: true,
-          })
-        }} >
+        <ListItemButton
+          className='p-0 px-1'
+          onClick={() => {
+            isHRLogin &&
+              setViewDetails &&
+              setViewDetails({
+                employeeNo: employeeDetails.reportsTo.employeeNo,
+                status: true,
+              });
+          }}
+        >
           <ListItemIcon>
             <Avatar src={getAvatar(employeeDetails.reportsTo.gender)} />
           </ListItemIcon>
           <ListItemText
-            primary={<span className='text-sm font-bold'>{employeeDetails.reportsTo.employeeName}</span>}
-            secondary={<span className='text-xs '>{employeeDetails.reportsTo.position}</span>}
+            primary={
+              <span className='text-sm font-bold'>
+                {employeeDetails.reportsTo.employeeName}
+              </span>
+            }
+            secondary={
+              <span className='text-xs '>
+                {employeeDetails.reportsTo.position}
+              </span>
+            }
           />
         </ListItemButton>
 
-        <p className='text-xs font-bold text-gray-500 mt-2'>MY TEAMMATES</p>
-        {
-          getMyTeamMates()
-        }
+        {/* <p className='text-xs font-bold text-gray-500 mt-2'>MY TEAMMATES</p> */}
+        <CollapseWrapper
+          panelTitle='My Teammates'
+          titleClassName='text-xs font-bold text-gray-500 mt-2 uppercase'
+          titleWrapperClassName='!pl-0'
+          open
+        >
+          {getMyTeamMates()}
+        </CollapseWrapper>
       </List>
     </CustomCard>
   );

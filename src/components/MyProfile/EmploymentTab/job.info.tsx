@@ -3,7 +3,12 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import moment, { Moment } from 'moment';
-import { EditTwoTone, EngineeringTwoTone, PersonTwoTone, SaveTwoTone } from '@mui/icons-material';
+import {
+  EditTwoTone,
+  EngineeringTwoTone,
+  PersonTwoTone,
+  SaveTwoTone,
+} from '@mui/icons-material';
 import { ProfileCtx } from '../profile.main';
 import {
   Alert,
@@ -88,28 +93,31 @@ const JobInfo = (props: Props) => {
     isView,
     setUpdatedDetails,
   };
-  console.log({ editJob }, { jobUpdate })
+  console.log({ editJob }, { jobUpdate });
 
   useEffect(() => {
-    let data: any[] = [{
-      index: 0,
-      effectiveDate: employeeDetails.jobLastUpdate,
-      location: employeeDetails.location,
-      department: employeeDetails.department,
-      rank: employeeDetails.rank,
-      position: employeeDetails.position,
-      reportsTo: employeeDetails.reportsTo,
-    }];
+    let data: any[] = [
+      {
+        index: 0,
+        effectiveDate: employeeDetails.jobLastUpdate,
+        location: employeeDetails.location,
+        department: employeeDetails.department,
+        rank: employeeDetails.rank,
+        position: employeeDetails.position,
+        reportsTo: employeeDetails.reportsTo,
+      },
+    ];
     if (employeeDetails.employment_history.length > 0) {
-      employeeDetails.employment_history.filter((x: any) => x.type?.toLowerCase() == "job")
+      employeeDetails.employment_history
+        .filter((x: any) => x.type?.toLowerCase() == 'job')
         .map((o: any, i: number = 1) => {
           data.push({
             ...o,
-            index: i
-          })
-        })
+            index: i,
+          });
+        });
     }
-    data.sort((a: any, b: any) => a.index - b.index)
+    data.sort((a: any, b: any) => a.index - b.index);
     setInfos(data);
   }, [employeeDetails]);
 
@@ -184,19 +192,26 @@ const JobInfo = (props: Props) => {
     {
       field: 'remarks',
       headerName: 'Remarks',
-      flex: 1
+      flex: 1,
     },
     {
       field: 'action',
       headerName: 'Actions',
       flex: 1,
       renderCell: (params: any) => {
-        if (params.row.index === (infos.length - 1)) {
-          return <Button variant="outlined" size='small' onClick={() => setEditJob(params.row)} startIcon={<EditTwoTone />}>
-            Edit
-          </Button>
+        if (params.row.index === infos.length - 1) {
+          return (
+            <Button
+              variant='outlined'
+              size='small'
+              onClick={() => setEditJob(params.row)}
+              startIcon={<EditTwoTone />}
+            >
+              Edit
+            </Button>
+          );
         }
-        return "";
+        return '';
       },
     },
   ];
@@ -297,8 +312,8 @@ const JobInfo = (props: Props) => {
               }));
               setEditJob((prev: any) => ({
                 ...prev,
-                location: [...prev.location, option.props['data-obj']]
-              }))
+                location: [...prev.location, option.props['data-obj']],
+              }));
             }}
           >
             {locations.map((location) => {
@@ -527,7 +542,7 @@ const JobInfoFields = ({
     setRanks(enums.ranks);
     setEmploymentTypes(enums.employment_types);
   }, [enums]);
-  console.log({ employeeDetails })
+  console.log({ employeeDetails });
   useEffect(() => {
     if (
       !employeeDetails.employeeNo &&
@@ -559,10 +574,7 @@ const JobInfoFields = ({
           x.code.toLowerCase() == employeeDetails.employmentType.toLowerCase()
       );
 
-      if (
-        employment_type &&
-        employment_type.code.toLowerCase() == 'project'
-      ) {
+      if (employment_type && employment_type.code.toLowerCase() == 'project') {
         setIsProjectEmployee(true);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
@@ -719,8 +731,7 @@ const JobInfoFields = ({
             >
               {getEmployeeItems
                 ?.filter(
-                  (x: any) =>
-                    x.department.code === employeeDetails.department
+                  (x: any) => x.department?.code === employeeDetails.department
                 )
                 .map((employee) => {
                   return (
@@ -897,7 +908,7 @@ const JobInfoFields = ({
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             required
-            id="companyContactNumber"
+            id='companyContactNumber'
             variant='standard'
             label='Company Contact Number'
             fullWidth
@@ -917,7 +928,7 @@ const JobInfoFields = ({
             variant='standard'
             label='Company Email Address'
             fullWidth
-            id="companyEmail"
+            id='companyEmail'
             disabled
             value={employeeDetails.companyEmail}
             helperText={

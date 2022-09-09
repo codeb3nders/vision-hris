@@ -9,6 +9,7 @@ import { Dialog, IconButton, TextField } from '@mui/material';
 import moment from 'moment';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import AddButton from 'CustomComponents/AddButton';
 
 type Props = {};
 
@@ -37,6 +38,12 @@ const EmploymentRecord = (props: Props) => {
         ...prev,
         employmentRecords: records,
       }));
+
+    records.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.employmentRecords;
+        return prev;
+      });
   }, [records]);
 
   return (
@@ -54,14 +61,7 @@ const EmploymentRecord = (props: Props) => {
           getRowHeight={() => 'auto'}
         />
       </div>
-      <div className='flex justify-end'>
-        <button
-          className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
-          onClick={() => setOpen(true)}
-        >
-          <Add fontSize='small' /> Add Employment Record
-        </button>
-      </div>
+      <AddButton text='Add Employment Record' setOpen={setOpen} />
     </CollapseWrapper>
   );
 };

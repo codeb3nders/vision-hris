@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { LocalLibraryTwoTone, Add, Delete } from '@mui/icons-material';
 import {
   Dialog,
@@ -39,7 +40,8 @@ const SpecialTrainings = ({ type }: Props) => {
   const [trainings, setTrainings] = useState<SpecialTrainingI[]>([]);
 
   useEffect(() => {
-    trainings.length > 0 &&
+    !isNew &&
+      trainings.length > 0 &&
       (type === 'Attended'
         ? setUpdatedDetails((prev: any) => ({
             ...prev,
@@ -49,7 +51,18 @@ const SpecialTrainings = ({ type }: Props) => {
             ...prev,
             specialTrainingsTaught: trainings,
           })));
-    console.log({ trainings });
+
+    type === 'Attended'
+      ? trainings.length <= 0 &&
+        setUpdatedDetails((prev: any) => {
+          delete prev?.specialTrainingsAttended;
+          return prev;
+        })
+      : trainings.length <= 0 &&
+        setUpdatedDetails((prev: any) => {
+          delete prev?.specialTrainingsTaught;
+          return prev;
+        });
   }, [trainings]);
 
   const handleDelete = (params: any) => {

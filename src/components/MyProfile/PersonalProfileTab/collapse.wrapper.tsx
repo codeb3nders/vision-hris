@@ -15,6 +15,8 @@ type Props = {
   className?: string;
   icon?: any;
   contentClassName?: string;
+  titleClassName?: string;
+  titleWrapperClassName?: string;
 };
 
 const CollapseWrapper = ({
@@ -24,6 +26,8 @@ const CollapseWrapper = ({
   className,
   icon,
   contentClassName,
+  titleClassName,
+  titleWrapperClassName,
 }: Props) => {
   const [expanded, setExpanded] = useState<boolean>(open || false);
   return (
@@ -38,7 +42,7 @@ const CollapseWrapper = ({
       onChange={() => setExpanded(!expanded)}
     >
       <AccordionSummary
-        className='hover:text-v-red hover:bg-v-red/5 transition ease-in-out duration-150'
+        className={`hover:text-v-red hover:bg-v-red/5 transition ease-in-out duration-150 ${titleWrapperClassName}`}
         expandIcon={<ExpandMoreTwoTone />}
         aria-controls={`${panelTitle
           .split(' ')
@@ -52,7 +56,7 @@ const CollapseWrapper = ({
           }`}
         >
           {icon && <SvgIcon component={icon} fontSize='small' />}
-          {panelTitle}
+          <span className={titleClassName}>{panelTitle}</span>
         </Typography>
       </AccordionSummary>
       <AccordionDetails className={contentClassName}>

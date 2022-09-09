@@ -1,4 +1,5 @@
-import { Add, AdminPanelSettingsTwoTone, Delete } from '@mui/icons-material';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { AdminPanelSettingsTwoTone, Delete } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useContext, useEffect, useState } from 'react';
@@ -9,6 +10,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import AddButton from 'CustomComponents/AddButton';
 
 type Props = {};
 
@@ -37,6 +39,12 @@ const Licensure = (props: Props) => {
         ...prev,
         govtProfExamsPassed: exams,
       }));
+
+    exams.length <= 0 &&
+      setUpdatedDetails((prev: any) => {
+        delete prev?.govtProfExamsPassed;
+        return prev;
+      });
   }, [exams]);
 
   return (
@@ -57,14 +65,7 @@ const Licensure = (props: Props) => {
           getRowHeight={() => 'auto'}
         />
       </div>
-      <div className='flex justify-end'>
-        <button
-          className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
-          onClick={() => setOpen(true)}
-        >
-          <Add fontSize='small' /> Add Licensure Examinations
-        </button>
-      </div>
+      <AddButton text='Add Licensure Examinations' setOpen={setOpen} />
     </CollapseWrapper>
   );
 };
