@@ -74,9 +74,9 @@ const ProfileOther = ({ className }: Props) => {
             <PlaceTwoTone />
           </ListItemIcon>
           <ListItemText
-            primary={
-              employeeDetails?.location.map((o: any) => <span className='text-xs'>{o.name}</span>)
-            }
+            primary={employeeDetails?.location?.map((o: any) => (
+              <span className='text-xs'>{o.name}</span>
+            ))}
           />
         </ListItem>
       </List>

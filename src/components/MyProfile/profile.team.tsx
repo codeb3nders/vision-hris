@@ -1,4 +1,4 @@
-import { } from '@mui/icons-material';
+import {} from '@mui/icons-material';
 import {
   List,
   ListItemIcon,
@@ -33,15 +33,17 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
 
   useEffect(() => {
     if (employeeDetails && employeeDetails.reportsTo) {
-      console.log({ employeeDetails })
+      console.log({ employeeDetails });
       setMyTeammates(
         getEmployeeItems
-          .filter(
-            (x: any) => {
-              return x.reportsTo && x.reportsTo.employeeNo === employeeDetails.reportsTo.employeeNo &&
-                x.employeeNo !== employeeDetails.employeeNo &&
-                x.employeeNo !== employeeDetails.reportsTo.employeeNo
-            })
+          .filter((x: any) => {
+            return (
+              x.reportsTo &&
+              x.reportsTo.employeeNo === employeeDetails.reportsTo.employeeNo &&
+              x.employeeNo !== employeeDetails.employeeNo &&
+              x.employeeNo !== employeeDetails.reportsTo.employeeNo
+            );
+          })
           .sort((a: any, b: any) => a.lastName.localeCompare(b.lastName))
       );
     }
@@ -49,22 +51,34 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
 
   const getMyTeamMates = () => {
     return myTeammates.map((o: any, i: number) => {
-      return <ListItemButton key={i} className='p-0 px-1' onClick={() => {
-        isHRLogin && setViewDetails && setViewDetails({
-          employeeNo: o.employeeNo,
-          status: true,
-        })
-      }}>
-        <ListItemIcon>
-          <Avatar src={getAvatar(o.gender.code)} />
-        </ListItemIcon>
-        <ListItemText
-          primary={<span className='text-xs font-bold'>{o.lastName}, {o.firstName}</span>}
-          secondary={<span className='text-xs '>{o.position.name}</span>}
-        />
-      </ListItemButton>
-    })
-  }
+      return (
+        <ListItemButton
+          key={i}
+          className='p-0 px-1'
+          onClick={() => {
+            isHRLogin &&
+              setViewDetails &&
+              setViewDetails({
+                employeeNo: o.employeeNo,
+                status: true,
+              });
+          }}
+        >
+          <ListItemIcon>
+            <Avatar src={getAvatar(o.gender?.code)} />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <span className='text-xs font-bold'>
+                {o.lastName}, {o.firstName}
+              </span>
+            }
+            secondary={<span className='text-xs '>{o.position.name}</span>}
+          />
+        </ListItemButton>
+      );
+    });
+  };
 
   return (
     <CustomCard className={`${className}`}>

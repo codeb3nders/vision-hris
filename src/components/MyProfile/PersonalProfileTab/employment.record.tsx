@@ -1,4 +1,5 @@
-import { Add, BadgeTwoTone, Delete } from '@mui/icons-material';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { BadgeTwoTone, Delete } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useContext, useEffect, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
@@ -14,7 +15,7 @@ import AddButton from 'CustomComponents/AddButton';
 type Props = {};
 
 const EmploymentRecord = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails } =
+  const { setEmployeeDetails, isNew, setUpdatedDetails } =
     useContext(ProfileCtx);
   const [records, setRecords] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
