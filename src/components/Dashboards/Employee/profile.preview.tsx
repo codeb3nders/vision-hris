@@ -1,5 +1,6 @@
 import { AppCtx } from 'App';
 import React, { useContext } from 'react';
+import { getAvatar } from 'utils/functions';
 
 export const ProfilePhoto =
   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80';
@@ -15,7 +16,7 @@ const ProfilePreview: React.FC<Props> = () => {
     <div className='pl-6'>
       <section className='flex flex-row space-x-2 items-center mb-1 relative z-10 '>
         <img
-          src={ProfilePhoto}
+          src={getAvatar(userData.gender?.code)}
           alt=''
           className='inline-block h-12 w-12 rounded-full'
         />
@@ -33,14 +34,14 @@ const ProfilePreview: React.FC<Props> = () => {
         <div>
           <div className='text-xs  mt-2'>Position:</div>
           <div className='text-sm  font-medium'>
-            {userData.position}
+            {userData.position.name}
           </div>
         </div>
 
         <div className='grid grid-cols-12 gap-4 space-y-0'>
           <div className='phone:col-span-6 tablet:col-span-4'>
             <div className='text-xs  mt-2'>Location:</div>
-            <div className='text-sm  font-medium'>{userData.location}</div>
+            <div className='text-sm  font-medium'>{userData.location.map((o:any) => o.name).join(", ")}</div>
           </div>
           <div className='phone:col-span-6 tablet:col-span-4'>
             <div className='text-xs  mt-2'>Reports To:</div>

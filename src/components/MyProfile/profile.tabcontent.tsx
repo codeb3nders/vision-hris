@@ -1,5 +1,5 @@
 import { TabPanel } from '@mui/lab';
-import { Divider } from '@mui/material';
+import { Button, Divider } from '@mui/material';
 import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, lazy, Suspense } from 'react';
 import ChecklistTable from './201Checklist/checklist.table';
@@ -61,6 +61,15 @@ const ProfileTabContent = ({ className }: Props) => {
       {/* <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' /> */}
 
       <TabPanel value='1' className='p-0 grid' id='Personal'>
+        <Button
+          // color='primary'
+          variant='contained'
+            // disabled={!validated}
+            className='px-4 py-2 bg-green-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
+            // onClick={handleEmployee}
+          >
+            Save Changes
+          </Button>
         <Suspense fallback={<div>Loading...</div>}>
           <Personal />
         </Suspense>

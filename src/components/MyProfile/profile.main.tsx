@@ -531,13 +531,13 @@ const ProfileMain = ({
           </section>
         </section>
 
-        {(isNew || isView) && (
+        {isNew && (
           <button
             disabled={!validated}
             className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10 disabled:bg-gray-300 disabled:cursor-not-allowed'
             onClick={handleEmployee}
           >
-            {isNew ? 'Save' : 'Update'} Employee Profile
+            Save Employee Profile
           </button>
         )}
       </TabContext>

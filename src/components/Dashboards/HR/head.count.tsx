@@ -8,7 +8,6 @@ type Props = {
 };
 
 const HeadCount = ({ className, data }: Props) => {
-  console.log({ data })
   return (
     <CardWTitle title='Headcount' className={`${className}`}>
       <div className=''>
