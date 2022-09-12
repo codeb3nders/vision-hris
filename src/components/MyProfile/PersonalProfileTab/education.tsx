@@ -154,7 +154,7 @@ const Education = (props: Props) => {
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
                   disabled={!handleExist(level)}
-                  value={value?.yrFrom}
+                  value={value?.yrFrom || undefined}
                   label='From'
                   views={['year']}
                   onChange={(value: any) =>
@@ -181,7 +181,7 @@ const Education = (props: Props) => {
                   onChange={(value: any) =>
                     handleEducation('yrTo', value, level)
                   }
-                  value={value?.yrTo}
+                  value={value?.yrTo || undefined}
                   renderInput={(params) => (
                     <TextField
                       id='education-yrto'

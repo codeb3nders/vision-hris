@@ -14,7 +14,6 @@ import React, {
 } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import { initialState } from './employee.initialstate';
-// import ProfileDetails from './profile.details';
 import ProfileOther from './profile.other';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
@@ -23,6 +22,7 @@ import {
   getEmployeeCreatedItem,
   getEmployeeCreateError,
   getEmployeeCreateStatus,
+  getEmployeeUpdateError,
   resetCreate,
   resetUpdate,
   updateEmployee,
@@ -75,19 +75,19 @@ export type ProfileModel = {
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => {},
+  setIndex: () => { },
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => {},
-  setDisplayPhoto: () => {},
+  setEmployeeDetails: () => { },
+  setDisplayPhoto: () => { },
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
   isOwner: false,
   enums: {},
-  setUpdatedDetails: () => {},
+  setUpdatedDetails: () => { },
   updatedDetails: null,
 });
 
@@ -100,6 +100,7 @@ export type EnumI = {
 
 export type EnumsI = {
   positions: EnumI[];
+  gender: EnumI[];
   departments: EnumI[];
   ranks: EnumI[];
   civil_status: EnumI[];
@@ -116,6 +117,7 @@ export type EnumsI = {
 
 const enumsInitialState = {
   positions: [],
+  gender: [],
   departments: [],
   ranks: [],
   civil_status: [],
@@ -182,7 +184,8 @@ const ProfileMain = ({
 
   // Employees
   const employeeData = useSelector(_getOneEmployeeDetails);
-  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus);
+  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus)
+  const employeeUpdateError = useSelector(getEmployeeUpdateError)
 
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
@@ -191,7 +194,7 @@ const ProfileMain = ({
         // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
         success();
       } else {
-        failed();
+        failed(newEmployeeError);
       }
     }
   }, [newEmployeeStatus]);
@@ -199,10 +202,10 @@ const ProfileMain = ({
   useEffect(() => {
     console.log({ employeeUpdatedStatus });
     if (employeeUpdatedStatus !== 'idle') {
-      if (employeeUpdatedStatus === 'succeeded') {
-        success();
+      if (employeeUpdateError) {
+        failed(employeeUpdateError);
       } else {
-        failed();
+        success();
       }
     }
   }, [employeeUpdatedStatus]);
@@ -213,7 +216,7 @@ const ProfileMain = ({
       if (employeeUpdatedStatus === 'succeeded') {
         success();
       } else {
-        failed();
+        failed(employeeUpdateError);
       }
     }
   }, [employeeUpdatedStatus]);
@@ -250,10 +253,7 @@ const ProfileMain = ({
         setEmployeeDetails(() => {
           return {
             ...initialState,
-            ...employeeData,
-            // department: employeeData.department?.name,
-            // employmentType: employeeData.employmentType.name,
-            // employmentStatus: employeeData.employmentStatus.name,
+            ...employeeData
           };
         });
       }
@@ -292,10 +292,10 @@ const ProfileMain = ({
     }, 2000);
   };
 
-  const failed = () => {
+  const failed = (message: string) => {
     setLoading({ status: false, action: '' });
     setOpenNotif({
-      message: newEmployeeError,
+      message: message,
       status: true,
       severity: 'error',
     });
@@ -322,7 +322,8 @@ const ProfileMain = ({
       file201: any = [],
       allowance_types: any = [],
       disciplinary_actions: any = [],
-      employment_types: any = [];
+      employment_types: any = [],
+      gender: any = [];
 
     enumsData.forEach((o: any) => {
       switch (o.type.toLowerCase()) {
@@ -331,6 +332,9 @@ const ProfileMain = ({
           break;
         case 'civilstatus':
           civil_status.push(o);
+          break;
+        case 'gender':
+          gender.push(o);
           break;
         case 'citizenship':
           citizenship.push(o);
@@ -368,7 +372,7 @@ const ProfileMain = ({
       }
     });
     setEnums({
-      positions,
+      positions, gender,
       departments,
       ranks,
       civil_status,
@@ -420,18 +424,18 @@ const ProfileMain = ({
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-              ...displayPhotos,
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+            ...displayPhotos,
+          ]
           : [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+          ]
       )
     );
   };
@@ -500,9 +504,8 @@ const ProfileMain = ({
 
       <TabContext value={index}>
         <section
-          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${
-            isNew ? '!pb-0' : ''
-          }`}
+          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${isNew ? '!pb-0' : ''
+            }`}
         >
           <Suspense fallback={<div>Loading...</div>}>
             <ProfileDetails />
@@ -511,16 +514,15 @@ const ProfileMain = ({
             {!isNew && (
               <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>
                 <ProfileOther />
-                <ProfileTeam setViewDetails={setViewDetails} />
+                {employeeDetails.reportsTo && <ProfileTeam setViewDetails={setViewDetails} />}
               </article>
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
-                isNew
-                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                  : ''
-              }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
+                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                : ''
+                }`}
             >
               <Suspense fallback={<div>Loading...</div>}>
                 <ProfileTabContent className='self-stretch' />
@@ -529,13 +531,13 @@ const ProfileMain = ({
           </section>
         </section>
 
-        {(isNew || isView) && (
+        {isNew && (
           <button
             disabled={!validated}
             className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10 disabled:bg-gray-300 disabled:cursor-not-allowed'
             onClick={handleEmployee}
           >
-            {isNew ? 'Save' : 'Update'} Employee Profile
+            Save Employee Profile
           </button>
         )}
       </TabContext>

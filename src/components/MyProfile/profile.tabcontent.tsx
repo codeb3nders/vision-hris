@@ -1,9 +1,10 @@
 import { TabPanel } from '@mui/lab';
-import { Divider } from '@mui/material';
+import { Button, Divider } from '@mui/material';
 import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, lazy, Suspense } from 'react';
 import ChecklistTable from './201Checklist/checklist.table';
 import AssetsTable from './Assets/assets.table';
+import EmployeeBenefits from './CompensationAndBenefits/employee.benefits';
 import EmployementStatus from './EmploymentTab/employement.status';
 import History from './Leaves/history';
 import LeaveBalances from './Leaves/leave.balances';
@@ -51,15 +52,24 @@ const ProfileTabContent = ({ className }: Props) => {
   return (
     <CustomCard
       id='tab-content'
-      className={`${
-        isNew || isView
+      className={`${isNew || isView
           ? 'desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
           : ''
-      } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
+        } overflow-y-auto desktop:p-6 laptop:p-6 phone:p-0 !pb-12 !pt-0 ${className}`}
     >
-      <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
+      <ProfileTabs className='phone:visible' />
+      {/* <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' /> */}
 
       <TabPanel value='1' className='p-0 grid' id='Personal'>
+        <Button
+          // color='primary'
+          variant='contained'
+            // disabled={!validated}
+            className='px-4 py-2 bg-green-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
+            // onClick={handleEmployee}
+          >
+            Save Changes
+          </Button>
         <Suspense fallback={<div>Loading...</div>}>
           <Personal />
         </Suspense>
@@ -93,6 +103,9 @@ const ProfileTabContent = ({ className }: Props) => {
       <TabPanel value='3' className='p-0 grid' id='CompensationAndBenefits'>
         <Suspense fallback={<div>Loading...</div>}>
           <GovernmentDetails />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <EmployeeBenefits />
         </Suspense>
         <Suspense fallback={<div>Loading...</div>}>
           <PayrollInformation />

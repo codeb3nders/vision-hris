@@ -33,7 +33,7 @@ const CelebrationsToday = ({ className, celebrations }: Props) => {
             <ListItem key={off.id} className='justtify-left px-0'>
               <ListItemIcon className='flex items-center gap-4'>
                 {off.isBirthdayToday ? birthdayIcon : anniversaryIcon}{' '}
-                <Avatar src={getAvatar(off.gender)} className='mr-2 w-[28px] h-[28px]' />
+                <Avatar src={getAvatar(off.gender.code)} className='mr-2 w-[28px] h-[28px]' />
               </ListItemIcon>
               <ListItemText
                 className='text-sm'

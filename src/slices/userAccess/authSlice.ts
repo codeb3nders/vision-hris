@@ -50,7 +50,7 @@ export const authSlice = createSlice({
                 if (action.payload.access_token) {
                     state.access_token = action.payload.access_token;
                     state.userData = action.payload.userInfo;
-                    state.userGroup = action.payload.userInfo.userGroup;
+                    state.userGroup = action.payload.userInfo.userGroup.code;
                 }
             })
             .addCase(authAction.rejected, (state, action) => {

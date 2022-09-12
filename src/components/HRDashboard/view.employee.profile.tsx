@@ -20,7 +20,7 @@ const ViewEmployeeProfile = ({ setViewDetails, viewDetails }: Props) => {
     <Dialog
       open={viewDetails.status}
       onClose={() => setViewDetails({ employeeNo: "", status: false })}
-      className='mx-auto [&>.MuiDialog-container>.MuiPaper-root]:!max-w-[1200px] [&>.MuiDialog-container>.MuiPaper-root]:w-full'
+      className='mx-auto [&>.MuiDialog-container>.MuiPaper-root]:!max-w-[90%] [&>.MuiDialog-container>.MuiPaper-root]:w-full'
     >
       <div className='relative'>
         <ProfileMain setViewDetails={setViewDetails} isView employeeNo={viewDetails.employeeNo} />

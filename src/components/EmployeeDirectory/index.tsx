@@ -56,7 +56,7 @@ const columns = () => [
         field: 'gender',
         headerName: '', width: 50,
         renderCell: (cell) => {
-            return <Avatar src={getAvatar(cell.value)} className='mr-2 w-[28px] h-[28px]' />
+            return <Avatar src={getAvatar(cell.row.gender.code)} className='mr-2 w-[28px] h-[28px]' />
         },
         sortable: false,
         filterable: false
@@ -67,7 +67,7 @@ const columns = () => [
         renderCell: (cell) => {
             return <div style={{ marginTop: 5 }}>
                 <Typography variant="subtitle2" color={VISION_RED} > {cell.value}</Typography>
-                <Typography variant="caption" display={"block"}> {cell.row.position}</Typography>
+                <Typography variant="caption" display={"block"}> {cell.row.position.name}</Typography>
                 <Typography variant="caption" display={"block"} > {cell.row.department.name}</Typography>
                 <Typography variant="caption" display={"block"} gutterBottom ><LocationOnTwoTone fontSize="small" /> {cell.row.location.map((o: any) => o.name).join(", ")}</Typography>
             </div>

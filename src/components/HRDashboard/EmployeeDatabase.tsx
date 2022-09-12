@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Card, Button, Link, Checkbox, Tooltip } from '@mui/material';
+import { Card, Button, Link, Tooltip } from '@mui/material';
 import {
   AddCircleOutlineTwoTone,
   KeyTwoTone,
@@ -21,8 +21,6 @@ import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
-import { AnyMxRecord } from 'dns';
-import { getAvatar } from 'utils/functions';
 
 type Props = {};
 
@@ -36,7 +34,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   // Employees
   const getEmployeeItems = useSelector(_getEmployeeItems);
-  const getEmployeeStatus = useSelector(_getEmployeeStatus);
+  // const getEmployeeStatus = useSelector(_getEmployeeStatus);
 
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
@@ -113,19 +111,21 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'position',
       headerName: 'Position',
       width: 200,
-      renderCell: (cell) => {
-        return (
-          <Tooltip title={cell.value || 'Position'}>
-            <span>{cell.value}</span>
-          </Tooltip>
-        );
+      renderCell: (cell: any) => cell.row.position?.name,
+      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      valueGetter: (params) => {
+        return params.row.position?.name;
       },
-      sortComparator: (v1, v2) => v1.localeCompare(v2),
     },
     {
       field: 'rank',
       headerName: 'Rank',
       width: 120,
+      renderCell: (cell: any) => cell.row.rank?.name,
+      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      valueGetter: (params) => {
+        return params.row.rank?.name;
+      },
     },
     {
       field: 'department',
@@ -148,10 +148,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Location',
       width: 140,
       renderCell: (cell) =>
-        cell.row.location.map((o: any) => o.name).join(', '),
+        cell.row.location?.map((o: any) => o.name).join(', '),
       sortable: false,
       valueGetter: (params) => {
-        return params.row.location.map((o: any) => o.name).join(', ');
+        return params.row.location?.map((o: any) => o.name).join(', ');
       },
     },
     {
@@ -178,11 +178,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'reportsTo',
       headerName: 'Team Leader',
       width: 140,
-      renderCell: (cell) => cell.row.reportsTo.employeeName,
+      renderCell: (cell) => cell.row.reportsTo?.employeeName || '',
       sortComparator: (v1, v2) =>
         v1.employeeName.localeCompare(v2.employeeName),
       valueGetter: (params) => {
-        return params.row.reportsTo.employeeName;
+        return params.row.reportsTo?.employeeName || '';
       },
     },
     // {
@@ -218,7 +218,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       />
 
       <Card sx={{ mt: 5, p: 2 }}>
-        <div style={{ marginBottom: 16, textAlign: 'left' }}>
+        <div style={{ marginBottom: 16, textAlign: 'right' }}>
           <Button
             onClick={sendCredentials}
             startIcon={<KeyTwoTone />}
@@ -226,8 +226,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
           >
             Send Credentials
           </Button>
-        </div>
-        <div style={{ marginBottom: 16, textAlign: 'left' }}>
           <Button
             onClick={sendCredentials}
             startIcon={<SupervisedUserCircleTwoTone />}
@@ -235,8 +233,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
           >
             Change Team Leader
           </Button>
-        </div>
-        <div style={{ marginBottom: 16, textAlign: 'right' }}>
           <Button startIcon={<UploadTwoTone />} sx={{ mr: 1 }}>
             Upload Employee Details
           </Button>

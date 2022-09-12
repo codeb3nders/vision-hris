@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Add, AttachMoneyTwoTone, Delete } from '@mui/icons-material';
-import { Dialog, IconButton, TextField } from '@mui/material';
+import { Dialog, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useContext, useEffect, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
@@ -9,7 +9,7 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const AllowanceDetails = (props: Props) => {
-  const { setUpdatedDetails, isNew } = useContext(ProfileCtx);
+  const { setUpdatedDetails, isNew, enums } = useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [allowances, setAllowances] = useState<any[]>([]);
 
@@ -45,6 +45,7 @@ const AllowanceDetails = (props: Props) => {
         open={open}
         setOpen={setOpen}
         setAllowances={setAllowances}
+        enums={enums}
       />
       <div style={{ width: '100%' }}>
         <DataGrid
@@ -70,11 +71,16 @@ const AllowanceDetails = (props: Props) => {
   );
 };
 
-const AllowanceDialog = ({ open, setOpen, setAllowances }) => {
+const AllowanceDialog = ({ open, setOpen, setAllowances, enums }) => {
   const [allowance, setAllowance] = useState<{
     allowanceType: string;
     amount: string;
   }>({ allowanceType: '', amount: '' });
+  const [allowanceTypes, setAllowanceTypes] = useState<any[]>([]);
+
+  useEffect(() => { 
+    setAllowanceTypes(enums.allowance_types)
+  }, [enums])
 
   const handleSave = () => {
     setOpen(false);
@@ -88,18 +94,32 @@ const AllowanceDialog = ({ open, setOpen, setAllowances }) => {
           <AttachMoneyTwoTone fontSize='small' /> New Allowance Details
         </p>
 
-        <TextField
-          id='allowance-type'
-          variant='standard'
-          size='small'
-          label='Allowance Type'
-          onChange={(e: any) =>
-            setAllowance((prev: any) => ({
-              ...prev,
-              allowanceType: e.target.value,
-            }))
-          }
-        />
+        <FormControl variant='standard' fullWidth size='small' required>
+          <InputLabel id='allowanceType-label'>Allowance Type</InputLabel>
+          <Select
+            id='allowance-type-select'
+            labelId='allowanceType-label'
+            onChange={(e: any, option: any) => {
+              setAllowance((prev: any) => ({
+                ...prev,
+                allowanceType: e.target.value,
+              }))
+            }}
+          >
+            {allowanceTypes.map((type: any, i: number) => {
+              return (
+                <MenuItem
+                  id={`type-${i}`}
+                  key={`type-${i}`}
+                  data-obj={type}
+                  value={type.code}
+                >
+                  {type.name}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
 
         <div className='flex flex-row items-center gap-1'>
           <span className='text-xs translate-y-2 '>PHP</span>

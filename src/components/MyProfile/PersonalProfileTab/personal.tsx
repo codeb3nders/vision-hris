@@ -36,14 +36,17 @@ const Personal = (props: Props) => {
   const [citizenship, setCitizenship] = useState<any[]>([]);
   const [civilStatus, setCivilStatus] = useState<any[]>([]);
   const [religion, setReligion] = useState<any[]>([]);
+  const [genders, setGenders] = useState<any[]>([]);
 
   useEffect(() => {
     setCitizenship(enums.citizenship);
     setCivilStatus(enums.civil_status);
     setReligion(enums.religions);
+    setGenders(enums.gender);
   }, [enums]);
-
+  console.log({ employeeDetails })
   useEffect(() => {
+    console.log({ sameAddress })
     if (sameAddress) {
       setEmployeeDetails((prev: any) => ({
         ...prev,
@@ -65,32 +68,6 @@ const Personal = (props: Props) => {
             province: prev.presentAddress.province,
             municipality: prev.presentAddress.municipality,
             barangay: prev.presentAddress.barangay,
-          },
-        }));
-    } else {
-      console.log('ELSE');
-
-      setEmployeeDetails((prev: EmployeeI) => ({
-        ...prev,
-        permanentAddress: {
-          addressLine: '',
-          region: '',
-          province: '',
-          municipality: '',
-          barangay: '',
-        },
-      }));
-
-      !isNew &&
-        employeeDetails.presentAddress.addressLine &&
-        setUpdatedDetails((prev: any) => ({
-          ...prev,
-          permanentAddress: {
-            addressLine: '',
-            region: '',
-            province: '',
-            municipality: '',
-            barangay: '',
           },
         }));
     }
@@ -160,12 +137,12 @@ const Personal = (props: Props) => {
       });
   };
 
-  const handleReligion = (e: any) => {
+  const handleReligion = (e: any, option: any) => {
     if (e.target.value !== 'Others, please specify') {
       !isNew &&
         setUpdatedDetails((prev: any) => ({
           ...prev,
-          religion: e.target.value,
+          religion: option.props['data-obj']
         }));
 
       setOtherReligion(false);
@@ -181,6 +158,15 @@ const Personal = (props: Props) => {
   const handleChange = (value: any) => {
     setEmployeeDetails({ ...employeeDetails, ...value });
   };
+
+  const isSame = () => {
+    const presentAddress = employeeDetails.presentAddress, permanentAddress = employeeDetails.permanentAddress;
+    return presentAddress?.addressLine == permanentAddress?.addressLine
+      && presentAddress?.region == permanentAddress?.region
+      && presentAddress?.province == permanentAddress?.province
+      && presentAddress?.municipality == permanentAddress?.municipality
+      && presentAddress?.barangay == permanentAddress?.barangay
+  }
 
   return (
     <CollapseWrapper
@@ -288,7 +274,7 @@ const Personal = (props: Props) => {
                 !isNew &&
                   setUpdatedDetails((prev: any) => ({
                     ...prev,
-                    suffix: value,
+                    birthDate: value,
                   }));
               }}
               // disabled={loading}
@@ -308,15 +294,15 @@ const Personal = (props: Props) => {
 
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
           <FormControl required fullWidth variant='standard'>
-            <InputLabel id='gender'>Gender</InputLabel>
+            <InputLabel id='genderLabel'>Gender</InputLabel>
             <Select
               id='gender'
-              labelId='gender'
+              labelId='genderLabel'
               size='small'
-              onChange={(e: any) => {
+              onChange={(e: any, option: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
-                  gender: e.target.value,
+                  gender: option.props['data-obj']
                 });
 
                 !isNew &&
@@ -325,14 +311,15 @@ const Personal = (props: Props) => {
                     gender: e.target.value,
                   }));
               }}
-              value={employeeDetails?.gender}
+              value={employeeDetails?.gender?.code}
             >
-              <MenuItem id='male' value='MALE'>
-                Male
-              </MenuItem>
-              <MenuItem id='female' value='FEMALE'>
-                Female
-              </MenuItem>
+              {genders.map((gender: any, i: number) => {
+                return (
+                  <MenuItem key={i} data-obj={gender} value={gender.code}>
+                    {gender.name}
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
         </div>
@@ -344,10 +331,10 @@ const Personal = (props: Props) => {
               id='civil-status'
               labelId='civil_status'
               size='small'
-              onChange={(e: any) => {
+              onChange={(e: any, option: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
-                  civilStatus: e.target.value,
+                  civilStatus: option.props['data-obj']
                 });
 
                 !isNew &&
@@ -356,11 +343,11 @@ const Personal = (props: Props) => {
                     civilStatus: e.target.value,
                   }));
               }}
-              value={employeeDetails?.civilStatus}
+              value={employeeDetails?.civilStatus?.code}
             >
               {civilStatus.map((status) => {
                 return (
-                  <MenuItem key={status._id} value={status.code}>
+                  <MenuItem key={status._id} data-obj={status} value={status.code}>
                     {status.name}
                   </MenuItem>
                 );
@@ -380,10 +367,10 @@ const Personal = (props: Props) => {
                 id='citizenship'
                 labelId='citizenship'
                 size='small'
-                onChange={(e: any) => {
+                onChange={(e: any, option: any) => {
                   setEmployeeDetails({
                     ...employeeDetails,
-                    citizenship: e.target.value,
+                    citizenship: option.props['data-obj']
                   });
 
                   !isNew &&
@@ -392,11 +379,11 @@ const Personal = (props: Props) => {
                       citizenship: e.target.value,
                     }));
                 }}
-                value={employeeDetails?.citizenship || 'Philippines'}
+                value={employeeDetails?.citizenship?.code || 'PHILIPPINES'}
               >
                 {citizenship.map((c: any, idx: number) => {
                   return (
-                    <MenuItem id={c._id} key={c._id} value={c.code}>
+                    <MenuItem id={c._id} key={c._id} value={c.code} data-obj={c}>
                       {c.name}
                     </MenuItem>
                   );
@@ -412,12 +399,23 @@ const Personal = (props: Props) => {
                 id='religion'
                 labelId='religion'
                 size='small'
-                onChange={handleReligion}
-                value={employeeDetails?.religion}
+                onChange={(e: any, option: any) => {
+                  setEmployeeDetails({
+                    ...employeeDetails,
+                    religion: option.props['data-obj']
+                  });
+
+                  !isNew &&
+                    setUpdatedDetails((prev: any) => ({
+                      ...prev,
+                      religion: e.target.value,
+                    }));
+                }}
+                value={employeeDetails?.religion?.code}
               >
                 {religion.map((religion) => {
                   return (
-                    <MenuItem key={religion._id} value={religion.code}>
+                    <MenuItem key={religion._id} data-obj={religion} value={religion.code}>
                       {religion.name}
                     </MenuItem>
                   );
@@ -426,7 +424,7 @@ const Personal = (props: Props) => {
             </FormControl>
           </div>
 
-          {otherReligion && (
+          {/* {otherReligion && (
             <>
               <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2 phone:hidden desktop:block laptop:block'></div>
               <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
@@ -452,7 +450,7 @@ const Personal = (props: Props) => {
                 />
               </div>
             </>
-          )}
+          )} */}
 
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
             <TextField
@@ -517,7 +515,7 @@ const Personal = (props: Props) => {
               <Checkbox
                 size='small'
                 id='address-yes'
-                checked={sameAddress}
+                checked={sameAddress || (employeeDetails.presentAddress && employeeDetails.permanentAddress && isSame())}
                 onChange={() => setSameAddress(true)}
               />
               <label htmlFor='address-yes'>Yes</label>
@@ -526,7 +524,7 @@ const Personal = (props: Props) => {
               <Checkbox
                 size='small'
                 id='address-no'
-                checked={!sameAddress}
+                checked={!(sameAddress || (employeeDetails.presentAddress && employeeDetails.permanentAddress && isSame()))}
                 onChange={() => setSameAddress(false)}
               />
               <label htmlFor='address-no'>No</label>

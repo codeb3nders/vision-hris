@@ -57,7 +57,7 @@ const App: React.FC<Props> = () => {
   });
 
   useEffect(() => {
-    if (userData && userData.userGroup == "HR ADMIN") {
+    if (userData && userData.userGroup.code == "HR ADMIN") {
       setIsHRLogin(true);
     }
   }, [userData])
