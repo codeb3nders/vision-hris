@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Card, Button, Link, Checkbox, Tooltip } from '@mui/material';
+import { Card, Button, Link, Tooltip } from '@mui/material';
 import {
   AddCircleOutlineTwoTone,
   KeyTwoTone,
@@ -21,8 +21,6 @@ import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
-import { AnyMxRecord } from 'dns';
-import { getAvatar } from 'utils/functions';
 
 type Props = {};
 
@@ -36,7 +34,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   // Employees
   const getEmployeeItems = useSelector(_getEmployeeItems);
-  const getEmployeeStatus = useSelector(_getEmployeeStatus);
+  // const getEmployeeStatus = useSelector(_getEmployeeStatus);
 
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
@@ -150,10 +148,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Location',
       width: 140,
       renderCell: (cell) =>
-        cell.row.location.map((o: any) => o.name).join(', '),
+        cell.row.location?.map((o: any) => o.name).join(', '),
       sortable: false,
       valueGetter: (params) => {
-        return params.row.location.map((o: any) => o.name).join(', ');
+        return params.row.location?.map((o: any) => o.name).join(', ');
       },
     },
     {
@@ -180,11 +178,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'reportsTo',
       headerName: 'Team Leader',
       width: 140,
-      renderCell: (cell) => cell.row.reportsTo?.employeeName || "",
+      renderCell: (cell) => cell.row.reportsTo?.employeeName || '',
       sortComparator: (v1, v2) =>
         v1.employeeName.localeCompare(v2.employeeName),
       valueGetter: (params) => {
-        return params.row.reportsTo?.employeeName || "";
+        return params.row.reportsTo?.employeeName || '';
       },
     },
     // {
