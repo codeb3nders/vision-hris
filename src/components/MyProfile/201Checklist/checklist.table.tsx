@@ -63,6 +63,7 @@ const ChecklistTable = (props: Props) => {
       <div style={{ width: '100%' }}>
         <DataGrid
           autoHeight
+          experimentalFeatures={{ newEditingApi: true }}
           disableSelectionOnClick
           rows={rows}
           columns={columns(handleDelete)}
@@ -238,6 +239,7 @@ const columns: any = (handleDelete: any) => [
     renderCell: (params: any) => {
       return params.value;
     },
+    editable: true,
   },
   {
     field: 'documentDescription',

@@ -97,7 +97,7 @@ export interface EmployeeI {
   payrollBankAccount: any | null;
   civilStatus: any;
   religion: any;
-  NumberOfDependents: undefined | number;
+  numberOfDependents: undefined | number;
   sss: string;
   philHealth: string;
   pagIbig: string;

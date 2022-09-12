@@ -21,7 +21,7 @@ const useRequiredChecker = ({ employeeDetails }) => {
       position,
       department,
       location,
-      reportsTo,
+      // reportsTo,
       dateHired,
       rank,
       employmentStatus,
@@ -40,7 +40,7 @@ const useRequiredChecker = ({ employeeDetails }) => {
       position &&
       department &&
       location.length > 0 &&
-      reportsTo &&
+      // reportsTo &&
       dateHired &&
       rank &&
       employmentStatus &&

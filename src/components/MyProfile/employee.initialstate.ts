@@ -13,11 +13,7 @@ export const initialState: EmployeeI = {
   location: [],
   isActive: true,
   userGroup: null,
-  reportsTo: {
-    employeeNo: "",
-    employeeName: "",
-    position: ""
-  },
+  reportsTo: null,
   dateHired: new Date(),
   employmentType: null,
   employmentStatus: null,
@@ -38,7 +34,7 @@ export const initialState: EmployeeI = {
   },
   civilStatus: null,
   religion: null,
-  NumberOfDependents: undefined,
+  numberOfDependents: undefined,
   sss: '',
   philHealth: '',
   pagIbig: '',

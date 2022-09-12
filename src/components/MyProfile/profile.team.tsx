@@ -32,15 +32,16 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
   const getEmployeeItems = useSelector(_getEmployeeItems);
 
   useEffect(() => {
-    if (employeeDetails) {
+    if (employeeDetails && employeeDetails.reportsTo) {
+      console.log({ employeeDetails })
       setMyTeammates(
         getEmployeeItems
           .filter(
-            (x: any) =>
-              x.reportsTo.employeeNo === employeeDetails.reportsTo.employeeNo &&
-              x.employeeNo !== employeeDetails.employeeNo &&
-              x.employeeNo !== employeeDetails.reportsTo.employeeNo
-          )
+            (x: any) => {
+              return x.reportsTo && x.reportsTo.employeeNo === employeeDetails.reportsTo.employeeNo &&
+                x.employeeNo !== employeeDetails.employeeNo &&
+                x.employeeNo !== employeeDetails.reportsTo.employeeNo
+            })
           .sort((a: any, b: any) => a.lastName.localeCompare(b.lastName))
       );
     }
@@ -59,7 +60,7 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
         </ListItemIcon>
         <ListItemText
           primary={<span className='text-xs font-bold'>{o.lastName}, {o.firstName}</span>}
-          secondary={<span className='text-xs '>{o.position}</span>}
+          secondary={<span className='text-xs '>{o.position.name}</span>}
         />
       </ListItemButton>
     })
@@ -81,17 +82,17 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
           }}
         >
           <ListItemIcon>
-            <Avatar src={getAvatar(employeeDetails.reportsTo.gender)} />
+            <Avatar src={getAvatar(employeeDetails.reportsTo?.gender)} />
           </ListItemIcon>
           <ListItemText
             primary={
               <span className='text-sm font-bold'>
-                {employeeDetails.reportsTo.employeeName}
+                {employeeDetails.reportsTo?.employeeName}
               </span>
             }
             secondary={
               <span className='text-xs '>
-                {employeeDetails.reportsTo.position}
+                {employeeDetails.reportsTo?.position}
               </span>
             }
           />

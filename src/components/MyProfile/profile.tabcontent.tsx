@@ -4,6 +4,7 @@ import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, lazy, Suspense } from 'react';
 import ChecklistTable from './201Checklist/checklist.table';
 import AssetsTable from './Assets/assets.table';
+import EmployeeBenefits from './CompensationAndBenefits/employee.benefits';
 import EmployementStatus from './EmploymentTab/employement.status';
 import History from './Leaves/history';
 import LeaveBalances from './Leaves/leave.balances';
@@ -93,6 +94,9 @@ const ProfileTabContent = ({ className }: Props) => {
       <TabPanel value='3' className='p-0 grid' id='CompensationAndBenefits'>
         <Suspense fallback={<div>Loading...</div>}>
           <GovernmentDetails />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <EmployeeBenefits />
         </Suspense>
         <Suspense fallback={<div>Loading...</div>}>
           <PayrollInformation />

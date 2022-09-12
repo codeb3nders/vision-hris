@@ -180,11 +180,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'reportsTo',
       headerName: 'Team Leader',
       width: 140,
-      renderCell: (cell) => cell.row.reportsTo.employeeName,
+      renderCell: (cell) => cell.row.reportsTo?.employeeName || "",
       sortComparator: (v1, v2) =>
         v1.employeeName.localeCompare(v2.employeeName),
       valueGetter: (params) => {
-        return params.row.reportsTo.employeeName;
+        return params.row.reportsTo?.employeeName || "";
       },
     },
     // {

@@ -121,17 +121,6 @@ const JobInfo = (props: Props) => {
     setInfos(data);
   }, [employeeDetails]);
 
-  useEffect(() => {
-    console.log({ employeeUpdatedStatus });
-    if (employeeUpdatedStatus !== 'idle') {
-      if (employeeUpdatedError) {
-        failed(employeeUpdatedError);
-      } else {
-        success();
-      }
-    }
-  }, [employeeUpdatedStatus]);
-
   const columns: GridColDef[] = [
     {
       field: 'effectiveDate',
@@ -185,7 +174,7 @@ const JobInfo = (props: Props) => {
       flex: 1,
       renderCell: (params: any) => {
         return (
-          <div className='text-xs p-1'>{params.row.reportsTo.employeeName}</div>
+          <div className='text-xs p-1'>{params.row.reportsTo?.employeeName}</div>
         );
       },
     },
@@ -249,11 +238,17 @@ const JobInfo = (props: Props) => {
           jobUpdate.employmentLastUpdate = jobUpdate?.effectiveDate || new Date();
           // jobUpdate.lastModifiedDate = new Date();
           consoler(jobUpdate, 'blue', 'updateEmployment');
-          await dispatch(updateEmployee(
+          const response = updateEmployee(
             {
               params: { ...jobUpdate, employeeNo: employeeDetails.employeeNo },
               access_token
-            }));
+            });
+          console.log({ response });
+          // if (employeeUpdatedError) {
+          //   failed(employeeUpdatedError);
+          // } else {
+          //   success();
+          // }
         } catch (error: any) {
           console.log(error);
         }
@@ -407,7 +402,7 @@ const JobInfo = (props: Props) => {
           <Select
             id='jobinfo-teamleader-update'
             labelId='tl'
-            value={editJob?.reportsTo.employeeNo}
+            value={editJob?.reportsTo?.employeeNo}
             onChange={(e: any, option: any) => {
               setJobUpdate((prev: any) => ({
                 ...prev,
@@ -423,6 +418,7 @@ const JobInfo = (props: Props) => {
               ?.filter(
                 (x: any) =>
                   x.department.code === (jobUpdate?.department || editJob.department.code)
+                && employeeDetails.employeeNo !== x.employeeNo
               )
               .map((employee) => {
                 return (
@@ -710,12 +706,12 @@ const JobInfoFields = ({
 
       <GridWrapper colSize='4' className='col-span-2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-3'>
-          <FormControl variant='standard' fullWidth size='small' required>
+          <FormControl variant='standard' fullWidth size='small'>
             <InputLabel id='teamleader'>Team Leader</InputLabel>
             <Select
               id='jobinfo-teamleader'
               labelId='teamleader'
-              defaultValue={employeeDetails?.reportsTo}
+              value={employeeDetails?.reportsTo}
               onChange={(e: any) => {
                 setEmployeeDetails({
                   ...employeeDetails,
@@ -731,7 +727,7 @@ const JobInfoFields = ({
             >
               {getEmployeeItems
                 ?.filter(
-                  (x: any) => x.department?.code === employeeDetails.department
+                  (x: any) => x.department?.code === employeeDetails.department && employeeDetails.employeeNo !== x.employeeNo
                 )
                 .map((employee) => {
                   return (

@@ -24,11 +24,11 @@ const GovernmentDetails = (props: Props) => {
   } = useContext(ProfileCtx);
   console.log({ employeeDetails });
   const handleTaxExemption = () => {
-    console.log({ dep: employeeDetails.NumberOfDependents });
+    console.log({ dep: employeeDetails.numberOfDependents });
     if (employeeDetails.civilStatus.toLocaleLowerCase() == 'married') {
       const marriedTax =
-        employeeDetails.NumberOfDependents !== undefined && employeeDetails.NumberOfDependents > 0
-          ? `MARRIED-${employeeDetails.NumberOfDependents}`
+        employeeDetails.numberOfDependents !== undefined && employeeDetails.numberOfDependents > 0
+          ? `MARRIED-${employeeDetails.numberOfDependents}`
           : 'MARRIED';
       setEmployeeDetails((prev: any) => ({
         ...prev,
@@ -36,8 +36,8 @@ const GovernmentDetails = (props: Props) => {
       }));
     } else {
       const singleTax =
-        employeeDetails.NumberOfDependents !== undefined && employeeDetails.NumberOfDependents > 0
-          ? `SINGLE-${employeeDetails.NumberOfDependents}`
+        employeeDetails.numberOfDependents !== undefined && employeeDetails.numberOfDependents > 0
+          ? `SINGLE-${employeeDetails.numberOfDependents}`
           : 'SINGLE';
       setEmployeeDetails((prev: any) => ({
         ...prev,
@@ -47,7 +47,7 @@ const GovernmentDetails = (props: Props) => {
   };
 
   useEffect(() => {
-    if (employeeDetails.NumberOfDependents && employeeDetails.civilStatus) {
+    if (employeeDetails.numberOfDependents && employeeDetails.civilStatus) {
       handleTaxExemption();
     } else {
       setEmployeeDetails((prev: any) => ({
@@ -55,7 +55,7 @@ const GovernmentDetails = (props: Props) => {
         taxExemption: '',
       }));
     }
-  }, [employeeDetails.NumberOfDependents, employeeDetails.civilStatus]);
+  }, [employeeDetails.numberOfDependents, employeeDetails.civilStatus]);
 
   return (
     <CollapseWrapper
@@ -167,17 +167,17 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             type='number'
             label='Number of Dependents'
-            value={employeeDetails?.NumberOfDependents}
+            value={employeeDetails?.numberOfDependents}
             onChange={(e: any) => {
               setEmployeeDetails({
                 ...employeeDetails,
-                NumberOfDependents: e.target.value,
+                numberOfDependents: e.target.value,
               });
 
               !isNew &&
                 setUpdatedDetails((prev: any) => ({
                   ...prev,
-                  NumberOfDependents: e.target.value,
+                  numberOfDependents: e.target.value,
                 }));
             }}
           />

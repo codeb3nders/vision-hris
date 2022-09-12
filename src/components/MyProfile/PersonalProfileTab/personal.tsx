@@ -311,7 +311,7 @@ const Personal = (props: Props) => {
                     gender: e.target.value,
                   }));
               }}
-              value={employeeDetails?.gender.code}
+              value={employeeDetails?.gender?.code}
             >
               {genders.map((gender: any, i: number) => {
                 return (
@@ -343,7 +343,7 @@ const Personal = (props: Props) => {
                     civilStatus: e.target.value,
                   }));
               }}
-              value={employeeDetails?.civilStatus.code}
+              value={employeeDetails?.civilStatus?.code}
             >
               {civilStatus.map((status) => {
                 return (
@@ -379,7 +379,7 @@ const Personal = (props: Props) => {
                       citizenship: e.target.value,
                     }));
                 }}
-                value={employeeDetails?.citizenship.code || 'Philippines'}
+                value={employeeDetails?.citizenship?.code || 'PHILIPPINES'}
               >
                 {citizenship.map((c: any, idx: number) => {
                   return (
@@ -411,7 +411,7 @@ const Personal = (props: Props) => {
                       religion: e.target.value,
                     }));
                 }}
-                value={employeeDetails?.religion.code}
+                value={employeeDetails?.religion?.code}
               >
                 {religion.map((religion) => {
                   return (

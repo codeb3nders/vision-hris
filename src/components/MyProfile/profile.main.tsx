@@ -100,6 +100,7 @@ export type EnumI = {
 
 export type EnumsI = {
   positions: EnumI[];
+  gender: EnumI[];
   departments: EnumI[];
   ranks: EnumI[];
   civil_status: EnumI[];
@@ -116,6 +117,7 @@ export type EnumsI = {
 
 const enumsInitialState = {
   positions: [],
+  gender: [],
   departments: [],
   ranks: [],
   civil_status: [],
@@ -214,7 +216,7 @@ const ProfileMain = ({
       if (employeeUpdatedStatus === 'succeeded') {
         success();
       } else {
-        failed();
+        failed(employeeUpdateError);
       }
     }
   }, [employeeUpdatedStatus]);
@@ -512,14 +514,14 @@ const ProfileMain = ({
             {!isNew && (
               <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>
                 <ProfileOther />
-                <ProfileTeam setViewDetails={setViewDetails} />
+                {employeeDetails.reportsTo && <ProfileTeam setViewDetails={setViewDetails} />}
               </article>
             )}
 
             <article
               className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
-                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                  : ''
+                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                : ''
                 }`}
             >
               <Suspense fallback={<div>Loading...</div>}>

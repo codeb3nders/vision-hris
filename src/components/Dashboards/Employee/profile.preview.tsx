@@ -10,6 +10,7 @@ type Props = {
 
 const ProfilePreview: React.FC<Props> = () => {
   const { userData } = useContext(AppCtx);
+  console.log({userData})
   return (
     <div className='pl-6'>
       <section className='flex flex-row space-x-2 items-center mb-1 relative z-10 '>
@@ -43,7 +44,7 @@ const ProfilePreview: React.FC<Props> = () => {
           </div>
           <div className='phone:col-span-6 tablet:col-span-4'>
             <div className='text-xs  mt-2'>Reports To:</div>
-            <div className='text-sm  font-medium'>{userData.reportsTo}</div>
+            <div className='text-sm  font-medium'>{userData.reportsTo?.employeeName}</div>
           </div>
           <button
             type='button'
