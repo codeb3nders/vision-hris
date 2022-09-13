@@ -41,7 +41,7 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 type Props = {};
 
 type JobInfoI = {
-  effectiveDate: Date | Moment;
+  jobLastUpdate: Date | Moment;
   location: string;
   department: string;
   rank: string;
@@ -99,7 +99,7 @@ const JobInfo = (props: Props) => {
     let data: any[] = [
       {
         index: 0,
-        effectiveDate: employeeDetails.jobLastUpdate,
+        jobLastUpdate: employeeDetails.jobLastUpdate,
         location: employeeDetails.location,
         department: employeeDetails.department,
         rank: employeeDetails.rank,
@@ -123,7 +123,7 @@ const JobInfo = (props: Props) => {
 
   const columns: GridColDef[] = [
     {
-      field: 'effectiveDate',
+      field: 'employmentLastUpdate',
       headerName: 'Effective Date',
       flex: 1,
       renderCell: (params: any) => {
@@ -235,15 +235,15 @@ const JobInfo = (props: Props) => {
 
       const update = async () => {
         try {
-          jobUpdate.employmentLastUpdate = jobUpdate?.effectiveDate || new Date();
+          jobUpdate.type = "JOB"
           // jobUpdate.lastModifiedDate = new Date();
           consoler(jobUpdate, 'blue', 'updateEmployment');
-          const response = updateEmployee(
+          await dispatch(updateEmployee(
             {
               params: { ...jobUpdate, employeeNo: employeeDetails.employeeNo },
               access_token
-            });
-          console.log({ response });
+            }))
+          // console.log({ response });
           // if (employeeUpdatedError) {
           //   failed(employeeUpdatedError);
           // } else {
@@ -440,14 +440,14 @@ const JobInfo = (props: Props) => {
             onChange={(value) => {
               setJobUpdate({
                 ...jobUpdate,
-                effectiveDate: value
+                jobLastUpdate: value
               });
               setEditJob((prev: any) => ({
                 ...prev,
-                effectiveDate: value
+                jobLastUpdate: value
               }))
             }}
-            value={editJob?.effectiveDate || new Date()}
+            value={editJob?.jobLastUpdate || new Date()}
             renderInput={(params) => (
               <TextField {...params} fullWidth required variant='standard' />
             )}

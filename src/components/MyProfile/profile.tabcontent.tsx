@@ -47,7 +47,7 @@ type Props = {
 };
 
 const ProfileTabContent = ({ className }: Props) => {
-  const { isNew, isView } = useContext(ProfileCtx);
+  const { isNew, isView, handleUpdateEmployee } = useContext(ProfileCtx);
 
   return (
     <CustomCard
@@ -64,9 +64,10 @@ const ProfileTabContent = ({ className }: Props) => {
         <Button
           // color='primary'
           variant='contained'
+          size="small"
             // disabled={!validated}
             className='px-4 py-2 bg-green-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
-            // onClick={handleEmployee}
+            onClick={() => handleUpdateEmployee("personal")}
           >
             Save Changes
           </Button>

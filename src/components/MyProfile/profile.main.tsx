@@ -71,6 +71,7 @@ export type ProfileModel = {
   enums: any;
   setUpdatedDetails: React.Dispatch<any>;
   updatedDetails: any;
+  handleUpdateEmployee: React.Dispatch<any>;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -89,6 +90,7 @@ export const ProfileCtx = createContext<ProfileModel>({
   enums: {},
   setUpdatedDetails: () => { },
   updatedDetails: null,
+  handleUpdateEmployee: () => { }
 });
 
 export type EnumI = {
@@ -301,14 +303,6 @@ const ProfileMain = ({
     });
   };
 
-  const handleEmployee = async () => {
-    if (!employeeDetails.employeeNo && isNew) {
-      saveEmployee();
-    } else {
-      handleUpdateEmployee();
-    }
-  };
-
   useEffect(() => {
     var positions: any = [],
       departments: any = [],
@@ -451,12 +445,12 @@ const ProfileMain = ({
     }
   };
 
-  const handleUpdateEmployee = async () => {
+  const handleUpdateEmployee = async (type:string) => {
     try {
       consoler(updatedDetails, 'orange', 'updateEmployee');
       await dispatch(
         updateEmployee({
-          params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo },
+          params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo, type },
           access_token,
         })
       );
@@ -485,6 +479,7 @@ const ProfileMain = ({
         setDisplayPhoto,
         setUpdatedDetails,
         updatedDetails,
+        handleUpdateEmployee
       }}
     >
       <Dialog open={loading.status}>
@@ -535,7 +530,7 @@ const ProfileMain = ({
           <button
             disabled={!validated}
             className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10 disabled:bg-gray-300 disabled:cursor-not-allowed'
-            onClick={handleEmployee}
+            onClick={saveEmployee}
           >
             Save Employee Profile
           </button>

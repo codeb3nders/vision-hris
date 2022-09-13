@@ -28,7 +28,7 @@ const Personal = (props: Props) => {
     enums,
     isView,
     isNew,
-    setUpdatedDetails,
+    setUpdatedDetails, updatedDetails
   } = useContext(ProfileCtx);
   const [otherReligion, setOtherReligion] = useState<boolean>(false);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
@@ -44,22 +44,11 @@ const Personal = (props: Props) => {
     setReligion(enums.religions);
     setGenders(enums.gender);
   }, [enums]);
-  console.log({ employeeDetails })
+  console.log({ employeeDetails }, {updatedDetails})
   useEffect(() => {
     console.log({ sameAddress })
     if (sameAddress) {
-      setEmployeeDetails((prev: any) => ({
-        ...prev,
-        permanentAddress: {
-          addressLine: prev.presentAddress.addressLine,
-          region: prev.presentAddress.region,
-          province: prev.presentAddress.province,
-          municipality: prev.presentAddress.municipality,
-          barangay: prev.presentAddress.barangay,
-        },
-      }));
-
-      !isNew &&
+      !isNew ?
         setUpdatedDetails((prev: any) => ({
           ...prev,
           permanentAddress: {
@@ -69,7 +58,17 @@ const Personal = (props: Props) => {
             municipality: prev.presentAddress.municipality,
             barangay: prev.presentAddress.barangay,
           },
-        }));
+        })) :
+        setEmployeeDetails((prev: any) => ({
+          ...prev,
+          permanentAddress: {
+            addressLine: prev.presentAddress.addressLine,
+            region: prev.presentAddress.region,
+            province: prev.presentAddress.province,
+            municipality: prev.presentAddress.municipality,
+            barangay: prev.presentAddress.barangay,
+          }
+      }));
     }
   }, [sameAddress]);
 
@@ -137,26 +136,16 @@ const Personal = (props: Props) => {
       });
   };
 
-  const handleReligion = (e: any, option: any) => {
-    if (e.target.value !== 'Others, please specify') {
-      !isNew &&
-        setUpdatedDetails((prev: any) => ({
-          ...prev,
-          religion: option.props['data-obj']
-        }));
-
-      setOtherReligion(false);
-      setEmployeeDetails({
-        ...employeeDetails,
-        religion: e.target.value,
-      });
-    } else {
-      setOtherReligion(true);
-    }
-  };
-
   const handleChange = (value: any) => {
-    setEmployeeDetails({ ...employeeDetails, ...value });
+    !isNew ?
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        ...value
+      })) :
+      setEmployeeDetails((prev: EmployeeI) => ({
+        ...prev,
+        ...value
+      }));
   };
 
   const isSame = () => {
@@ -183,18 +172,8 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            value={employeeDetails.firstName}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                firstName: e.target.value,
-              });
-              !isNew &&
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  firstName: e.target.value,
-                }));
-            }}
+            value={updatedDetails?.firstName || employeeDetails.firstName}
+            onChange={(e: any) => handleChange({firstName: e.target.value})}
           />
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
@@ -204,18 +183,8 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            value={employeeDetails?.middleName}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                middleName: e.target.value,
-              });
-              !isNew &&
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  middleName: e.target.value,
-                }));
-            }}
+            value={updatedDetails?.middleName || employeeDetails.middleName}
+            onChange={(e: any) => handleChange({ middleName: e.target.value })}
           />
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
@@ -226,18 +195,8 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            value={employeeDetails?.lastName}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                lastName: e.target.value,
-              });
-
-              setUpdatedDetails((prev: any) => ({
-                ...prev,
-                lastName: e.target.value,
-              }));
-            }}
+            value={updatedDetails?.lastName || employeeDetails.lastName}
+            onChange={(e: any) => handleChange({ lastName: e.target.value })}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-7'>
@@ -247,17 +206,8 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            value={employeeDetails?.suffix}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                suffix: e.target.value,
-              });
-              setUpdatedDetails((prev: any) => ({
-                ...prev,
-                suffix: e.target.value,
-              }));
-            }}
+            value={updatedDetails?.suffix || employeeDetails.suffix}
+            onChange={(e: any) => handleChange({ suffix: e.target.value })}
           />
         </div>
 
@@ -265,20 +215,8 @@ const Personal = (props: Props) => {
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
               label='Birthdate'
-              onChange={(value: any) => {
-                setEmployeeDetails((prev: EmployeeI) => ({
-                  ...prev,
-                  birthDate: value,
-                }));
-
-                !isNew &&
-                  setUpdatedDetails((prev: any) => ({
-                    ...prev,
-                    birthDate: value,
-                  }));
-              }}
-              // disabled={loading}
-              value={employeeDetails.birthDate}
+              value={updatedDetails?.birthDate || employeeDetails.birthDate}
+              onChange={(value: any) => handleChange({ birthDate: value })}
               renderInput={(params) => (
                 <TextField
                   id='birthday'
@@ -298,20 +236,19 @@ const Personal = (props: Props) => {
             <Select
               id='gender'
               labelId='genderLabel'
-              size='small'
+              size='small'              
               onChange={(e: any, option: any) => {
-                setEmployeeDetails({
-                  ...employeeDetails,
+                !isNew ?
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  gender: e.target.value,
+                })) :
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
                   gender: option.props['data-obj']
-                });
-
-                !isNew &&
-                  setUpdatedDetails((prev: any) => ({
-                    ...prev,
-                    gender: e.target.value,
-                  }));
+                }));
               }}
-              value={employeeDetails?.gender?.code}
+              value={updatedDetails?.gender?.code || employeeDetails?.gender?.code}
             >
               {genders.map((gender: any, i: number) => {
                 return (
@@ -332,18 +269,17 @@ const Personal = (props: Props) => {
               labelId='civil_status'
               size='small'
               onChange={(e: any, option: any) => {
-                setEmployeeDetails({
-                  ...employeeDetails,
+                !isNew ?
+                setUpdatedDetails((prev: any) => ({
+                  ...prev,
+                  civilStatus: e.target.value,
+                })) :
+                setEmployeeDetails((prev: EmployeeI) => ({
+                  ...prev,
                   civilStatus: option.props['data-obj']
-                });
-
-                !isNew &&
-                  setUpdatedDetails((prev: any) => ({
-                    ...prev,
-                    civilStatus: e.target.value,
-                  }));
+                }));
               }}
-              value={employeeDetails?.civilStatus?.code}
+              value={updatedDetails?.civilStatus?.code || employeeDetails?.civilStatus?.code}
             >
               {civilStatus.map((status) => {
                 return (
@@ -368,18 +304,17 @@ const Personal = (props: Props) => {
                 labelId='citizenship'
                 size='small'
                 onChange={(e: any, option: any) => {
-                  setEmployeeDetails({
-                    ...employeeDetails,
+                  !isNew ?
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    citizenship: e.target.value,
+                  })) :
+                  setEmployeeDetails((prev: EmployeeI) => ({
+                    ...prev,
                     citizenship: option.props['data-obj']
-                  });
-
-                  !isNew &&
-                    setUpdatedDetails((prev: any) => ({
-                      ...prev,
-                      citizenship: e.target.value,
-                    }));
+                  }));
                 }}
-                value={employeeDetails?.citizenship?.code || 'PHILIPPINES'}
+                value={updatedDetails?.citizenship?.code || employeeDetails?.citizenship?.code || 'PHILIPPINES'}
               >
                 {citizenship.map((c: any, idx: number) => {
                   return (
@@ -400,18 +335,17 @@ const Personal = (props: Props) => {
                 labelId='religion'
                 size='small'
                 onChange={(e: any, option: any) => {
-                  setEmployeeDetails({
-                    ...employeeDetails,
+                  !isNew ?
+                  setUpdatedDetails((prev: any) => ({
+                    ...prev,
+                    religion: e.target.value,
+                  })) :
+                  setEmployeeDetails((prev: EmployeeI) => ({
+                    ...prev,
                     religion: option.props['data-obj']
-                  });
-
-                  !isNew &&
-                    setUpdatedDetails((prev: any) => ({
-                      ...prev,
-                      religion: e.target.value,
-                    }));
+                  }));
                 }}
-                value={employeeDetails?.religion?.code}
+                value={updatedDetails?.religion?.code || employeeDetails?.religion?.code}
               >
                 {religion.map((religion) => {
                   return (
@@ -424,34 +358,6 @@ const Personal = (props: Props) => {
             </FormControl>
           </div>
 
-          {/* {otherReligion && (
-            <>
-              <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2 phone:hidden desktop:block laptop:block'></div>
-              <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
-                <TextField
-                  id='other-religion'
-                  label='Please specify your religion.'
-                  size='small'
-                  variant='standard'
-                  fullWidth
-                  // defaultValue={employeeDetails?.religion}
-                  onChange={(e: any) => {
-                    setEmployeeDetails({
-                      ...employeeDetails,
-                      religion: e.target.value,
-                    });
-
-                    !isNew &&
-                      setUpdatedDetails((prev: any) => ({
-                        ...prev,
-                        religion: e.target.value,
-                      }));
-                  }}
-                />
-              </div>
-            </>
-          )} */}
-
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
             <TextField
               id='personal-contact-no'
@@ -460,18 +366,8 @@ const Personal = (props: Props) => {
               size='small'
               variant='standard'
               fullWidth
-              value={employeeDetails?.personalContactNumber}
-              onChange={(e: any) => {
-                setEmployeeDetails({
-                  ...employeeDetails,
-                  personalContactNumber: e.target.value,
-                });
-                !isNew &&
-                  setUpdatedDetails((prev: any) => ({
-                    ...prev,
-                    personalContactNumber: e.target.value,
-                  }));
-              }}
+              value={updatedDetails?.personalContactNumber || employeeDetails.personalContactNumber}
+              onChange={(e: any) => handleChange({ personalContactNumber: e.target.value })}
             />
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
@@ -482,18 +378,8 @@ const Personal = (props: Props) => {
               size='small'
               variant='standard'
               fullWidth
-              value={employeeDetails?.personalEmail}
-              onChange={(e: any) => {
-                setEmployeeDetails({
-                  ...employeeDetails,
-                  personalEmail: e.target.value,
-                });
-                !isNew &&
-                  setUpdatedDetails((prev: any) => ({
-                    ...prev,
-                    personalEmail: e.target.value,
-                  }));
-              }}
+              value={updatedDetails?.personalEmail || employeeDetails.personalEmail}
+              onChange={(e: any) => handleChange({ personalEmail: e.target.value })}
             />
           </div>
 
