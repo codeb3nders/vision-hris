@@ -15,9 +15,6 @@ const EmployeeBenefits = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [promiseArguments, setPromiseArguments] = useState<any>(null);
 
-  const { newRow, oldRow } = promiseArguments;
-    const mutation = computeMutation(newRow, oldRow);
-    
   const handleDelete = (params) => {
     setBenefits((prev: any) => {
       const filtered = prev.filter((a: any) => a.benefit !== params.value);
@@ -65,6 +62,9 @@ console.log({promiseArguments})
           processRowUpdate={processRowUpdate}
           disableSelectionOnClick
           rows={benefits}
+          localeText={{
+            noRowsLabel: 'No data',
+          }}
           hideFooter={true}
           columns={columns(handleDelete)}
           experimentalFeatures={{ newEditingApi: true }}
