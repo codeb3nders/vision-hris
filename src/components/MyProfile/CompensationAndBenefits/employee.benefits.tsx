@@ -1,8 +1,11 @@
 import { Delete, VolunteerActivismTwoTone } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridRowModel,
+  GridColumns,
+  GridRowId,
+  GridRowsProp, } from '@mui/x-data-grid';
 import AddButton from 'CustomComponents/AddButton';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 
 type Props = {};
@@ -10,13 +13,42 @@ type Props = {};
 const EmployeeBenefits = (props: Props) => {
   const [benefits, setBenefits] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [promiseArguments, setPromiseArguments] = useState<any>(null);
 
+  const { newRow, oldRow } = promiseArguments;
+    const mutation = computeMutation(newRow, oldRow);
+    
   const handleDelete = (params) => {
     setBenefits((prev: any) => {
       const filtered = prev.filter((a: any) => a.benefit !== params.value);
       return filtered;
     });
   };
+
+  function computeMutation(newRow: GridRowModel, oldRow: GridRowModel) {
+  if (newRow.benefit !== oldRow.benefit) {
+    return `Name from '${oldRow.benefit}' to '${newRow.benefit}'`;
+  }
+  return null;
+}
+
+console.log({promiseArguments})
+
+  const processRowUpdate = useCallback (
+    (newRow: GridRowModel, oldRow: GridRowModel) =>
+      new Promise<GridRowModel>((resolve, reject) => {
+        const mutation = computeMutation(newRow, oldRow);
+        console.log({mutation})
+        if (mutation) {
+          // Save the arguments to resolve or reject the promise later
+          setPromiseArguments({ resolve, reject, newRow, oldRow });
+        } else {
+          resolve(oldRow); // Nothing was changed
+        }
+      }),
+    [],
+  );
+
 
   return (
     <CollapseWrapper
@@ -29,11 +61,13 @@ const EmployeeBenefits = (props: Props) => {
         <DataGrid
           getRowId={(data: any) => data.id}
           autoHeight
+          headerHeight={0}
+          processRowUpdate={processRowUpdate}
           disableSelectionOnClick
           rows={benefits}
+          hideFooter={true}
           columns={columns(handleDelete)}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          experimentalFeatures={{ newEditingApi: true }}
           getRowHeight={() => 'auto'}
         />
       </div>
@@ -86,19 +120,19 @@ const columns: any = (handleDelete: any) => {
     {
       field: 'benefit',
       headerName: 'Employee Benefits',
-      flex: 1,
-      renderCell: (params: any) => {
-        return (
-          <div className='flex flex-row items-center w-full gap-1'>
-            <span className='text-xs'>{params.value}</span>
-            <div className='flex-1 flex justify-end'>
-              <IconButton size='small' onClick={() => handleDelete(params)}>
-                <Delete />
-              </IconButton>
+      flex: 1, editable: true,
+      renderCell: (params) => <div className='flex flex-row items-center w-full gap-1'>
+            {params.value}
             </div>
-          </div>
-        );
-      },
+    },
+    {
+      field: 'action',
+      headerName: '',
+      flex: 1,
+      renderCell: (params: any) => <div className='flex-1 flex justify-end'><IconButton size='small' onClick={() => handleDelete(params)}>
+                <Delete />
+      </IconButton>
+        </div>
     },
   ];
 };
