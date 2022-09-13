@@ -1,6 +1,24 @@
-import { Delete, VolunteerActivismTwoTone } from '@mui/icons-material';
+import {
+  Add,
+  Cancel,
+  Delete,
+  Edit,
+  Save,
+  VolunteerActivismTwoTone,
+} from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColumns,
+  GridEventListener,
+  GridRowId,
+  GridRowModel,
+  GridRowModes,
+  GridRowModesModel,
+  GridRowParams,
+  MuiEvent,
+} from '@mui/x-data-grid';
 import AddButton from 'CustomComponents/AddButton';
 import { useEffect, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
@@ -10,13 +28,124 @@ type Props = {};
 const EmployeeBenefits = (props: Props) => {
   const [benefits, setBenefits] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
-  const handleDelete = (params) => {
-    setBenefits((prev: any) => {
-      const filtered = prev.filter((a: any) => a.benefit !== params.value);
-      return filtered;
-    });
+  const handleRowEditStart = (
+    params: GridRowParams,
+    event: MuiEvent<React.SyntheticEvent>
+  ) => {
+    event.defaultMuiPrevented = true;
   };
+
+  const handleRowEditStop: GridEventListener<'rowEditStop'> = (
+    params,
+    event
+  ) => {
+    event.defaultMuiPrevented = true;
+  };
+
+  const handleEditClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  const handleCancelClick = (id: GridRowId) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    const editedRow = benefits.find((row) => row.id === id);
+    if (editedRow!.isNew) {
+      setBenefits(benefits.filter((row) => row.id !== id));
+    }
+  };
+
+  const handleDeleteClick = (id: GridRowId) => () => {
+    setBenefits(benefits.filter((row) => row.id !== id));
+  };
+
+  const handleAddBenefit = () => {
+    const id = benefits.length + 1;
+    setBenefits((prev: any) => [
+      ...prev,
+      {
+        id,
+        benefit: '',
+        isNew: true,
+      },
+    ]);
+
+    setRowModesModel((oldModel) => ({
+      ...oldModel,
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: 'benefit' },
+    }));
+  };
+
+  const processRowUpdate = (newRow: GridRowModel) => {
+    const updatedRow = { ...newRow, isNew: false };
+    console.log({ newRow, updatedRow });
+
+    setBenefits(
+      benefits.map((row) => (row.id === newRow.id ? updatedRow : row))
+    );
+    return updatedRow;
+  };
+
+  const columns: GridColumns = [
+    {
+      field: 'benefit',
+      headerName: '',
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      cellClassName: 'actions',
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<Save />}
+              label='Save'
+              onClick={handleSaveClick(id)}
+            />,
+            <GridActionsCellItem
+              icon={<Cancel />}
+              label='Cancel'
+              className='textPrimary'
+              onClick={handleCancelClick(id)}
+              color='inherit'
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            icon={<Edit />}
+            label='Edit'
+            className='textPrimary'
+            onClick={handleEditClick(id)}
+            color='inherit'
+          />,
+          <GridActionsCellItem
+            icon={<Delete />}
+            label='Delete'
+            onClick={handleDeleteClick(id)}
+            color='inherit'
+          />,
+        ];
+      },
+    },
+  ];
 
   return (
     <CollapseWrapper
@@ -24,83 +153,36 @@ const EmployeeBenefits = (props: Props) => {
       icon={VolunteerActivismTwoTone}
       contentClassName='p-0'
     >
-      <BenefitsDialog open={open} setOpen={setOpen} setBenefits={setBenefits} />
       <div style={{ width: '100%' }}>
         <DataGrid
           getRowId={(data: any) => data.id}
           autoHeight
           disableSelectionOnClick
           rows={benefits}
-          columns={columns(handleDelete)}
+          columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
           getRowHeight={() => 'auto'}
+          headerHeight={0}
+          processRowUpdate={processRowUpdate}
+          editMode='row'
+          rowModesModel={rowModesModel}
+          onRowEditStart={handleRowEditStart}
+          onRowEditStop={handleRowEditStop}
+          experimentalFeatures={{ newEditingApi: true }}
         />
       </div>
-      <AddButton text='Add Employment Benefit' setOpen={setOpen} />
-    </CollapseWrapper>
-  );
-};
 
-const BenefitsDialog = ({ open, setOpen, setBenefits }) => {
-  const [benefit, setBenefit] = useState<string>('');
-
-  const handleSave = () => {
-    setBenefits((prev: any) => [...prev, { benefit, id: prev.length + 1 }]);
-    setOpen(false);
-    setBenefit('');
-  };
-
-  useEffect(() => {
-    !open && setBenefit('');
-  }, [open]);
-
-  return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
-      <div className='p-6 flex flex-col gap-4 w-[350px]'>
-        <p className='text-md font-bold '>
-          <VolunteerActivismTwoTone fontSize='small' /> New Employment Benefit
-        </p>
-
-        <TextField
-          id='position-held'
-          variant='standard'
-          label='Employee Benefit'
-          value={benefit}
-          onChange={(e: any) => setBenefit(e.target.value)}
-        />
-
+      <div className='flex justify-end'>
         <button
-          className='px-2 py-1 w-full bg-green-500 text-white'
-          onClick={handleSave}
+          className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
+          onClick={handleAddBenefit}
         >
-          Save Benefit
+          <Add fontSize='small' /> Add Employee Benefit
         </button>
       </div>
-    </Dialog>
+    </CollapseWrapper>
   );
-};
-
-const columns: any = (handleDelete: any) => {
-  return [
-    {
-      field: 'benefit',
-      headerName: 'Employee Benefits',
-      flex: 1,
-      renderCell: (params: any) => {
-        return (
-          <div className='flex flex-row items-center w-full gap-1'>
-            <span className='text-xs'>{params.value}</span>
-            <div className='flex-1 flex justify-end'>
-              <IconButton size='small' onClick={() => handleDelete(params)}>
-                <Delete />
-              </IconButton>
-            </div>
-          </div>
-        );
-      },
-    },
-  ];
 };
 
 export default EmployeeBenefits;
