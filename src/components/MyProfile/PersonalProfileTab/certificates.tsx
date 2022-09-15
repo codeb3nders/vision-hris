@@ -15,7 +15,7 @@ import AddButton from 'CustomComponents/AddButton';
 type Props = {};
 
 const Certificates = (props: Props) => {
-  const { setEmployeeDetails, isNew, setUpdatedDetails } =
+  const { setEmployeeDetails, isNew, setUpdatedDetails, getIcon } =
     useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [certificates, setCertificates] = useState<any[]>([]);
@@ -50,7 +50,7 @@ const Certificates = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Licenses and Certifications'
-      icon={WorkspacePremiumTwoTone}
+      icon={() => getIcon(<WorkspacePremiumTwoTone />, "licensesCertifications")}
     >
       <LicensureDialog
         open={open}

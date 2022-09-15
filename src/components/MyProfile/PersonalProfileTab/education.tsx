@@ -17,11 +17,45 @@ const Education = (props: Props) => {
     setEmployeeDetails,
     employeeDetails,
     setUpdatedDetails, updatedDetails,
-    isNew,
+    isNew,getIcon
   } = useContext(ProfileCtx);
   const [educationData, setEducationData] = useState<any[]>([]);
-  
-  // const updatedEducation = useMemo(() => setUpdatedDetails(educationData), [educationData]);
+  const [withUpdate, setWithUpdate] = useState<boolean>(false);
+
+  const withData = useMemo(() => {
+    return educationData.some((x:any) => x.yrFrom || x.yrTo || x.schoolAndAddress || x.degree || x.honors)
+  }, [educationData])
+
+  useEffect(() => {
+    if (isNew && withData) {
+      setEmployeeDetails((prev:any) => {
+        return {
+          ...prev,
+          educationalBackground: educationData
+        }
+      })
+    }
+  }, [withData]);
+
+  useEffect(() => {
+    if (withUpdate) {
+      if (withData) {
+        setUpdatedDetails((prev: any) => {
+          return {
+            ...prev,
+            educationalBackground: educationData
+          }
+        })
+      } else {
+        setUpdatedDetails((prev: any) => {
+          const { educationalBackground, ...rest } = prev;
+          return {
+            ...rest
+          }
+        })
+      }
+    }
+  }, [educationData])
 
   useEffect(() => {
     const dbData:any = employeeDetails?.educationalBackground;
@@ -38,7 +72,6 @@ const Education = (props: Props) => {
       }) 
     }
     setEducationData(education);
-    console.log({ education });
   }, [employeeDetails.educationalBackground]);
 
   const handleEducation = (col: string, value: any, level: string) => {
@@ -53,6 +86,7 @@ const Education = (props: Props) => {
         return o;
       })
     })
+    setWithUpdate(true)
   };
 
   const columns: GridColDef[] = [
@@ -62,16 +96,16 @@ const Education = (props: Props) => {
       width: 200,
       renderCell: (params: any) => {
         const level = params.row.level;
-        const value = employeeDetails.educationalBackground?.filter(
-          (educ: EmployeeI | any) => educ.level === level
-        )[0];
+        // const value = employeeDetails.educationalBackground?.filter(
+        //   (educ: EmployeeI | any) => educ.level === level
+        // )[0];
 
         return (
           <span className='flex flex-row p-1 text-xs w-full gap-4'>
             <span className='flex-1'>
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
-                  value={value?.yrFrom || null}
+                  value={params.value || null}
                   label='From'
                   views={['year']}
                   onChange={(value: any) =>
@@ -97,7 +131,7 @@ const Education = (props: Props) => {
                   onChange={(value: any) =>
                     handleEducation('yrTo', value, level)
                   }
-                  value={value?.yrTo || null}
+                  value={params.row.yrTo || null}
                   renderInput={(params) => (
                     <TextField
                       id='education-yrto'
@@ -116,7 +150,7 @@ const Education = (props: Props) => {
     },
     {
       field: 'level',
-      headerName: 'Level of Education',
+      headerName: 'Level',
       width: 120
     },
     {
@@ -204,7 +238,7 @@ const Education = (props: Props) => {
     {
       yrFrom: null,
       yrTo: null,
-      level: 'Post Graduation',
+      level: 'Post Graduate',
       degree: '',
       schoolAndAddress: '',
       honors: '',
@@ -220,7 +254,7 @@ const Education = (props: Props) => {
   ];
 
   return (
-    <CollapseWrapper panelTitle='Educational Attainment' icon={SchoolTwoTone}>
+    <CollapseWrapper panelTitle='Educational Attainment' icon={() => getIcon(<SchoolTwoTone/>, "educationalBackground")}>
       <div style={{ width: '100%' }}>
         <DataGrid
           getRowId={(data: any) => data.level}
@@ -230,6 +264,7 @@ const Education = (props: Props) => {
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
+          hideFooter={true}
         />
       </div>
     </CollapseWrapper>

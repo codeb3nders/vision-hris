@@ -83,8 +83,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       width: 200,
       renderCell: (cell) => {
         return (
-          <Tooltip title={cell.value || 'Employee Name'}>
-            <Link
+          <Link
               underline='none'
               variant='button'
               style={{ cursor: 'pointer' }}
@@ -97,7 +96,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
             >
               {cell.value}
             </Link>
-          </Tooltip>
         );
       },
       sortComparator: (v1, v2) => v1.localeCompare(v2),

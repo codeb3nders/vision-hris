@@ -67,7 +67,7 @@ const ProfileTabContent = ({ className }: Props) => {
           size="small"
             // disabled={!validated}
             className='px-4 py-2 bg-green-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
-            onClick={() => handleUpdateEmployee("personal")}
+            onClick={() => handleUpdateEmployee(null)}
           >
             Save Changes
           </Button>

@@ -28,7 +28,7 @@ const Personal = (props: Props) => {
     enums,
     isView,
     isNew,
-    setUpdatedDetails, updatedDetails
+    setUpdatedDetails, updatedDetails, getIcon
   } = useContext(ProfileCtx);
   const [otherReligion, setOtherReligion] = useState<boolean>(false);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
@@ -49,16 +49,19 @@ const Personal = (props: Props) => {
     console.log({ sameAddress })
     if (sameAddress) {
       !isNew ?
-        setUpdatedDetails((prev: any) => ({
-          ...prev,
-          permanentAddress: {
-            addressLine: prev.presentAddress.addressLine,
-            region: prev.presentAddress.region,
-            province: prev.presentAddress.province,
-            municipality: prev.presentAddress.municipality,
-            barangay: prev.presentAddress.barangay,
-          },
-        })) :
+        setUpdatedDetails((prev: any) => {
+          const data = prev || employeeDetails;
+          return {
+            ...updatedDetails,
+            permanentAddress: {
+              addressLine: data.presentAddress.addressLine,
+              region: data.presentAddress.region,
+              province: data.presentAddress.province,
+              municipality: data.presentAddress.municipality,
+              barangay: data.presentAddress.barangay,
+            },
+          }
+        }) :
         setEmployeeDetails((prev: any) => ({
           ...prev,
           permanentAddress: {
@@ -160,13 +163,15 @@ const Personal = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Personal Information'
-      icon={AccountCircleTwoTone}
+      // icon={AccountCircleTwoTone}
+      icon={()=>getIcon(<AccountCircleTwoTone />, "")}
       open
     >
       <GridWrapper colSize='7'>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
           <TextField
             id='first-name'
+            name="firstName"
             required
             label='First Name'
             size='small'
@@ -180,6 +185,7 @@ const Personal = (props: Props) => {
           <TextField
             id='middle-name'
             label='Middle Name'
+            name="middleName"
             size='small'
             variant='standard'
             fullWidth
@@ -190,6 +196,7 @@ const Personal = (props: Props) => {
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
           <TextField
             id='last-name'
+            name="lastName"
             required
             label='Last Name'
             size='small'
@@ -202,6 +209,7 @@ const Personal = (props: Props) => {
         <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-7'>
           <TextField
             id='name-suffix'
+            name="suffix"
             label='Suffix (If any)'
             size='small'
             variant='standard'
@@ -222,6 +230,7 @@ const Personal = (props: Props) => {
                   id='birthday'
                   {...params}
                   fullWidth
+                  name="birthDate"
                   required
                   variant='standard'
                 />
@@ -235,6 +244,7 @@ const Personal = (props: Props) => {
             <InputLabel id='genderLabel'>Gender</InputLabel>
             <Select
               id='gender'
+              name="gender"
               labelId='genderLabel'
               size='small'              
               onChange={(e: any, option: any) => {
@@ -266,6 +276,7 @@ const Personal = (props: Props) => {
             <InputLabel id='civil_status'>Civil Status</InputLabel>
             <Select
               id='civil-status'
+              name="civilStatus"
               labelId='civil_status'
               size='small'
               onChange={(e: any, option: any) => {
@@ -301,6 +312,7 @@ const Personal = (props: Props) => {
               <InputLabel id='citizenship'>Citizenship</InputLabel>
               <Select
                 id='citizenship'
+                name="citizenship"
                 labelId='citizenship'
                 size='small'
                 onChange={(e: any, option: any) => {
@@ -332,6 +344,7 @@ const Personal = (props: Props) => {
               <InputLabel id='religion'>Religion</InputLabel>
               <Select
                 id='religion'
+                name="religion"
                 labelId='religion'
                 size='small'
                 onChange={(e: any, option: any) => {
@@ -362,6 +375,7 @@ const Personal = (props: Props) => {
             <TextField
               id='personal-contact-no'
               required
+              name="personalContactNumber"
               label='Personal Contact Number'
               size='small'
               variant='standard'
@@ -373,6 +387,7 @@ const Personal = (props: Props) => {
           <div className='desktop:col-span-1 laptop:col-span-1 phone:col-span-2'>
             <TextField
               id='personal-email'
+              name="personalEmail"
               required
               label='Personal Email Address'
               size='small'

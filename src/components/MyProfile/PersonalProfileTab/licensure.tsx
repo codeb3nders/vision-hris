@@ -11,11 +11,12 @@ import moment from 'moment';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import AddButton from 'CustomComponents/AddButton';
+import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 type Props = {};
 
 const Licensure = (props: Props) => {
-  const { setEmployeeDetails, isNew, setUpdatedDetails } =
+  const { setEmployeeDetails, isNew, setUpdatedDetails, getIcon } =
     useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [exams, setExams] = useState<any[]>([]);
@@ -50,7 +51,7 @@ const Licensure = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Government/Professional Licensure Examinations Passed'
-      icon={AdminPanelSettingsTwoTone}
+      icon={() => getIcon(<AdminPanelSettingsTwoTone />, "govtProfExamsPassed")}
     >
       <LicensureDialog open={open} setOpen={setOpen} setExams={setExams} />
       <div style={{ width: '100%' }}>
@@ -71,20 +72,38 @@ const Licensure = (props: Props) => {
 };
 
 const LicensureDialog = ({ open, setOpen, setExams }) => {
+  const { failed } = useContext(ProfileCtx);
   const [data, setData] = useState<any>({});
 
-  const handleSave = () => {
-    setExams((prev: any) => [
-      ...prev,
-      { ...data, id: `${data.rating}~${data.dateTaken}` },
-    ]);
-    setOpen(false);
+  const handleSave = async () => {
+    const validateFields = async () => {
+        const dialog: any = document.getElementById("licensure-dialog");
+        const required = dialog.querySelectorAll("[required]");
+        let invalidCtr = 0;
 
-    setData({
-      examTitle: '',
-      dateTaken: '',
-      rating: '',
-    });
+        invalidCtr = await Array.from(required)
+          .filter((e: any) => !e.value)
+          .map((e: any) => e.id).length;
+
+        if (invalidCtr > 0) {
+          return failed(INCOMPLETE_FORM_MESSAGE);
+        }
+        return true;
+      }
+      //check inputs...
+    if (await validateFields()) {
+      setExams((prev: any) => [
+        ...prev,
+        { ...data, id: `${data.rating}~${data.dateTaken}` },
+      ]);
+      setOpen(false);
+
+      setData({
+        examTitle: '',
+        dateTaken: '',
+        rating: '',
+      });
+    }
   };
 
   useEffect(() => {
@@ -97,7 +116,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
   }, [open]);
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => setOpen(false)} id="licensure-dialog">
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
           <AdminPanelSettingsTwoTone fontSize='small' /> New Licensure
@@ -105,6 +124,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
         </p>
 
         <TextField
+          required
           id='title-licensure-exam'
           variant='standard'
           size='small'
@@ -133,6 +153,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
                 id='date-taken'
                 size='small'
                 {...params}
+                required
                 fullWidth
                 variant='standard'
               />
@@ -145,6 +166,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
           variant='standard'
           size='small'
           label='Rating'
+          required
           value={data.rating}
           onChange={(e: any) =>
             setData((prev: any) => ({

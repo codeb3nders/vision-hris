@@ -17,39 +17,23 @@ import {
   resetUpdate
 } from 'slices';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
+import { EMPLOYMENT_HISTORY_TYPE } from 'constants/Values';
 
 type Props = {};
-
-type EmploymentI = {
-  id: any;
-  effectiveDate: Date | Moment;
-  employmentType: any;
-  employmentStatus: any;
-  endOfProbationary: Date | null | Moment;
-  contractEndDate: Date | null | Moment;
-  remarks?: string;
-};
 
 const EmployementStatus = (props: Props) => {
   const dispatch = useDispatch();
   const { access_token } = useContext(AppCtx);
-  const { isNew, employeeDetails, enums } = useContext(ProfileCtx);
+  const { isNew, employeeDetails, enums, failed } = useContext(ProfileCtx);
   const [infos, setInfos] = useState<any[]>([]);
   const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
   const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
   const [editEmployment, setEditEmployment] = useState<any>(); //display
   const [employmentUpdate, setEmploymentUpdate] = useState<any>(); //save to employees table
-  const [openNotif, setOpenNotif] = useState<{
-    message: string;
-    status: boolean;
-    severity: any;
-  }>({ message: '', status: false, severity: '' });
   const [loading, setLoading] = useState<{ status: boolean; action: string }>({
     status: false,
     action: '',
   });
-  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus)
-  const employeeUpdatedError = useSelector(_getEmployeeUpdateError)
 
   useEffect(() => {
     setEmploymentTypes(enums.employment_types);
@@ -63,35 +47,32 @@ const EmployementStatus = (props: Props) => {
   useEffect(() => {
     let data: any[] = [{
       index: 0,
-      effectiveDate: employeeDetails.employmentLastUpdate,
+      effectiveDate: employeeDetails.dateHired,
       employmentType: employeeDetails.employmentType,
       employmentStatus: employeeDetails.employmentStatus,
       endOfProbationary: employeeDetails.endOfProbationary,
       contractEndDate: employeeDetails.contractEndDate
     }];
     if (employeeDetails.employment_history.length > 0) {
-      employeeDetails.employment_history.filter((x: any) => x.type?.toLowerCase() == "employment")
-        .map((o: any, i: number = 1) => {
-          data.push({
-            ...o,
+      employeeDetails.employment_history
+        .map((o: any, i: number) => {
+          i++;
+          const new_data = {
+            employmentType: employeeDetails.employmentType,
+            employmentStatus: employeeDetails.employmentStatus,
+            endOfProbationary: employeeDetails.endOfProbationary,
+            contractEndDate: employeeDetails.contractEndDate,
+            effectiveDate: o.effectiveDate,
+            ...o.details,
             index: i
-          })
+          }
+          console.log({new_data})
+          data.push(new_data)
         })
     }
-    data.sort((a: any, b: any) => a.index - b.index)
+    data.sort((a: any, b: any) => b.index - a.index)
     setInfos(data);
   }, [employeeDetails]);
-
-  useEffect(() => {
-    console.log({ employeeUpdatedStatus });
-    if (employeeUpdatedStatus !== 'idle') {
-      if (employeeUpdatedError) {
-        failed(employeeUpdatedError);
-      } else {
-        success();
-      }
-    }
-  }, [employeeUpdatedStatus]);
 
   const columns: GridColDef[] = [
     {
@@ -156,47 +137,20 @@ const EmployementStatus = (props: Props) => {
     },
   ];
 
-  const success = () => {
-    setLoading({ status: false, action: '' });
-    setOpenNotif({
-      message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully updated.`,
-      status: true,
-      severity: 'success',
-    });
-    dispatch(resetUpdate());
-
-    setTimeout(() => {
-      setOpenNotif({
-        message: '',
-        status: false,
-        severity: 'success',
-      });
-    }, 2000);
-  }
-
-  const failed = (message: string) => {
-    setLoading({ status: false, action: '' });
-    setOpenNotif({
-      message,
-      status: true,
-      severity: 'error',
-    });
-  }
-  consoler(employmentUpdate, 'orange', 'employmentUpdate');
   const getDialog = () => {
     const handleSaveChanges = async () => {
 
       const update = async () => {
         setLoading({ status: true, action: 'Saving' });
         try {
-          employmentUpdate.employmentLastUpdate = employmentUpdate?.effectiveDate || new Date();
-          // employmentUpdate.lastModifiedDate = new Date();
+          employmentUpdate.type = EMPLOYMENT_HISTORY_TYPE;
           consoler(employmentUpdate, 'blue', 'updateEmployment');
           await dispatch(updateEmployee(
             {
               params: { ...employmentUpdate, employeeNo: employeeDetails.employeeNo },
               access_token
             }));
+          setEditEmployment(null);
         } catch (error: any) {
           setLoading({ status: false, action: '' });
           console.log(error);
@@ -231,13 +185,6 @@ const EmployementStatus = (props: Props) => {
       await update();
     }
     return <Dialog id="dialog-employment" open={editEmployment !== null} onClose={() => setEditEmployment(null)}>
-      <Snackbar
-        autoHideDuration={2000}
-        open={openNotif.status}
-        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
-      >
-        <Alert severity={openNotif.severity}>{openNotif.message}</Alert>
-      </Snackbar>
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
           <BadgeTwoTone /> Employment Update
@@ -360,7 +307,7 @@ const EmployementStatus = (props: Props) => {
                 effectiveDate: value
               })
             }}
-            value={editEmployment?.effectiveDate || new Date()}
+            value={new Date()}
             renderInput={(params) => (
               <TextField {...params} fullWidth required variant='standard' />
             )}
