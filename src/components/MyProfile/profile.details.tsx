@@ -2,6 +2,7 @@
 import { PhotoCameraOutlined } from '@mui/icons-material';
 import {
   Avatar,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -25,7 +26,7 @@ const ProfileDetails = (props: Props) => {
     setEmployeeDetails,
     setDisplayPhoto,
     displayPhoto,
-    enums,
+    enums, updatedDetails, handleUpdateEmployee
   } = useContext(ProfileCtx);
   const [img, setImg] = useState<any>(null);
   const { processfile, resized } = useResize({ quality: 0.9 });
@@ -115,6 +116,15 @@ const ProfileDetails = (props: Props) => {
             Started on {moment(employeeDetails.dateHired).format('LL')} (
             {employeeDetails.yearsInService} year/s)
           </p>
+          <Button
+            // color='primary'
+            variant='contained'
+            disabled={!updatedDetails}
+            className='px-4 py-2 bg-green-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
+            onClick={handleUpdateEmployee}
+          >
+            Save Changes
+          </Button>
         </section>
       )}
 

@@ -15,7 +15,7 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 type Props = {};
 const initialData = {
-  name: '',
+  certificate: '',
   authorizingEntity: '',
   validUntil: '',
   licenseCertNo: '',
@@ -28,7 +28,7 @@ const Certificates = (props: Props) => {
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
   const withData = useMemo(() => {
-    return certificates.some((x:any) => x.name || x.authorizingEntity || x.validUntil || x.licenseCertNo)
+    return certificates.some((x:any) => x.certificate || x.authorizingEntity || x.validUntil || x.licenseCertNo)
   }, [certificates])
 
   useEffect(() => {
@@ -118,6 +118,7 @@ const Certificates = (props: Props) => {
         open={open}
         setOpen={setOpen}
         setCertificates={setCertificates}
+        setWithUpdate={setWithUpdate}
       />
       <div style={{ width: '100%' }}>
         <DataGrid
@@ -136,7 +137,7 @@ const Certificates = (props: Props) => {
   );
 };
 
-const LicensureDialog = ({ open, setOpen, setCertificates }) => {
+const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
   const {setOpenNotif, failed} = useContext(ProfileCtx)
   const [data, setData] = useState<any>({});
 
@@ -157,9 +158,10 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
       }
       //check inputs...
     if (await validateFields()) {
+      setWithUpdate(true);
       setCertificates((prev: any) => [
         ...prev,
-        { ...data },
+        data
       ]);
       setOpen(false);
       setData(initialData);
@@ -186,11 +188,11 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
           variant='standard'
           size='small'
           label='License/Certification'
-          value={data.name}
+          value={data.certificate}
           onChange={(e: any) =>
             setData((prev: any) => ({
               ...prev,
-              name: e.target.value,
+              certificate: e.target.value,
             }))
           }
         />
@@ -216,7 +218,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
             onChange={(value: any) =>
               setData((prev: any) => ({
                 ...prev,
-                validUntil: moment(value).format('LL'),
+                validUntil: value,
               }))
             }
             renderInput={(params) => (
@@ -279,9 +281,10 @@ const columns: any = (handleDelete: any) => [
     flex: 1,
   },
   {
-    field: 'certificateValidUntil',
+    field: 'validUntil',
     headerName: 'License/Certification Valid Until',
     flex: 1,
+    renderCell: (params: any) => moment(params.value).format("LL")
   },
   {
     field: 'licenseCertNo',

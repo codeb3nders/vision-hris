@@ -18,6 +18,7 @@ type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setFamily: React.Dispatch<React.SetStateAction<FamilyI[]>>;
   family: FamilyI[];
+  setWithUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const initialData:FamilyI = {
@@ -28,13 +29,13 @@ const initialData:FamilyI = {
     residence: '',
   }
 
-const FamilyBackgroundForm = ({ open, setOpen, setFamily }: Props) => {
+const FamilyBackgroundForm = ({ open, setOpen, setFamily, setWithUpdate }: Props) => {
   const { setOpenNotif, failed } = useContext(ProfileCtx);
   const [newFamily, setNewFamily] = useState<FamilyI>(initialData);
 
   useEffect(() => {
     if (!open) {
-      setFamily([])
+      setNewFamily(initialData)
       setOpenNotif({ message: '', status: false, severity: '' })
     }
   }, [open]);
@@ -56,6 +57,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily }: Props) => {
       }
       //check inputs...
     if (await validateFields()) {
+      setWithUpdate(true)
       setFamily((family: FamilyI[]) => [...family, newFamily]);
       setOpen(false);
     }
@@ -79,11 +81,10 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily }: Props) => {
           }
         />
 
-        <FormControl variant='standard' fullWidth size='small'>
+        <FormControl variant='standard' fullWidth size='small' required>
           <InputLabel id='relation'>Relation</InputLabel>
           <Select
             id='relation'
-            required
             labelId='relation'
             onChange={(e: any) =>
               setNewFamily({ ...newFamily, relation: e.target.value })

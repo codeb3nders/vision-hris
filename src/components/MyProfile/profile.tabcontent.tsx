@@ -67,15 +67,6 @@ const ProfileTabContent = ({ className }: Props) => {
         }
       >
         <TabPanel value='1' className='p-0 grid' id='Personal'>
-          <Button
-            // color='primary'
-            variant='contained'
-            // disabled={!validated}
-            className='px-4 py-2 bg-green-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
-            onClick={() => handleUpdateEmployee(null)}
-          >
-            Save Changes
-          </Button>
           <Suspense fallback={<div>Loading...</div>}>
             <Personal />
           </Suspense>

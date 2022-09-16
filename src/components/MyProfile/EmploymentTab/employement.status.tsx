@@ -14,6 +14,7 @@ import {
   updateEmployee,
   getEmployeeUpdateStatus as _getEmployeeUpdateStatus,
   getEmployeeUpdateError as _getEmployeeUpdateError,
+  getOneEmployeeAction as _getOneEmployeeAction,
   resetUpdate
 } from 'slices';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
@@ -24,7 +25,7 @@ type Props = {};
 const EmployementStatus = (props: Props) => {
   const dispatch = useDispatch();
   const { access_token } = useContext(AppCtx);
-  const { isNew, employeeDetails, enums, failed } = useContext(ProfileCtx);
+  const { isNew, employeeDetails, enums, failed, setIndex } = useContext(ProfileCtx);
   const [infos, setInfos] = useState<any[]>([]);
   const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
   const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
@@ -41,46 +42,56 @@ const EmployementStatus = (props: Props) => {
   }, [enums]);
 
   useEffect(() => {
-    console.log({ editEmployment })
-  }, [editEmployment])
-
-  useEffect(() => {
-    let data: any[] = [{
-      index: 0,
-      effectiveDate: employeeDetails.dateHired,
-      employmentType: employeeDetails.employmentType,
-      employmentStatus: employeeDetails.employmentStatus,
-      endOfProbationary: employeeDetails.endOfProbationary,
-      contractEndDate: employeeDetails.contractEndDate
-    }];
-    if (employeeDetails.employment_history.length > 0) {
-      employeeDetails.employment_history
-        .map((o: any, i: number) => {
-          i++;
-          const new_data = {
-            employmentType: employeeDetails.employmentType,
-            employmentStatus: employeeDetails.employmentStatus,
-            endOfProbationary: employeeDetails.endOfProbationary,
-            contractEndDate: employeeDetails.contractEndDate,
-            effectiveDate: o.effectiveDate,
-            ...o.details,
-            index: i
-          }
-          console.log({new_data})
-          data.push(new_data)
-        })
-    }
-    data.sort((a: any, b: any) => b.index - a.index)
-    setInfos(data);
+    getData();
   }, [employeeDetails]);
+console.log({employmentUpdate}, {editEmployment})
+  const getData = async () => {
+    //latest data from employees
+    let data: any[] = [], prev_remarks = "";
+    //updated employee job info..
+    
+    if (employeeDetails.employment_history.length > 0) {
+      const o:any = employeeDetails.employment_history;
+      for (var i = 0; i < o.length; i++){
+        const history_data = {
+          employmentStatus: employeeDetails.employmentStatus,
+          employmentType: employeeDetails.employmentType,
+          endOfProbationary: employeeDetails.endOfProbationary,
+          contractEndDate: employeeDetails.contractEndDate,
+          effectiveDate: new Date(),
+          employmentLastUpdate: o[i]?.effectiveDate,
+          remarks: prev_remarks,
+          ...o[i].details,
+          index: i,
+        };
+        prev_remarks = o[i]?.remarks || "";
+        console.log({history_data})
+        data.push(history_data);
+      }
+    }
+    data.push({
+      index: data.length,
+      employmentLastUpdate: employeeDetails.employmentLastUpdate,
+      effectiveDate: new Date(),
+      employmentStatus: employeeDetails.employmentStatus,
+      employmentType: employeeDetails.employmentType,
+      endOfProbationary: employeeDetails.endOfProbationary,
+      contractEndDate: employeeDetails.contractEndDate,
+      remarks: prev_remarks
+    })
+    data.sort((a: any, b: any) => b.index - a.index);
+    setInfos(data);
+  }
 
   const columns: GridColDef[] = [
     {
-      field: 'effectiveDate',
+      field: 'employmentLastUpdate',
       headerName: 'Effective Date',
       flex: 1,
-      renderCell: (params: GridCellParams) => {
-        return <div>{moment(params.value).format('LL')}</div>;
+      renderCell: (params: any) => {
+        return (
+          <div className='text-xs p-1'>{moment(params.value).format('LL')}</div>
+        );
       },
     },
     {
@@ -141,18 +152,28 @@ const EmployementStatus = (props: Props) => {
     const handleSaveChanges = async () => {
 
       const update = async () => {
-        setLoading({ status: true, action: 'Saving' });
         try {
           employmentUpdate.type = EMPLOYMENT_HISTORY_TYPE;
+          employmentUpdate.effectiveDate = employeeDetails.employmentLastUpdate;
+          employmentUpdate.employmentLastUpdate = moment(employmentUpdate.employmentLastUpdate).endOf("day")
+          if (editEmployment.employmentStatus.code.toLowerCase() === "resigned") {
+            employmentUpdate.dateInactive = moment(employmentUpdate.employmentLastUpdate).endOf("day")
+          }
           consoler(employmentUpdate, 'blue', 'updateEmployment');
           await dispatch(updateEmployee(
             {
               params: { ...employmentUpdate, employeeNo: employeeDetails.employeeNo },
               access_token
-            }));
+            }))
           setEditEmployment(null);
+          await dispatch(
+            _getOneEmployeeAction({
+              access_token,
+              params: { employeeNo: employeeDetails.employeeNo },
+            })
+          );
+          setIndex("2")
         } catch (error: any) {
-          setLoading({ status: false, action: '' });
           console.log(error);
         }
       };
@@ -300,14 +321,14 @@ const EmployementStatus = (props: Props) => {
             onChange={(value) => {
               setEmploymentUpdate({
                 ...employmentUpdate,
-                effectiveDate: value
+                employmentLastUpdate: value
               });
-              setEditEmployment({
-                ...editEmployment,
+              setEditEmployment((prev: any) => ({
+                ...prev,
                 effectiveDate: value
-              })
+              }))
             }}
-            value={new Date()}
+            value={editEmployment.effectiveDate}
             renderInput={(params) => (
               <TextField {...params} fullWidth required variant='standard' />
             )}

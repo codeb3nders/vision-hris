@@ -159,14 +159,12 @@ const EmployeeBenefits = (props: Props) => {
           getRowId={(data: any) => data.id}
           autoHeight
           headerHeight={0}
-          processRowUpdate={processRowUpdate}
           disableSelectionOnClick
           rows={benefits}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
           getRowHeight={() => 'auto'}
-          headerHeight={0}
           processRowUpdate={processRowUpdate}
           editMode='row'
           rowModesModel={rowModesModel}

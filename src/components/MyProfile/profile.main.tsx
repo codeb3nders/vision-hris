@@ -157,7 +157,7 @@ const ProfileMain = ({
   const dispatch = useDispatch();
 
   const [updatedDetails, setUpdatedDetails] = useState<any>(null);
-  const [index, setIndex] = useState<string>('0');
+  const [index, setIndex] = useState<string>('1');
   const { isLoggedIn, userData, access_token, userGroup } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
   const [employeeDetails, setEmployeeDetails] =
@@ -255,7 +255,7 @@ console.log({employeeUpdatedStatus})
 
   useEffect(() => {
     handleGetDisplayPhoto();
-    setIndex('1');
+    setIndex(index);
     if (isNew) {
       setEmployeeDetails(initialState);
     } else {
@@ -486,12 +486,12 @@ console.log({employeeUpdatedStatus})
     }
   };
 
-  const handleUpdateEmployee = async (type?:string|null) => {
+  const handleUpdateEmployee = async () => {
     try {
       consoler(updatedDetails, 'orange', 'updateEmployee');
       await dispatch(
         updateEmployee({
-          params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo, type },
+          params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo },
           access_token,
         })
       );
