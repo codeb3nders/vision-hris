@@ -57,16 +57,18 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
         onChange={(event: React.SyntheticEvent, newValue: string) =>
           setIndex(newValue)
         }
-        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${isMobile ? 'border-b border-gray-200' : ''
-          }`}
+        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${
+          isMobile ? 'border-b border-gray-200' : ''
+        }`}
         scrollButtons={true}
         // scrollButtons={isMobile}
-        variant={"scrollable"}
-      // variant={isMobile ? 'scrollable' : 'fullWidth'}
+        // variant={'scrollable'}
+        variant={isMobile ? 'scrollable' : 'fullWidth'}
       >
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '1' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
+            index === '1' ? '!text-v-red' : ''
+          }`}
           label='Personal'
           {...a11yProps('1')}
           id='personal-tab'
@@ -74,8 +76,9 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
           itemID='personal-tab'
         />
         <Tab
-          className={`employment-tab p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '2' ? '!text-v-red' : ''
-            }`}
+          className={`employment-tab p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
+            index === '2' ? '!text-v-red' : ''
+          }`}
           label='Employment'
           {...a11yProps('2')}
           id='employment-tab'
@@ -83,8 +86,9 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
           itemID='employment-tab'
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${index === '3' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
+            index === '3' ? '!text-v-red' : ''
+          }`}
           label='Compensation and Benefits'
           {...a11yProps('3')}
           id='compensation-tab'
@@ -114,68 +118,79 @@ const EmployeeTabs = ({ className, index, setIndex, isMobile }) => {
         onChange={(event: React.SyntheticEvent, newValue: string) =>
           setIndex(newValue)
         }
-        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${isMobile ? 'border-b border-gray-200' : ''
-          }`}
+        className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${
+          isMobile ? 'border-b border-gray-200' : ''
+        }`}
         scrollButtons={isMobile}
         variant={isMobile ? 'scrollable' : 'fullWidth'}
       >
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '1' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '1' ? '!text-v-red' : ''
+          }`}
           label='Personal'
           {...a11yProps('1')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '2' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '2' ? '!text-v-red' : ''
+          }`}
           label='Employment'
           {...a11yProps('2')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '3' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '3' ? '!text-v-red' : ''
+          }`}
           label='Compensation and Benefits'
           {...a11yProps('3')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '4' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '4' ? '!text-v-red' : ''
+          }`}
           label='Learning and Development'
           {...a11yProps('4')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '5' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '5' ? '!text-v-red' : ''
+          }`}
           label='201 File'
           {...a11yProps('5')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '6' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '6' ? '!text-v-red' : ''
+          }`}
           label='Asset Management'
           {...a11yProps('6')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '7' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '7' ? '!text-v-red' : ''
+          }`}
           label='Leaves'
           {...a11yProps('7')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '8' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '8' ? '!text-v-red' : ''
+          }`}
           label='Official Business'
           {...a11yProps('8')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '9' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '9' ? '!text-v-red' : ''
+          }`}
           label='Overtime'
           {...a11yProps('9')}
         />
         <Tab
-          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${index === '10' ? '!text-v-red' : ''
-            }`}
+          className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] ${
+            index === '10' ? '!text-v-red' : ''
+          }`}
           label='Disciplinary Cases'
           {...a11yProps('10')}
         />

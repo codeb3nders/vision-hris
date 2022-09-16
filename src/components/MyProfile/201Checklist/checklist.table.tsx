@@ -1,5 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { DataGrid } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridEventListener,
+  GridRowId,
+  GridRowModel,
+  GridRowModes,
+  GridRowModesModel,
+  GridRowParams,
+  MuiEvent,
+} from '@mui/x-data-grid';
 import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import {
@@ -11,7 +21,14 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { AddTaskTwoTone, Delete, SaveTwoTone } from '@mui/icons-material';
+import {
+  AddTaskTwoTone,
+  Cancel,
+  Delete,
+  Edit,
+  Save,
+  SaveTwoTone,
+} from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { ProfileCtx } from '../profile.main';
@@ -27,27 +44,89 @@ type ChecklistModel = {
   fileType?: string;
   url?: string;
   remarks?: string;
+  id: number;
 };
 
 const ChecklistTable = (props: Props) => {
-  const { isNew, setUpdatedDetails } = useContext(ProfileCtx);
+  const { isNew, setUpdatedDetails, enums } = useContext(ProfileCtx);
   const [rows, setRows] = useState<ChecklistModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [selectedDocuments, setSelectedDocuments] = useState<any[]>([]);
+  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
-  const handleDelete = (params: any) => {
-    setUpdatedDetails((prev: any) => ({ ...prev, employee201Files: rows }));
-    setRows((prev: any) => {
-      const filtered = prev.filter(
-        (a: any) => a.documentCode !== params.row.documentCode
-      );
-      return filtered;
-    });
+  const handleRowEditStart = (
+    params: GridRowParams,
+    event: MuiEvent<React.SyntheticEvent>
+  ) => {
+    event.defaultMuiPrevented = true;
   };
+
+  const handleRowEditStop: GridEventListener<'rowEditStop'> = (
+    params,
+    event
+  ) => {
+    event.defaultMuiPrevented = true;
+  };
+
+  const handleEditClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  const handleCancelClick = (id: GridRowId) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    // const editedRow = rows.find((row) => row.id === id);
+    // if (editedRow!.isNew) {
+    //   setRows(rows.filter((row) => row.id !== id));
+    // }
+  };
+
+  const handleDeleteClick = (id: GridRowId) => () => {
+    setRows(rows.filter((row) => row.id !== id));
+  };
+
+  useEffect(() => {
+    const updated = selectedDocuments.map((selected: any) => {
+      const updatedDocuments = rows.filter(
+        (row: any) => row.documentCode === selected
+      )[0];
+      if (updatedDocuments) {
+        return updatedDocuments;
+      }
+
+      return null;
+    });
+
+    console.log({ updated });
+  }, [selectedDocuments]);
+
+  useEffect(() => {
+    const list = enums?.file201.map((document: any, idx: number) => ({
+      documentCode: document?.code,
+      documentDescription: document?.documentDescription || null,
+      dateUploaded: document?.dateUploaded || null,
+      fileType: document?.fileType || null,
+      url: document?.url || null,
+      remarks: document?.remarks || null,
+      id: document.code,
+    }));
+    setRows(list);
+  }, [enums]);
 
   useEffect(() => {
     !isNew &&
       rows.length > 0 &&
-      setUpdatedDetails((prev: any) => ({ ...prev, employee201Files: rows }));
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        employee201Files: rows.filter((row) => row.dateUploaded),
+      }));
 
     rows.length <= 0 &&
       setUpdatedDetails((prev: any) => {
@@ -56,237 +135,125 @@ const ChecklistTable = (props: Props) => {
       });
   }, [rows]);
 
+  const processRowUpdate = (newRow: GridRowModel) => {
+    const updatedRow = { ...newRow, isNew: false };
+    console.log({ newRow, updatedRow });
+
+    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    return updatedRow;
+  };
+
   return (
     <div>
-      <File201Dialog open={open} setOpen={setOpen} setRows={setRows} />
-
       <div style={{ width: '100%' }}>
         <DataGrid
           autoHeight
           experimentalFeatures={{ newEditingApi: true }}
           disableSelectionOnClick
           rows={rows}
-          columns={columns(handleDelete)}
+          columns={columns(
+            rowModesModel,
+            handleSaveClick,
+            handleCancelClick,
+            handleEditClick,
+            handleDeleteClick
+          )}
           pageSize={5}
           rowsPerPageOptions={[5]}
-          checkboxSelection
           getRowHeight={() => 'auto'}
+          onStateChange={(state: any) => setSelectedDocuments(state.selection)}
           getRowId={(data) => data.documentCode}
+          processRowUpdate={processRowUpdate}
+          editMode='row'
+          rowModesModel={rowModesModel}
+          onRowEditStart={handleRowEditStart}
+          onRowEditStop={handleRowEditStop}
         />
       </div>
-
-      <AddButton text='Add 201 File' setOpen={setOpen} />
     </div>
   );
 };
 
-const file201InitialState = {
-  dateUploaded: '',
-  documentCode: '',
-  documentDescription: '',
-  fileType: '',
-  remarks: '',
-  url: '',
-};
-
-const File201Dialog = ({ open, setOpen, setRows }) => {
-  const { enums } = useContext(ProfileCtx);
-  const [newChecklist, setNewChecklist] =
-    useState<ChecklistModel>(file201InitialState);
-
-  const handleSave201File = () => {
-    setRows((prev) => [...prev, newChecklist]);
-    setNewChecklist(file201InitialState);
-    setOpen(false);
-  };
-
-  return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
-      <div className='p-6 flex flex-col gap-4 w-[550px]'>
-        <p className='text-md font-bold '>
-          <AddTaskTwoTone /> New 201 File
-        </p>
-        <GridWrapper colSize='2'>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth required>
-              <InputLabel id='cat'>Document</InputLabel>
-              <Select
-                label='Document'
-                labelId='cat'
-                onChange={(e: any) =>
-                  setNewChecklist({
-                    ...newChecklist,
-                    documentCode: e.target.value,
-                  })
-                }
-              >
-                {enums.file201.map((document: any) => {
-                  return (
-                    <MenuItem
-                      key={document.code}
-                      id={document.code}
-                      value={document.code}
-                    >
-                      {document.name}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </div>
-
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <TextField
-              fullWidth
-              variant='standard'
-              size='small'
-              multiline
-              label='Document Description'
-              onChange={(e: any) =>
-                setNewChecklist({
-                  ...newChecklist,
-                  documentDescription: e.target.value,
-                })
-              }
-            />
-          </div>
-
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <TextField
-              fullWidth
-              variant='standard'
-              size='small'
-              label='File Type'
-              onChange={(e: any) =>
-                setNewChecklist({
-                  ...newChecklist,
-                  fileType: e.target.value,
-                })
-              }
-            />
-          </div>
-
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <TextField
-              fullWidth
-              variant='standard'
-              size='small'
-              label='URL'
-              onChange={(e: any) =>
-                setNewChecklist({ ...newChecklist, url: e.target.value })
-              }
-            />
-          </div>
-
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='Date Uploaded'
-                onChange={(value) =>
-                  setNewChecklist({
-                    ...newChecklist,
-                    dateUploaded: moment(value).format('LL'),
-                  })
-                }
-                value={new Date()}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <TextField
-              multiline
-              fullWidth
-              variant='standard'
-              size='small'
-              label='Remarks'
-              onChange={(e: any) =>
-                setNewChecklist({ ...newChecklist, remarks: e.target.value })
-              }
-            />
-          </div>
-        </GridWrapper>
-
-        <div className='grid grid-cols-5'>
-          <button
-            disabled={!newChecklist.documentCode}
-            onClick={handleSave201File}
-            className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
-          >
-            <SaveTwoTone fontSize='small' className='mr-2' />
-            Save Task
-          </button>
-          <button
-            className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-            onClick={() => setOpen(false)}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </Dialog>
-  );
-};
-
-const columns: any = (handleDelete: any) => [
+const columns: any = (
+  rowModesModel: any,
+  handleSaveClick: any,
+  handleCancelClick: any,
+  handleEditClick: any,
+  handleDeleteClick: any
+) => [
   {
     field: 'documentCode',
     headerName: 'Document',
-    flex: 1,
+    width: 200,
     renderCell: (params: any) => {
-      return params.value;
+      return <span className='text-xs'>{params.value}</span>;
     },
-    editable: true,
   },
   {
     field: 'documentDescription',
     headerName: 'Description',
-    flex: 1,
-    renderCell: (params: any) => {
-      return params.value;
-    },
+    width: 200,
   },
   {
     field: 'fileType',
     headerName: 'File Type',
-    flex: 1,
-    renderCell: (params: any) => {
-      return params.value;
-    },
+    width: 150,
   },
 
   {
     field: 'dateUploaded',
     headerName: 'Date Uploaded',
-    flex: 1,
+    type: 'date',
+    editable: true,
+    width: 200,
   },
   {
     field: 'url',
     headerName: 'URL',
-    flex: 1,
-    renderCell: (params: any) => {
-      return (
-        <div className='flex flex-row items-center w-full gap-1'>
-          <span className='text-xs'>
-            <a
-              href={params.value}
-              target='_blank'
-              rel='noreferrer'
-              className='text-sky-500'
-            >
-              {params.value}
-            </a>
-          </span>
-          <div className='flex-1 flex justify-end'>
-            <IconButton size='small' onClick={() => handleDelete(params)}>
-              <Delete />
-            </IconButton>
-          </div>
-        </div>
-      );
+    editable: true,
+    width: 200,
+  },
+  {
+    field: 'remarks',
+    headerName: 'Remarks',
+    editable: true,
+    width: 200,
+  },
+  {
+    field: 'actions',
+    type: 'actions',
+    headerName: 'Actions',
+    width: 100,
+    cellClassName: 'actions',
+    getActions: ({ id }) => {
+      const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+      if (isInEditMode) {
+        return [
+          <GridActionsCellItem
+            icon={<Save />}
+            label='Save'
+            onClick={handleSaveClick(id)}
+          />,
+          <GridActionsCellItem
+            icon={<Cancel />}
+            label='Cancel'
+            className='textPrimary'
+            onClick={handleCancelClick(id)}
+            color='inherit'
+          />,
+        ];
+      }
+
+      return [
+        <GridActionsCellItem
+          icon={<Edit />}
+          label='Edit'
+          className='textPrimary'
+          onClick={handleEditClick(id)}
+          color='inherit'
+        />,
+      ];
     },
   },
 ];
