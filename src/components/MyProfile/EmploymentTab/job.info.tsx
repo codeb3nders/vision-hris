@@ -22,7 +22,7 @@ import {
   TextField,
 } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { USER_GROUP } from 'constants/Values';
+import { JOB_HISTORY_TYPE, USER_GROUP } from 'constants/Values';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -41,7 +41,7 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 type Props = {};
 
 type JobInfoI = {
-  effectiveDate: Date | Moment;
+  jobLastUpdate: Date | Moment;
   location: string;
   department: string;
   rank: string;
@@ -57,7 +57,7 @@ const JobInfo = (props: Props) => {
     setEmployeeDetails,
     enums,
     isView,
-    setUpdatedDetails,
+    setUpdatedDetails, failed
   } = useContext(ProfileCtx);
   const { access_token } = useContext(AppCtx)
   const dispatch = useDispatch();
@@ -70,13 +70,6 @@ const JobInfo = (props: Props) => {
   const [ranks, setRanks] = useState<any[]>([]);
   const [editJob, setEditJob] = useState<any>(null);
   const [jobUpdate, setJobUpdate] = useState<any>(null);
-  const [openNotif, setOpenNotif] = useState<{
-    message: string;
-    status: boolean;
-    severity: any;
-  }>({ message: '', status: false, severity: '' });
-  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus)
-  const employeeUpdatedError = useSelector(_getEmployeeUpdateError)
 
   useEffect(() => {
     setDepartments(enums.departments);
@@ -96,10 +89,11 @@ const JobInfo = (props: Props) => {
   console.log({ editJob }, { jobUpdate });
 
   useEffect(() => {
+    //latest data from employees
     let data: any[] = [
       {
         index: 0,
-        effectiveDate: employeeDetails.jobLastUpdate,
+        effectiveDate: employeeDetails.dateHired,
         location: employeeDetails.location,
         department: employeeDetails.department,
         rank: employeeDetails.rank,
@@ -107,17 +101,26 @@ const JobInfo = (props: Props) => {
         reportsTo: employeeDetails.reportsTo,
       },
     ];
-    if (employeeDetails.employment_history.length > 0) {
-      employeeDetails.employment_history
-        .filter((x: any) => x.type?.toLowerCase() == 'job')
-        .map((o: any, i: number = 1) => {
-          data.push({
-            ...o,
+    if (employeeDetails.job_history.length > 0) {
+      employeeDetails.job_history
+        .map((o: any, i: number) => {
+          i++;
+          const new_data = {
+            location: employeeDetails.location,
+            department: employeeDetails.department,
+            rank: employeeDetails.rank,
+            position: employeeDetails.position,
+            reportsTo: employeeDetails.reportsTo,
+            effectiveDate: o.effectiveDate,
+            ...o.details,
             index: i,
-          });
+          };
+          console.log({new_data})
+          data.push(new_data);
         });
     }
-    data.sort((a: any, b: any) => a.index - b.index);
+    console.log({data})
+    data.sort((a: any, b: any) => b.index - a.index);
     setInfos(data);
   }, [employeeDetails]);
 
@@ -174,7 +177,7 @@ const JobInfo = (props: Props) => {
       flex: 1,
       renderCell: (params: any) => {
         return (
-          <div className='text-xs p-1'>{params.row.reportsTo?.employeeName}</div>
+          <div className='text-xs p-1'>{params.row.reportsTo?.employeeName || params.row.reportsTo}</div> //TODO: change this once modification is done in the backend
         );
       },
     },
@@ -204,51 +207,21 @@ const JobInfo = (props: Props) => {
       },
     },
   ];
-
-  const success = () => {
-    // setOpenNotif({
-    //   message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully updated.`,
-    //   status: true,
-    //   severity: 'success',
-    // });
-    dispatch(resetUpdate());
-
-    // setTimeout(() => {
-    //   setOpenNotif({
-    //     message: '',
-    //     status: false,
-    //     severity: 'success',
-    //   });
-    // }, 2000);
-  }
-
-  const failed = (message: string) => {
-    setOpenNotif({
-      message,
-      status: true,
-      severity: 'error',
-    });
-  }
-
+console.log({getEmployeeItems})
   const getDialog = () => {
     const handleSaveChanges = async () => {
 
       const update = async () => {
         try {
-          jobUpdate.employmentLastUpdate = jobUpdate?.effectiveDate || new Date();
+          jobUpdate.type = JOB_HISTORY_TYPE;
           // jobUpdate.lastModifiedDate = new Date();
           consoler(jobUpdate, 'blue', 'updateEmployment');
-          const response = updateEmployee(
+          await dispatch(updateEmployee(
             {
               params: { ...jobUpdate, employeeNo: employeeDetails.employeeNo },
               access_token
-            });
-          console.log({ response });
-          // if (employeeUpdatedError) {
-          //   failed(employeeUpdatedError);
-          // } else {
-          //   success();
-          // }
+            }))
+          setEditJob(null);
         } catch (error: any) {
           console.log(error);
         }
@@ -282,13 +255,6 @@ const JobInfo = (props: Props) => {
       await update();
     }
     return <Dialog open={editJob !== null} id="dialog-job" onClose={() => setEditJob(null)}>
-      <Snackbar
-        autoHideDuration={2000}
-        open={openNotif.status}
-        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
-      >
-        <Alert severity={openNotif.severity}>{openNotif.message}</Alert>
-      </Snackbar>
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
           <PersonTwoTone /> Job Update
@@ -397,7 +363,7 @@ const JobInfo = (props: Props) => {
             })}
           </Select>
         </FormControl>
-        <FormControl variant='standard' fullWidth size='small' required>
+        <FormControl variant='standard' fullWidth size='small'>
           <InputLabel id='tl'>Team Leader</InputLabel>
           <Select
             id='jobinfo-teamleader-update'
@@ -419,7 +385,10 @@ const JobInfo = (props: Props) => {
                 (x: any) =>
                   x.department.code === (jobUpdate?.department || editJob.department.code)
                 && employeeDetails.employeeNo !== x.employeeNo
-              )
+            ).sort((a: any, b: any) => {
+              // console.log(a.firstName, {a}, "xxxxxxxxxxxxxxxxx")
+                return a.firstName?.localeCompare(b.firstName)
+              })
               .map((employee) => {
                 return (
                   <MenuItem
@@ -447,7 +416,7 @@ const JobInfo = (props: Props) => {
                 effectiveDate: value
               }))
             }}
-            value={editJob?.effectiveDate || new Date()}
+            value={new Date()}
             renderInput={(params) => (
               <TextField {...params} fullWidth required variant='standard' />
             )}

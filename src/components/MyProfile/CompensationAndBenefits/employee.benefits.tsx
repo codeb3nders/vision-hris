@@ -20,7 +20,7 @@ import {
   MuiEvent,
 } from '@mui/x-data-grid';
 import AddButton from 'CustomComponents/AddButton';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 
 type Props = {};
@@ -29,6 +29,7 @@ const EmployeeBenefits = (props: Props) => {
   const [benefits, setBenefits] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+  const [promiseArguments, setPromiseArguments] = useState<any>(null);
 
   const handleRowEditStart = (
     params: GridRowParams,
@@ -157,6 +158,8 @@ const EmployeeBenefits = (props: Props) => {
         <DataGrid
           getRowId={(data: any) => data.id}
           autoHeight
+          headerHeight={0}
+          processRowUpdate={processRowUpdate}
           disableSelectionOnClick
           rows={benefits}
           columns={columns}

@@ -1,5 +1,20 @@
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
+export const personalCols = [
+  'firstName', 
+  'lastName', 
+  'middleName', 
+  'suffix', 
+  'citizenship', 
+  'gender', 
+  'birthDate', 
+  'personalContactNumber', 
+  'personalEmail', 
+  'civilStatus', 
+  'religion', 
+  'presentAddress', 
+  'permanentAddress'
+]
 export const initialState: EmployeeI = {
   employeeNo: '',
   firstName: '',
@@ -74,6 +89,7 @@ export const initialState: EmployeeI = {
   allowanceDetails: [],
   yearsInService: 0,
   employment_history: [],
+  job_history: [],
   employmentLastUpdate: undefined,
   jobLastUpdate: undefined,
   lastModifiedDate: undefined,
