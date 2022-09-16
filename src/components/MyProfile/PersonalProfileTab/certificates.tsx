@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Add, Delete, WorkspacePremiumTwoTone } from '@mui/icons-material';
+import { Add, Delete, SaveTwoTone, WorkspacePremiumTwoTone } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -11,41 +11,103 @@ import moment from 'moment';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import AddButton from 'CustomComponents/AddButton';
+import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 type Props = {};
-
+const initialData = {
+  name: '',
+  authorizingEntity: '',
+  validUntil: '',
+  licenseCertNo: '',
+}
 const Certificates = (props: Props) => {
-  const { setEmployeeDetails, isNew, setUpdatedDetails, getIcon } =
+  const { setEmployeeDetails, isNew, setUpdatedDetails, getIcon, employeeDetails, updatedDetails } =
     useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [certificates, setCertificates] = useState<any[]>([]);
+  const [withUpdate, setWithUpdate] = useState<boolean>(false);
+
+  const withData = useMemo(() => {
+    return certificates.some((x:any) => x.name || x.authorizingEntity || x.validUntil || x.licenseCertNo)
+  }, [certificates])
+
+  useEffect(() => {
+    if (isNew && withData) {
+      setEmployeeDetails((prev:any) => {
+        return {
+          ...prev,
+          licensesCertifications: certificates
+        }
+      })
+    }
+  }, [withData]);
+
+  useEffect(() => {
+    if (withUpdate) {
+      if (withData) {
+        setUpdatedDetails((prev: any) => {
+          return {
+            ...prev,
+            licensesCertifications: certificates
+          }
+        })
+      } else {
+        if (updatedDetails) {
+          setUpdatedDetails((prev: any) => {
+            const { licensesCertifications, ...rest } = prev;
+            return {
+              ...rest
+            }
+          })
+        } else {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              licensesCertifications: []
+            }
+          })
+        }
+      }
+      setWithUpdate(false);
+    }
+  }, [certificates])
+
+  useEffect(() => {
+    const dbData:any[] = employeeDetails?.licensesCertifications || [];
+    setCertificates(dbData);
+  }, [employeeDetails.licensesCertifications]);
 
   const handleDelete = (params: any) => {
     setCertificates((prev: any) => {
-      const filtered = prev.filter((a: any) => a.id !== params.row.id);
+      const filtered = prev.filter((a: any) => {
+        const paramsKey = `${params.row.name}-${params.row.licenseCertNo}`;
+        const aKey = `${a?.name}-${a?.licenseCertNo}`;
+        return paramsKey !== aKey;
+      });
       return filtered;
     });
+    setWithUpdate(true);
   };
 
-  useEffect(() => {
-    setEmployeeDetails((prev: EmployeeI) => ({
-      ...prev,
-      licensesCertifications: certificates,
-    }));
+  // useEffect(() => {
+  //   setEmployeeDetails((prev: EmployeeI) => ({
+  //     ...prev,
+  //     licensesCertifications: certificates,
+  //   }));
 
-    !isNew &&
-      certificates.length > 0 &&
-      setUpdatedDetails((prev: any) => ({
-        ...prev,
-        licensesCertifications: certificates,
-      }));
+  //   !isNew &&
+  //     certificates.length > 0 &&
+  //     setUpdatedDetails((prev: any) => ({
+  //       ...prev,
+  //       licensesCertifications: certificates,
+  //     }));
 
-    certificates.length <= 0 &&
-      setUpdatedDetails((prev: any) => {
-        delete prev?.licensesCertifications;
-        return prev;
-      });
-  }, [certificates]);
+  //   certificates.length <= 0 &&
+  //     setUpdatedDetails((prev: any) => {
+  //       delete prev?.licensesCertifications;
+  //       return prev;
+  //     });
+  // }, [certificates]);
 
   return (
     <CollapseWrapper
@@ -75,35 +137,44 @@ const Certificates = (props: Props) => {
 };
 
 const LicensureDialog = ({ open, setOpen, setCertificates }) => {
+  const {setOpenNotif, failed} = useContext(ProfileCtx)
   const [data, setData] = useState<any>({});
 
-  const handleSave = () => {
-    setCertificates((prev: any) => [
-      ...prev,
-      { ...data, id: data.licenseCertNo },
-    ]);
-    setOpen(false);
+  const handleSave = async() => {
+    const validateFields = async () => {
+        const dialog: any = document.getElementById("certificates-dialog");
+        const required = dialog.querySelectorAll("[required]");
+        let invalidCtr = 0;
 
-    setData({
-      name: '',
-      authorizingEntity: '',
-      validUntil: '',
-      licenseCertNo: '',
-    });
+        invalidCtr = await Array.from(required)
+          .filter((e: any) => !e.value)
+          .map((e: any) => e.id).length;
+
+        if (invalidCtr > 0) {
+          return failed(INCOMPLETE_FORM_MESSAGE);
+        }
+        return true;
+      }
+      //check inputs...
+    if (await validateFields()) {
+      setCertificates((prev: any) => [
+        ...prev,
+        { ...data },
+      ]);
+      setOpen(false);
+      setData(initialData);
+    }
   };
 
   useEffect(() => {
-    !open &&
-      setData({
-        name: '',
-        authorizingEntity: '',
-        validUntil: '',
-        licenseCertNo: '',
-      });
+    if (!open) {
+      setData(initialData);
+      setOpenNotif({ message: '', status: false, severity: '' })
+    }
   }, [open]);
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => setOpen(false)} id="certificates-dialog">
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
           <WorkspacePremiumTwoTone fontSize='small' /> New Licence/Certificate
@@ -111,6 +182,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
 
         <TextField
           id='certification'
+          required
           variant='standard'
           size='small'
           label='License/Certification'
@@ -124,6 +196,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
         />
         <TextField
           id='authorizing-entity'
+          required
           variant='standard'
           size='small'
           label='Authorizing Entity'
@@ -151,6 +224,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
                 id='certification-valid-until'
                 size='small'
                 {...params}
+                required
                 fullWidth
                 variant='standard'
               />
@@ -160,6 +234,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
 
         <TextField
           id='certification-number'
+          required
           variant='standard'
           size='small'
           label='License/Certification Number'
@@ -172,12 +247,21 @@ const LicensureDialog = ({ open, setOpen, setCertificates }) => {
           }
         />
 
-        <button
-          className='px-2 py-1 w-full bg-green-500 text-white'
-          onClick={handleSave}
-        >
-          Save Licensure Examination
-        </button>
+        <div className='grid grid-cols-7'>
+          <button
+            onClick={handleSave}
+            className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+          >
+            <SaveTwoTone fontSize='small' className='mr-2' />
+            Save
+          </button>
+          <button
+            className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </Dialog>
   );

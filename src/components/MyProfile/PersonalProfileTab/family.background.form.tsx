@@ -7,8 +7,10 @@ import {
   Select,
   TextField,
 } from '@mui/material';
+import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import { RELATION } from 'constants/Values';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { ProfileCtx } from '../profile.main';
 import { FamilyI } from './family.background';
 
 type Props = {
@@ -18,28 +20,56 @@ type Props = {
   family: FamilyI[];
 };
 
-const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
-  const [newFamily, setNewFamily] = useState<FamilyI>({
+const initialData:FamilyI = {
     company: '',
     name: '',
     occupation: '',
     relation: '',
     residence: '',
-  });
+  }
 
-  const handleAddFamily = () => {
-    setFamily((family: FamilyI[]) => [...family, newFamily]);
-    setOpen(false);
+const FamilyBackgroundForm = ({ open, setOpen, setFamily }: Props) => {
+  const { setOpenNotif, failed } = useContext(ProfileCtx);
+  const [newFamily, setNewFamily] = useState<FamilyI>(initialData);
+
+  useEffect(() => {
+    if (!open) {
+      setFamily([])
+      setOpenNotif({ message: '', status: false, severity: '' })
+    }
+  }, [open]);
+
+  const handleAddFamily = async() => {
+    const validateFields = async () => {
+        const dialog: any = document.getElementById("family-dialog");
+        const required = dialog.querySelectorAll("[required]");
+        let invalidCtr = 0;
+
+        invalidCtr = await Array.from(required)
+          .filter((e: any) => !e.value)
+          .map((e: any) => e.id).length;
+
+        if (invalidCtr > 0) {
+          return failed(INCOMPLETE_FORM_MESSAGE);
+        }
+        return true;
+      }
+      //check inputs...
+    if (await validateFields()) {
+      setFamily((family: FamilyI[]) => [...family, newFamily]);
+      setOpen(false);
+    }
   };
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => setOpen(false)} id="family-dialog">
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
           <PersonAddTwoTone fontSize='small' /> Add Family Member
         </p>
         <TextField
           id='name'
+          required
           fullWidth
           variant='standard'
           size='small'
@@ -53,6 +83,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
           <InputLabel id='relation'>Relation</InputLabel>
           <Select
             id='relation'
+            required
             labelId='relation'
             onChange={(e: any) =>
               setNewFamily({ ...newFamily, relation: e.target.value })
@@ -89,6 +120,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
         <TextField
           id='residence'
           fullWidth
+          required
           variant='standard'
           size='small'
           label='Residence'
@@ -107,7 +139,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, family }: Props) => {
             className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
           >
             <SaveTwoTone fontSize='small' className='mr-2' />
-            Save Family Member Details
+            Save
           </button>
           <button
             className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'

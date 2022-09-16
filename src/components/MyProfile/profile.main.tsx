@@ -81,6 +81,7 @@ export type ProfileModel = {
   handleUpdateEmployee: React.Dispatch<any>;
   getIcon: any;
   failed: any;
+  setOpenNotif: React.Dispatch<any>;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -101,7 +102,8 @@ export const ProfileCtx = createContext<ProfileModel>({
   updatedDetails: null,
   handleUpdateEmployee: () => { },
   getIcon: () => { },
-  failed: () => {}
+  failed: () => { },
+  setOpenNotif: ()=>{}
 });
 
 export type EnumI = {
@@ -534,7 +536,8 @@ console.log({employeeUpdatedStatus})
         updatedDetails,
         handleUpdateEmployee,
         getIcon,
-        failed
+        failed,
+        setOpenNotif
       }}
     >
       <Dialog open={loading.status}>
