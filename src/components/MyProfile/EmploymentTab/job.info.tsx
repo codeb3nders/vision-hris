@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import moment, { Moment } from 'moment';
@@ -11,19 +11,16 @@ import {
 } from '@mui/icons-material';
 import { ProfileCtx } from '../profile.main';
 import {
-  Alert,
   Button,
   Dialog,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
 } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { JOB_HISTORY_TYPE, USER_GROUP } from 'constants/Values';
-import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -31,6 +28,7 @@ import {
   getEmployeeItems as _getEmployeeItems,
   getEmployeeUpdateStatus as _getEmployeeUpdateStatus,
   getEmployeeUpdateError as _getEmployeeUpdateError,
+  getOneEmployeeAction as _getOneEmployeeAction,
   resetUpdate, updateEmployee
 } from 'slices';
 import { useDispatch, useSelector } from 'react-redux';
@@ -57,14 +55,13 @@ const JobInfo = (props: Props) => {
     setEmployeeDetails,
     enums,
     isView,
-    setUpdatedDetails, failed
+    setUpdatedDetails, failed, setIndex
   } = useContext(ProfileCtx);
   const { access_token } = useContext(AppCtx)
   const dispatch = useDispatch();
   const getEmployeeItems = useSelector(_getEmployeeItems);
   const [infos, setInfos] = useState<JobInfoI[]>([]);
   const [departments, setDepartments] = useState<any[]>([]);
-  const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
   const [positions, setPositions] = useState<any[]>([]);
   const [ranks, setRanks] = useState<any[]>([]);
@@ -73,7 +70,6 @@ const JobInfo = (props: Props) => {
 
   useEffect(() => {
     setDepartments(enums.departments);
-    setEmploymentStatus(enums.employment_status);
     setLocations(enums.locations);
     setPositions(enums.positions);
     setRanks(enums.ranks);
@@ -86,47 +82,53 @@ const JobInfo = (props: Props) => {
     isView,
     setUpdatedDetails,
   };
-  console.log({ editJob }, { jobUpdate });
 
   useEffect(() => {
+    getData();
+  }, [employeeDetails]);
+
+  const getData = async () => {
     //latest data from employees
-    let data: any[] = [
-      {
-        index: 0,
-        effectiveDate: employeeDetails.dateHired,
-        location: employeeDetails.location,
-        department: employeeDetails.department,
-        rank: employeeDetails.rank,
-        position: employeeDetails.position,
-        reportsTo: employeeDetails.reportsTo,
-      },
-    ];
+    let data: any[] = [], prev_remarks = "";
+    //updated employee job info..
+    
     if (employeeDetails.job_history.length > 0) {
-      employeeDetails.job_history
-        .map((o: any, i: number) => {
-          i++;
-          const new_data = {
-            location: employeeDetails.location,
-            department: employeeDetails.department,
-            rank: employeeDetails.rank,
-            position: employeeDetails.position,
-            reportsTo: employeeDetails.reportsTo,
-            effectiveDate: o.effectiveDate,
-            ...o.details,
-            index: i,
-          };
-          console.log({new_data})
-          data.push(new_data);
-        });
+      const o:any = employeeDetails.job_history;
+      for (var i = 0; i < o.length; i++){
+        const history_data = {
+          location: employeeDetails.location,
+          department: employeeDetails.department,
+          rank: employeeDetails.rank,
+          position: employeeDetails.position,
+          reportsTo: employeeDetails.reportsTo,
+          effectiveDate: new Date(),
+          jobLastUpdate: o[i]?.effectiveDate,
+          remarks: prev_remarks,
+          ...o[i].details,
+          index: i,
+        };
+        prev_remarks = o[i]?.remarks || "";
+        data.push(history_data);
+      }
     }
-    console.log({data})
+    data.push({
+      index: data.length,
+      jobLastUpdate: employeeDetails.jobLastUpdate,
+      effectiveDate: new Date(),
+      location: employeeDetails.location,
+      department: employeeDetails.department,
+      rank: employeeDetails.rank,
+      position: employeeDetails.position,
+      reportsTo: employeeDetails.reportsTo,
+      remarks: prev_remarks
+    })
     data.sort((a: any, b: any) => b.index - a.index);
     setInfos(data);
-  }, [employeeDetails]);
+  }
 
   const columns: GridColDef[] = [
     {
-      field: 'effectiveDate',
+      field: 'jobLastUpdate',
       headerName: 'Effective Date',
       flex: 1,
       renderCell: (params: any) => {
@@ -214,7 +216,9 @@ console.log({getEmployeeItems})
       const update = async () => {
         try {
           jobUpdate.type = JOB_HISTORY_TYPE;
-          // jobUpdate.lastModifiedDate = new Date();
+          jobUpdate.effectiveDate = employeeDetails.jobLastUpdate;
+          jobUpdate.jobLastUpdate = moment(jobUpdate.jobLastUpdate).endOf("day")
+          
           consoler(jobUpdate, 'blue', 'updateEmployment');
           await dispatch(updateEmployee(
             {
@@ -222,6 +226,13 @@ console.log({getEmployeeItems})
               access_token
             }))
           setEditJob(null);
+          await dispatch(
+            _getOneEmployeeAction({
+              access_token,
+              params: { employeeNo: employeeDetails.employeeNo },
+            })
+          );
+          setIndex("2")
         } catch (error: any) {
           console.log(error);
         }
@@ -386,7 +397,6 @@ console.log({getEmployeeItems})
                   x.department.code === (jobUpdate?.department || editJob.department.code)
                 && employeeDetails.employeeNo !== x.employeeNo
             ).sort((a: any, b: any) => {
-              // console.log(a.firstName, {a}, "xxxxxxxxxxxxxxxxx")
                 return a.firstName?.localeCompare(b.firstName)
               })
               .map((employee) => {
@@ -409,14 +419,14 @@ console.log({getEmployeeItems})
             onChange={(value) => {
               setJobUpdate({
                 ...jobUpdate,
-                effectiveDate: value
+                jobLastUpdate: value
               });
               setEditJob((prev: any) => ({
                 ...prev,
                 effectiveDate: value
               }))
             }}
-            value={new Date()}
+            value={editJob.effectiveDate}
             renderInput={(params) => (
               <TextField {...params} fullWidth required variant='standard' />
             )}

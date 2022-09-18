@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { AdminPanelSettingsTwoTone, Delete } from '@mui/icons-material';
+import { AdminPanelSettingsTwoTone, Delete, SaveTwoTone } from '@mui/icons-material';
 import { Dialog, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -16,37 +16,73 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 type Props = {};
 
 const Licensure = (props: Props) => {
-  const { setEmployeeDetails, isNew, setUpdatedDetails, getIcon } =
+  const { setEmployeeDetails, isNew, setUpdatedDetails, getIcon, updatedDetails, employeeDetails } =
     useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [exams, setExams] = useState<any[]>([]);
+  const [withUpdate, setWithUpdate] = useState<boolean>(false);
+
+  const withData = useMemo(() => {
+    return exams.some((x:any) => x.examTitle || x.dateTaken || x.rating)
+  }, [exams])
+
+  useEffect(() => {
+    if (isNew && withData) {
+      setEmployeeDetails((prev:any) => {
+        return {
+          ...prev,
+          govtProfExamsPassed: exams
+        }
+      })
+    }
+  }, [withData]);
+
+  useEffect(() => {
+    if (withUpdate) {
+      if (withData) {
+        setUpdatedDetails((prev: any) => {
+          return {
+            ...prev,
+            govtProfExamsPassed: exams
+          }
+        })
+      } else {
+        if (updatedDetails) {
+          setUpdatedDetails((prev: any) => {
+            const { govtProfExamsPassed, ...rest } = prev;
+            return {
+              ...rest
+            }
+          })
+        } else {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              govtProfExamsPassed: []
+            }
+          })
+        }
+      }
+      setWithUpdate(false);
+    }
+  }, [exams])
+
+  useEffect(() => {
+    const dbData:any[] = employeeDetails?.govtProfExamsPassed || [];
+    setExams(dbData);
+  }, [employeeDetails.govtProfExamsPassed]);
 
   const handleDelete = (params: any) => {
     setExams((prev: any) => {
-      const filtered = prev.filter((a: any) => a.id !== params.row.id);
+      const filtered = prev.filter((a: any) => {
+        const paramsKey = `${params.row.examTitle}-${params.row.dateTaken}`;
+        const aKey = `${a?.examTitle}-${a?.dateTaken}`;
+        return paramsKey != aKey
+      });
       return filtered;
     });
+    setWithUpdate(true);
   };
-
-  useEffect(() => {
-    setEmployeeDetails((prev: EmployeeI) => ({
-      ...prev,
-      govtProfExamsPassed: exams,
-    }));
-
-    !isNew &&
-      exams.length > 0 &&
-      setUpdatedDetails((prev: any) => ({
-        ...prev,
-        govtProfExamsPassed: exams,
-      }));
-
-    exams.length <= 0 &&
-      setUpdatedDetails((prev: any) => {
-        delete prev?.govtProfExamsPassed;
-        return prev;
-      });
-  }, [exams]);
 
   return (
     <CollapseWrapper
@@ -56,7 +92,7 @@ const Licensure = (props: Props) => {
       <LicensureDialog open={open} setOpen={setOpen} setExams={setExams} />
       <div style={{ width: '100%' }}>
         <DataGrid
-          getRowId={(data: any) => data?.dateTaken}
+          getRowId={(data: any) => `${data.examTitle}-${data.dateTaken}`}
           autoHeight
           disableSelectionOnClick
           rows={exams}
@@ -72,7 +108,7 @@ const Licensure = (props: Props) => {
 };
 
 const LicensureDialog = ({ open, setOpen, setExams }) => {
-  const { failed } = useContext(ProfileCtx);
+  const { failed, setOpenNotif } = useContext(ProfileCtx);
   const [data, setData] = useState<any>({});
 
   const handleSave = async () => {
@@ -94,7 +130,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
     if (await validateFields()) {
       setExams((prev: any) => [
         ...prev,
-        { ...data, id: `${data.rating}~${data.dateTaken}` },
+        { ...data },
       ]);
       setOpen(false);
 
@@ -107,12 +143,14 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
   };
 
   useEffect(() => {
-    !open &&
+    if (!open) {
       setData({
         examTitle: '',
         dateTaken: '',
         rating: '',
       });
+      setOpenNotif({ message: '', status: false, severity: '' })
+    }
   }, [open]);
 
   return (
@@ -176,12 +214,21 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
           }
         />
 
-        <button
-          className='px-2 py-1 w-full bg-green-500 text-white'
-          onClick={handleSave}
-        >
-          Save Licensure Examination
-        </button>
+        <div className='grid grid-cols-7'>
+          <button
+            onClick={handleSave}
+            className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+          >
+            <SaveTwoTone fontSize='small' className='mr-2' />
+            Save
+          </button>
+          <button
+            className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </Dialog>
   );

@@ -91,26 +91,6 @@ const EmploymentRecord = (props: Props) => {
     setWithUpdate(true);
   };
 
-  // useEffect(() => {
-  //   setEmployeeDetails((prev: EmployeeI) => ({
-  //     ...prev,
-  //     employmentRecords: records,
-  //   }));
-
-  //   !isNew &&
-  //     records.length > 0 &&
-  //     setUpdatedDetails((prev: any) => ({
-  //       ...prev,
-  //       employmentRecords: records,
-  //     }));
-
-  //   records.length <= 0 &&
-  //     setUpdatedDetails((prev: any) => {
-  //       delete prev?.employmentRecords;
-  //       return prev;
-  //     });
-  // }, [records]);
-
   return (
     <CollapseWrapper panelTitle='Employment Record' icon={()=>getIcon(<BadgeTwoTone />, "employmentRecords")}>
       <RecordDialog open={open} setOpen={setOpen} setRecords={setRecords} setWithUpdate={setWithUpdate} />
@@ -132,7 +112,7 @@ const EmploymentRecord = (props: Props) => {
 };
 
 const RecordDialog = ({ open, setOpen, setRecords, setWithUpdate }) => {
-  const { failed } = useContext(ProfileCtx);
+  const { failed, setOpenNotif } = useContext(ProfileCtx);
   const [data, setData] = useState<any>({});
 
   const handleSave = async() => {
@@ -160,8 +140,10 @@ const RecordDialog = ({ open, setOpen, setRecords, setWithUpdate }) => {
   };
 
   useEffect(() => {
-    !open &&
+    if (!open) {
       setData(initialData);
+      setOpenNotif({ message: '', status: false, severity: '' })
+    }
   }, [open]);
 
   return (

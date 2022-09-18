@@ -87,6 +87,7 @@ export type ProfileModel = {
   handleUpdateEmployee: React.Dispatch<any>;
   getIcon: any;
   failed: any;
+  setOpenNotif: React.Dispatch<any>;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -108,6 +109,7 @@ export const ProfileCtx = createContext<ProfileModel>({
   handleUpdateEmployee: () => {},
   getIcon: () => {},
   failed: () => {},
+  setOpenNotif: () => {},
 });
 
 export type EnumI = {
@@ -161,7 +163,7 @@ const ProfileMain = ({
   const dispatch = useDispatch();
 
   const [updatedDetails, setUpdatedDetails] = useState<any>(null);
-  const [index, setIndex] = useState<string>('0');
+  const [index, setIndex] = useState<string>('1');
   const { isLoggedIn, userData, access_token, userGroup } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
   const [employeeDetails, setEmployeeDetails] =
@@ -259,7 +261,7 @@ const ProfileMain = ({
 
   useEffect(() => {
     handleGetDisplayPhoto();
-    setIndex('1');
+    setIndex(index);
     if (isNew) {
       setEmployeeDetails(initialState);
     } else {
@@ -492,16 +494,12 @@ const ProfileMain = ({
     }
   };
 
-  const handleUpdateEmployee = async (type?: string | null) => {
+  const handleUpdateEmployee = async () => {
     try {
       consoler(updatedDetails, 'orange', 'updateEmployee');
       await dispatch(
         updateEmployee({
-          params: {
-            ...updatedDetails,
-            employeeNo: employeeDetails.employeeNo,
-            type,
-          },
+          params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo },
           access_token,
         })
       );
@@ -552,6 +550,7 @@ const ProfileMain = ({
         handleUpdateEmployee,
         getIcon,
         failed,
+        setOpenNotif,
       }}
     >
       <Dialog open={loading.status}>
