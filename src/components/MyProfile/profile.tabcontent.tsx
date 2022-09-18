@@ -1,5 +1,5 @@
 import { TabPanel } from '@mui/lab';
-import { Button, Divider } from '@mui/material';
+import { Divider } from '@mui/material';
 import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, lazy, Suspense } from 'react';
 import ChecklistTable from './201Checklist/checklist.table';
@@ -50,7 +50,7 @@ type Props = {
 };
 
 const ProfileTabContent = ({ className }: Props) => {
-  const { isNew, isView } = useContext(ProfileCtx);
+  const { isNew, isView, handleEmployee } = useContext(ProfileCtx);
 
   return (
     <CustomCard
@@ -58,6 +58,15 @@ const ProfileTabContent = ({ className }: Props) => {
       className={`desktop:p-6 laptop:p-6 phone:p-0 !pt-0 w-full ${className}`}
     >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
+
+      <div className='mb-2 flex flex-row justify-end'>
+        <button
+          onClick={handleEmployee}
+          className='px-4 py-1 bg-green-500 hover:bg-green-400 transition-all duration-200 text-white disabled:bg-gray-300 disabled:cursor-not-allowed rounded-sm'
+        >
+          Save Changes
+        </button>
+      </div>
 
       <div
         className={
@@ -67,15 +76,6 @@ const ProfileTabContent = ({ className }: Props) => {
         }
       >
         <TabPanel value='1' className='p-0 grid' id='Personal'>
-          <Button
-            // color='primary'
-            variant='contained'
-            // disabled={!validated}
-            className='px-4 py-2 bg-green-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
-            // onClick={handleEmployee}
-          >
-            Save Changes
-          </Button>
           <Suspense fallback={<div>Loading...</div>}>
             <Personal />
           </Suspense>

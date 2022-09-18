@@ -71,24 +71,26 @@ export type ProfileModel = {
   enums: any;
   setUpdatedDetails: React.Dispatch<any>;
   updatedDetails: any;
+  handleEmployee: any;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => { },
+  setIndex: () => {},
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => { },
-  setDisplayPhoto: () => { },
+  setEmployeeDetails: () => {},
+  setDisplayPhoto: () => {},
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
   isOwner: false,
   enums: {},
-  setUpdatedDetails: () => { },
+  setUpdatedDetails: () => {},
   updatedDetails: null,
+  handleEmployee: () => {},
 });
 
 export type EnumI = {
@@ -184,8 +186,8 @@ const ProfileMain = ({
 
   // Employees
   const employeeData = useSelector(_getOneEmployeeDetails);
-  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus)
-  const employeeUpdateError = useSelector(getEmployeeUpdateError)
+  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus);
+  const employeeUpdateError = useSelector(getEmployeeUpdateError);
 
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
@@ -245,7 +247,7 @@ const ProfileMain = ({
       let is_owner = false;
       if (
         employeeData?.employeeNo === userData.employeeNo &&
-        userGroup.toLowerCase() == 'employee'
+        userGroup.toLowerCase() === 'employee'
       ) {
         is_owner = true;
       }
@@ -253,7 +255,7 @@ const ProfileMain = ({
         setEmployeeDetails(() => {
           return {
             ...initialState,
-            ...employeeData
+            ...employeeData,
           };
         });
       }
@@ -372,7 +374,8 @@ const ProfileMain = ({
       }
     });
     setEnums({
-      positions, gender,
+      positions,
+      gender,
       departments,
       ranks,
       civil_status,
@@ -424,18 +427,18 @@ const ProfileMain = ({
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-            ...displayPhotos,
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+              ...displayPhotos,
+            ]
           : [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+            ]
       )
     );
   };
@@ -485,6 +488,7 @@ const ProfileMain = ({
         setDisplayPhoto,
         setUpdatedDetails,
         updatedDetails,
+        handleEmployee,
       }}
     >
       <Dialog open={loading.status}>
@@ -504,8 +508,9 @@ const ProfileMain = ({
 
       <TabContext value={index}>
         <section
-          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${isNew ? '!pb-0' : ''
-            }`}
+          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${
+            isNew ? '!pb-0' : ''
+          }`}
         >
           <Suspense fallback={<div>Loading...</div>}>
             <ProfileDetails />
@@ -514,15 +519,18 @@ const ProfileMain = ({
             {!isNew && (
               <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>
                 <ProfileOther />
-                {employeeDetails.reportsTo && <ProfileTeam setViewDetails={setViewDetails} />}
+                {employeeDetails.reportsTo && (
+                  <ProfileTeam setViewDetails={setViewDetails} />
+                )}
               </article>
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
-                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                : ''
-                }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
+                isNew
+                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                  : ''
+              }`}
             >
               <Suspense fallback={<div>Loading...</div>}>
                 <ProfileTabContent className='self-stretch' />
