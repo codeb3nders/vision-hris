@@ -25,7 +25,7 @@ export type FamilyI = {
 };
 
 const FamilyBackground = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails } =
+  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails, getIcon } =
     useContext(ProfileCtx);
   const [family, setFamily] = useState<FamilyI[]>([]);
   const [open, setOpen] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const FamilyBackground = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Family Background'
-      icon={FamilyRestroomTwoTone}
+      icon={() => getIcon(<FamilyRestroomTwoTone />, "familyBackground")}
     >
       <FamilyBackgroundForm
         open={open}

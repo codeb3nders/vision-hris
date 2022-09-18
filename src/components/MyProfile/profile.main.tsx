@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { TabContext } from '@mui/lab';
-import { Alert, CircularProgress, Dialog, Snackbar } from '@mui/material';
+import {
+  Alert,
+  Badge,
+  CircularProgress,
+  Dialog,
+  Snackbar,
+} from '@mui/material';
 import { AppCtx, consoler } from 'App';
 import React, {
   createContext,
@@ -13,7 +19,7 @@ import React, {
   useCallback,
 } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
-import { initialState } from './employee.initialstate';
+import { initialState, personalCols } from './employee.initialstate';
 import ProfileOther from './profile.other';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
@@ -34,8 +40,15 @@ import {
   getEmployeeStatusOne as _getOneEmployeeStatus,
   getEmployeeDetails as _getOneEmployeeDetails,
   getEmployeeUpdateStatus as _getEmployeeUpdateStatus,
+  getEmployeeUpdateError as _getEmployeeUpdateError,
+  getEmployeeHistoryAction as _getEmployeeHistoryAction,
+  getEmployeeHistoryData as _getEmployeeHistoryData,
+  getEmployeeHistoryStatus as _getEmployeeHistoryStatus,
+  getEmployeeHistoryError as _getEmployeeHistoryError,
 } from 'slices';
 import useRequiredChecker from 'hooks/useRequiredChecker';
+import { EMPLOYMENT_HISTORY_TYPE, JOB_HISTORY_TYPE } from 'constants/Values';
+import { SvgIconComponent } from '@mui/icons-material';
 
 const ProfileDetails = lazy(() => import('./profile.details'));
 const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
@@ -71,7 +84,9 @@ export type ProfileModel = {
   enums: any;
   setUpdatedDetails: React.Dispatch<any>;
   updatedDetails: any;
-  handleEmployee: any;
+  handleUpdateEmployee: React.Dispatch<any>;
+  getIcon: any;
+  failed: any;
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -90,7 +105,9 @@ export const ProfileCtx = createContext<ProfileModel>({
   enums: {},
   setUpdatedDetails: () => {},
   updatedDetails: null,
-  handleEmployee: () => {},
+  handleUpdateEmployee: () => {},
+  getIcon: () => {},
+  failed: () => {},
 });
 
 export type EnumI = {
@@ -187,7 +204,12 @@ const ProfileMain = ({
   // Employees
   const employeeData = useSelector(_getOneEmployeeDetails);
   const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus);
-  const employeeUpdateError = useSelector(getEmployeeUpdateError);
+  const employeeUpdateError = useSelector(_getEmployeeUpdateError);
+
+  // Employee History
+  const employeeHistoryData = useSelector(_getEmployeeHistoryData);
+  const employeeHistoryStatus = useSelector(_getEmployeeHistoryStatus);
+  const employeeHistoryError = useSelector(_getEmployeeHistoryError);
 
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
@@ -202,37 +224,34 @@ const ProfileMain = ({
   }, [newEmployeeStatus]);
 
   useEffect(() => {
-    console.log({ employeeUpdatedStatus });
+    console.log({ employeeHistoryData });
+    handleHistory();
+  }, [employeeHistoryData]);
+  console.log({ employeeUpdatedStatus });
+  useEffect(() => {
     if (employeeUpdatedStatus !== 'idle') {
       if (employeeUpdateError) {
         failed(employeeUpdateError);
       } else {
         success();
+        const updatedDetailsTmp = updatedDetails;
+        clearUpdatedDetails();
+        setEmployeeDetails((prev: EmployeeI) => {
+          return {
+            ...prev,
+            ...updatedDetailsTmp,
+          };
+        });
       }
     }
   }, [employeeUpdatedStatus]);
 
   useEffect(() => {
-    console.log({ employeeUpdatedStatus });
-    if (employeeUpdatedStatus !== 'idle') {
-      if (employeeUpdatedStatus === 'succeeded') {
-        success();
-      } else {
-        failed(employeeUpdateError);
-      }
-    }
-  }, [employeeUpdatedStatus]);
-
-  useEffect(() => {
-    if (access_token) {
-      var employee_number = employeeNo;
-      if (!employeeNo) {
-        employee_number = userData.employeeNo;
-      }
+    if (access_token && employeeNo) {
       dispatch(
         _getOneEmployeeAction({
           access_token,
-          params: { employeeNo: employee_number },
+          params: { employeeNo },
         })
       );
     }
@@ -244,24 +263,51 @@ const ProfileMain = ({
     if (isNew) {
       setEmployeeDetails(initialState);
     } else {
-      let is_owner = false;
-      if (
-        employeeData?.employeeNo === userData.employeeNo &&
-        userGroup.toLowerCase() === 'employee'
-      ) {
-        is_owner = true;
-      }
       if (employeeData) {
-        setEmployeeDetails(() => {
-          return {
-            ...initialState,
-            ...employeeData,
-          };
-        });
+        getEmployeeHistory();
+      } else {
+        setIsOwner(true);
       }
-      setIsOwner(is_owner);
     }
   }, [employeeData, isLoggedIn, isNew, isView]);
+
+  const getEmployeeHistory = async () => {
+    console.log({ employeeData });
+    dispatch(
+      _getEmployeeHistoryAction({
+        access_token,
+        employeeNo: employeeData.employeeNo,
+      })
+    );
+  };
+
+  const clearUpdatedDetails = () => {
+    setUpdatedDetails(null);
+  };
+
+  const handleHistory = async () => {
+    let employmentHistory: any[] = [],
+      jobHistory: any[] = [];
+    await employeeHistoryData.forEach((o: any) => {
+      switch (o.type.toUpperCase()) {
+        case EMPLOYMENT_HISTORY_TYPE:
+          employmentHistory.push(o);
+          break;
+        case JOB_HISTORY_TYPE:
+          jobHistory.push(o);
+          break;
+        default:
+      }
+    });
+    setEmployeeDetails(() => {
+      return {
+        ...initialState,
+        ...employeeData,
+        employment_history: employmentHistory,
+        job_history: jobHistory,
+      };
+    });
+  };
 
   const success = () => {
     setLoading({ status: false, action: '' });
@@ -301,14 +347,6 @@ const ProfileMain = ({
       status: true,
       severity: 'error',
     });
-  };
-
-  const handleEmployee = async () => {
-    if (!employeeDetails.employeeNo && isNew) {
-      saveEmployee();
-    } else {
-      handleUpdateEmployee();
-    }
   };
 
   useEffect(() => {
@@ -454,12 +492,16 @@ const ProfileMain = ({
     }
   };
 
-  const handleUpdateEmployee = async () => {
+  const handleUpdateEmployee = async (type?: string | null) => {
     try {
       consoler(updatedDetails, 'orange', 'updateEmployee');
       await dispatch(
         updateEmployee({
-          params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo },
+          params: {
+            ...updatedDetails,
+            employeeNo: employeeDetails.employeeNo,
+            type,
+          },
           access_token,
         })
       );
@@ -472,6 +514,25 @@ const ProfileMain = ({
   useEffect(() => {
     console.log({ updatedDetails });
   }, [updatedDetails]);
+
+  const getIcon = (icon: SvgIconComponent, col: string) => {
+    if (updatedDetails) {
+      const checkPersonalChanges = () => {
+        return personalCols.some((x: any) => updatedDetails.hasOwnProperty(x));
+      };
+      if (
+        (col && updatedDetails.hasOwnProperty(col)) ||
+        (!col && checkPersonalChanges())
+      ) {
+        return (
+          <Badge badgeContent=' ' color='error' variant='dot'>
+            {icon}
+          </Badge>
+        );
+      }
+    }
+    return icon;
+  };
 
   return (
     <ProfileCtx.Provider
@@ -488,7 +549,9 @@ const ProfileMain = ({
         setDisplayPhoto,
         setUpdatedDetails,
         updatedDetails,
-        handleEmployee,
+        handleUpdateEmployee,
+        getIcon,
+        failed,
       }}
     >
       <Dialog open={loading.status}>
@@ -543,7 +606,7 @@ const ProfileMain = ({
           <button
             disabled={!validated}
             className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10 disabled:bg-gray-300 disabled:cursor-not-allowed'
-            onClick={handleEmployee}
+            onClick={saveEmployee}
           >
             Save Employee Profile
           </button>

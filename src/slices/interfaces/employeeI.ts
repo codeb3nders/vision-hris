@@ -125,6 +125,7 @@ export interface EmployeeI {
   allowanceDetails: AllowanceDetailsI[] | null;
   yearsInService: number;
   employment_history: any[];
+  job_history: any[];
   employmentLastUpdate: Date | Moment | undefined;
   jobLastUpdate: Date | Moment | undefined;
   lastModifiedDate: Date | Moment | undefined;

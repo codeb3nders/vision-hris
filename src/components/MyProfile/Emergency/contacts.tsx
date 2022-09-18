@@ -33,7 +33,7 @@ type ContactsI = {
 };
 
 const Contacts = (props: Props) => {
-  const { isNew, setUpdatedDetails, setEmployeeDetails } =
+  const { isNew, setUpdatedDetails, setEmployeeDetails, getIcon } =
     useContext(ProfileCtx);
   const [rows, setRows] = useState<ContactsI[]>([]);
   const [newContact, setNewContact] = useState<any>({
@@ -134,7 +134,7 @@ const Contacts = (props: Props) => {
   }, [open]);
 
   return (
-    <CollapseWrapper panelTitle='Emergency Contact' icon={ContactPhoneTwoTone}>
+    <CollapseWrapper panelTitle='Emergency Contact' icon={() => getIcon(<ContactPhoneTwoTone />, "emergencyContact")}>
       <div className='flex flex-col'>
         <Dialog open={open} onClose={() => setOpen(false)}>
           <div className='p-6 flex flex-col gap-4 w-[350px]'>

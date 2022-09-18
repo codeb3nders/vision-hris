@@ -15,146 +15,97 @@ type Props = {};
 const Education = (props: Props) => {
   const {
     setEmployeeDetails,
-    employeeDetails: details,
-    setUpdatedDetails,
-    isNew,
+    employeeDetails,
+    setUpdatedDetails, updatedDetails,
+    isNew,getIcon
   } = useContext(ProfileCtx);
-  const [selectedLevels, setSelectedLevels] = useState<any>('');
+  const [educationData, setEducationData] = useState<any[]>([]);
+  const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
-  const employeeDetails = useMemo(() => details, [details]);
+  const withData = useMemo(() => {
+    return educationData.some((x:any) => x.yrFrom || x.yrTo || x.schoolAndAddress || x.degree || x.honors)
+  }, [educationData])
 
   useEffect(() => {
-    console.log({ selectedLevels });
-  }, [selectedLevels]);
-
-  const handleExist = (levelOfEducation: any) => {
-    return (
-      selectedLevels.findIndex((level: any) => level === levelOfEducation) > -1
-    );
-  };
-
-  const handleKey = (level: string, col: string) => {
-    switch (level) {
-      case 'Elementary':
-        return `elementary${col}`;
-      case 'Secondary':
-        return `secondary${col}`;
-      case 'Tertiary':
-        return `tertiary${col}`;
-      case 'Post Graduation':
-        return `postGrad${col}`;
-      case 'Others':
-        return `others${col}`;
-
-      default:
-        break;
-    }
-  };
-
-  const handleEducation = (col: string, value: any, level: string) => {
-    const exist: any = employeeDetails.educationalBackground?.findIndex(
-      (educ: any) => educ.level === level
-    );
-
-    console.log({ exist });
-
-    if (
-      exist >= 0 &&
-      employeeDetails?.educationalBackground &&
-      employeeDetails?.educationalBackground.length > 0
-    ) {
-      setEmployeeDetails((prev: EmployeeI | any) => {
+    if (isNew && withData) {
+      setEmployeeDetails((prev:any) => {
         return {
           ...prev,
-          educationalBackground: prev?.educationalBackground?.map(
-            (education: EducationI) => {
-              console.log({ education, level });
+          educationalBackground: educationData
+        }
+      })
+    }
+  }, [withData]);
 
-              if (education.level === level) {
-                console.log({ education });
-
-                return {
-                  ...education,
-                  [col]: value,
-                };
-              }
-
-              return education;
-            }
-          ),
-        };
-      });
-
-      !isNew &&
+  useEffect(() => {
+    if (withUpdate) {
+      if (withData) {
         setUpdatedDetails((prev: any) => {
           return {
             ...prev,
-            educationalBackground: prev?.educationalBackground?.map(
-              (education: EducationI) => {
-                console.log({ education, level });
-
-                if (education.level === level) {
-                  console.log({ education });
-
-                  return {
-                    ...education,
-                    [col]: value,
-                  };
-                }
-
-                return education;
-              }
-            ),
-          };
-        });
-    } else if (exist === -1) {
-      setEmployeeDetails((prev: EmployeeI | any) => ({
-        ...prev,
-        educationalBackground: [
-          ...prev.educationalBackground,
-          { [col]: value, level },
-        ],
-      }));
-
-      !isNew &&
-        setUpdatedDetails((prev: any) => ({
-          ...prev,
-          educationalBackground: prev?.educationalBackground
-            ? [...prev?.educationalBackground, { [col]: value, level }]
-            : [{ [col]: value, level }],
-        }));
-    } else {
-      setEmployeeDetails((prev: EmployeeI | any) => ({
-        ...prev,
-        educationalBackground: [{ [col]: value, level }],
-      }));
-
-      !isNew &&
-        setUpdatedDetails((prev: any) => ({
-          ...prev,
-          educationalBackground: [{ [col]: value, level }],
-        }));
+            educationalBackground: educationData
+          }
+        })
+      } else {
+        setUpdatedDetails((prev: any) => {
+          const { educationalBackground, ...rest } = prev;
+          return {
+            ...rest
+          }
+        })
+      }
     }
+  }, [educationData])
+
+  useEffect(() => {
+    const dbData:any = employeeDetails?.educationalBackground;
+    let education: any = dbData || [];
+    if (education.length === 0) {
+      education = levels;
+    } else {
+      education = levels.map((e: any) => {
+        const exists = dbData.findIndex((o: any) => o.level.toLowerCase() === e.level.toLowerCase());
+        if (exists >= 0) {
+          return dbData[exists];
+        }
+        return e;
+      }) 
+    }
+    setEducationData(education);
+  }, [employeeDetails.educationalBackground]);
+
+  const handleEducation = (col: string, value: any, level: string) => {
+    setEducationData((data: any) => {
+      return data.map((o: any) => {
+        if (level.toLowerCase() === o.level.toLowerCase()) {
+          return {
+            ...o,
+            [col]: value
+          }
+        }
+        return o;
+      })
+    })
+    setWithUpdate(true)
   };
 
   const columns: GridColDef[] = [
     {
       field: 'yrFrom',
       headerName: 'Years of Inclusion',
-      width: 300,
+      width: 200,
       renderCell: (params: any) => {
         const level = params.row.level;
-        const value = employeeDetails.educationalBackground?.filter(
-          (educ: EmployeeI | any) => educ.level === level
-        )[0];
+        // const value = employeeDetails.educationalBackground?.filter(
+        //   (educ: EmployeeI | any) => educ.level === level
+        // )[0];
 
         return (
           <span className='flex flex-row p-1 text-xs w-full gap-4'>
             <span className='flex-1'>
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
-                  disabled={!handleExist(level)}
-                  value={value?.yrFrom || undefined}
+                  value={params.value || null}
                   label='From'
                   views={['year']}
                   onChange={(value: any) =>
@@ -175,13 +126,12 @@ const Education = (props: Props) => {
             <span className='flex-1'>
               <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
-                  disabled={!handleExist(level)}
                   label='To'
                   views={['year']}
                   onChange={(value: any) =>
                     handleEducation('yrTo', value, level)
                   }
-                  value={value?.yrTo || undefined}
+                  value={params.row.yrTo || null}
                   renderInput={(params) => (
                     <TextField
                       id='education-yrto'
@@ -200,32 +150,20 @@ const Education = (props: Props) => {
     },
     {
       field: 'level',
-      headerName: 'Level of Education',
-      width: 150,
-      renderCell: (params: any) => {
-        return (
-          <div
-            className={
-              handleExist(params.row.level) ? 'text-black' : 'text-black/40'
-            }
-          >
-            {params.value}
-          </div>
-        );
-      },
+      headerName: 'Level',
+      width: 120
     },
     {
       field: 'schoolAndAddress',
       headerName: 'Name of School and Address',
       width: 250,
       renderCell: (params: any) => {
-        const key: any = handleKey(params.row.level, 'SchoolAndAddress');
-        return handleExist(params.row.level) ? (
-          <TextField
-            id='school-and-address'
+        return <TextField
+          id={`school-and-address_${params.row.level}`}
             variant='standard'
             size='small'
-            fullWidth
+          fullWidth
+          value={params.value}
             onChange={(e: any) =>
               handleEducation(
                 'schoolAndAddress',
@@ -234,9 +172,6 @@ const Education = (props: Props) => {
               )
             }
           />
-        ) : (
-          <div>{params.value}</div>
-        );
       },
     },
     {
@@ -244,20 +179,16 @@ const Education = (props: Props) => {
       headerName: 'Degree',
       width: 200,
       renderCell: (params: any) => {
-        const key: any = handleKey(params.row.level, 'Degree');
-        return handleExist(params.row.level) ? (
-          <TextField
+        return <TextField
             id='degree'
             variant='standard'
             size='small'
-            fullWidth
+          fullWidth
+          value={params.value}
             onChange={(e: any) =>
               handleEducation('degree', e.target.value, params.row.level)
             }
-          />
-        ) : (
-          <div>{params.value}</div>
-        );
+        />
       },
     },
     {
@@ -265,61 +196,56 @@ const Education = (props: Props) => {
       headerName: 'Honors Received (If any)',
       width: 200,
       renderCell: (params: any) => {
-        const key: any = handleKey(params.row.level, 'Honors');
-        return handleExist(params.row.level) ? (
-          <TextField
+        return <TextField
             id='honors'
             variant='standard'
             size='small'
             fullWidth
-            value={employeeDetails[key] || null}
+            value={params.value}
             onChange={(e: any) =>
               handleEducation('honors', e.target.value, params.row.level)
             }
-          />
-        ) : (
-          <div>{params.value}</div>
-        );
+        />
       },
     },
   ];
 
   const levels = [
     {
-      yrFrom: new Date(),
-      yrTo: new Date(),
+      yrFrom: null,
+      yrTo: null,
       level: 'Elementary',
       degree: '',
       schoolAndAddress: '',
       honors: '',
     },
     {
-      yrFrom: new Date(),
-      yrTo: new Date(),
+      yrFrom: null,
+      yrTo: null,
       level: 'Secondary',
       degree: '',
       schoolAndAddress: '',
       honors: '',
     },
     {
-      yrFrom: new Date(),
-      yrTo: new Date(),
+      yrFrom: null,
+      yrTo: null,
       level: 'Tertiary',
       schoolAndAddress: '',
       degree: '',
       honors: '',
     },
     {
-      yrFrom: new Date(),
-      yrTo: new Date(),
-      level: 'Post Graduation',
+      yrFrom: null,
+      yrTo: null,
+      level: 'Post Graduate',
       degree: '',
       schoolAndAddress: '',
       honors: '',
     },
     {
-      yrFrom: new Date(),
-      yrTo: new Date(),
+      yrFrom: null,
+      yrTo: null,
       level: 'Others',
       degree: '',
       schoolAndAddress: '',
@@ -328,19 +254,17 @@ const Education = (props: Props) => {
   ];
 
   return (
-    <CollapseWrapper panelTitle='Educational Attainment' icon={SchoolTwoTone}>
+    <CollapseWrapper panelTitle='Educational Attainment' icon={() => getIcon(<SchoolTwoTone/>, "educationalBackground")}>
       <div style={{ width: '100%' }}>
         <DataGrid
           getRowId={(data: any) => data.level}
           autoHeight
           disableSelectionOnClick
-          rows={levels}
+          rows={educationData}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
-          checkboxSelection
-          // getRowHeight={() => 'auto'}
-          onStateChange={(state: any) => setSelectedLevels(state.selection)}
+          hideFooter={true}
         />
       </div>
     </CollapseWrapper>

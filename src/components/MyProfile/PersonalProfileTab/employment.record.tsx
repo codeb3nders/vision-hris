@@ -1,58 +1,122 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { BadgeTwoTone, Delete } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { Dialog, IconButton, TextField } from '@mui/material';
+import { Badge, Dialog, IconButton, TextField } from '@mui/material';
 import moment from 'moment';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import AddButton from 'CustomComponents/AddButton';
+import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 type Props = {};
+const initialData = {
+        yrFrom: '',
+        yrTo: '',
+        companyName: '',
+        companyAddress: '',
+        positionHeld: '',
+      }
 
 const EmploymentRecord = (props: Props) => {
-  const { setEmployeeDetails, isNew, setUpdatedDetails } =
+  const { setEmployeeDetails, isNew, setUpdatedDetails, getIcon, employeeDetails, updatedDetails } =
     useContext(ProfileCtx);
   const [records, setRecords] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [withUpdate, setWithUpdate] = useState<boolean>(false);
+
+  const withData = useMemo(() => {
+    return records.some((x:any) => x.yrFrom || x.yrTo || x.companyName || x.companyAddress || x.positionHeld)
+  }, [records])
+
+  useEffect(() => {
+    if (isNew && withData) {
+      setEmployeeDetails((prev:any) => {
+        return {
+          ...prev,
+          employmentRecords: records
+        }
+      })
+    }
+  }, [withData]);
+
+  useEffect(() => {
+    if (withUpdate) {
+      if (withData) {
+        setUpdatedDetails((prev: any) => {
+          return {
+            ...prev,
+            employmentRecords: records
+          }
+        })
+      } else {
+        if (updatedDetails) {
+          setUpdatedDetails((prev: any) => {
+            const { employmentRecords, ...rest } = prev;
+            return {
+              ...rest
+            }
+          })
+        } else {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              employmentRecords: []
+            }
+          })
+        }
+      }
+      setWithUpdate(false);
+    }
+  }, [records])
+
+  useEffect(() => {
+    const dbData:any[] = employeeDetails?.employmentRecords || [];
+    setRecords(dbData);
+  }, [employeeDetails.employmentRecords]);
 
   const handleDelete = (params: any) => {
     setRecords((prev: any) => {
-      const filtered = prev.filter((a: any) => a.id !== params.row.id);
+      const filtered = prev.filter((a: any) => {
+        const paramsKey = `${params.row.companyName}-${params.row.yrFrom}-${params.row.yrTo}`;
+        const aKey = `${a?.companyName}-${a?.yrFrom}-${a?.yrTo}`;
+        return paramsKey != aKey
+      });
       return filtered;
     });
+    setWithUpdate(true);
   };
 
-  useEffect(() => {
-    setEmployeeDetails((prev: EmployeeI) => ({
-      ...prev,
-      employmentRecords: records,
-    }));
+  // useEffect(() => {
+  //   setEmployeeDetails((prev: EmployeeI) => ({
+  //     ...prev,
+  //     employmentRecords: records,
+  //   }));
 
-    !isNew &&
-      records.length > 0 &&
-      setUpdatedDetails((prev: any) => ({
-        ...prev,
-        employmentRecords: records,
-      }));
+  //   !isNew &&
+  //     records.length > 0 &&
+  //     setUpdatedDetails((prev: any) => ({
+  //       ...prev,
+  //       employmentRecords: records,
+  //     }));
 
-    records.length <= 0 &&
-      setUpdatedDetails((prev: any) => {
-        delete prev?.employmentRecords;
-        return prev;
-      });
-  }, [records]);
+  //   records.length <= 0 &&
+  //     setUpdatedDetails((prev: any) => {
+  //       delete prev?.employmentRecords;
+  //       return prev;
+  //     });
+  // }, [records]);
 
   return (
-    <CollapseWrapper panelTitle='Employment Record' icon={BadgeTwoTone}>
-      <RecordDialog open={open} setOpen={setOpen} setRecords={setRecords} />
+    <CollapseWrapper panelTitle='Employment Record' icon={()=>getIcon(<BadgeTwoTone />, "employmentRecords")}>
+      <RecordDialog open={open} setOpen={setOpen} setRecords={setRecords} setWithUpdate={setWithUpdate} />
       <div style={{ width: '100%' }}>
         <DataGrid
-          getRowId={(data: any) => data?.companyName}
+          getRowId={(data: any) => `${data?.companyName}-${data?.yrFrom}-${data?.yrTo}`}
           autoHeight
           disableSelectionOnClick
           rows={records}
@@ -67,33 +131,41 @@ const EmploymentRecord = (props: Props) => {
   );
 };
 
-const RecordDialog = ({ open, setOpen, setRecords }) => {
+const RecordDialog = ({ open, setOpen, setRecords, setWithUpdate }) => {
+  const { failed } = useContext(ProfileCtx);
   const [data, setData] = useState<any>({});
 
-  const handleSave = () => {
-    setRecords((prev: any) => [...prev, data]);
-    setOpen(false);
+  const handleSave = async() => {
+    const validateFields = async () => {
+        const dialog: any = document.getElementById("employmentRecord-dialog");
+        const required = dialog.querySelectorAll("[required]");
+        let invalidCtr = 0;
 
-    setData({
-      yrFrom: '',
-      yrTo: '',
-      companyName: '',
-      positionHeld: '',
-    });
+        invalidCtr = await Array.from(required)
+          .filter((e: any) => !e.value)
+          .map((e: any) => e.id).length;
+
+        if (invalidCtr > 0) {
+          return failed(INCOMPLETE_FORM_MESSAGE);
+        }
+        return true;
+      }
+      //check inputs...
+    if (await validateFields()) {
+      setWithUpdate(true);
+      setRecords((prev: any) => [...prev, data]);
+      setOpen(false);
+      setData(initialData);
+    }
   };
 
   useEffect(() => {
     !open &&
-      setData({
-        yrFrom: '',
-        yrTo: '',
-        companyName: '',
-        positionHeld: '',
-      });
+      setData(initialData);
   }, [open]);
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => setOpen(false)} id="employmentRecord-dialog">
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
           <BadgeTwoTone fontSize='small' /> New Employment Record
@@ -111,7 +183,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                   onChange={(value: any) =>
                     setData((prev: any) => ({
                       ...prev,
-                      yrFrom: moment(value).format('LL'),
+                      yrFrom: moment(value).startOf("year").format("YYYY")
                     }))
                   }
                   renderInput={(params) => (
@@ -121,6 +193,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                       {...params}
                       fullWidth
                       variant='standard'
+                      required
                     />
                   )}
                 />
@@ -135,7 +208,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                   onChange={(value: any) =>
                     setData((prev: any) => ({
                       ...prev,
-                      yrTo: moment(value).format('LL'),
+                      yrTo: moment(value).startOf("year").format("YYYY")
                     }))
                   }
                   renderInput={(params) => (
@@ -145,6 +218,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
                       {...params}
                       fullWidth
                       variant='standard'
+                      required
                     />
                   )}
                 />
@@ -155,6 +229,7 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
 
         <TextField
           id='company-name'
+          required
           variant='standard'
           label='Company Name'
           value={data.companyName}
@@ -162,8 +237,9 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
             setData((prev: any) => ({ ...prev, companyName: e.target.value }))
           }
         />
-        {/* <TextField
+        <TextField
           id='company-address'
+          required
           variant='standard'
           label='Company Address'
           multiline
@@ -174,10 +250,11 @@ const RecordDialog = ({ open, setOpen, setRecords }) => {
               companyAddress: e.target.value,
             }))
           }
-        /> */}
+        />
         <TextField
           id='position-held'
           variant='standard'
+          required
           label='Position Held'
           value={data.positionHeld}
           onChange={(e: any) =>
@@ -205,9 +282,9 @@ const columns: any = (handleDelete: any) => {
       renderCell: (params: any) => {
         return (
           <div className='text-xs'>
-            <span>{moment(params?.row?.yrFrom).format('LL')}</span>
+            <span>{params?.row?.yrFrom}</span>
             <span className='mx-2'> - </span>
-            <span>{moment(params?.row?.yrTo).format('LL')}</span>
+            <span>{params?.row?.yrTo}</span>
           </div>
         );
       },

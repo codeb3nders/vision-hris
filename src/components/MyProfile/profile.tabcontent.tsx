@@ -50,7 +50,7 @@ type Props = {
 };
 
 const ProfileTabContent = ({ className }: Props) => {
-  const { isNew, isView, handleEmployee } = useContext(ProfileCtx);
+  const { isNew, isView, handleUpdateEmployee } = useContext(ProfileCtx);
 
   return (
     <CustomCard
@@ -61,7 +61,7 @@ const ProfileTabContent = ({ className }: Props) => {
 
       <div className='mb-2 flex flex-row justify-end'>
         <button
-          onClick={handleEmployee}
+          onClick={() => handleUpdateEmployee(null)}
           className='px-4 py-1 bg-green-500 hover:bg-green-400 transition-all duration-200 text-white disabled:bg-gray-300 disabled:cursor-not-allowed rounded-sm'
         >
           Save Changes

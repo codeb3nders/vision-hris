@@ -67,28 +67,6 @@ const Address = ({ data, isPermanent }: Props) => {
     }
   }, [regionFile])
 
-  // const handleAddress = (type: string) => {
-  //   setEmployeeDetails((prev: EmployeeI) => ({
-  //     ...prev,
-  //     [type]: {
-  //       addressLine,
-  //       region: selectedRegion.region_name,
-  //       province: selectedProvince.id,
-  //       municipality: selectedMunicipality.id,
-  //       barangay: selectedBarangay,
-  //     },
-  //   }));
-  // };
-
-  // useEffect(() => {
-  //   setEmployeeDetails({
-  //     ...employeeDetails,
-  //     [isPermanent ? 'permanentResidenceAddress' : 'presentResidenceAddress']: {
-  //       addressLine:
-  //     },
-  //   });
-  // }, [streetAddress1, streetAddress2]);
-
   const handleChange = (obj: any) => {
     if (Object.keys(obj).length > 0) {
       const key = Object.keys(obj)[0];
