@@ -166,8 +166,6 @@ const EmployeeBenefits = (props: Props) => {
           pageSize={5}
           rowsPerPageOptions={[5]}
           getRowHeight={() => 'auto'}
-          headerHeight={0}
-          processRowUpdate={processRowUpdate}
           editMode='row'
           rowModesModel={rowModesModel}
           onRowEditStart={handleRowEditStart}
