@@ -32,7 +32,7 @@ const ProfileOther = ({ className }: Props) => {
           <ListItemText
             primary={
               <span className='text-xs '>
-                {employeeDetails?.personalContactNumber}
+                {employeeDetails?.companyContactNumber} / { employeeDetails?.personalContactNumber}
               </span>
             }
             primaryTypographyProps={{ sx: { fontSize: '.85rem' } }}
@@ -46,7 +46,7 @@ const ProfileOther = ({ className }: Props) => {
           <ListItemText
             primary={
               <a
-                href='mailto:test@vcdcph.com'
+                // href='mailto:test@vcdcph.com'
                 target='_blank'
                 rel='noreferrer'
                 className='text-xs text-sky-500'

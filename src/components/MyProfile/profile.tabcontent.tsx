@@ -50,7 +50,7 @@ type Props = {
 };
 
 const ProfileTabContent = ({ className }: Props) => {
-  const { isNew, isView, handleUpdateEmployee } = useContext(ProfileCtx);
+  const { isNew, isView, handleUpdateEmployee, updatedDetails } = useContext(ProfileCtx);
 
   return (
     <CustomCard
@@ -59,15 +59,15 @@ const ProfileTabContent = ({ className }: Props) => {
     >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
-      <div className='mb-2 flex flex-row justify-end'>
+<div className='mb-2 flex flex-row justify-end'>
         <button
-          onClick={() => handleUpdateEmployee(null)}
+          disabled={!updatedDetails}
+          onClick={handleUpdateEmployee}
           className='px-4 py-1 bg-green-500 hover:bg-green-400 transition-all duration-200 text-white disabled:bg-gray-300 disabled:cursor-not-allowed rounded-sm'
         >
           Save Changes
         </button>
       </div>
-
       <div
         className={
           isNew || isView
