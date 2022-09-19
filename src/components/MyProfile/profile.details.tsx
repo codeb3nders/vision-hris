@@ -116,7 +116,7 @@ const ProfileDetails = (props: Props) => {
             Started on {moment(employeeDetails.dateHired).format('LL')} (
             {employeeDetails.yearsInService} year/s)
           </p>
-          <Button
+          {/* <Button
             // color='primary'
             variant='contained'
             disabled={!updatedDetails}
@@ -124,7 +124,7 @@ const ProfileDetails = (props: Props) => {
             onClick={handleUpdateEmployee}
           >
             Save Changes
-          </Button>
+          </Button> */}
         </section>
       )}
 
