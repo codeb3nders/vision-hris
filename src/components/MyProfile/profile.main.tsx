@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { TabContext } from '@mui/lab';
-import { Alert, Badge, CircularProgress, Dialog, Snackbar } from '@mui/material';
+import {
+  Alert,
+  Badge,
+  CircularProgress,
+  Dialog,
+  Snackbar,
+} from '@mui/material';
 import { AppCtx, consoler } from 'App';
 import React, {
   createContext,
@@ -86,24 +92,24 @@ export type ProfileModel = {
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => { },
+  setIndex: () => {},
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => { },
-  setDisplayPhoto: () => { },
+  setEmployeeDetails: () => {},
+  setDisplayPhoto: () => {},
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
   isOwner: false,
   enums: {},
-  setUpdatedDetails: () => { },
+  setUpdatedDetails: () => {},
   updatedDetails: null,
-  handleUpdateEmployee: () => { },
-  getIcon: () => { },
-  failed: () => { },
-  setOpenNotif: ()=>{}
+  handleUpdateEmployee: () => {},
+  getIcon: () => {},
+  failed: () => {},
+  setOpenNotif: () => {},
 });
 
 export type EnumI = {
@@ -199,13 +205,13 @@ const ProfileMain = ({
 
   // Employees
   const employeeData = useSelector(_getOneEmployeeDetails);
-  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus)
-  const employeeUpdateError = useSelector(_getEmployeeUpdateError)
+  const employeeUpdatedStatus = useSelector(_getEmployeeUpdateStatus);
+  const employeeUpdateError = useSelector(_getEmployeeUpdateError);
 
   // Employee History
   const employeeHistoryData = useSelector(_getEmployeeHistoryData);
-  const employeeHistoryStatus = useSelector(_getEmployeeHistoryStatus)
-  const employeeHistoryError = useSelector(_getEmployeeHistoryError)
+  const employeeHistoryStatus = useSelector(_getEmployeeHistoryStatus);
+  const employeeHistoryError = useSelector(_getEmployeeHistoryError);
 
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
@@ -220,10 +226,10 @@ const ProfileMain = ({
   }, [newEmployeeStatus]);
 
   useEffect(() => {
-    console.log({ employeeHistoryData })
+    console.log({ employeeHistoryData });
     handleHistory();
   }, [employeeHistoryData]);
-console.log({employeeUpdatedStatus})
+  console.log({ employeeUpdatedStatus });
   useEffect(() => {
     if (employeeUpdatedStatus !== 'idle') {
       if (employeeUpdateError) {
@@ -232,12 +238,12 @@ console.log({employeeUpdatedStatus})
         success();
         const updatedDetailsTmp = updatedDetails;
         clearUpdatedDetails();
-        setEmployeeDetails((prev:EmployeeI) => {
+        setEmployeeDetails((prev: EmployeeI) => {
           return {
             ...prev,
-            ...updatedDetailsTmp
-          }
-        })
+            ...updatedDetailsTmp,
+          };
+        });
       }
     }
   }, [employeeUpdatedStatus]);
@@ -268,41 +274,42 @@ console.log({employeeUpdatedStatus})
   }, [employeeData, isLoggedIn, isNew, isView]);
 
   const getEmployeeHistory = async () => {
-    console.log({employeeData})
+    console.log({ employeeData });
     dispatch(
-        _getEmployeeHistoryAction({
-          access_token,
-          employeeNo: employeeData.employeeNo
-        })
-      );
-  }
+      _getEmployeeHistoryAction({
+        access_token,
+        employeeNo: employeeData.employeeNo,
+      })
+    );
+  };
 
   const clearUpdatedDetails = () => {
     setUpdatedDetails(null);
-  }
+  };
 
   const handleHistory = async () => {
-    let employmentHistory: any[] = [], jobHistory:any[]=[];
+    let employmentHistory: any[] = [],
+      jobHistory: any[] = [];
     await employeeHistoryData.forEach((o: any) => {
       switch (o.type.toUpperCase()) {
         case EMPLOYMENT_HISTORY_TYPE:
-          employmentHistory.push(o)
+          employmentHistory.push(o);
           break;
         case JOB_HISTORY_TYPE:
-          jobHistory.push(o)
+          jobHistory.push(o);
           break;
         default:
       }
-    })
+    });
     setEmployeeDetails(() => {
       return {
         ...initialState,
         ...employeeData,
         employment_history: employmentHistory,
-        job_history: jobHistory
+        job_history: jobHistory,
       };
     });
-  }
+  };
 
   const success = () => {
     setLoading({ status: false, action: '' });
@@ -407,7 +414,8 @@ console.log({employeeUpdatedStatus})
       }
     });
     setEnums({
-      positions, gender,
+      positions,
+      gender,
       departments,
       ranks,
       civil_status,
@@ -459,18 +467,18 @@ console.log({employeeUpdatedStatus})
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-            ...displayPhotos,
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+              ...displayPhotos,
+            ]
           : [
-            {
-              employeeNo,
-              photo: displayPhoto.photo,
-            },
-          ]
+              {
+                employeeNo,
+                photo: displayPhoto.photo,
+              },
+            ]
       )
     );
   };
@@ -505,19 +513,24 @@ console.log({employeeUpdatedStatus})
     console.log({ updatedDetails });
   }, [updatedDetails]);
 
-  const getIcon = (icon: SvgIconComponent, col:string) => {
+  const getIcon = (icon: SvgIconComponent, col: string) => {
     if (updatedDetails) {
       const checkPersonalChanges = () => {
-        return personalCols.some((x:any) => updatedDetails.hasOwnProperty(x))
-      }
-      if ((col && updatedDetails.hasOwnProperty(col)) || (!col && checkPersonalChanges())) {
-        return <Badge badgeContent=" " color="error" variant="dot">
-          {icon}
-        </Badge>
+        return personalCols.some((x: any) => updatedDetails.hasOwnProperty(x));
+      };
+      if (
+        (col && updatedDetails.hasOwnProperty(col)) ||
+        (!col && checkPersonalChanges())
+      ) {
+        return (
+          <Badge badgeContent=' ' color='error' variant='dot'>
+            {icon}
+          </Badge>
+        );
       }
     }
     return icon;
-  }
+  };
 
   return (
     <ProfileCtx.Provider
@@ -537,7 +550,7 @@ console.log({employeeUpdatedStatus})
         handleUpdateEmployee,
         getIcon,
         failed,
-        setOpenNotif
+        setOpenNotif,
       }}
     >
       <Dialog open={loading.status}>
@@ -557,8 +570,9 @@ console.log({employeeUpdatedStatus})
 
       <TabContext value={index}>
         <section
-          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${isNew ? '!pb-0' : ''
-            }`}
+          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${
+            isNew ? '!pb-0' : ''
+          }`}
         >
           <Suspense fallback={<div>Loading...</div>}>
             <ProfileDetails />
@@ -567,15 +581,18 @@ console.log({employeeUpdatedStatus})
             {!isNew && (
               <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>
                 <ProfileOther />
-                {employeeDetails.reportsTo && <ProfileTeam setViewDetails={setViewDetails} />}
+                {employeeDetails.reportsTo && (
+                  <ProfileTeam setViewDetails={setViewDetails} />
+                )}
               </article>
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
-                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                : ''
-                }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
+                isNew
+                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                  : ''
+              }`}
             >
               <Suspense fallback={<div>Loading...</div>}>
                 <ProfileTabContent className='self-stretch' />

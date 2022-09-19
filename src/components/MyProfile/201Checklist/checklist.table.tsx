@@ -10,30 +10,9 @@ import {
   GridRowParams,
   MuiEvent,
 } from '@mui/x-data-grid';
-import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
-import {
-  Dialog,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from '@mui/material';
-import {
-  AddTaskTwoTone,
-  Cancel,
-  Delete,
-  Edit,
-  Save,
-  SaveTwoTone,
-} from '@mui/icons-material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { Cancel, Edit, Save } from '@mui/icons-material';
 import { ProfileCtx } from '../profile.main';
-import AddButton from 'CustomComponents/AddButton';
-import GridWrapper from 'CustomComponents/GridWrapper';
 
 type Props = {};
 
@@ -50,7 +29,6 @@ type ChecklistModel = {
 const ChecklistTable = (props: Props) => {
   const { isNew, setUpdatedDetails, enums } = useContext(ProfileCtx);
   const [rows, setRows] = useState<ChecklistModel[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
   const [selectedDocuments, setSelectedDocuments] = useState<any[]>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
@@ -231,7 +209,7 @@ const columns: any = (
       if (isInEditMode) {
         return [
           <GridActionsCellItem
-            icon={<Save />}
+            icon={<Save color='success' />}
             label='Save'
             onClick={handleSaveClick(id)}
           />,

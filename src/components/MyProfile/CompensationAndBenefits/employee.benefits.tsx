@@ -115,7 +115,7 @@ const EmployeeBenefits = (props: Props) => {
         if (isInEditMode) {
           return [
             <GridActionsCellItem
-              icon={<Save />}
+              icon={<Save color='success' />}
               label='Save'
               onClick={handleSaveClick(id)}
             />,

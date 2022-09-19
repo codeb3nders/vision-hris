@@ -11,7 +11,7 @@ type Props = {
 
 const ProfilePreview: React.FC<Props> = () => {
   const { userData } = useContext(AppCtx);
-  console.log({userData})
+  console.log({ userData });
   return (
     <div className='pl-6'>
       <section className='flex flex-row space-x-2 items-center mb-1 relative z-10 '>
@@ -21,7 +21,9 @@ const ProfilePreview: React.FC<Props> = () => {
           className='inline-block h-12 w-12 rounded-full'
         />
         <div>
-          <div className='text-sm  font-medium'>{userData.firstName} {userData.lastName}</div>
+          <div className='text-sm  font-medium'>
+            {userData.firstName} {userData.lastName}
+          </div>
           <div className='text-xs '>
             <small>Email:</small> {userData.companyEmail}
           </div>
@@ -33,19 +35,21 @@ const ProfilePreview: React.FC<Props> = () => {
       <section className='flex flex-col relative z-10'>
         <div>
           <div className='text-xs  mt-2'>Position:</div>
-          <div className='text-sm  font-medium'>
-            {userData.position.name}
-          </div>
+          <div className='text-sm  font-medium'>{userData.position.name}</div>
         </div>
 
         <div className='grid grid-cols-12 gap-4 space-y-0'>
           <div className='phone:col-span-6 tablet:col-span-4'>
             <div className='text-xs  mt-2'>Location:</div>
-            <div className='text-sm  font-medium'>{userData.location.map((o:any) => o.name).join(", ")}</div>
+            <div className='text-sm  font-medium'>
+              {userData.location?.map((o: any) => o.name).join(', ')}
+            </div>
           </div>
           <div className='phone:col-span-6 tablet:col-span-4'>
             <div className='text-xs  mt-2'>Reports To:</div>
-            <div className='text-sm  font-medium'>{userData.reportsTo?.employeeName}</div>
+            <div className='text-sm  font-medium'>
+              {userData.reportsTo?.employeeName}
+            </div>
           </div>
           <button
             type='button'
