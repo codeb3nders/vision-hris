@@ -15,6 +15,7 @@ import {
   getAllEmployeesAction as _getEmployeesAction,
   getEmployeeStatus as _getEmployeeStatus,
   createUserAccess,
+  clearHistoryData, clearEmployeeDetails,
 } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
@@ -75,6 +76,13 @@ const EmployeeDatabase: React.FC<Props> = () => {
     );
     setIsLoading(false);
   }, [getEmployeeItems]);
+
+  useEffect(() => { 
+    if (!viewDetails.status) {
+      dispatch(clearEmployeeDetails());
+      dispatch(clearHistoryData());
+    }
+  }, [viewDetails])
 
   const columns = (setViewDetails: any) => [
     {
