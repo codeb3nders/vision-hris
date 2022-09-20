@@ -26,7 +26,11 @@ export const getEmployeeHistoryAction: any = createAsyncThunk(
 export const employeeHistorySlice = createSlice({
   name: "employeeHistory-get",
   initialState,
-  reducers: {},
+  reducers: {
+    clearHistoryData: () => {
+      return initialState;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getEmployeeHistoryAction.pending, (state) => {
@@ -47,5 +51,7 @@ export const getEmployeeHistoryData = (state: any) => state.employeeHistory.data
 export const getEmployeeHistoryStatus = (state: any) => state.employeeHistory.status;
 export const getEmployeeHistoryError = (state: any) => state.employeeHistory.error;
 export const employeeHistoryStore = (state: any) => state.employeeHistory;
+
+export const { clearHistoryData } = employeeHistorySlice.actions;
 
 export default employeeHistorySlice.reducer;

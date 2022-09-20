@@ -258,7 +258,7 @@ const ProfileMain = ({
       );
     }
   }, [access_token, employeeNo]);
-
+console.log({isNew}, {employeeDetails})
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex(index);

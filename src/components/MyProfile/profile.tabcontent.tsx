@@ -4,6 +4,7 @@ import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, lazy, Suspense } from 'react';
 import ChecklistTable from './201Checklist/checklist.table';
 import AssetsTable from './Assets/assets.table';
+import DisciplinaryCasesTable from './Disciplinary Cases/offenses.table';
 import EmployementStatus from './EmploymentTab/employement.status';
 import History from './Leaves/history';
 import LeaveBalances from './Leaves/leave.balances';
@@ -156,7 +157,7 @@ const ProfileTabContent = ({ className }: Props) => {
           Overtime
         </TabPanel>
         <TabPanel value='10' className='p-0 grid' id='DisciplinaryCases'>
-          Disciplinary Cases
+          <DisciplinaryCasesTable />
         </TabPanel>
       </div>
     </CustomCard>

@@ -8,7 +8,12 @@ import {
   GridRowModes,
   GridRowModesModel,
   GridRowParams,
-  MuiEvent,
+  GridToolbar,
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarExport,
+  GridToolbarFilterButton,
+  MuiEvent, gridClasses 
 } from '@mui/x-data-grid';
 import { useContext, useEffect, useState } from 'react';
 import { Cancel, Edit, Save } from '@mui/icons-material';
@@ -90,7 +95,6 @@ const ChecklistTable = (props: Props) => {
       documentCode: document?.code,
       documentDescription: document?.documentDescription || null,
       dateUploaded: document?.dateUploaded || null,
-      fileType: document?.fileType || null,
       url: document?.url || null,
       remarks: document?.remarks || null,
       id: document.code,
@@ -121,11 +125,23 @@ const ChecklistTable = (props: Props) => {
     return updatedRow;
   };
 
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        <GridToolbarFilterButton />
+        <GridToolbarExport />
+      </GridToolbarContainer>
+    )
+  }
+
   return (
     <div>
       <div style={{ width: '100%' }}>
         <DataGrid
+          components={{ Toolbar: CustomToolbar }}
           autoHeight
+          hideFooter={true}
           experimentalFeatures={{ newEditingApi: true }}
           disableSelectionOnClick
           rows={rows}
@@ -136,8 +152,11 @@ const ChecklistTable = (props: Props) => {
             handleEditClick,
             handleDeleteClick
           )}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          sx={{
+            [`& .${gridClasses.cell}`]: {
+              py: 1,
+            },
+          }}
           getRowHeight={() => 'auto'}
           onStateChange={(state: any) => setSelectedDocuments(state.selection)}
           getRowId={(data) => data.documentCode}
@@ -156,13 +175,12 @@ const columns: any = (
   rowModesModel: any,
   handleSaveClick: any,
   handleCancelClick: any,
-  handleEditClick: any,
-  handleDeleteClick: any
+  handleEditClick: any
 ) => [
   {
     field: 'documentCode',
     headerName: 'Document',
-    width: 200,
+    width: 220,
     renderCell: (params: any) => {
       return <span className='text-xs'>{params.value}</span>;
     },
@@ -170,20 +188,14 @@ const columns: any = (
   {
     field: 'documentDescription',
     headerName: 'Description',
-    width: 200,
-  },
-  {
-    field: 'fileType',
-    headerName: 'File Type',
     width: 150,
   },
-
   {
     field: 'dateUploaded',
     headerName: 'Date Uploaded',
     type: 'date',
     editable: true,
-    width: 200,
+    width: 100,
   },
   {
     field: 'url',

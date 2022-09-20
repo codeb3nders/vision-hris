@@ -45,7 +45,13 @@ export const getOneEmployeeAction: any = createAsyncThunk(
 export const employeesSlice = createSlice({
   name: "employees-get",
   initialState,
-  reducers: {},
+  reducers: {
+    clearEmployeeDetails: (state) => {
+      return {
+        ...state, employeeDetails: null
+      };
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllEmployeesAction.pending, (state) => {
@@ -80,5 +86,7 @@ export const getEmployeeDetails = (state: any) => state.employee.employeeDetails
 export const getEmployeeStatusOne = (state: any) => state.employee.statusOne;
 export const getEmployeeErrorOne = (state: any) => state.employee.errorOne;
 export const employeeStore = (state: any) => state.employee;
+
+export const { clearEmployeeDetails } = employeesSlice.actions;
 
 export default employeesSlice.reducer;
