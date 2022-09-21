@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useState, useCallback } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -7,19 +7,13 @@ import {
 } from 'react-router-dom';
 import Navbar from './Navigation/Navbar';
 import Dashboard from './DashboardSwitcher';
-import LeaveForm from './EmployeeDashboard/Forms/LeaveForm';
-import LeaveTable from './EmployeeDashboard/Tables/LeaveTable';
-import OTTable from './EmployeeDashboard/Tables/OTTable';
-import LeaveManagement from './EmployeeDashboard/Management/LeaveManagement';
-import OTManangement from './EmployeeDashboard/Management/OTManangement';
 import EmployeeDatabase from './HRDashboard/EmployeeDatabase';
 import EmployeeDirectory from './EmployeeDirectory';
-import OTForm from './EmployeeDashboard/Forms/OTForm';
 import { Path } from 'constants/Path';
 import ProfileMain from './MyProfile/profile.main';
-import HRMainDashboard from './Dashboards/HR/hr.main.dashboard';
-import { ROLE_ACCESS } from 'constants/access'
-const { Employee, HR, Manager } = Path;
+import { ROLE_ACCESS } from 'constants/access';
+import ErrorPage from './Other/error.page';
+const { Employee, HR } = Path;
 
 type MainCtxI = {
   isTable: boolean;
@@ -28,7 +22,7 @@ type MainCtxI = {
 
 export const MainCtx = createContext<MainCtxI>({
   isTable: false,
-  setIsTable: () => { },
+  setIsTable: () => {},
 });
 
 interface Props {
@@ -42,7 +36,7 @@ const Main: React.FC<Props> = ({ role }) => {
     if (!module_id) return true;
     if (!role) return true;
 
-    const code = role.toLowerCase().replace(" ", "_");
+    const code = role.toLowerCase().replace(' ', '_');
     const haveAcess = ROLE_ACCESS[code].indexOf(module_id);
     if (haveAcess !== -1) {
       return true;
@@ -51,17 +45,20 @@ const Main: React.FC<Props> = ({ role }) => {
     return false; // set to true for testing purpose
   };
 
-  const PrivateRoute = useCallback(({ module_id, component, is_allowed, ...rest }: any) => {
-    const routeComponent = (props: any) => {
-      return is_allowed ? (
-        React.createElement(component, props)
-      ) : (
-        <Redirect to={{ pathname: `/noaccess${rest.path}` }} />
-      );
-    };
+  const PrivateRoute = useCallback(
+    ({ module_id, component, is_allowed, ...rest }: any) => {
+      const routeComponent = (props: any) => {
+        return is_allowed ? (
+          React.createElement(component, props)
+        ) : (
+          <Redirect to={{ pathname: `/noaccess${rest.path}` }} />
+        );
+      };
 
-    return <Route {...rest} render={routeComponent} />;
-  }, []);
+      return <Route {...rest} render={routeComponent} />;
+    },
+    []
+  );
 
   return (
     <MainCtx.Provider value={{ isTable, setIsTable }}>
@@ -69,16 +66,37 @@ const Main: React.FC<Props> = ({ role }) => {
         <Router>
           <Navbar />
           <section
-            className={`tablet:px-8 phone:px-4 max-w-[1200px] desktop:max-w-[1200px] laptop:max-w-[1200px] sm:max-w-full mx-auto ${isTable ? 'desktop:max-w-full laptop:max-w-full' : ''
-              }`}
+            className={`tablet:px-8 phone:px-4 max-w-[1200px] desktop:max-w-[1200px] laptop:max-w-[1200px] sm:max-w-full mx-auto ${
+              isTable ? 'desktop:max-w-full laptop:max-w-full' : ''
+            }`}
           >
             <Switch>
-              <PrivateRoute is_allowed={isAllowed('dashboard')} module_id="dashboard" exact path={Path.Dashboard} component={Dashboard} />
-              <PrivateRoute is_allowed={isAllowed('employees_db')} path={HR.People.Employees} component={EmployeeDatabase} />
-              <PrivateRoute is_allowed={isAllowed('employee_directory')} path={HR.People.Directory} component={EmployeeDirectory} />
+              <PrivateRoute
+                is_allowed={isAllowed('dashboard')}
+                module_id='dashboard'
+                exact
+                path={Path.Dashboard}
+                component={Dashboard}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed('employees_db')}
+                path={HR.People.Employees}
+                component={EmployeeDatabase}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed('employees_db')}
+                path={HR.People.Employees}
+                component={EmployeeDatabase}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed('employee_dept')}
+                path={HR.People.Departments}
+                component={EmployeeDirectory}
+              />
               <Route path={Employee.Profile} component={ProfileMain} />
 
-              {/* <Route component={GenericErrorPage} /> */}
+              <Route component={ErrorPage} path='/noaccess/:page' />
+              <Route component={ErrorPage} path='*' />
             </Switch>
           </section>
         </Router>
