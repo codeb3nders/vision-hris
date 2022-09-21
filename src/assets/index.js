@@ -4,3 +4,4 @@ export { default as WELCOME } from './images/welcome.png';
 export { default as VISION_LOGO_WHITE } from './images/pms-logo.png';
 export { default as MALE_PHOTO_PLACEHOLDER } from './images/placeholder.webp';
 export { default as FEMALE_PHOTO_PLACEHOLDER } from './images/woman-placeholder.jpg';
+export { default as ERROR_GRAPHICS } from './images/error.png';
