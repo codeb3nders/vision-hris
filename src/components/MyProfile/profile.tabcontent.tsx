@@ -60,7 +60,7 @@ const ProfileTabContent = ({ className }: Props) => {
     >
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
-      {employeesTabs.indexOf(index) >= 0 &&
+      {employeesTabs.indexOf(index) >= 0 && !isNew &&
       <div className='mb-2 flex flex-row justify-end'>
         <button
           disabled={!updatedDetails}

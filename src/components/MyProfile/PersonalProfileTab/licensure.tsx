@@ -27,43 +27,39 @@ const Licensure = (props: Props) => {
   }, [exams])
 
   useEffect(() => {
-    if (isNew && withData) {
-      setEmployeeDetails((prev:any) => {
-        return {
-          ...prev,
-          govtProfExamsPassed: exams
-        }
-      })
-    }
-  }, [withData]);
-
-  useEffect(() => {
-    if (!isNew && withUpdate) {
-      if (withData) {
-        setUpdatedDetails((prev: any) => {
-          return {
-            ...prev,
-            govtProfExamsPassed: exams
-          }
-        })
-      } else {
-        if (updatedDetails) {
+    if (withUpdate) {
+      if (!isNew) {
+        if (withData) {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              govtProfExamsPassed: exams
+            }
+          })
+        } else {
           setUpdatedDetails((prev: any) => {
             const { govtProfExamsPassed, ...rest } = prev;
             return {
               ...rest
             }
           })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              govtProfExamsPassed: []
-            }
-          })
         }
       }
-      setWithUpdate(false);
+      if (withData) {
+        setEmployeeDetails((prev:EmployeeI) => {
+          return {
+            ...prev,
+            govtProfExamsPassed: exams
+          }
+        })
+      } else {
+        setEmployeeDetails((prev: any) => {
+          const { govtProfExamsPassed, ...rest } = prev;
+          return {
+            ...rest
+          }
+        })
+      }
     }
   }, [exams])
 

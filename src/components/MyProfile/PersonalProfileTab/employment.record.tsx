@@ -45,32 +45,39 @@ const EmploymentRecord = (props: Props) => {
   }, [withData]);
 
   useEffect(() => {
-    if (!isNew && withUpdate) {
-      if (withData) {
-        setUpdatedDetails((prev: any) => {
-          return {
-            ...prev,
-            employmentRecords: records
-          }
-        })
-      } else {
-        if (updatedDetails) {
+    if (withUpdate) {
+      if (!isNew) {
+        if (withData) {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              employmentRecords: records
+            }
+          })
+        } else {
           setUpdatedDetails((prev: any) => {
             const { employmentRecords, ...rest } = prev;
             return {
               ...rest
             }
           })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              employmentRecords: []
-            }
-          })
         }
       }
-      setWithUpdate(false);
+      if (withData) {
+        setEmployeeDetails((prev:EmployeeI) => {
+          return {
+            ...prev,
+            employmentRecords: records
+          }
+        })
+      } else {
+        setEmployeeDetails((prev: any) => {
+          const { employmentRecords, ...rest } = prev;
+          return {
+            ...rest
+          }
+        })
+      }
     }
   }, [records])
 

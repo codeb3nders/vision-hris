@@ -152,7 +152,7 @@ const Personal = (props: Props) => {
   };
 
   const handleSelectChange = (col:string, value:any, option:any) => {
-    !isNew &&
+    if (!isNew) {
       setUpdatedDetails((prev: any) => ({
         ...prev,
         [col]: value,
@@ -161,6 +161,12 @@ const Personal = (props: Props) => {
         ...prev,
         [col]: option.props['data-obj']
       }));
+    } else {
+      setEmployeeDetails((prev: EmployeeI) => ({
+        ...prev,
+        [col]: value
+      }));
+    }
   }
 
   const isSame = () => {

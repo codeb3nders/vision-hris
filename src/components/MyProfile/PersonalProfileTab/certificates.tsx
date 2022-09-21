@@ -32,43 +32,39 @@ const Certificates = (props: Props) => {
   }, [certificates])
 
   useEffect(() => {
-    if (isNew && withData) {
-      setEmployeeDetails((prev:any) => {
-        return {
-          ...prev,
-          licensesCertifications: certificates
-        }
-      })
-    }
-  }, [withData]);
-
-  useEffect(() => {
-    if (!isNew && withUpdate) {
-      if (withData) {
-        setUpdatedDetails((prev: any) => {
-          return {
-            ...prev,
-            licensesCertifications: certificates
-          }
-        })
-      } else {
-        if (updatedDetails) {
+    if (withUpdate) {
+      if (!isNew) {
+        if (withData) {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              licensesCertifications: certificates
+            }
+          })
+        } else {
           setUpdatedDetails((prev: any) => {
             const { licensesCertifications, ...rest } = prev;
             return {
               ...rest
             }
           })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              licensesCertifications: []
-            }
-          })
         }
       }
-      setWithUpdate(false);
+      if (withData) {
+        setEmployeeDetails((prev:EmployeeI) => {
+          return {
+            ...prev,
+            licensesCertifications: certificates
+          }
+        })
+      } else {
+        setEmployeeDetails((prev: any) => {
+          const { licensesCertifications, ...rest } = prev;
+          return {
+            ...rest
+          }
+        })
+      }
     }
   }, [certificates])
 
@@ -76,7 +72,7 @@ const Certificates = (props: Props) => {
     const dbData:any[] = employeeDetails?.licensesCertifications || [];
     setCertificates(dbData);
   }, [employeeDetails.licensesCertifications]);
-
+  
   const handleDelete = (params: any) => {
     setCertificates((prev: any) => {
       const filtered = prev.filter((a: any) => {
@@ -168,11 +164,11 @@ const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
           variant='standard'
           size='small'
           label='License/Certification'
-          value={data.certificate}
+          value={data.name}
           onChange={(e: any) =>
             setData((prev: any) => ({
               ...prev,
-              certificate: e.target.value,
+              name: e.target.value,
             }))
           }
         />
@@ -251,7 +247,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
 
 const columns: any = (handleDelete: any) => [
   {
-    field: 'certificate',
+    field: 'name',
     headerName: 'License/Certification',
     flex: 1,
   },

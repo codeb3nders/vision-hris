@@ -16,8 +16,8 @@ export interface AddressI {
 
 export interface EducationI {
   level: string;
-  yrFrom: number;
-  yrTo: number;
+  yrFrom: number | null;
+  yrTo: number | null;
   schoolAndAddress: string;
   degree: string;
   honors: string;
@@ -119,7 +119,7 @@ export interface EmployeeI {
   payrollGroup: any;
   presentAddress: AddressI;
   permanentAddress: AddressI;
-  educationalBackground: EducationI[] | null;
+  educationalBackground: EducationI[];
   employmentRecords: EmploymentRecordsI[] | null;
   licensesCertifications: LicensesCertificationsI[] | null;
   allowanceDetails: AllowanceDetailsI[] | null;

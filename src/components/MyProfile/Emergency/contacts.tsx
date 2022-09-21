@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   AddIcCallTwoTone,
@@ -21,6 +21,7 @@ import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { RELATION } from 'constants/Values';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import AddButton from 'CustomComponents/AddButton';
+import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 type Props = {};
 
@@ -32,19 +33,79 @@ type ContactsI = {
   residence: string;
 };
 
+const initialData = {
+  name: null,
+  residence: null,
+  phoneNumber: null,
+  relation: null,
+  occupation: null,
+}
+
 const Contacts = (props: Props) => {
-  const { isNew, setUpdatedDetails, setEmployeeDetails, getIcon } =
+  const { isNew, setUpdatedDetails, employeeDetails, setEmployeeDetails, getIcon, failed, setOpenNotif } =
     useContext(ProfileCtx);
   const [rows, setRows] = useState<ContactsI[]>([]);
-  const [newContact, setNewContact] = useState<any>({
-    name: null,
-    residence: null,
-    occupation: null,
-    phoneNumber: null,
-    relation: null,
-  });
-
+  const [newContact, setNewContact] = useState<any>(initialData);
   const [open, setOpen] = useState<boolean>(false);
+  const [withUpdate, setWithUpdate] = useState<boolean>(false);
+
+  const withData = useMemo(() => {
+    return rows.some((x:any) => x.name || x.relation || x.residence || x.phoneNumber || x.occupation)
+  }, [rows])
+
+  useEffect(() => {
+    if (withUpdate) {
+      if (!isNew) {
+        if (withData) {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              emergencyContact: rows
+            }
+          })
+        } else {
+          setUpdatedDetails((prev: any) => {
+            const { emergencyContact, ...rest } = prev;
+            return {
+              ...rest
+            }
+          })
+        }
+      }
+      if (withData) {
+        setEmployeeDetails((prev:EmployeeI) => {
+          return {
+            ...prev,
+            emergencyContact: rows
+          }
+        })
+      } else {
+        setEmployeeDetails((prev: any) => {
+          const { emergencyContact, ...rest } = prev;
+          return {
+            ...rest
+          }
+        })
+      }
+    }
+  }, [newContact])
+
+  useEffect(() => {
+    const dbData:any[] = employeeDetails?.emergencyContact || [];
+    setRows(dbData);
+  }, [employeeDetails.emergencyContact]);
+  
+  const handleDelete = (params: any) => {
+    setRows((prev: any) => {
+      const filtered = prev.filter((a: any) => {
+        const paramsKey = `${params.row.name}-${params.row.licenseCertNo}`;
+        const aKey = `${a?.name}-${a?.licenseCertNo}`;
+        return paramsKey !== aKey;
+      });
+      return filtered;
+    });
+    setWithUpdate(true);
+  };
 
   const columns: any = (handleDelete: any) => [
     {
@@ -81,62 +142,44 @@ const Contacts = (props: Props) => {
     },
   ];
 
-  const handleSaveNewContact = () => {
-    setOpen(false);
+  const handleSaveNewContact = async() => {
+    const validateFields = async () => {
+        const dialog: any = document.getElementById("emergency-dialog");
+        const required = dialog.querySelectorAll("[required]");
+        let invalidCtr = 0;
 
-    setRows((prev: any) => [...prev, newContact]);
+        invalidCtr = await Array.from(required)
+          .filter((e: any) => !e.value)
+          .map((e: any) => e.id).length;
 
-    setNewContact({
-      name: null,
-      residence: null,
-      phoneNumber: null,
-      relation: null,
-      occupation: null,
-    });
-  };
-
-  useEffect(() => {
-    setEmployeeDetails((prev: EmployeeI) => ({
-      ...prev,
-      emergencyContact: rows,
-    }));
-
-    !isNew &&
-      rows.length > 0 &&
-      setUpdatedDetails((prev: any) => ({
+        if (invalidCtr > 0) {
+          return failed(INCOMPLETE_FORM_MESSAGE);
+        }
+        return true;
+      }
+      //check inputs...
+    if (await validateFields()) {
+      setWithUpdate(true);
+      setRows((prev: any) => [
         ...prev,
-        emergencyContact: rows,
-      }));
-
-    rows.length <= 0 &&
-      setUpdatedDetails((prev: any) => {
-        delete prev?.emergencyContact;
-        return prev;
-      });
-  }, [rows]);
-
-  const handleDelete = (params: any) => {
-    setRows((prev: any) => {
-      const filtered = prev.filter((a: any) => a.id !== params.row.id);
-      return filtered;
-    });
+        newContact
+      ]);
+      setOpen(false);
+      setNewContact(initialData);
+    }
   };
 
   useEffect(() => {
-    !open &&
-      setNewContact({
-        name: null,
-        residence: null,
-        phoneNumber: null,
-        relation: null,
-        occupation: null,
-      });
+    if (!open) {
+      setNewContact(initialData);
+      setOpenNotif({ message: '', status: false, severity: '' })
+    }
   }, [open]);
 
   return (
     <CollapseWrapper panelTitle='Emergency Contact' icon={() => getIcon(<ContactPhoneTwoTone />, "emergencyContact")}>
       <div className='flex flex-col'>
-        <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog open={open} onClose={() => setOpen(false)} id="emergency-dialog">
           <div className='p-6 flex flex-col gap-4 w-[350px]'>
             <p className='text-md font-bold '>
               <AddIcCallTwoTone fontSize='small' /> New Emergency Contact

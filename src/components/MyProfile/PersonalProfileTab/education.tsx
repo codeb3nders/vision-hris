@@ -15,9 +15,9 @@ type Props = {};
 
 const Education = (props: Props) => {
   const {
-    // setEmployeeDetails,
-    // employeeDetails,
-    setUpdatedDetails, updatedDetails, setEducationalBgData, educationalBgData,
+    setEmployeeDetails,
+    employeeDetails,
+    setUpdatedDetails, 
     isNew,getIcon
   } = useContext(ProfileCtx);
   const [educationData, setEducationData] = useState<any[]>([]);
@@ -29,21 +29,8 @@ const Education = (props: Props) => {
   }, [educationData])
 
   useEffect(() => {
-    const dbData:any = educationalBgData;
-    let education: any = dbData || [];
-    if (education.length === 0) {
-      education = levels;
-    } else {
-      education = levels.map((e: any) => {
-        const exists = dbData.findIndex((o: any) => o.level.toLowerCase() === e.level.toLowerCase());
-        if (exists >= 0) {
-          return dbData[exists];
-        }
-        return e;
-      }) 
-    }
-    setEducationData(education);
-  }, [educationalBgData]);
+    setEducationData(employeeDetails.educationalBackground);
+  }, [employeeDetails.educationalBackground]);
       console.log({educationData})
 
   useEffect(() => {
@@ -64,12 +51,21 @@ const Education = (props: Props) => {
             }
           })
         }
+      }
+      if (withData) {
+        setEmployeeDetails((prev:EmployeeI) => {
+          return {
+            ...prev,
+            educationalBackground: educationData
+          }
+        })
       } else {
-        if (withData) {
-          setEducationalBgData(educationData)
-        } else {
-          setEducationalBgData([])
-        }
+        setEmployeeDetails((prev: any) => {
+          const { educationalBackground, ...rest } = prev;
+          return {
+            ...rest
+          }
+        })
       }
     }
   }, [educationData])
@@ -201,49 +197,6 @@ const Education = (props: Props) => {
             }
         />
       },
-    },
-  ];
-
-  const levels = [
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Elementary',
-      degree: '',
-      schoolAndAddress: '',
-      honors: '',
-    },
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Secondary',
-      degree: '',
-      schoolAndAddress: '',
-      honors: '',
-    },
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Tertiary',
-      schoolAndAddress: '',
-      degree: '',
-      honors: '',
-    },
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Post Graduate',
-      degree: '',
-      schoolAndAddress: '',
-      honors: '',
-    },
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Others',
-      degree: '',
-      schoolAndAddress: '',
-      honors: '',
     },
   ];
 

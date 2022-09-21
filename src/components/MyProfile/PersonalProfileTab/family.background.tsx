@@ -9,6 +9,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import AddButton from 'CustomComponents/AddButton';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { lazy, useContext, useEffect, useState, memo, useMemo } from 'react';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
 const FamilyBackgroundForm = lazy(() => import('./family.background.form'));
@@ -16,7 +17,6 @@ const FamilyBackgroundForm = lazy(() => import('./family.background.form'));
 type Props = {};
 
 export type FamilyI = {
-  //   id?: number;
   name: string;
   relation: string;
   occupation: string;
@@ -36,43 +36,39 @@ const FamilyBackground = (props: Props) => {
   }, [family])
 
   useEffect(() => {
-    if (isNew && withData) {
-      setEmployeeDetails((prev:any) => {
-        return {
-          ...prev,
-          familyBackground: family
-        }
-      })
-    }
-  }, [withData]);
-
-  useEffect(() => {
-    if (!isNew && withUpdate) {
-      if (withData) {
-        setUpdatedDetails((prev: any) => {
-          return {
-            ...prev,
-            familyBackground: family
-          }
-        })
-      } else {
-        if (updatedDetails) {
+    if (withUpdate) {
+      if (!isNew) {
+        if (withData) {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              familyBackground: family
+            }
+          })
+        } else {
           setUpdatedDetails((prev: any) => {
             const { familyBackground, ...rest } = prev;
             return {
               ...rest
             }
           })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              familyBackground: []
-            }
-          })
         }
       }
-      setWithUpdate(false);
+      if (withData) {
+        setEmployeeDetails((prev:EmployeeI) => {
+          return {
+            ...prev,
+            familyBackground: family
+          }
+        })
+      } else {
+        setEmployeeDetails((prev: any) => {
+          const { familyBackground, ...rest } = prev;
+          return {
+            ...rest
+          }
+        })
+      }
     }
   }, [family])
 
