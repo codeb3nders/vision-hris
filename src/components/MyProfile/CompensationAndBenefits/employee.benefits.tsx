@@ -76,8 +76,10 @@ console.log( {withUpdate}, {benefits})
   }, [benefits])
 
   useEffect(() => {
-    const dbData:any[] = employeeDetails?.employeeBenefits || [];
-    setBenefits(dbData);
+    if (!isNew) {
+      const dbData:any[] = employeeDetails?.employeeBenefits || [];
+      setBenefits(dbData);
+    }
   }, [employeeDetails.employeeBenefits]);
 
   const handleDelete = (id:any) => {

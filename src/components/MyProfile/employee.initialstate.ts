@@ -37,13 +37,56 @@ export const payrollInfoCols = [
   'deductWithholdingTax'
 ]
 
+const levels = [
+    {
+      yrFrom: null,
+      yrTo: null,
+      level: 'Elementary',
+      degree: '',
+      schoolAndAddress: '',
+      honors: '',
+    },
+    {
+      yrFrom: null,
+      yrTo: null,
+      level: 'Secondary',
+      degree: '',
+      schoolAndAddress: '',
+      honors: '',
+    },
+    {
+      yrFrom: null,
+      yrTo: null,
+      level: 'Tertiary',
+      schoolAndAddress: '',
+      degree: '',
+      honors: '',
+    },
+    {
+      yrFrom: null,
+      yrTo: null,
+      level: 'Post Graduate',
+      degree: '',
+      schoolAndAddress: '',
+      honors: '',
+    },
+    {
+      yrFrom: null,
+      yrTo: null,
+      level: 'Others',
+      degree: '',
+      schoolAndAddress: '',
+      honors: '',
+    },
+  ];
+
 export const initialState: EmployeeI = {
   employeeNo: '',
   firstName: '',
   lastName: '',
   middleName: '',
   suffix: '',
-  citizenship: null,
+  citizenship: 'PHILIPPINES',
   position: null,
   rank: null,
   department: null,
@@ -105,7 +148,7 @@ export const initialState: EmployeeI = {
     province: "",
     region: ""
   },
-  educationalBackground: [],
+  educationalBackground: levels,
   employmentRecords: [],
   licensesCertifications: [],
   allowanceDetails: [],

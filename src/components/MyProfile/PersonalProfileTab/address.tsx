@@ -28,13 +28,14 @@ const Address = ({ data, isPermanent }: Props) => {
   const [regionFile, setRegionFile] = useState<any[]>([]);
 
   useEffect(() => {
+    console.log({data})
     if (data) {
       setRegionFile(data)
     }
   }, [data])
 
   useEffect(() => {
-    if (!isNew && regionFile.length > 0 && employeeDetails) {
+    if (regionFile.length > 0 && employeeDetails) {
       const region = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].region,
         province = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].province,
         municipality = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].municipality;
