@@ -32,7 +32,6 @@ const FamilyBackground = (props: Props) => {
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
   const withData = useMemo(() => {
-    console.log({family})
     return family.some((x:any) => x.name || x.relation || x.company || x.occupation || x.residence)
   }, [family])
 
@@ -48,7 +47,7 @@ const FamilyBackground = (props: Props) => {
   }, [withData]);
 
   useEffect(() => {
-    if (withUpdate) {
+    if (!isNew && withUpdate) {
       if (withData) {
         setUpdatedDetails((prev: any) => {
           return {

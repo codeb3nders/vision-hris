@@ -43,7 +43,7 @@ const Certificates = (props: Props) => {
   }, [withData]);
 
   useEffect(() => {
-    if (withUpdate) {
+    if (!isNew && withUpdate) {
       if (withData) {
         setUpdatedDetails((prev: any) => {
           return {
@@ -88,26 +88,6 @@ const Certificates = (props: Props) => {
     });
     setWithUpdate(true);
   };
-
-  // useEffect(() => {
-  //   setEmployeeDetails((prev: EmployeeI) => ({
-  //     ...prev,
-  //     licensesCertifications: certificates,
-  //   }));
-
-  //   !isNew &&
-  //     certificates.length > 0 &&
-  //     setUpdatedDetails((prev: any) => ({
-  //       ...prev,
-  //       licensesCertifications: certificates,
-  //     }));
-
-  //   certificates.length <= 0 &&
-  //     setUpdatedDetails((prev: any) => {
-  //       delete prev?.licensesCertifications;
-  //       return prev;
-  //     });
-  // }, [certificates]);
 
   return (
     <CollapseWrapper

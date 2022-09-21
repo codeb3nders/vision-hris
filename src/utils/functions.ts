@@ -19,3 +19,14 @@ export function stringToColour(str) {
   }
   return colour;
 }
+
+export function generateArrayOfYears(lessYears:number) {
+  var max = new Date().getFullYear()
+  var min = max - lessYears
+  var years:number[] = []
+
+  for (var i = max; i >= min; i--) {
+    years.push(i)
+  }
+  return years
+}

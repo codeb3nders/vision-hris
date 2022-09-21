@@ -45,7 +45,7 @@ const EmploymentRecord = (props: Props) => {
   }, [withData]);
 
   useEffect(() => {
-    if (withUpdate) {
+    if (!isNew && withUpdate) {
       if (withData) {
         setUpdatedDetails((prev: any) => {
           return {

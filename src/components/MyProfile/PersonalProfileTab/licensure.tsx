@@ -38,7 +38,7 @@ const Licensure = (props: Props) => {
   }, [withData]);
 
   useEffect(() => {
-    if (withUpdate) {
+    if (!isNew && withUpdate) {
       if (withData) {
         setUpdatedDetails((prev: any) => {
           return {
@@ -89,7 +89,7 @@ const Licensure = (props: Props) => {
       panelTitle='Government/Professional Licensure Examinations Passed'
       icon={() => getIcon(<AdminPanelSettingsTwoTone />, "govtProfExamsPassed")}
     >
-      <LicensureDialog open={open} setOpen={setOpen} setExams={setExams} />
+      <LicensureDialog open={open} setOpen={setOpen} setExams={setExams} setWithUpdate={setWithUpdate} />
       <div style={{ width: '100%' }}>
         <DataGrid
           getRowId={(data: any) => `${data.examTitle}-${data.dateTaken}`}
@@ -107,7 +107,7 @@ const Licensure = (props: Props) => {
   );
 };
 
-const LicensureDialog = ({ open, setOpen, setExams }) => {
+const LicensureDialog = ({ open, setOpen, setExams, setWithUpdate }) => {
   const { failed, setOpenNotif } = useContext(ProfileCtx);
   const [data, setData] = useState<any>({});
 
@@ -128,6 +128,7 @@ const LicensureDialog = ({ open, setOpen, setExams }) => {
       }
       //check inputs...
     if (await validateFields()) {
+      setWithUpdate(true)
       setExams((prev: any) => [
         ...prev,
         { ...data },

@@ -88,6 +88,8 @@ export type ProfileModel = {
   getIcon: any;
   failed: any;
   setOpenNotif: React.Dispatch<any>;
+  setEducationalBgData: React.Dispatch<any[]>;
+  educationalBgData: any[],
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -109,7 +111,9 @@ export const ProfileCtx = createContext<ProfileModel>({
   handleUpdateEmployee: () => {},
   getIcon: () => {},
   failed: () => {},
-  setOpenNotif: () => {},
+  setOpenNotif: () => { },
+  setEducationalBgData: () => { },
+  educationalBgData: [],
 });
 
 export type EnumI = {
@@ -198,6 +202,7 @@ const ProfileMain = ({
     status: false,
     action: '',
   });
+  const [educationalBgData, setEducationalBgData] = useState<any[]>([]);
   const { enumsData } = useSelector(enumsStore);
   const newEmployeeStatus = useSelector(getEmployeeCreateStatus);
   const newEmployeeData = useSelector(getEmployeeCreatedItem);
@@ -258,7 +263,7 @@ const ProfileMain = ({
       );
     }
   }, [access_token, employeeNo]);
-console.log({isNew}, {employeeDetails})
+console.log({educationalBgData}, {employeeDetails})
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex(index);
@@ -309,6 +314,7 @@ console.log({isNew}, {employeeDetails})
         job_history: jobHistory,
       };
     });
+    setEducationalBgData(employeeData?.educationalBackground || [])
   };
 
   const success = () => {
@@ -516,6 +522,10 @@ console.log({isNew}, {employeeDetails})
     console.log({ updatedDetails });
   }, [updatedDetails]);
 
+  useEffect(() => {
+    console.log({ educationalBgData });
+  }, [educationalBgData]);
+
   const getIcon = (icon: SvgIconComponent, col: string) => {
     if (updatedDetails) {
       const checkPersonalChanges = () => {
@@ -559,6 +569,7 @@ console.log({isNew}, {employeeDetails})
         getIcon,
         failed,
         setOpenNotif,
+        setEducationalBgData, educationalBgData,
       }}
     >
       <Dialog open={loading.status}>

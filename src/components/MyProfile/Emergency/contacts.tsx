@@ -142,6 +142,7 @@ const Contacts = (props: Props) => {
               <AddIcCallTwoTone fontSize='small' /> New Emergency Contact
             </p>
             <TextField
+              required
               id='emergency-name'
               fullWidth
               variant='standard'
@@ -151,7 +152,7 @@ const Contacts = (props: Props) => {
                 setNewContact({ ...newContact, name: e.target.value })
               }
             />
-            <FormControl variant='standard'>
+            <FormControl variant='standard' required>
               <InputLabel id='relation'>Relation</InputLabel>
               <Select
                 id='relation'
@@ -187,6 +188,7 @@ const Contacts = (props: Props) => {
               variant='standard'
               size='small'
               multiline
+              required
               minRows={2}
               label='Residence'
               onChange={(e: any) =>
@@ -197,6 +199,7 @@ const Contacts = (props: Props) => {
               id='emergency-phone-number'
               fullWidth
               variant='standard'
+              required
               size='small'
               label='Phone Number'
               onChange={(e: any) =>
