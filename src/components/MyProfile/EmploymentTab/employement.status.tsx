@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { BadgeTwoTone, EditTwoTone, SaveTwoTone, WorkHistoryTwoTone } from '@mui/icons-material';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, gridClasses, GridColDef } from '@mui/x-data-grid';
 import moment, { Moment } from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
@@ -387,6 +387,11 @@ console.log({employmentUpdate}, {editEmployment})
           checkboxSelection={false}
           hideFooter={true}
           getRowHeight={() => 'auto'}
+          sx={{
+            [`& .${gridClasses.cell}`]: {
+              py: 1,
+            },
+          }}
           autoHeight
           className='border-0'
         />

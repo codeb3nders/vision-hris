@@ -15,6 +15,28 @@ export const personalCols = [
   'presentAddress', 
   'permanentAddress'
 ]
+
+export const compensationBenefitsCols = [
+  'sss', 
+  'philHealth', 
+  'pagIbig', 
+  'tin', 
+  'numberOfDependents', 
+  'taxExemption'
+]
+
+export const payrollInfoCols = [
+  'basicPay', 
+  'payRateType', 
+  'paymentMethod', 
+  'payrollGroup', 
+  'deductionSSS', 
+  'deductPhilhealth',
+  'deductHMDF',
+  'fixedContributionRate',
+  'deductWithholdingTax'
+]
+
 export const initialState: EmployeeI = {
   employeeNo: '',
   firstName: '',

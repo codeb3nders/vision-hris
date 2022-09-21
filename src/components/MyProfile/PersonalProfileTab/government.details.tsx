@@ -11,6 +11,7 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { ProfileCtx } from '../profile.main';
+import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {};
 
@@ -20,29 +21,23 @@ const GovernmentDetails = (props: Props) => {
     setEmployeeDetails,
     isOwner,
     isNew,
-    setUpdatedDetails,
+    setUpdatedDetails, getIcon, updatedDetails
   } = useContext(ProfileCtx);
-  console.log({ employeeDetails });
+
   const handleTaxExemption = () => {
     console.log({ dep: employeeDetails.numberOfDependents });
-    if (employeeDetails.civilStatus.toLocaleLowerCase() == 'married') {
+    if (employeeDetails.civilStatus.code.toLocaleLowerCase() == 'married') {
       const marriedTax =
         employeeDetails.numberOfDependents !== undefined && employeeDetails.numberOfDependents > 0
           ? `MARRIED-${employeeDetails.numberOfDependents}`
           : 'MARRIED';
-      setEmployeeDetails((prev: any) => ({
-        ...prev,
-        taxExemption: marriedTax,
-      }));
+      handleChange({taxExemption: marriedTax})
     } else {
       const singleTax =
         employeeDetails.numberOfDependents !== undefined && employeeDetails.numberOfDependents > 0
           ? `SINGLE-${employeeDetails.numberOfDependents}`
           : 'SINGLE';
-      setEmployeeDetails((prev: any) => ({
-        ...prev,
-        taxExemption: singleTax,
-      }));
+      handleChange({taxExemption: singleTax})
     }
   };
 
@@ -57,10 +52,22 @@ const GovernmentDetails = (props: Props) => {
     }
   }, [employeeDetails.numberOfDependents, employeeDetails.civilStatus]);
 
+  const handleChange = (value: any) => {
+    !isNew &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        ...value
+      }))
+    setEmployeeDetails((prev: EmployeeI) => ({
+      ...prev,
+      ...value
+    }));
+  };
+
   return (
     <CollapseWrapper
       panelTitle='Government Details'
-      icon={AssuredWorkloadTwoTone}
+      icon={() => getIcon(<AssuredWorkloadTwoTone />, "")}
       open
     >
       <GridWrapper colSize='2'>
@@ -73,18 +80,7 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             label='SSS'
             value={employeeDetails?.sss}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                sss: e.target.value,
-              });
-
-              !isNew &&
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  sss: e.target.value,
-                }));
-            }}
+            onChange={(e: any) => handleChange({ sss: e.target.value})}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -96,18 +92,7 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             label='PhilHealth'
             value={employeeDetails?.philHealth}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                philHealth: e.target.value,
-              });
-
-              !isNew &&
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  philHealth: e.target.value,
-                }));
-            }}
+            onChange={(e: any) => handleChange({ philHealth: e.target.value})}
           />
         </div>
 
@@ -120,18 +105,7 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             label='Pag-IBIG/HMDF'
             value={employeeDetails?.pagIbig}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                pagIbig: e.target.value,
-              });
-
-              !isNew &&
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  pagIbig: e.target.value,
-                }));
-            }}
+            onChange={(e: any) => handleChange({ pagIbig: e.target.value})}
           />
         </div>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -143,18 +117,7 @@ const GovernmentDetails = (props: Props) => {
             fullWidth
             label='TIN'
             value={employeeDetails?.tin}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                tin: e.target.value,
-              });
-
-              !isNew &&
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  tin: e.target.value,
-                }));
-            }}
+            onChange={(e: any) => handleChange({ tin: e.target.value})}
           />
         </div>
 
@@ -168,18 +131,7 @@ const GovernmentDetails = (props: Props) => {
             type='number'
             label='Number of Dependents'
             value={employeeDetails?.numberOfDependents}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                numberOfDependents: e.target.value,
-              });
-
-              !isNew &&
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  numberOfDependents: e.target.value,
-                }));
-            }}
+            onChange={(e: any) => handleChange({ numberOfDependents: e.target.value})}
           />
         </div>
 
@@ -193,18 +145,7 @@ const GovernmentDetails = (props: Props) => {
             disabled
             label='Tax Exemption'
             value={employeeDetails?.taxExemption}
-            onChange={(e: any) => {
-              setEmployeeDetails({
-                ...employeeDetails,
-                taxExemption: e.target.value,
-              });
-
-              !isNew &&
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  taxExemption: e.target.value,
-                }));
-            }}
+            onChange={(e: any) => handleChange({ taxExemption: e.target.value})}
           />
         </div>
       </GridWrapper>

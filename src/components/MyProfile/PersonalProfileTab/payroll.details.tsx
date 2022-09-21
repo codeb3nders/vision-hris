@@ -8,13 +8,13 @@ import CollapseWrapper from './collapse.wrapper';
 type Props = {};
 
 const PayrollDetails = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails } =
+  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails, getIcon } =
     useContext(ProfileCtx);
 
   return (
     <CollapseWrapper
       panelTitle='Payroll Account Details'
-      icon={AccountBalanceWalletTwoTone}
+      icon={() => getIcon(<AccountBalanceWalletTwoTone />, "payrollBankAccount")}
     >
       <GridWrapper colSize='2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>

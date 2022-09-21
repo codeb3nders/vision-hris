@@ -32,7 +32,7 @@ const ProfileOther = ({ className }: Props) => {
           <ListItemText
             primary={
               <span className='text-xs '>
-                {employeeDetails?.companyContactNumber} / { employeeDetails?.personalContactNumber}
+                {employeeDetails?.companyContactNumber}
               </span>
             }
             primaryTypographyProps={{ sx: { fontSize: '.85rem' } }}

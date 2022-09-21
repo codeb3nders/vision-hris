@@ -48,7 +48,7 @@ const Personal = (props: Props) => {
   useEffect(() => {
     console.log({ sameAddress })
     if (sameAddress) {
-      !isNew ?
+      !isNew &&
         setUpdatedDetails((prev: any) => {
           const data = prev || employeeDetails;
           return {
@@ -61,7 +61,7 @@ const Personal = (props: Props) => {
               barangay: data.presentAddress.barangay,
             },
           }
-        }) :
+        })
         setEmployeeDetails((prev: any) => ({
           ...prev,
           permanentAddress: {
@@ -140,16 +140,28 @@ const Personal = (props: Props) => {
   };
 
   const handleChange = (value: any) => {
-    !isNew ?
+    !isNew &&
       setUpdatedDetails((prev: any) => ({
         ...prev,
         ...value
-      })) :
+      }))
       setEmployeeDetails((prev: EmployeeI) => ({
         ...prev,
         ...value
       }));
   };
+
+  const handleSelectChange = (col:string, value:any, option:any) => {
+    !isNew &&
+      setUpdatedDetails((prev: any) => ({
+        ...prev,
+        [col]: value,
+      }))
+      setEmployeeDetails((prev: EmployeeI) => ({
+        ...prev,
+        [col]: option.props['data-obj']
+      }));
+  }
 
   const isSame = () => {
     const presentAddress = employeeDetails.presentAddress, permanentAddress = employeeDetails.permanentAddress;
@@ -177,7 +189,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            value={updatedDetails?.firstName || employeeDetails.firstName}
+            value={employeeDetails.firstName}
             onChange={(e: any) => handleChange({firstName: e.target.value})}
           />
         </div>
@@ -189,7 +201,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            value={updatedDetails?.middleName || employeeDetails.middleName}
+            value={employeeDetails?.middleName}
             onChange={(e: any) => handleChange({ middleName: e.target.value })}
           />
         </div>
@@ -202,7 +214,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            value={updatedDetails?.lastName || employeeDetails.lastName}
+            value={employeeDetails?.lastName}
             onChange={(e: any) => handleChange({ lastName: e.target.value })}
           />
         </div>
@@ -214,7 +226,7 @@ const Personal = (props: Props) => {
             size='small'
             variant='standard'
             fullWidth
-            value={updatedDetails?.suffix || employeeDetails.suffix}
+            value={employeeDetails?.suffix}
             onChange={(e: any) => handleChange({ suffix: e.target.value })}
           />
         </div>
@@ -223,7 +235,7 @@ const Personal = (props: Props) => {
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
               label='Birthdate'
-              value={updatedDetails?.birthDate || employeeDetails.birthDate}
+              value={employeeDetails?.birthDate}
               onChange={(value: any) => handleChange({ birthDate: value })}
               renderInput={(params) => (
                 <TextField
@@ -246,19 +258,9 @@ const Personal = (props: Props) => {
               id='gender'
               name="gender"
               labelId='genderLabel'
-              size='small'              
-              onChange={(e: any, option: any) => {
-                !isNew ?
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  gender: e.target.value,
-                })) :
-                setEmployeeDetails((prev: EmployeeI) => ({
-                  ...prev,
-                  gender: option.props['data-obj']
-                }));
-              }}
-              value={updatedDetails?.gender?.code || employeeDetails?.gender?.code}
+              size='small'
+              onChange={(e: any, option: any) => handleSelectChange("gender", e.target.value, option)}
+              value={employeeDetails?.gender?.code}
             >
               {genders.map((gender: any, i: number) => {
                 return (
@@ -279,18 +281,8 @@ const Personal = (props: Props) => {
               name="civilStatus"
               labelId='civil_status'
               size='small'
-              onChange={(e: any, option: any) => {
-                !isNew ?
-                setUpdatedDetails((prev: any) => ({
-                  ...prev,
-                  civilStatus: e.target.value,
-                })) :
-                setEmployeeDetails((prev: EmployeeI) => ({
-                  ...prev,
-                  civilStatus: option.props['data-obj']
-                }));
-              }}
-              value={updatedDetails?.civilStatus?.code || employeeDetails?.civilStatus?.code}
+              onChange={(e: any, option: any) => handleSelectChange("civilStatus", e.target.value, option)}
+              value={employeeDetails?.civilStatus?.code}
             >
               {civilStatus.map((status) => {
                 return (
@@ -315,18 +307,8 @@ const Personal = (props: Props) => {
                 name="citizenship"
                 labelId='citizenship'
                 size='small'
-                onChange={(e: any, option: any) => {
-                  !isNew ?
-                  setUpdatedDetails((prev: any) => ({
-                    ...prev,
-                    citizenship: e.target.value,
-                  })) :
-                  setEmployeeDetails((prev: EmployeeI) => ({
-                    ...prev,
-                    citizenship: option.props['data-obj']
-                  }));
-                }}
-                value={updatedDetails?.citizenship?.code || employeeDetails?.citizenship?.code || 'PHILIPPINES'}
+                onChange={(e: any, option: any) => handleSelectChange("citizenship", e.target.value, option)}
+                value={employeeDetails?.citizenship?.code || 'PHILIPPINES'}
               >
                 {citizenship.map((c: any, idx: number) => {
                   return (
@@ -347,18 +329,8 @@ const Personal = (props: Props) => {
                 name="religion"
                 labelId='religion'
                 size='small'
-                onChange={(e: any, option: any) => {
-                  !isNew ?
-                  setUpdatedDetails((prev: any) => ({
-                    ...prev,
-                    religion: e.target.value,
-                  })) :
-                  setEmployeeDetails((prev: EmployeeI) => ({
-                    ...prev,
-                    religion: option.props['data-obj']
-                  }));
-                }}
-                value={updatedDetails?.religion?.code || employeeDetails?.religion?.code}
+                onChange={(e: any, option: any) => handleSelectChange("religion", e.target.value, option)}
+                value={employeeDetails?.religion?.code}
               >
                 {religion.map((religion) => {
                   return (
@@ -380,7 +352,7 @@ const Personal = (props: Props) => {
               size='small'
               variant='standard'
               fullWidth
-              value={updatedDetails?.personalContactNumber || employeeDetails.personalContactNumber}
+              value={employeeDetails?.personalContactNumber}
               onChange={(e: any) => handleChange({ personalContactNumber: e.target.value })}
             />
           </div>
@@ -393,7 +365,7 @@ const Personal = (props: Props) => {
               size='small'
               variant='standard'
               fullWidth
-              value={updatedDetails?.personalEmail || employeeDetails.personalEmail}
+              value={employeeDetails?.personalEmail}
               onChange={(e: any) => handleChange({ personalEmail: e.target.value })}
             />
           </div>

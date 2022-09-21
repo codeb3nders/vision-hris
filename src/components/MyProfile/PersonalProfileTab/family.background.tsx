@@ -94,34 +94,6 @@ const FamilyBackground = (props: Props) => {
     setWithUpdate(true);
   };
 
-  // useEffect(() => {
-  //   // employeeDetails?.familyBackground?.length > 0 &&
-  //   //   setFamily(employeeDetails?.familyBackground);
-  // }, [employeeDetails]);
-
-  // useEffect(() => {
-  //   setEmployeeDetails({ ...employeeDetails, familyBackground: family });
-  //   !isNew &&
-  //     family.length > 0 &&
-  //     setUpdatedDetails((prev: any) => ({
-  //       ...prev,
-  //       familyBackground: family,
-  //     }));
-
-  //   family.length <= 0 &&
-  //     setUpdatedDetails((prev: any) => {
-  //       delete prev?.familyBackground;
-  //       return prev;
-  //     });
-  // }, [family]);
-
-  // const handleDelete = (params: any) => {
-  //   setFamily((prev: any) => {
-  //     const filtered = prev.filter((a: any) => a.id !== params.row.id);
-  //     return filtered;
-  //   });
-  // };
-
   return (
     <CollapseWrapper
       panelTitle='Family Background'

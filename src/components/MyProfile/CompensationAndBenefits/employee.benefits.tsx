@@ -20,16 +20,77 @@ import {
   MuiEvent,
 } from '@mui/x-data-grid';
 import AddButton from 'CustomComponents/AddButton';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useContext, useMemo } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
+import { ProfileCtx } from '../profile.main';
 
 type Props = {};
 
 const EmployeeBenefits = (props: Props) => {
+  const {setEmployeeDetails, employeeDetails, setUpdatedDetails, updatedDetails, getIcon, isNew} = useContext(ProfileCtx)
   const [benefits, setBenefits] = useState<any[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-  const [promiseArguments, setPromiseArguments] = useState<any>(null);
+  const [withUpdate, setWithUpdate] = useState<boolean>(false);
+
+console.log( {withUpdate}, {benefits})
+  useEffect(() => {
+    if (isNew) {
+      setEmployeeDetails((prev:any) => {
+        return {
+          ...prev,
+          employeeBenefits: benefits.map((o:any) => o.benefit)
+        }
+      })
+    }
+  }, [benefits]);
+
+  useEffect(() => {
+    if (!isNew && withUpdate) {
+      const withData = benefits.some((x:any) => x.benefit)
+      if (withData) {
+        setUpdatedDetails((prev: any) => {
+          return {
+            ...prev,
+            employeeBenefits: benefits
+          }
+        })
+      } else {
+        if (updatedDetails) {
+          setUpdatedDetails((prev: any) => {
+            const { employeeBenefits, ...rest } = prev;
+            return {
+              ...rest
+            }
+          })
+        } else {
+          setUpdatedDetails((prev: any) => {
+            return {
+              ...prev,
+              employeeBenefits: []
+            }
+          })
+        }
+      }
+      setWithUpdate(false);
+    }
+  }, [benefits])
+
+  useEffect(() => {
+    const dbData:any[] = employeeDetails?.employeeBenefits || [];
+    setBenefits(dbData);
+  }, [employeeDetails.employeeBenefits]);
+
+  const handleDelete = (id:any) => {
+    setBenefits((prev: any) => {
+      const filtered = prev.filter((a: any) => {
+        const paramsKey = id;
+        const aKey = a?.id;
+        return paramsKey !== aKey;
+      });
+      return filtered;
+    });
+    setWithUpdate(true);
+  };
 
   const handleRowEditStart = (
     params: GridRowParams,
@@ -62,11 +123,8 @@ const EmployeeBenefits = (props: Props) => {
     const editedRow = benefits.find((row) => row.id === id);
     if (editedRow!.isNew) {
       setBenefits(benefits.filter((row) => row.id !== id));
+      setWithUpdate(true);
     }
-  };
-
-  const handleDeleteClick = (id: GridRowId) => () => {
-    setBenefits(benefits.filter((row) => row.id !== id));
   };
 
   const handleAddBenefit = () => {
@@ -79,7 +137,7 @@ const EmployeeBenefits = (props: Props) => {
         isNew: true,
       },
     ]);
-
+    setWithUpdate(true);
     setRowModesModel((oldModel) => ({
       ...oldModel,
       [id]: { mode: GridRowModes.Edit, fieldToFocus: 'benefit' },
@@ -93,6 +151,7 @@ const EmployeeBenefits = (props: Props) => {
     setBenefits(
       benefits.map((row) => (row.id === newRow.id ? updatedRow : row))
     );
+    setWithUpdate(true);
     return updatedRow;
   };
 
@@ -140,7 +199,7 @@ const EmployeeBenefits = (props: Props) => {
           <GridActionsCellItem
             icon={<Delete />}
             label='Delete'
-            onClick={handleDeleteClick(id)}
+            onClick={() => handleDelete(id)}
             color='inherit'
           />,
         ];
@@ -151,7 +210,7 @@ const EmployeeBenefits = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Employee Benefits'
-      icon={VolunteerActivismTwoTone}
+      icon={() => getIcon(<VolunteerActivismTwoTone />, "employeeBenefits")}
       contentClassName='p-0'
     >
       <div style={{ width: '100%' }}>

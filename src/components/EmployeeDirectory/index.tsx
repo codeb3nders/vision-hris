@@ -85,14 +85,14 @@ const columns = () => [
         },
         sortable: false
     },
-    // {
-    //     field: 'reportsTo',
-    //     headerName: 'Reports To', flex: 1,
-    //     renderCell: (cell) => {
-    //         return cell.row.reportsTo.employeeName;
-    //     },
-    //     sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName)
-    // },
+    {
+        field: 'reportsTo',
+        headerName: 'Reports To', flex: 1,
+        renderCell: (cell) => {
+            return cell.row.reportsTo.employeeName;
+        },
+        sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName)
+    },
 ];
 
 export default EmployeeDirectory;

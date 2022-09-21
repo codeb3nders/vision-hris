@@ -19,7 +19,7 @@ import React, {
   useCallback,
 } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
-import { initialState, personalCols } from './employee.initialstate';
+import { compensationBenefitsCols, initialState, payrollInfoCols, personalCols } from './employee.initialstate';
 import ProfileOther from './profile.other';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
@@ -497,6 +497,9 @@ console.log({isNew}, {employeeDetails})
   const handleUpdateEmployee = async () => {
     try {
       consoler(updatedDetails, 'orange', 'updateEmployee');
+      if (updatedDetails.employeeBenefits) {
+        updatedDetails.employeeBenefits = updatedDetails.employeeBenefits.map((o:any) => o.benefit)
+      }
       await dispatch(
         updateEmployee({
           params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo },
@@ -518,9 +521,14 @@ console.log({isNew}, {employeeDetails})
       const checkPersonalChanges = () => {
         return personalCols.some((x: any) => updatedDetails.hasOwnProperty(x));
       };
+      const checkComBenChanges = () => {
+        return compensationBenefitsCols.some((x: any) => updatedDetails.hasOwnProperty(x)) || 
+        payrollInfoCols.some((x: any) => updatedDetails.hasOwnProperty(x))
+      };
       if (
         (col && updatedDetails.hasOwnProperty(col)) ||
-        (!col && checkPersonalChanges())
+        (index === "1" && !col && checkPersonalChanges()) ||
+        (index === "3" && !col && checkComBenChanges())
       ) {
         return (
           <Badge badgeContent=' ' color='error' variant='dot'>
