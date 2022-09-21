@@ -1,5 +1,5 @@
 import { HomeOutlined, ReportProblemOutlined } from '@mui/icons-material';
-import { ERROR_GRAPHICS } from 'assets';
+import { ERROR } from 'assets';
 import env from 'environments/env';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -75,7 +75,7 @@ const ErrorPage = ({ type = 'Restricted' }: Props) => {
           <div className='absolute desktop:right-[-100px] laptop:right-[-90px] tablet:right-[-90px] phone:right-[-60px] desktop:bottom-[-120px] laptop:bottom-[-100px] tablet:bottom-[-110px] phone:bottom-[-80px] desktop:w-[150%] laptop:w-[150%] tablet:w-[160%] phone:w-[180%]'>
             <img
               className='select-none'
-              src={ERROR_GRAPHICS}
+              src={ERROR}
               alt=''
               onMouseDown={(e) => e.preventDefault()}
             />
