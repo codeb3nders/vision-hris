@@ -8,12 +8,12 @@ import {
   GridRowModes,
   GridRowModesModel,
   GridRowParams,
-  GridToolbar,
   GridToolbarColumnsButton,
   GridToolbarContainer,
   GridToolbarExport,
   GridToolbarFilterButton,
-  MuiEvent, gridClasses 
+  MuiEvent,
+  gridClasses,
 } from '@mui/x-data-grid';
 import { useContext, useEffect, useState } from 'react';
 import { Cancel, Edit, Save } from '@mui/icons-material';
@@ -132,7 +132,7 @@ const ChecklistTable = (props: Props) => {
         <GridToolbarFilterButton />
         <GridToolbarExport />
       </GridToolbarContainer>
-    )
+    );
   }
 
   return (
