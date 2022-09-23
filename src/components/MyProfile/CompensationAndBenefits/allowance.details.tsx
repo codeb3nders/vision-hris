@@ -9,7 +9,7 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const AllowanceDetails = (props: Props) => {
-  const { setUpdatedDetails, isNew, enums } = useContext(ProfileCtx);
+  const { setUpdatedDetails, isNew, enums, getIcon } = useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [allowances, setAllowances] = useState<any[]>([]);
 
@@ -38,7 +38,7 @@ const AllowanceDetails = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Allowance Details'
-      icon={AttachMoneyTwoTone}
+      icon={() => getIcon(<AttachMoneyTwoTone />, "allowanceDetails")}
       contentClassName='p-0'
     >
       <AllowanceDialog

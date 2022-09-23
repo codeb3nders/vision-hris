@@ -48,7 +48,6 @@ const theme = createTheme();
 
 export default function SignInSide() {
   const dispatch = useDispatch();
-  const { status: enumsStatus, enumsData } = useSelector(enumsStore);
   const { auth } = useSelector((state: any) => state);
   const { status, isLoggedIn, access_token, userData } = auth;
   const [values, setValues] = useState({

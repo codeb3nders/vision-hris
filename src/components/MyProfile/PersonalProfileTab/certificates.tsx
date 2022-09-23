@@ -15,7 +15,7 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 type Props = {};
 const initialData = {
-  certificate: '',
+  name: '',
   authorizingEntity: '',
   validUntil: '',
   licenseCertNo: '',
@@ -28,7 +28,7 @@ const Certificates = (props: Props) => {
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
   const withData = useMemo(() => {
-    return certificates.some((x:any) => x.certificate || x.authorizingEntity || x.validUntil || x.licenseCertNo)
+    return certificates.some((x:any) => x.name || x.authorizingEntity || x.validUntil || x.licenseCertNo)
   }, [certificates])
 
   useEffect(() => {
@@ -155,7 +155,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
     <Dialog open={open} onClose={() => setOpen(false)} id="certificates-dialog">
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
-          <WorkspacePremiumTwoTone fontSize='small' /> New Licence/Certificate
+          <WorkspacePremiumTwoTone fontSize='small' /> Add Licence/Certificate
         </p>
 
         <TextField

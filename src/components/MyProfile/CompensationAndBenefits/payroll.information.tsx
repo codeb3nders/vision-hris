@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { ProfileCtx } from '../profile.main';
@@ -15,9 +15,16 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const PayrollInformation = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails, getIcon } =
+  const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails, getIcon, enums } =
     useContext(ProfileCtx);
-
+  const [payrollGroup, setPayrollGroup] = useState<any[]>([])
+  const [paymentMethod, setPaymentMethod] = useState<any[]>([])
+  
+  useEffect(() => {
+    setPayrollGroup(enums.payroll_group);
+    setPaymentMethod(enums.payment_method);
+  }, [enums]);
+  
   const handleChange = (value: any) => {
     !isNew &&
       setUpdatedDetails((prev: any) => ({
@@ -33,7 +40,7 @@ const PayrollInformation = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Payroll Information'
-      icon={() => getIcon(<PaidTwoTone />, "")}
+      icon={() => getIcon(<PaidTwoTone />, "PayrollInfo")}
       contentClassName='p-0'
     >
       <GridWrapper colSize='2'>
@@ -57,15 +64,14 @@ const PayrollInformation = (props: Props) => {
             <Select
               label='Pay Rate Type'
               id='pay-rate-type'
-              value={employeeDetails.payRateType}
+              value={employeeDetails?.payRateType?.code || employeeDetails.payRateType}
               onChange={(e: any) => handleChange({ payRateType: e.target.value})}
             >
-              <MenuItem id='type-bi-monthly' value='Bi monthly'>
-                Bi monthly
-              </MenuItem>
-              <MenuItem id='type-weekly' value='Weekly'>
-                Weekly
-              </MenuItem>
+              {
+                payrollGroup.map((o: any, i:number) => {
+                  return <MenuItem id={`payRateType-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                })
+              }
             </Select>
           </FormControl>
         </div>
@@ -76,18 +82,14 @@ const PayrollInformation = (props: Props) => {
             <Select
               label='Payment Method'
               id='payment-method'
-              value={employeeDetails.paymentMethod}
+              value={employeeDetails?.paymentMethod?.code || employeeDetails.paymentMethod}
               onChange={(e: any) => handleChange({ paymentMethod: e.target.value})}
             >
-              <MenuItem value='Cash' id='cash'>
-                Cash
-              </MenuItem>
-              <MenuItem value='Check' id='check'>
-                Check
-              </MenuItem>
-              <MenuItem value='Payroll Account' id='payroll-account'>
-                Payroll Account
-              </MenuItem>
+              {
+                paymentMethod.map((o: any, i:number) => {
+                  return <MenuItem id={`paymentMethod-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                })
+              }
             </Select>
           </FormControl>
         </div>
@@ -97,16 +99,15 @@ const PayrollInformation = (props: Props) => {
             <InputLabel>Payroll Group</InputLabel>
             <Select
               label='Payroll Group'
-              value={employeeDetails.payrollGroup}
               id='payroll-group'
+              value={employeeDetails?.payrollGroup?.code || employeeDetails.payrollGroup}
               onChange={(e: any) => handleChange({ payrollGroup: e.target.value})}
             >
-              <MenuItem id='group-bi-monthly' value='Bi monthly'>
-                Bi monthly
-              </MenuItem>
-              <MenuItem id='group-weekly' value='Weekly'>
-                Weekly
-              </MenuItem>
+              {
+                payrollGroup.map((o: any, i:number) => {
+                  return <MenuItem id={`payrollGroup-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                })
+              }
             </Select>
           </FormControl>
         </div>
@@ -132,12 +133,15 @@ const PayrollInformation = (props: Props) => {
             <InputLabel>Deduct Philhealth Contribution</InputLabel>
             <Select
               label='Deduct Philhealth Contribution'
-              value={employeeDetails.deductPhilhealth}
+              value={employeeDetails?.deductPhilhealth?.code || employeeDetails.deductPhilhealth}
               id='deduct-philhealth'
               onChange={(e: any) => handleChange({ deductPhilhealth: e.target.value})}
             >
-              <MenuItem value='Bi monthly'>Bi monthly</MenuItem>
-              <MenuItem value='Weekly'>Weekly</MenuItem>
+              {
+                payrollGroup.map((o: any, i:number) => {
+                  return <MenuItem id={`deductPhilhealth-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                })
+              }
             </Select>
           </FormControl>
         </div>
@@ -162,15 +166,14 @@ const PayrollInformation = (props: Props) => {
             <Select
               label='Fixed Contribution Rate'
               id='deduct-philhealth'
-              value={employeeDetails.fixedContributionRate}
+              value={employeeDetails?.fixedContributionRate?.code || employeeDetails.fixedContributionRate}
               onChange={(e: any) => handleChange({ fixedContributionRate: e.target.value})}
             >
-              <MenuItem id='contrib-bi-monthly' value='Bi monthly'>
-                Bi monthly
-              </MenuItem>
-              <MenuItem id='contrib-weekly' value='Weekly'>
-                Weekly
-              </MenuItem>
+              {
+                payrollGroup.map((o: any, i:number) => {
+                  return <MenuItem id={`fixedContributionRate-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                })
+              }
             </Select>
           </FormControl>
         </div>

@@ -89,7 +89,7 @@ export type ProfileModel = {
   failed: any;
   setOpenNotif: React.Dispatch<any>;
   setEducationalBgData: React.Dispatch<any[]>;
-  educationalBgData: any[],
+  educationalBgData: any[];
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -121,6 +121,9 @@ export type EnumI = {
   type: string;
   code: string;
   name: string;
+  Cleansing_Days?: number;
+  Category?: string;
+  Level?: string;
 };
 
 export type EnumsI = {
@@ -138,6 +141,8 @@ export type EnumsI = {
   allowance_types: EnumI[];
   disciplinary_actions: EnumI[];
   employment_types: EnumI[];
+  payroll_group: EnumI[];
+  payment_method: EnumI[];
 };
 
 const enumsInitialState = {
@@ -155,6 +160,8 @@ const enumsInitialState = {
   allowance_types: [],
   disciplinary_actions: [],
   employment_types: [],
+  payroll_group: [],
+  payment_method:[]
 };
 
 const ProfileMain = ({
@@ -371,7 +378,9 @@ console.log({educationalBgData}, {employeeDetails})
       allowance_types: any = [],
       disciplinary_actions: any = [],
       employment_types: any = [],
-      gender: any = [];
+      gender: any = [],
+      payroll_group: any = [],
+      payment_method: any = [];
 
     enumsData.forEach((o: any) => {
       switch (o.type.toLowerCase()) {
@@ -417,6 +426,12 @@ console.log({educationalBgData}, {employeeDetails})
         case 'employmenttype':
           employment_types.push(o);
           break;
+        case 'payrollgroup':
+          payroll_group.push(o);
+          break;
+        case 'paymentmethod':
+          payment_method.push(o);
+          break;
       }
     });
     setEnums({
@@ -434,6 +449,8 @@ console.log({educationalBgData}, {employeeDetails})
       allowance_types,
       disciplinary_actions,
       employment_types,
+      payroll_group,
+      payment_method
     });
   }, [enumsData]);
 
@@ -528,23 +545,38 @@ console.log({educationalBgData}, {employeeDetails})
 
   const getIcon = (icon: SvgIconComponent, col: string) => {
     if (updatedDetails) {
+      const badgeIcon = <Badge badgeContent=' ' color='error' variant='dot'>
+        {icon}
+      </Badge>
       const checkPersonalChanges = () => {
         return personalCols.some((x: any) => updatedDetails.hasOwnProperty(x));
       };
-      const checkComBenChanges = () => {
-        return compensationBenefitsCols.some((x: any) => updatedDetails.hasOwnProperty(x)) || 
-        payrollInfoCols.some((x: any) => updatedDetails.hasOwnProperty(x))
+      const checkGovtChanges = () => {
+        return compensationBenefitsCols.some((x: any) => updatedDetails.hasOwnProperty(x))
       };
-      if (
-        (col && updatedDetails.hasOwnProperty(col)) ||
-        (index === "1" && !col && checkPersonalChanges()) ||
-        (index === "3" && !col && checkComBenChanges())
-      ) {
-        return (
-          <Badge badgeContent=' ' color='error' variant='dot'>
-            {icon}
-          </Badge>
-        );
+      const checkPayrollInfoChanges = () => {
+        return payrollInfoCols.some((x: any) => updatedDetails.hasOwnProperty(x))
+      };
+      switch (col) {
+        case "Personal":
+          if (checkPersonalChanges()) {
+            return badgeIcon;
+          }
+          break;
+        case "Government":
+          if (checkGovtChanges()) {
+            return badgeIcon;
+          }
+          break;
+        case "PayrollInfo":
+          if (checkPayrollInfoChanges()) {
+            return badgeIcon;
+          }
+          break;
+        default:
+          if (updatedDetails.hasOwnProperty(col)) {
+            return badgeIcon;
+          }
       }
     }
     return icon;
