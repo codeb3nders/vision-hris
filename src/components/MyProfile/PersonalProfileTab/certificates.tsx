@@ -15,7 +15,7 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 type Props = {};
 const initialData = {
-  certificate: '',
+  name: '',
   authorizingEntity: '',
   validUntil: '',
   licenseCertNo: '',
@@ -28,40 +28,23 @@ const Certificates = (props: Props) => {
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
   const withData = useMemo(() => {
-    return certificates.some((x:any) => x.certificate || x.authorizingEntity || x.validUntil || x.licenseCertNo)
+    return certificates.some((x:any) => x.name || x.authorizingEntity || x.validUntil || x.licenseCertNo)
   }, [certificates])
 
   useEffect(() => {
     if (withUpdate) {
       if (!isNew) {
-        if (withData) {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              licensesCertifications: certificates
-            }
-          })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            const { licensesCertifications, ...rest } = prev;
-            return {
-              ...rest
-            }
-          })
-        }
-      }
-      if (withData) {
-        setEmployeeDetails((prev:EmployeeI) => {
+        setUpdatedDetails((prev: any) => {
           return {
             ...prev,
             licensesCertifications: certificates
           }
         })
       } else {
-        setEmployeeDetails((prev: any) => {
-          const { licensesCertifications, ...rest } = prev;
+        setEmployeeDetails((prev:EmployeeI) => {
           return {
-            ...rest
+            ...prev,
+            licensesCertifications: certificates
           }
         })
       }
@@ -114,7 +97,7 @@ const Certificates = (props: Props) => {
 };
 
 const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
-  const {setOpenNotif, failed} = useContext(ProfileCtx)
+  const {resetNotif, failed} = useContext(ProfileCtx)
   const [data, setData] = useState<any>({});
 
   const handleSave = async() => {
@@ -147,7 +130,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
   useEffect(() => {
     if (!open) {
       setData(initialData);
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 
@@ -155,7 +138,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
     <Dialog open={open} onClose={() => setOpen(false)} id="certificates-dialog">
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
-          <WorkspacePremiumTwoTone fontSize='small' /> New Licence/Certificate
+          <WorkspacePremiumTwoTone fontSize='small' /> Add Licence/Certificate
         </p>
 
         <TextField

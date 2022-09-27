@@ -30,13 +30,13 @@ const initialData:FamilyI = {
   }
 
 const FamilyBackgroundForm = ({ open, setOpen, setFamily, setWithUpdate }: Props) => {
-  const { setOpenNotif, failed } = useContext(ProfileCtx);
+  const { resetNotif, failed } = useContext(ProfileCtx);
   const [newFamily, setNewFamily] = useState<FamilyI>(initialData);
 
   useEffect(() => {
     if (!open) {
       setNewFamily(initialData)
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 
@@ -133,9 +133,6 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, setWithUpdate }: Props
 
         <div className='grid grid-cols-7'>
           <button
-            disabled={
-              !newFamily.relation || !newFamily.name || !newFamily.residence
-            }
             onClick={handleAddFamily}
             className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
           >

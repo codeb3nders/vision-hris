@@ -7,7 +7,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { ProfileCtx } from '../profile.main';
@@ -21,23 +21,27 @@ const GovernmentDetails = (props: Props) => {
     setEmployeeDetails,
     isOwner,
     isNew,
-    setUpdatedDetails, getIcon, updatedDetails
+    setUpdatedDetails, getIcon
   } = useContext(ProfileCtx);
+  const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
   const handleTaxExemption = () => {
-    console.log({ dep: employeeDetails.numberOfDependents });
     if (employeeDetails.civilStatus.code.toLocaleLowerCase() == 'married') {
       const marriedTax =
         employeeDetails.numberOfDependents !== undefined && employeeDetails.numberOfDependents > 0
           ? `MARRIED-${employeeDetails.numberOfDependents}`
           : 'MARRIED';
-      handleChange({taxExemption: marriedTax})
+      if (employeeDetails.taxExemption.toLocaleLowerCase() !== marriedTax.toLocaleLowerCase()) {
+        handleChange({taxExemption: marriedTax})
+      }
     } else {
       const singleTax =
         employeeDetails.numberOfDependents !== undefined && employeeDetails.numberOfDependents > 0
           ? `SINGLE-${employeeDetails.numberOfDependents}`
           : 'SINGLE';
-      handleChange({taxExemption: singleTax})
+      if (employeeDetails.taxExemption.toLocaleLowerCase() !== singleTax.toLocaleLowerCase()) {
+        handleChange({ taxExemption: singleTax })
+      }
     }
   };
 
@@ -53,11 +57,14 @@ const GovernmentDetails = (props: Props) => {
   }, [employeeDetails.numberOfDependents, employeeDetails.civilStatus]);
 
   const handleChange = (value: any) => {
-    !isNew &&
+    if (!isNew) {
       setUpdatedDetails((prev: any) => ({
         ...prev,
         ...value
       }))
+      // setWithUpdate(true);
+    }
+      
     setEmployeeDetails((prev: EmployeeI) => ({
       ...prev,
       ...value
@@ -67,7 +74,7 @@ const GovernmentDetails = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Government Details'
-      icon={() => getIcon(<AssuredWorkloadTwoTone />, "")}
+      icon={() => getIcon(<AssuredWorkloadTwoTone />, "Government")}
       open
     >
       <GridWrapper colSize='2'>

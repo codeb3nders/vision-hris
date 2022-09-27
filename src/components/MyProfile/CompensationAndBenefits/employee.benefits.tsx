@@ -32,7 +32,6 @@ const EmployeeBenefits = (props: Props) => {
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
-console.log( {withUpdate}, {benefits})
   useEffect(() => {
     if (isNew) {
       setEmployeeDetails((prev:any) => {
@@ -78,10 +77,18 @@ console.log( {withUpdate}, {benefits})
   useEffect(() => {
     if (!isNew) {
       const dbData:any[] = employeeDetails?.employeeBenefits || [];
-      setBenefits(dbData);
+      setBenefits(() => {
+        return dbData.map((o: any, id:number) => {
+          return {
+            benefit: o,
+            isNew: false,
+            id
+          }
+        })
+      });
     }
   }, [employeeDetails.employeeBenefits]);
-
+console.log({benefits})
   const handleDelete = (id:any) => {
     setBenefits((prev: any) => {
       const filtered = prev.filter((a: any) => {

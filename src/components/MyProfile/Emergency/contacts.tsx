@@ -28,21 +28,19 @@ type Props = {};
 type ContactsI = {
   name: string;
   relation: string;
-  phoneNumber: string;
-  occupation: string;
-  residence: string;
+  contactNumber: string;
+  address: string;
 };
 
 const initialData = {
   name: null,
-  residence: null,
-  phoneNumber: null,
+  address: null,
+  contactNumber: null,
   relation: null,
-  occupation: null,
 }
 
 const Contacts = (props: Props) => {
-  const { isNew, setUpdatedDetails, employeeDetails, setEmployeeDetails, getIcon, failed, setOpenNotif } =
+  const { isNew, setUpdatedDetails, employeeDetails, setEmployeeDetails, getIcon, failed, resetNotif } =
     useContext(ProfileCtx);
   const [rows, setRows] = useState<ContactsI[]>([]);
   const [newContact, setNewContact] = useState<any>(initialData);
@@ -50,45 +48,28 @@ const Contacts = (props: Props) => {
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
   const withData = useMemo(() => {
-    return rows.some((x:any) => x.name || x.relation || x.residence || x.phoneNumber || x.occupation)
+    return rows.some((x:any) => x.name || x.relation || x.address || x.contactNumber)
   }, [rows])
 
   useEffect(() => {
     if (withUpdate) {
       if (!isNew) {
-        if (withData) {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              emergencyContact: rows
-            }
-          })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            const { emergencyContact, ...rest } = prev;
-            return {
-              ...rest
-            }
-          })
-        }
-      }
-      if (withData) {
-        setEmployeeDetails((prev:EmployeeI) => {
+        setUpdatedDetails((prev: any) => {
           return {
             ...prev,
             emergencyContact: rows
           }
         })
       } else {
-        setEmployeeDetails((prev: any) => {
-          const { emergencyContact, ...rest } = prev;
+        setEmployeeDetails((prev:EmployeeI) => {
           return {
-            ...rest
+            ...prev,
+            emergencyContact: rows
           }
         })
       }
     }
-  }, [newContact])
+  }, [rows])
 
   useEffect(() => {
     const dbData:any[] = employeeDetails?.emergencyContact || [];
@@ -124,7 +105,7 @@ const Contacts = (props: Props) => {
       flex: 1,
     },
     {
-      field: 'phoneNumber',
+      field: 'contactNumber',
       headerName: 'Phone Number',
       flex: 1,
       renderCell: (params: any) => {
@@ -172,7 +153,7 @@ const Contacts = (props: Props) => {
   useEffect(() => {
     if (!open) {
       setNewContact(initialData);
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 
@@ -182,7 +163,7 @@ const Contacts = (props: Props) => {
         <Dialog open={open} onClose={() => setOpen(false)} id="emergency-dialog">
           <div className='p-6 flex flex-col gap-4 w-[350px]'>
             <p className='text-md font-bold '>
-              <AddIcCallTwoTone fontSize='small' /> New Emergency Contact
+              <AddIcCallTwoTone fontSize='small' /> Add Emergency Contact
             </p>
             <TextField
               required
@@ -214,18 +195,6 @@ const Contacts = (props: Props) => {
               </Select>
             </FormControl>
             <TextField
-              id='emergency-occupation'
-              fullWidth
-              variant='standard'
-              size='small'
-              multiline
-              minRows={2}
-              label='Occupation'
-              onChange={(e: any) =>
-                setNewContact({ ...newContact, occupation: e.target.value })
-              }
-            />
-            <TextField
               id='emergency-residence'
               fullWidth
               variant='standard'
@@ -235,7 +204,7 @@ const Contacts = (props: Props) => {
               minRows={2}
               label='Residence'
               onChange={(e: any) =>
-                setNewContact({ ...newContact, residence: e.target.value })
+                setNewContact({ ...newContact, address: e.target.value })
               }
             />
             <TextField
@@ -246,17 +215,11 @@ const Contacts = (props: Props) => {
               size='small'
               label='Phone Number'
               onChange={(e: any) =>
-                setNewContact({ ...newContact, phoneNumber: e.target.value })
+                setNewContact({ ...newContact, contactNumber: e.target.value })
               }
             />
             <div className='grid grid-cols-5'>
               <button
-                disabled={
-                  !newContact.name ||
-                  !newContact.residence ||
-                  !newContact.phoneNumber ||
-                  !newContact.relation
-                }
                 onClick={handleSaveNewContact}
                 className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
               >

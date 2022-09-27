@@ -32,6 +32,7 @@ import {
   resetCreate,
   resetUpdate,
   updateEmployee,
+  getNewLandD, getNewLandDError, getNewLandDStatus, resetCreateLandD
 } from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -87,9 +88,9 @@ export type ProfileModel = {
   handleUpdateEmployee: React.Dispatch<any>;
   getIcon: any;
   failed: any;
-  setOpenNotif: React.Dispatch<any>;
+  resetNotif: any;
   setEducationalBgData: React.Dispatch<any[]>;
-  educationalBgData: any[],
+  educationalBgData: any[];
 };
 
 export const ProfileCtx = createContext<ProfileModel>({
@@ -111,7 +112,7 @@ export const ProfileCtx = createContext<ProfileModel>({
   handleUpdateEmployee: () => {},
   getIcon: () => {},
   failed: () => {},
-  setOpenNotif: () => { },
+  resetNotif: () => { },
   setEducationalBgData: () => { },
   educationalBgData: [],
 });
@@ -121,6 +122,9 @@ export type EnumI = {
   type: string;
   code: string;
   name: string;
+  Cleansing_Days?: number;
+  Category?: string;
+  Level?: string;
 };
 
 export type EnumsI = {
@@ -138,6 +142,8 @@ export type EnumsI = {
   allowance_types: EnumI[];
   disciplinary_actions: EnumI[];
   employment_types: EnumI[];
+  payroll_group: EnumI[];
+  payment_method: EnumI[];
 };
 
 const enumsInitialState = {
@@ -155,6 +161,8 @@ const enumsInitialState = {
   allowance_types: [],
   disciplinary_actions: [],
   employment_types: [],
+  payroll_group: [],
+  payment_method:[]
 };
 
 const ProfileMain = ({
@@ -215,15 +223,44 @@ const ProfileMain = ({
 
   // Employee History
   const employeeHistoryData = useSelector(_getEmployeeHistoryData);
-  const employeeHistoryStatus = useSelector(_getEmployeeHistoryStatus);
-  const employeeHistoryError = useSelector(_getEmployeeHistoryError);
+  
+  // Learning and Development
+  const newLandDStatus = useSelector(getNewLandDStatus);
+  const newCreatedLandD = useSelector(getNewLandD);
+  const newLandDError = useSelector(getNewLandDError);
 
+  /**Learning and Development: NEW */
+  useEffect(() => { 
+    console.log({newLandDStatus})
+    if (newLandDStatus !== 'idle') {
+      if (newCreatedLandD && newLandDStatus === 'succeeded') {
+        // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
+        success(resetCreateLandD(), "newCreatedLandD");
+      } else {
+        failed(newLandDError);
+      }
+    }
+  }, [newLandDStatus])
+
+  /**Learning and Development: UPDATE */
+  // useEffect(() => { 
+  //   if (newLandDStatus !== 'idle') {
+  //     if (newCreatedLandD && newLandDStatus === 'succeeded') {
+  //       // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
+  //       success(resetCreateLandD());
+  //     } else {
+  //       failed(newLandDError);
+  //     }
+  //   }
+  // }, [newLandDStatus])
+
+  /** Employees: NEW */
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
     if (newEmployeeStatus !== 'idle') {
       if (newEmployeeData && newEmployeeStatus === 'succeeded') {
         // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
-        success();
+        success(resetCreate(), "newEmployeeStatus");
       } else {
         failed(newEmployeeError);
       }
@@ -234,13 +271,14 @@ const ProfileMain = ({
     console.log({ employeeHistoryData });
     handleHistory();
   }, [employeeHistoryData]);
-  console.log({ employeeUpdatedStatus });
+
+  /** Employees: UPDATE */
   useEffect(() => {
     if (employeeUpdatedStatus !== 'idle') {
       if (employeeUpdateError) {
         failed(employeeUpdateError);
       } else {
-        success();
+        success(resetUpdate(), "employeeUpdatedStatus");
         const updatedDetailsTmp = updatedDetails;
         clearUpdatedDetails();
         setEmployeeDetails((prev: EmployeeI) => {
@@ -263,7 +301,7 @@ const ProfileMain = ({
       );
     }
   }, [access_token, employeeNo]);
-console.log({educationalBgData}, {employeeDetails})
+console.log({updatedDetails}, {employeeDetails})
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex(index);
@@ -317,7 +355,8 @@ console.log({educationalBgData}, {employeeDetails})
     setEducationalBgData(employeeData?.educationalBackground || [])
   };
 
-  const success = () => {
+  const success = (cb: any, test: string) => {
+    console.log({test})
     setLoading({ status: false, action: '' });
     setRefresh(true);
     const type = isNew ? 'created' : 'updated';
@@ -327,14 +366,14 @@ console.log({educationalBgData}, {employeeDetails})
         status: true,
         severity: 'success',
       });
-      dispatch(resetCreate());
+      dispatch(cb);
     } else {
       setOpenNotif({
         message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully ${type}.`,
         status: true,
         severity: 'success',
       });
-      dispatch(resetUpdate());
+      dispatch(cb);
     }
 
     setTimeout(() => {
@@ -357,6 +396,14 @@ console.log({educationalBgData}, {employeeDetails})
     });
   };
 
+  const resetNotif = () => {
+    setOpenNotif({
+      message: "",
+      status: false,
+      severity: '',
+    });
+  }
+
   useEffect(() => {
     var positions: any = [],
       departments: any = [],
@@ -371,7 +418,9 @@ console.log({educationalBgData}, {employeeDetails})
       allowance_types: any = [],
       disciplinary_actions: any = [],
       employment_types: any = [],
-      gender: any = [];
+      gender: any = [],
+      payroll_group: any = [],
+      payment_method: any = [];
 
     enumsData.forEach((o: any) => {
       switch (o.type.toLowerCase()) {
@@ -402,20 +451,26 @@ console.log({educationalBgData}, {employeeDetails})
         case 'rank':
           ranks.push(o);
           break;
-        case 'asset':
+        case 'assettype':
           assets.push(o);
           break;
-        case '201_file_types':
+        case 'documenttype':
           file201.push(o);
           break;
-        case 'allowance_type':
+        case 'allowancetype':
           allowance_types.push(o);
           break;
-        case 'disciplinary_action':
+        case 'offenselevel':
           disciplinary_actions.push(o);
           break;
         case 'employmenttype':
           employment_types.push(o);
+          break;
+        case 'payrollgroup':
+          payroll_group.push(o);
+          break;
+        case 'paymentmethod':
+          payment_method.push(o);
           break;
       }
     });
@@ -434,6 +489,8 @@ console.log({educationalBgData}, {employeeDetails})
       allowance_types,
       disciplinary_actions,
       employment_types,
+      payroll_group,
+      payment_method
     });
   }, [enumsData]);
 
@@ -528,23 +585,38 @@ console.log({educationalBgData}, {employeeDetails})
 
   const getIcon = (icon: SvgIconComponent, col: string) => {
     if (updatedDetails) {
+      const badgeIcon = <Badge badgeContent=' ' color='error' variant='dot'>
+        {icon}
+      </Badge>
       const checkPersonalChanges = () => {
         return personalCols.some((x: any) => updatedDetails.hasOwnProperty(x));
       };
-      const checkComBenChanges = () => {
-        return compensationBenefitsCols.some((x: any) => updatedDetails.hasOwnProperty(x)) || 
-        payrollInfoCols.some((x: any) => updatedDetails.hasOwnProperty(x))
+      const checkGovtChanges = () => {
+        return compensationBenefitsCols.some((x: any) => updatedDetails.hasOwnProperty(x))
       };
-      if (
-        (col && updatedDetails.hasOwnProperty(col)) ||
-        (index === "1" && !col && checkPersonalChanges()) ||
-        (index === "3" && !col && checkComBenChanges())
-      ) {
-        return (
-          <Badge badgeContent=' ' color='error' variant='dot'>
-            {icon}
-          </Badge>
-        );
+      const checkPayrollInfoChanges = () => {
+        return payrollInfoCols.some((x: any) => updatedDetails.hasOwnProperty(x))
+      };
+      switch (col) {
+        case "Personal":
+          if (checkPersonalChanges()) {
+            return badgeIcon;
+          }
+          break;
+        case "Government":
+          if (checkGovtChanges()) {
+            return badgeIcon;
+          }
+          break;
+        case "PayrollInfo":
+          if (checkPayrollInfoChanges()) {
+            return badgeIcon;
+          }
+          break;
+        default:
+          if (updatedDetails.hasOwnProperty(col)) {
+            return badgeIcon;
+          }
       }
     }
     return icon;
@@ -568,8 +640,8 @@ console.log({educationalBgData}, {employeeDetails})
         handleUpdateEmployee,
         getIcon,
         failed,
-        setOpenNotif,
         setEducationalBgData, educationalBgData,
+        resetNotif
       }}
     >
       <Dialog open={loading.status}>

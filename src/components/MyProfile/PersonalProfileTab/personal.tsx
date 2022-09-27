@@ -181,8 +181,7 @@ const Personal = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Personal Information'
-      // icon={AccountCircleTwoTone}
-      icon={()=>getIcon(<AccountCircleTwoTone />, "")}
+      icon={()=>getIcon(<AccountCircleTwoTone />, "Personal")}
       open
     >
       <GridWrapper colSize='7'>

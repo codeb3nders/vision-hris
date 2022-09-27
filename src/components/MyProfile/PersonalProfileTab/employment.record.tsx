@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { BadgeTwoTone, Delete } from '@mui/icons-material';
+import { BadgeTwoTone, Delete, SaveTwoTone } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import CollapseWrapper from './collapse.wrapper';
@@ -47,34 +47,17 @@ const EmploymentRecord = (props: Props) => {
   useEffect(() => {
     if (withUpdate) {
       if (!isNew) {
-        if (withData) {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              employmentRecords: records
-            }
-          })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            const { employmentRecords, ...rest } = prev;
-            return {
-              ...rest
-            }
-          })
-        }
-      }
-      if (withData) {
-        setEmployeeDetails((prev:EmployeeI) => {
+        setUpdatedDetails((prev: any) => {
           return {
             ...prev,
             employmentRecords: records
           }
         })
       } else {
-        setEmployeeDetails((prev: any) => {
-          const { employmentRecords, ...rest } = prev;
+        setEmployeeDetails((prev:EmployeeI) => {
           return {
-            ...rest
+            ...prev,
+            employmentRecords: records
           }
         })
       }
@@ -119,7 +102,7 @@ const EmploymentRecord = (props: Props) => {
 };
 
 const RecordDialog = ({ open, setOpen, setRecords, setWithUpdate }) => {
-  const { failed, setOpenNotif } = useContext(ProfileCtx);
+  const { failed, resetNotif } = useContext(ProfileCtx);
   const [data, setData] = useState<any>({});
 
   const handleSave = async() => {
@@ -149,7 +132,7 @@ const RecordDialog = ({ open, setOpen, setRecords, setWithUpdate }) => {
   useEffect(() => {
     if (!open) {
       setData(initialData);
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 
@@ -251,12 +234,21 @@ const RecordDialog = ({ open, setOpen, setRecords, setWithUpdate }) => {
           }
         />
 
-        <button
-          className='px-2 py-1 w-full bg-green-500 text-white'
-          onClick={handleSave}
-        >
-          Save Employment Record
-        </button>
+        <div className='grid grid-cols-7'>
+          <button
+            onClick={handleSave}
+            className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+          >
+            <SaveTwoTone fontSize='small' className='mr-2' />
+            Save
+          </button>
+          <button
+            className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </Dialog>
   );

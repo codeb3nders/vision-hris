@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import {
   Delete,
+  Edit,
   LaptopChromebookTwoTone,
   SaveTwoTone,
 } from '@mui/icons-material';
@@ -21,32 +22,65 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import AddButton from 'CustomComponents/AddButton';
 import { ProfileCtx } from '../profile.main';
 import GridWrapper from 'CustomComponents/GridWrapper';
+import { AppCtx } from 'App';
+import { useDispatch, useSelector } from 'react-redux';
+import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
+import { createAssetAction } from 'slices/assets/createSlice';
+import { getByEmployeeNoAction, getEmployeeAssetsData, getEmployeeAssetsStatus } from 'slices/assets/getSlice';
+import { deleteAssetAction, getAssetDeleteStatus } from 'slices/assets/deleteSlice';
 
 type Props = {};
 
 type AssetModel = {
   assetName: any;
-  assetType: string;
+  assetType: any;
   assetDetails: string;
   assetSerialNumber: string;
-  dateAssigned: string;
-  dateReturned: string;
+  dateAssigned: Date | null;
+  dateReturned: Date | null;
   remarks: string;
 };
 
 const AssetsTable = (props: Props) => {
-  const { setUpdatedDetails, isNew } = useContext(ProfileCtx);
+  const { setUpdatedDetails, isNew, employeeDetails } = useContext(ProfileCtx);
   const [rows, setRows] = useState<AssetModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const employeeAssets = useSelector(getEmployeeAssetsData);
+  const employeeAssetsStatus = useSelector(getEmployeeAssetsStatus);
+  const employeeDeleteAssetStatus = useSelector(getAssetDeleteStatus);
+  const { access_token } = useContext(AppCtx);
 
-  const handleDelete = (params: any) => {
-    setRows((prev: any) => {
-      const filtered = prev.filter(
-        (a: any) => a.assetName !== params.row.assetName
-      );
-      return filtered;
-    });
+  useEffect(() => {
+    if (employeeAssetsStatus !== "idle") {
+      console.log({employeeAssets})
+      setRows(employeeAssets)
+    }
+  }, [employeeAssetsStatus])
+
+  useEffect(() => {
+    if (employeeDetails.employeeNo) {
+      getData();
+    }
+  }, [employeeDetails.employeeNo])
+
+  useEffect(() => {
+    if (employeeDeleteAssetStatus === "succeeded") {
+      getData();
+    }
+  }, [employeeDeleteAssetStatus])
+
+  const getData = async () => {
+    await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
+  }
+
+  const handleDelete = async(id: string) => {
+    await dispatch(deleteAssetAction({id, access_token}))
   };
+
+  const handleEdit = async (id?: string) => {
+    
+  }
 
   useEffect(() => {
     !isNew &&
@@ -62,16 +96,16 @@ const AssetsTable = (props: Props) => {
 
   return (
     <div>
-      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} />
+      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} />
       <div style={{ width: '100%' }}>
         <DataGrid
           autoHeight
           disableSelectionOnClick
           rows={rows}
-          columns={columns(handleDelete)}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          checkboxSelection
+          columns={columns(handleDelete, handleEdit)}
+          pageSize={30}
+          rowsPerPageOptions={[30]}
+          hideFooter={true}
           getRowHeight={() => 'auto'}
           getRowId={(data) => data.assetName}
         />
@@ -86,24 +120,59 @@ const initialState = {
   assetName: '',
   assetDetails: '',
   assetSerialNumber: '',
-  dateAssigned: '',
-  dateReturned: '',
+  dateAssigned: null,
+  dateReturned: null,
   remarks: '',
-  assetType: '',
+  assetType: "",
 };
 
-const AssetDialog = ({ open, setOpen, setRows }) => {
+const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
   const [newAsset, setNewAsset] = useState<AssetModel>(initialState);
-  const { enums } = useContext(ProfileCtx);
+  const { enums, resetNotif, failed } = useContext(ProfileCtx);
+  const dispatch = useDispatch();
+  const [assetTypes, setAssetTypes] = useState<any[]>([]);
 
-  const handleSaveNewAsset = () => {
-    setOpen(false);
-    setRows((prev: any) => [...prev, newAsset]);
-    setNewAsset(initialState);
+  useEffect(() => { 
+    setAssetTypes(enums.assets)
+  }, [enums])
+
+  useEffect(() => {
+    if (!open) {
+      setNewAsset(initialState)
+      resetNotif()
+    }
+  }, [open]);
+  
+  const handleSave = async () => {
+    const validateFields = async () => {
+        const dialog: any = document.getElementById("assets-dialog");
+        const required = dialog.querySelectorAll("[required]");
+        let invalidCtr = 0;
+
+        invalidCtr = await Array.from(required)
+          .filter((e: any) => !e.value)
+          .map((e: any) => e.id).length;
+
+        if (invalidCtr > 0) {
+          return failed(INCOMPLETE_FORM_MESSAGE);
+        }
+        return true;
+      }
+      //check inputs...
+    if (await validateFields()) {
+      setRows((prev: any) => [...prev, newAsset]);
+      try {
+        await dispatch(createAssetAction({ body: {...newAsset, employeeNo: employeeNo}, access_token }));
+      } catch (error: any) {
+        console.log(error);
+      }
+      setOpen(false);
+      setNewAsset(initialState);
+    }
   };
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => setOpen(false)} id="assets-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
           <LaptopChromebookTwoTone /> New Asset
@@ -146,7 +215,7 @@ const AssetDialog = ({ open, setOpen, setRows }) => {
                   setNewAsset({ ...newAsset, assetType: e.target.value })
                 }
               >
-                {enums.assets.map((asset) => {
+                {assetTypes.map((asset) => {
                   return (
                     <MenuItem key={asset.code} value={asset.code}>
                       {asset.name}
@@ -174,10 +243,10 @@ const AssetDialog = ({ open, setOpen, setRows }) => {
                 onChange={(value) =>
                   setNewAsset({
                     ...newAsset,
-                    dateAssigned: moment(value).format('LL'),
+                    dateAssigned: value,
                   })
                 }
-                value={new Date()}
+                value={newAsset.dateAssigned}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -191,10 +260,10 @@ const AssetDialog = ({ open, setOpen, setRows }) => {
                 onChange={(value) =>
                   setNewAsset({
                     ...newAsset,
-                    dateReturned: moment(value).format('LL'),
+                    dateReturned: value,
                   })
                 }
-                value={new Date()}
+                value={newAsset.dateReturned}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -215,20 +284,13 @@ const AssetDialog = ({ open, setOpen, setRows }) => {
           </div>
         </GridWrapper>
 
-        <div className='grid grid-cols-5'>
+        <div className='grid grid-cols-7'>
           <button
-            disabled={
-              !newAsset.assetName ||
-              !newAsset.assetDetails ||
-              !newAsset.assetSerialNumber ||
-              !newAsset.dateAssigned ||
-              !newAsset.dateReturned
-            }
-            onClick={handleSaveNewAsset}
-            className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+            onClick={handleSave}
+            className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
           >
             <SaveTwoTone fontSize='small' className='mr-2' />
-            Save Asset
+            Save
           </button>
           <button
             className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
@@ -242,7 +304,7 @@ const AssetDialog = ({ open, setOpen, setRows }) => {
   );
 };
 
-const columns: any = (handleDelete: any) => [
+const columns: any = (handleDelete: any, handleEdit:any) => [
   {
     field: 'assetName',
     headerName: 'Asset Name',
@@ -256,7 +318,7 @@ const columns: any = (handleDelete: any) => [
     headerName: 'Asset Type',
     flex: 1,
     renderCell: (params: any) => {
-      return params.value;
+      return params.row?.assetType?.name || params.value;
     },
   },
   {
@@ -280,7 +342,7 @@ const columns: any = (handleDelete: any) => [
     headerName: 'Date Assigned',
     flex: 1,
     renderCell: (params: any) => {
-      return params.value;
+      return params.value && moment(params.value).format('MM/DD/YYYY');
     },
   },
   {
@@ -288,24 +350,27 @@ const columns: any = (handleDelete: any) => [
     headerName: 'Date Returned',
     flex: 1,
     renderCell: (params: any) => {
-      return params.value;
+      return params.value && moment(params.value).format('MM/DD/YYYY');
     },
   },
   {
     field: 'remarks',
     headerName: 'Remarks',
+    flex: 1
+  },
+  {
+    field: 'actions',
+    headerName: 'Actions',
     flex: 1,
     renderCell: (params: any) => {
-      return (
-        <div className='flex flex-row items-center w-full gap-1'>
-          <span className='text-xs'>{params.value}</span>
-          <div className='flex-1 flex justify-end'>
-            <IconButton size='small' onClick={() => handleDelete(params)}>
-              <Delete />
-            </IconButton>
-          </div>
-        </div>
-      );
+      return <div>
+        <IconButton size='small' onClick={() => handleDelete(params.row?.id)}>
+          <Delete />
+        </IconButton>
+        <IconButton size='small' onClick={() => handleEdit(params.row?.id)}>
+          <Edit />
+        </IconButton>
+      </div>
     },
   },
 ];
