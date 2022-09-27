@@ -30,13 +30,13 @@ const initialData:FamilyI = {
   }
 
 const FamilyBackgroundForm = ({ open, setOpen, setFamily, setWithUpdate }: Props) => {
-  const { setOpenNotif, failed } = useContext(ProfileCtx);
+  const { resetNotif, failed } = useContext(ProfileCtx);
   const [newFamily, setNewFamily] = useState<FamilyI>(initialData);
 
   useEffect(() => {
     if (!open) {
       setNewFamily(initialData)
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 

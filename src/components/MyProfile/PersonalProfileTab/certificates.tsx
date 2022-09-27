@@ -97,7 +97,7 @@ const Certificates = (props: Props) => {
 };
 
 const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
-  const {setOpenNotif, failed} = useContext(ProfileCtx)
+  const {resetNotif, failed} = useContext(ProfileCtx)
   const [data, setData] = useState<any>({});
 
   const handleSave = async() => {
@@ -130,7 +130,7 @@ const LicensureDialog = ({ open, setOpen, setCertificates, setWithUpdate }) => {
   useEffect(() => {
     if (!open) {
       setData(initialData);
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 

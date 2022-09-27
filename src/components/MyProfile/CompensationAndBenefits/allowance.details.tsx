@@ -107,7 +107,7 @@ const AllowanceDetails = (props: Props) => {
 };
 
 const AllowanceDialog = ({ open, setOpen, setAllowances, enums, setWithUpdate }) => {
-  const { setOpenNotif, failed } = useContext(ProfileCtx);
+  const { resetNotif, failed } = useContext(ProfileCtx);
   const [allowance, setAllowance] = useState<{
     allowanceType: string;
     amount: string;
@@ -117,7 +117,7 @@ const AllowanceDialog = ({ open, setOpen, setAllowances, enums, setWithUpdate })
   useEffect(() => {
     if (!open) {
       setAllowance(initialData);
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 

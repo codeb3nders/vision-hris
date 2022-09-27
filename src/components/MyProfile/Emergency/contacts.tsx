@@ -40,7 +40,7 @@ const initialData = {
 }
 
 const Contacts = (props: Props) => {
-  const { isNew, setUpdatedDetails, employeeDetails, setEmployeeDetails, getIcon, failed, setOpenNotif } =
+  const { isNew, setUpdatedDetails, employeeDetails, setEmployeeDetails, getIcon, failed, resetNotif } =
     useContext(ProfileCtx);
   const [rows, setRows] = useState<ContactsI[]>([]);
   const [newContact, setNewContact] = useState<any>(initialData);
@@ -153,7 +153,7 @@ const Contacts = (props: Props) => {
   useEffect(() => {
     if (!open) {
       setNewContact(initialData);
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 

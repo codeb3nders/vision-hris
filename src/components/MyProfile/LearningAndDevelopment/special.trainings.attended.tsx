@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { LocalLibraryTwoTone, Add, Delete, Edit } from '@mui/icons-material';
+import { LocalLibraryTwoTone, Add, Delete, Edit, SaveTwoTone } from '@mui/icons-material';
 import {
   Dialog,
   FormControl,
@@ -13,6 +13,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { AppCtx } from 'App';
+import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
@@ -55,7 +56,7 @@ const SpecialTrainings = ({ type }: Props) => {
   const employeeTrainingsStatus = useSelector(getEmployeeLandDStatus);
   const employeeDeleteTrainingsStatus = useSelector(getLearnAndDevDeleteStatus);
   const { access_token } = useContext(AppCtx);
-  const {employeeDetails} = useContext(ProfileCtx)
+  const {employeeDetails, failed, resetNotif} = useContext(ProfileCtx)
   const [open, setOpen] = useState<boolean>(false);
   const [trainings, setTrainings] = useState<SpecialTrainingI[]>([]);
 
@@ -76,37 +77,11 @@ const SpecialTrainings = ({ type }: Props) => {
     if (employeeDeleteTrainingsStatus === "succeeded") {
       getData();
     }
-  }, [getLearnAndDevDeleteStatus])
+  }, [employeeDeleteTrainingsStatus])
 
   const getData = async () => {
     await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
   }
-
-  // useEffect(() => {
-  //   !isNew &&
-  //     trainings.length > 0 &&
-  //     (type === 'Attended'
-  //       ? setUpdatedDetails((prev: any) => ({
-  //           ...prev,
-  //           specialTrainingsAttended: trainings,
-  //         }))
-  //       : setUpdatedDetails((prev: any) => ({
-  //           ...prev,
-  //           specialTrainingsTaught: trainings,
-  //         })));
-
-  //   type === 'Attended'
-  //     ? trainings.length <= 0 &&
-  //       setUpdatedDetails((prev: any) => {
-  //         delete prev?.specialTrainingsAttended;
-  //         return prev;
-  //       })
-  //     : trainings.length <= 0 &&
-  //       setUpdatedDetails((prev: any) => {
-  //         delete prev?.specialTrainingsTaught;
-  //         return prev;
-  //       });
-  // }, [trainings]);
 
   const handleDelete = async(id: string) => {
     await dispatch(deleteLearningAndDevelopment({id, access_token}))
@@ -129,6 +104,8 @@ const SpecialTrainings = ({ type }: Props) => {
         setTrainings={setTrainings}
         access_token={access_token}
         employeeNo={employeeDetails.employeeNo}
+        failed={failed}
+        resetNotif={resetNotif}
       />
       <DataGrid
         rows={trainings}
@@ -159,24 +136,47 @@ const SpecialTrainings = ({ type }: Props) => {
   );
 };
 
-const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings, employeeNo, access_token }) => {
+const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings, employeeNo, access_token, failed, resetNotif }) => {
   const dispatch = useDispatch();
   const [training, setTraining] = useState<SpecialTrainingI>(initialData);
-console.log({training})
-  const handleSave = async() => {
-    setTrainings((prev: any) => [...prev, training]);
-    // setLoading({ status: true, action: 'Saving' });
-    try {
-      await dispatch(createLearningAndDevelopment({ body: {...training, employeeNo: employeeNo}, access_token }));
-    } catch (error: any) {
-      // setLoading({ status: false, action: '' });
-      console.log(error);
+
+  useEffect(() => {
+    if (!open) {
+      setTraining(initialData)
+      resetNotif()
     }
-    setOpen(false);
+  }, [open]);
+
+  const handleSave = async () => {
+    const validateFields = async () => {
+        const dialog: any = document.getElementById("trainings-dialog");
+        const required = dialog.querySelectorAll("[required]");
+        let invalidCtr = 0;
+
+        invalidCtr = await Array.from(required)
+          .filter((e: any) => !e.value)
+          .map((e: any) => e.id).length;
+
+        if (invalidCtr > 0) {
+          return failed(INCOMPLETE_FORM_MESSAGE);
+        }
+        return true;
+      }
+      //check inputs...
+    if (await validateFields()) {
+      setTrainings((prev: any) => [...prev, training]);
+      try {
+        await dispatch(createLearningAndDevelopment({ body: {...training, employeeNo: employeeNo}, access_token }));
+      } catch (error: any) {
+        console.log(error);
+      }
+      setOpen(false);
+      setTraining(initialData)
+    }
   };
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => setOpen(false)} id="trainings-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
           <LocalLibraryTwoTone fontSize='small' /> Add {type} Training
@@ -383,28 +383,21 @@ console.log({training})
           )}
         </GridWrapper>
 
-        <button
-          className='px-2 py-1 w-full bg-green-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed'
-          onClick={handleSave}
-          disabled={
-            !training.courseTitle &&
-            !training.institution &&
-            !training.venue &&
-            !training.startDate &&
-            !training.endDate
-          }
-        >
-          Save {type} Training
-        </button>
-        <button
-          className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-          // onClick={() => {
-          //   setEditEmployment(null);
-          //   dispatch(resetUpdate())
-          // }}
-        >
-          Cancel
-        </button>
+        <div className='grid grid-cols-7'>
+          <button
+            onClick={handleSave}
+            className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+          >
+            <SaveTwoTone fontSize='small' className='mr-2' />
+            Save
+          </button>
+          <button
+            className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </Dialog>
   );

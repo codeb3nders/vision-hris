@@ -87,7 +87,7 @@ const Licensure = (props: Props) => {
 };
 
 const LicensureDialog = ({ open, setOpen, setExams, setWithUpdate }) => {
-  const { failed, setOpenNotif } = useContext(ProfileCtx);
+  const { failed, resetNotif } = useContext(ProfileCtx);
   const [data, setData] = useState<any>({});
 
   const handleSave = async () => {
@@ -129,7 +129,7 @@ const LicensureDialog = ({ open, setOpen, setExams, setWithUpdate }) => {
         dateTaken: '',
         rating: '',
       });
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 

@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { deleteLandDEndpoint } from 'apis/learningAndDev';
-import { LearningAndDevelopmentI } from 'slices/interfaces/learningAndDevelopmentI';
+import { deleteAssetEndpoint } from 'apis/assets';
 
 const initialState: any = {
     data: null,
@@ -9,31 +8,31 @@ const initialState: any = {
 };
 
 
-export const deleteLearningAndDevelopment: any = createAsyncThunk(
-  'learningAndDevelopment/delete',
+export const deleteAssetAction: any = createAsyncThunk(
+  'asset/delete',
   async (data: { id: string; access_token: string }) => {
     try {
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      return await deleteLandDEndpoint(data.id, config);
+      return await deleteAssetEndpoint(data.id, config);
     } catch (err: any) {
-      console.error('ERROR in deleteLearningAndDevelopment', err);
+      console.error('ERROR in deleteAssetAction', err);
       return err;
     }
   }
 );
 
-export const deleteLearnAndDevSlice = createSlice({
-    name: 'LandD-delete',
+export const deleteAssetSlice = createSlice({
+    name: 'asset-delete',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(deleteLearningAndDevelopment.pending, (state) => {
+            .addCase(deleteAssetAction.pending, (state) => {
                 state.status = 'loading';
             })
-            .addCase(deleteLearningAndDevelopment.fulfilled, (state, action) => {
+            .addCase(deleteAssetAction.fulfilled, (state, action) => {
                 console.log({ action });
                 if (action.payload.response) {
                     const { status, data } = action.payload.response;
@@ -44,14 +43,14 @@ export const deleteLearnAndDevSlice = createSlice({
                     // state.data = action.payload.data;
                 }
             })
-            .addCase(deleteLearningAndDevelopment.rejected, (state, action) => {
+            .addCase(deleteAssetAction.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
             });
     },
 });
 
-export const getLearnAndDevDeleteStatus = (state: any) => state.deleteLearnAndDev.status;
-export const getLearnAndDevDeleteError = (state: any) => state.deleteLearnAndDev.error;
+export const getAssetDeleteStatus = (state: any) => state.deleteAsset.status;
+export const getAssetDeleteError = (state: any) => state.deleteAsset.error;
 
-export default deleteLearnAndDevSlice.reducer;
+export default deleteAssetSlice.reducer;

@@ -21,12 +21,16 @@ import createLearnAndDevSlice from "slices/learningAndDevelopment/createSlice";
 import updateLearnAndDevSlice from "slices/learningAndDevelopment/updateSlice";
 import deleteLearnAndDevSlice from "slices/learningAndDevelopment/deleteSlice";
 import getLearnAndDevSlice from "slices/learningAndDevelopment/getSlice";
+import createAssetSlice from "slices/assets/createSlice";
+import getAssetsSlice from "slices/assets/getSlice";
+import updateAssetSlice from "slices/assets/updateSlice";
+import deleteAssetSlice from "slices/assets/deleteSlice";
 
 const rootPersistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['employeesWithLeave', 'userAccess', 'newEmployee', 'filteredEmployees', 'updatedEmployee', 'employeeHistory', 'newLearningAndDev', 'updatedLearnAndDev', 'deleteLearnAndDev']
+  blacklist: ['employeesWithLeave', 'userAccess', 'newEmployee', 'filteredEmployees', 'updatedEmployee', 'employeeHistory', 'newLearningAndDev', 'updatedLearnAndDev', 'deleteLearnAndDev', 'newAsset', 'getAssets', 'updateAssetSlice', 'deleteAssetSlice']
 }
 
 const appReducer = combineReducers({
@@ -42,7 +46,11 @@ const appReducer = combineReducers({
   newLearningAndDev: createLearnAndDevSlice,
   updatedLearnAndDev: updateLearnAndDevSlice,
   deleteLearnAndDev: deleteLearnAndDevSlice,
-  getLearnAndDev: getLearnAndDevSlice
+  getLearnAndDev: getLearnAndDevSlice,
+  newAsset: createAssetSlice,
+  getAssets: getAssetsSlice,
+  updatedAsset: updateAssetSlice,
+  deleteAsset: deleteAssetSlice,
 })
 
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);

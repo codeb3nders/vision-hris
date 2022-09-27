@@ -102,7 +102,7 @@ const EmploymentRecord = (props: Props) => {
 };
 
 const RecordDialog = ({ open, setOpen, setRecords, setWithUpdate }) => {
-  const { failed, setOpenNotif } = useContext(ProfileCtx);
+  const { failed, resetNotif } = useContext(ProfileCtx);
   const [data, setData] = useState<any>({});
 
   const handleSave = async() => {
@@ -132,7 +132,7 @@ const RecordDialog = ({ open, setOpen, setRecords, setWithUpdate }) => {
   useEffect(() => {
     if (!open) {
       setData(initialData);
-      setOpenNotif({ message: '', status: false, severity: '' })
+      resetNotif()
     }
   }, [open]);
 

@@ -88,7 +88,7 @@ export type ProfileModel = {
   handleUpdateEmployee: React.Dispatch<any>;
   getIcon: any;
   failed: any;
-  setOpenNotif: React.Dispatch<any>;
+  resetNotif: any;
   setEducationalBgData: React.Dispatch<any[]>;
   educationalBgData: any[];
 };
@@ -112,7 +112,7 @@ export const ProfileCtx = createContext<ProfileModel>({
   handleUpdateEmployee: () => {},
   getIcon: () => {},
   failed: () => {},
-  setOpenNotif: () => { },
+  resetNotif: () => { },
   setEducationalBgData: () => { },
   educationalBgData: [],
 });
@@ -396,6 +396,14 @@ console.log({updatedDetails}, {employeeDetails})
     });
   };
 
+  const resetNotif = () => {
+    setOpenNotif({
+      message: "",
+      status: false,
+      severity: '',
+    });
+  }
+
   useEffect(() => {
     var positions: any = [],
       departments: any = [],
@@ -443,7 +451,7 @@ console.log({updatedDetails}, {employeeDetails})
         case 'rank':
           ranks.push(o);
           break;
-        case 'asset':
+        case 'assettype':
           assets.push(o);
           break;
         case 'documenttype':
@@ -632,8 +640,8 @@ console.log({updatedDetails}, {employeeDetails})
         handleUpdateEmployee,
         getIcon,
         failed,
-        setOpenNotif,
         setEducationalBgData, educationalBgData,
+        resetNotif
       }}
     >
       <Dialog open={loading.status}>
