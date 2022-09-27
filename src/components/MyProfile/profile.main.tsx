@@ -301,7 +301,7 @@ const ProfileMain = ({
       );
     }
   }, [access_token, employeeNo]);
-console.log({educationalBgData}, {employeeDetails})
+console.log({updatedDetails}, {employeeDetails})
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex(index);
@@ -446,13 +446,13 @@ console.log({educationalBgData}, {employeeDetails})
         case 'asset':
           assets.push(o);
           break;
-        case '201_file_types':
+        case 'documenttype':
           file201.push(o);
           break;
-        case 'allowance_type':
+        case 'allowancetype':
           allowance_types.push(o);
           break;
-        case 'disciplinary_action':
+        case 'offenselevel':
           disciplinary_actions.push(o);
           break;
         case 'employmenttype':

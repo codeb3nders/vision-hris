@@ -34,34 +34,17 @@ const Certificates = (props: Props) => {
   useEffect(() => {
     if (withUpdate) {
       if (!isNew) {
-        if (withData) {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              licensesCertifications: certificates
-            }
-          })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            const { licensesCertifications, ...rest } = prev;
-            return {
-              ...rest
-            }
-          })
-        }
-      }
-      if (withData) {
-        setEmployeeDetails((prev:EmployeeI) => {
+        setUpdatedDetails((prev: any) => {
           return {
             ...prev,
             licensesCertifications: certificates
           }
         })
       } else {
-        setEmployeeDetails((prev: any) => {
-          const { licensesCertifications, ...rest } = prev;
+        setEmployeeDetails((prev:EmployeeI) => {
           return {
-            ...rest
+            ...prev,
+            licensesCertifications: certificates
           }
         })
       }

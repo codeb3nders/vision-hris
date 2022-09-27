@@ -29,34 +29,17 @@ const Licensure = (props: Props) => {
   useEffect(() => {
     if (withUpdate) {
       if (!isNew) {
-        if (withData) {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              govtProfExamsPassed: exams
-            }
-          })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            const { govtProfExamsPassed, ...rest } = prev;
-            return {
-              ...rest
-            }
-          })
-        }
-      }
-      if (withData) {
-        setEmployeeDetails((prev:EmployeeI) => {
+        setUpdatedDetails((prev: any) => {
           return {
             ...prev,
             govtProfExamsPassed: exams
           }
         })
       } else {
-        setEmployeeDetails((prev: any) => {
-          const { govtProfExamsPassed, ...rest } = prev;
+        setEmployeeDetails((prev:EmployeeI) => {
           return {
-            ...rest
+            ...prev,
+            govtProfExamsPassed: exams
           }
         })
       }
@@ -154,7 +137,7 @@ const LicensureDialog = ({ open, setOpen, setExams, setWithUpdate }) => {
     <Dialog open={open} onClose={() => setOpen(false)} id="licensure-dialog">
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
-          <AdminPanelSettingsTwoTone fontSize='small' /> New Licensure
+          <AdminPanelSettingsTwoTone fontSize='small' /> Add Licensure
           Examination
         </p>
 

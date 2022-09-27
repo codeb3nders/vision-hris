@@ -54,39 +54,22 @@ const Contacts = (props: Props) => {
   useEffect(() => {
     if (withUpdate) {
       if (!isNew) {
-        if (withData) {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              emergencyContact: rows
-            }
-          })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            const { emergencyContact, ...rest } = prev;
-            return {
-              ...rest
-            }
-          })
-        }
-      }
-      if (withData) {
-        setEmployeeDetails((prev:EmployeeI) => {
+        setUpdatedDetails((prev: any) => {
           return {
             ...prev,
             emergencyContact: rows
           }
         })
       } else {
-        setEmployeeDetails((prev: any) => {
-          const { emergencyContact, ...rest } = prev;
+        setEmployeeDetails((prev:EmployeeI) => {
           return {
-            ...rest
+            ...prev,
+            emergencyContact: rows
           }
         })
       }
     }
-  }, [newContact])
+  }, [rows])
 
   useEffect(() => {
     const dbData:any[] = employeeDetails?.emergencyContact || [];
@@ -237,12 +220,6 @@ const Contacts = (props: Props) => {
             />
             <div className='grid grid-cols-5'>
               <button
-                disabled={
-                  !newContact.name ||
-                  !newContact.address ||
-                  !newContact.contactNumber ||
-                  !newContact.relation
-                }
                 onClick={handleSaveNewContact}
                 className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
               >

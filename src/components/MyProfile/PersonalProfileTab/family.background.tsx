@@ -38,34 +38,17 @@ const FamilyBackground = (props: Props) => {
   useEffect(() => {
     if (withUpdate) {
       if (!isNew) {
-        if (withData) {
-          setUpdatedDetails((prev: any) => {
-            return {
-              ...prev,
-              familyBackground: family
-            }
-          })
-        } else {
-          setUpdatedDetails((prev: any) => {
-            const { familyBackground, ...rest } = prev;
-            return {
-              ...rest
-            }
-          })
-        }
-      }
-      if (withData) {
-        setEmployeeDetails((prev:EmployeeI) => {
+        setUpdatedDetails((prev: any) => {
           return {
             ...prev,
             familyBackground: family
           }
         })
       } else {
-        setEmployeeDetails((prev: any) => {
-          const { familyBackground, ...rest } = prev;
+        setEmployeeDetails((prev:EmployeeI) => {
           return {
-            ...rest
+            ...prev,
+            familyBackground: family
           }
         })
       }
