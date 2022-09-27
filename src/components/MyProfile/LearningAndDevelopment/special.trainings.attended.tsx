@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { LocalLibraryTwoTone, Add, Delete } from '@mui/icons-material';
+import { LocalLibraryTwoTone, Add, Delete, Edit } from '@mui/icons-material';
 import {
   Dialog,
   FormControl,
@@ -12,9 +12,14 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AppCtx } from 'App';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createLearningAndDevelopment } from 'slices/learningAndDevelopment/createSlice';
+import { deleteLearningAndDevelopment, getLearnAndDevDeleteStatus } from 'slices/learningAndDevelopment/deleteSlice';
+import { getByEmployeeNoAction, getEmployeeLandDData, getEmployeeLandDStatus } from 'slices/learningAndDevelopment/getSlice';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { ProfileCtx } from '../profile.main';
 
@@ -28,51 +33,88 @@ export interface SpecialTrainingI {
   venue: string;
   startDate: string;
   endDate: string;
+  isAttended: boolean;
   status?: string;
   bondLength?: string;
   bondStartDate?: string;
   bondEndDate?: string;
 }
 
+const initialData = {
+    courseTitle: '',
+    institution: '',
+    venue: '',
+    startDate: '',
+    endDate: '',
+    isAttended: true
+  }
+
 const SpecialTrainings = ({ type }: Props) => {
-  const { setUpdatedDetails, isNew } = useContext(ProfileCtx);
+  const dispatch = useDispatch();
+  const employeeTrainings = useSelector(getEmployeeLandDData);
+  const employeeTrainingsStatus = useSelector(getEmployeeLandDStatus);
+  const employeeDeleteTrainingsStatus = useSelector(getLearnAndDevDeleteStatus);
+  const { access_token } = useContext(AppCtx);
+  const {employeeDetails} = useContext(ProfileCtx)
   const [open, setOpen] = useState<boolean>(false);
   const [trainings, setTrainings] = useState<SpecialTrainingI[]>([]);
 
   useEffect(() => {
-    !isNew &&
-      trainings.length > 0 &&
-      (type === 'Attended'
-        ? setUpdatedDetails((prev: any) => ({
-            ...prev,
-            specialTrainingsAttended: trainings,
-          }))
-        : setUpdatedDetails((prev: any) => ({
-            ...prev,
-            specialTrainingsTaught: trainings,
-          })));
+    if (employeeTrainingsStatus !== "idle") {
+      console.log({employeeTrainings})
+      setTrainings(employeeTrainings.filter((x: any) => x.isAttended === (type === "Attended")))
+    }
+  }, [employeeTrainingsStatus])
 
-    type === 'Attended'
-      ? trainings.length <= 0 &&
-        setUpdatedDetails((prev: any) => {
-          delete prev?.specialTrainingsAttended;
-          return prev;
-        })
-      : trainings.length <= 0 &&
-        setUpdatedDetails((prev: any) => {
-          delete prev?.specialTrainingsTaught;
-          return prev;
-        });
-  }, [trainings]);
+  useEffect(() => {
+    if (employeeDetails.employeeNo) {
+      getData();
+    }
+  }, [employeeDetails.employeeNo])
 
-  const handleDelete = (params: any) => {
-    setTrainings((prev: SpecialTrainingI[]) => {
-      return prev.filter(
-        (training: SpecialTrainingI) =>
-          training.courseTitle !== params.row.courseTitle
-      );
-    });
+  useEffect(() => {
+    if (employeeDeleteTrainingsStatus === "succeeded") {
+      getData();
+    }
+  }, [getLearnAndDevDeleteStatus])
+
+  const getData = async () => {
+    await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
+  }
+
+  // useEffect(() => {
+  //   !isNew &&
+  //     trainings.length > 0 &&
+  //     (type === 'Attended'
+  //       ? setUpdatedDetails((prev: any) => ({
+  //           ...prev,
+  //           specialTrainingsAttended: trainings,
+  //         }))
+  //       : setUpdatedDetails((prev: any) => ({
+  //           ...prev,
+  //           specialTrainingsTaught: trainings,
+  //         })));
+
+  //   type === 'Attended'
+  //     ? trainings.length <= 0 &&
+  //       setUpdatedDetails((prev: any) => {
+  //         delete prev?.specialTrainingsAttended;
+  //         return prev;
+  //       })
+  //     : trainings.length <= 0 &&
+  //       setUpdatedDetails((prev: any) => {
+  //         delete prev?.specialTrainingsTaught;
+  //         return prev;
+  //       });
+  // }, [trainings]);
+
+  const handleDelete = async(id: string) => {
+    await dispatch(deleteLearningAndDevelopment({id, access_token}))
   };
+
+  const handleEdit = async (id?: string) => {
+    
+  }
 
   return (
     <CollapseWrapper
@@ -85,20 +127,22 @@ const SpecialTrainings = ({ type }: Props) => {
         setOpen={setOpen}
         type={type}
         setTrainings={setTrainings}
+        access_token={access_token}
+        employeeNo={employeeDetails.employeeNo}
       />
       <DataGrid
         rows={trainings}
         columns={
           type === 'Attended'
-            ? attendedColumns(handleDelete)
-            : taughtColumns(handleDelete)
+            ? attendedColumns(handleDelete, handleEdit)
+            : taughtColumns(handleDelete, handleEdit)
         }
         autoHeight
         density='compact'
         disableSelectionOnClick
         pageSize={30}
         rowsPerPageOptions={[30]}
-        checkboxSelection={true}
+        checkboxSelection={false}
         loading={false}
         getRowId={(data: any) => data.courseTitle}
       />
@@ -115,17 +159,19 @@ const SpecialTrainings = ({ type }: Props) => {
   );
 };
 
-const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings }) => {
-  const [training, setTraining] = useState<SpecialTrainingI>({
-    courseTitle: '',
-    institution: '',
-    venue: '',
-    startDate: '',
-    endDate: '',
-  });
-
-  const handleSave = () => {
+const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings, employeeNo, access_token }) => {
+  const dispatch = useDispatch();
+  const [training, setTraining] = useState<SpecialTrainingI>(initialData);
+console.log({training})
+  const handleSave = async() => {
     setTrainings((prev: any) => [...prev, training]);
+    // setLoading({ status: true, action: 'Saving' });
+    try {
+      await dispatch(createLearningAndDevelopment({ body: {...training, employeeNo: employeeNo}, access_token }));
+    } catch (error: any) {
+      // setLoading({ status: false, action: '' });
+      console.log(error);
+    }
     setOpen(false);
   };
 
@@ -189,7 +235,7 @@ const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings }) => {
           <div className='col-span-1'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
-                value={new Date()}
+                value={training.startDate || null}
                 label='Training Start Date'
                 onChange={(value: any) => {
                   setTraining((prev: any) => ({
@@ -214,7 +260,7 @@ const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings }) => {
           <div className='col-span-1'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
-                value={new Date()}
+                value={training.endDate || null}
                 label='Training End Date'
                 onChange={(value: any) => {
                   setTraining((prev: any) => ({
@@ -278,19 +324,19 @@ const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings }) => {
                       }));
                     }}
                   >
-                    <MenuItem value='6 Months'>6 Months</MenuItem>
-                    <MenuItem value='12 Months'>12 Months</MenuItem>
-                    <MenuItem value='24 Months'>24 Months</MenuItem>
-                    <MenuItem value='36 Months'>36 Months</MenuItem>
-                    <MenuItem value='48 Months'>48 Months</MenuItem>
-                    <MenuItem value='60 Months'>60 Months</MenuItem>
+                    <MenuItem value={ 6}>6 Months</MenuItem>
+                    <MenuItem value={12}>12 Months</MenuItem>
+                    <MenuItem value={24}>24 Months</MenuItem>
+                    <MenuItem value={36}>36 Months</MenuItem>
+                    <MenuItem value={48}>48 Months</MenuItem>
+                    <MenuItem value={60}>60 Months</MenuItem>
                   </Select>
                 </FormControl>
               </div>
               <div className='col-span-1'>
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                   <DatePicker
-                    value={new Date()}
+                    value={training.bondStartDate || null}
                     label='Training Bond Start Date'
                     onChange={(value: any) => {
                       setTraining((prev: any) => ({
@@ -313,7 +359,7 @@ const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings }) => {
               <div className='col-span-1'>
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                   <DatePicker
-                    value={new Date()}
+                    value={training.bondEndDate || null}
                     label='Training Bond End Date'
                     onChange={(value: any) => {
                       setTraining((prev: any) => ({
@@ -350,91 +396,111 @@ const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings }) => {
         >
           Save {type} Training
         </button>
+        <button
+          className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+          // onClick={() => {
+          //   setEditEmployment(null);
+          //   dispatch(resetUpdate())
+          // }}
+        >
+          Cancel
+        </button>
       </div>
     </Dialog>
   );
 };
 
-const attendedColumns = (handleDelete: any) => [
-  { field: 'courseTitle', headerName: 'Course Title', width: 200 },
-  { field: 'institution', headerName: 'Institution', width: 200 },
-  { field: 'venue', headerName: 'Address/Venue', width: 200 },
+const attendedColumns = (handleDelete: any, handleEdit:any) => [
+  { field: 'courseTitle', headerName: 'Course Title', flex: 1 },
+  { field: 'institution', headerName: 'Institution', flex: 1 },
+  { field: 'venue', headerName: 'Address/Venue', flex: 1 },
   {
     field: 'startDate',
-    headerName: 'Training Start Date',
-    width: 200,
+    headerName: 'Start Date',
+    flex: 1,
     renderCell: (params: any) => {
-      return moment(params.value).format('LL');
+      return moment(params.value).format('MM/DD/YYYY');
     },
   },
   {
     field: 'endDate',
-    headerName: 'Training End Date',
-    width: 200,
+    headerName: 'End Date',
+    flex: 1,
     renderCell: (params: any) => {
-      return moment(params.value).format('LL');
+      return moment(params.value).format('MM/DD/YYYY');
     },
   },
-  { field: 'status', headerName: 'Status', width: 200 },
+  { field: 'status', headerName: 'Status', flex: 1 },
   {
     field: 'bondLength',
-    headerName: 'Training Bond Length',
-    width: 200,
+    headerName: 'Bond Length',
+    flex: 1,
+    renderCell: (params: any) => {
+      return `${params.value} months`
+    },
   },
   {
     field: 'bondStartDate',
-    headerName: 'Training Bond Start Date',
-    width: 200,
+    headerName: 'Bond Start Date',
+    flex: 1,
     renderCell: (params: any) => {
-      return moment(params.value).format('LL');
+      return moment(params.value).format('MM/DD/YYYY');
     },
   },
   {
     field: 'bondEndDate',
-    headerName: 'Training Bond End Date',
-    width: 200,
+    headerName: 'Bond End Date',
+    flex: 1,
+    renderCell: (params: any) => moment(params.value).format('MM/DD/YYYY')
+  },
+  {
+    field: 'actions',
+    headerName: 'Actions',
+    flex: 1,
     renderCell: (params: any) => {
-      return (
-        <div className='flex flex-row items-center w-full gap-1'>
-          <span>{moment(params.value).format('LL')}</span>
-          <div className='flex-1 flex justify-end'>
-            <IconButton size='small' onClick={() => handleDelete(params)}>
-              <Delete />
-            </IconButton>
-          </div>
-        </div>
-      );
+      return <div>
+        <IconButton size='small' onClick={() => handleDelete(params.row?.id)}>
+          <Delete />
+        </IconButton>
+        <IconButton size='small' onClick={() => handleEdit(params.row?.id)}>
+          <Edit />
+        </IconButton>
+      </div>
     },
   },
 ];
 
-const taughtColumns = (handleDelete: any) => [
-  { field: 'courseTitle', headerName: 'Course Title', width: 200 },
-  { field: 'institution', headerName: 'Institution', width: 200 },
-  { field: 'address', headerName: 'Address/Venue', width: 200 },
+const taughtColumns = (handleDelete: any, handleEdit:any) => [
+  { field: 'courseTitle', headerName: 'Course Title', flex: 1 },
+  { field: 'institution', headerName: 'Institution', flex: 1 },
+  { field: 'address', headerName: 'Address/Venue', flex: 1 },
   {
     field: 'startDate',
     headerName: 'Training Start Date',
-    width: 200,
+    flex: 1,
     renderCell: (params: any) => {
-      return moment(params.value).format('LL');
+      return moment(params.value).format('MM/DD/YYYY');
     },
   },
   {
     field: 'endDate',
     headerName: 'Training End Date',
-    width: 200,
+    flex: 1,
+    renderCell: (params: any) => moment(params.value).format('MM/DD/YYYY')
+  },
+  {
+    field: 'actions',
+    headerName: 'Actions',
+    flex: 1,
     renderCell: (params: any) => {
-      return (
-        <div className='flex flex-row items-center w-full gap-1'>
-          <span>{moment(params.value).format('LL')}</span>
-          <div className='flex-1 flex justify-end'>
-            <IconButton size='small' onClick={() => handleDelete(params)}>
-              <Delete />
-            </IconButton>
-          </div>
-        </div>
-      );
+      return <div>
+        <IconButton size='small' onClick={() => handleDelete(params.row?.id)}>
+          <Delete />
+        </IconButton>
+        <IconButton size='small' onClick={() => handleEdit(params.row?.id)}>
+          <Edit />
+        </IconButton>
+      </div>
     },
   },
 ];

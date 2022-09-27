@@ -32,6 +32,7 @@ import {
   resetCreate,
   resetUpdate,
   updateEmployee,
+  getNewLandD, getNewLandDError, getNewLandDStatus, resetCreateLandD
 } from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -222,15 +223,44 @@ const ProfileMain = ({
 
   // Employee History
   const employeeHistoryData = useSelector(_getEmployeeHistoryData);
-  const employeeHistoryStatus = useSelector(_getEmployeeHistoryStatus);
-  const employeeHistoryError = useSelector(_getEmployeeHistoryError);
+  
+  // Learning and Development
+  const newLandDStatus = useSelector(getNewLandDStatus);
+  const newCreatedLandD = useSelector(getNewLandD);
+  const newLandDError = useSelector(getNewLandDError);
 
+  /**Learning and Development: NEW */
+  useEffect(() => { 
+    console.log({newLandDStatus})
+    if (newLandDStatus !== 'idle') {
+      if (newCreatedLandD && newLandDStatus === 'succeeded') {
+        // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
+        success(resetCreateLandD(), "newCreatedLandD");
+      } else {
+        failed(newLandDError);
+      }
+    }
+  }, [newLandDStatus])
+
+  /**Learning and Development: UPDATE */
+  // useEffect(() => { 
+  //   if (newLandDStatus !== 'idle') {
+  //     if (newCreatedLandD && newLandDStatus === 'succeeded') {
+  //       // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
+  //       success(resetCreateLandD());
+  //     } else {
+  //       failed(newLandDError);
+  //     }
+  //   }
+  // }, [newLandDStatus])
+
+  /** Employees: NEW */
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
     if (newEmployeeStatus !== 'idle') {
       if (newEmployeeData && newEmployeeStatus === 'succeeded') {
         // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
-        success();
+        success(resetCreate(), "newEmployeeStatus");
       } else {
         failed(newEmployeeError);
       }
@@ -241,13 +271,14 @@ const ProfileMain = ({
     console.log({ employeeHistoryData });
     handleHistory();
   }, [employeeHistoryData]);
-  console.log({ employeeUpdatedStatus });
+
+  /** Employees: UPDATE */
   useEffect(() => {
     if (employeeUpdatedStatus !== 'idle') {
       if (employeeUpdateError) {
         failed(employeeUpdateError);
       } else {
-        success();
+        success(resetUpdate(), "employeeUpdatedStatus");
         const updatedDetailsTmp = updatedDetails;
         clearUpdatedDetails();
         setEmployeeDetails((prev: EmployeeI) => {
@@ -324,7 +355,8 @@ console.log({educationalBgData}, {employeeDetails})
     setEducationalBgData(employeeData?.educationalBackground || [])
   };
 
-  const success = () => {
+  const success = (cb: any, test: string) => {
+    console.log({test})
     setLoading({ status: false, action: '' });
     setRefresh(true);
     const type = isNew ? 'created' : 'updated';
@@ -334,14 +366,14 @@ console.log({educationalBgData}, {employeeDetails})
         status: true,
         severity: 'success',
       });
-      dispatch(resetCreate());
+      dispatch(cb);
     } else {
       setOpenNotif({
         message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully ${type}.`,
         status: true,
         severity: 'success',
       });
-      dispatch(resetUpdate());
+      dispatch(cb);
     }
 
     setTimeout(() => {

@@ -6,3 +6,4 @@ export * from "./userAccess/createUserAccessSlice";
 export * from "./employees/updateEmployeesSlice";
 export * from "./employees/filteredEmployeesSlice";
 export * from "./employee_history/getEmployeeHistorySlice";
+export * from "./learningAndDevelopment/createSlice";
