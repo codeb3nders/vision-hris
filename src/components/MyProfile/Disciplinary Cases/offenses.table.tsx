@@ -10,9 +10,14 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AppCtx } from 'App';
+import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import AddButton from 'CustomComponents/AddButton';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { ProfileCtx } from '../profile.main';
+import {createAction, getByEmployeeNoAction, updateAction, deleteAction} from 'slices/disciplinaryCases';
 
 type Props = {};
 
@@ -33,6 +38,9 @@ type OffenseI = {
 };
 
 const OffensesTable = (props: Props) => {
+  const dispatch = useDispatch();
+  const {employeeDetails, failed, resetNotif } = useContext(ProfileCtx);
+  const { access_token} = useContext(AppCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [offenses, setOffenses] = useState<OffenseI[]>([]);
   const [showAll, setShowAll] = useState<boolean>(false);
@@ -54,7 +62,15 @@ const OffensesTable = (props: Props) => {
 
   return (
     <div>
-      <OffenseDialog open={open} setOpen={setOpen} setOffenses={setOffenses} />
+      <OffenseDialog
+        open={open}
+        setOpen={setOpen}
+        setOffenses={setOffenses}
+        failed={failed}
+        employeeNo={employeeDetails.employeeNo}
+        access_token={access_token}
+        resetNotif={resetNotif}
+      />
       <div style={{ width: '100%' }}>
         <DataGrid
           autoHeight
@@ -68,7 +84,7 @@ const OffensesTable = (props: Props) => {
           getRowId={(data) => data.caseNumber}
         />
       </div>
-      <AddButton setOpen={setOpen} text='Add Offense' />
+      <AddButton setOpen={setOpen} text='Add Record' />
     </div>
   );
 };
@@ -89,13 +105,36 @@ const initialState: OffenseI = {
   aging: '',
 };
 
-const OffenseDialog = ({ open, setOpen, setOffenses }) => {
+const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_token, resetNotif }) => {
+  const dispatch = useDispatch();
   const [offense, setOffense] = useState<OffenseI>(initialState);
 
-  const handleSaveOffense = () => {
-    setOffenses((prev) => [...prev, offense]);
-    setOpen(false);
-    setOffense(initialState);
+  const handleSaveOffense = async() => {
+    const validateFields = async () => {
+        const dialog: any = document.getElementById("offense-dialog");
+        const required = dialog.querySelectorAll("[required]");
+        let invalidCtr = 0;
+
+        invalidCtr = await Array.from(required)
+          .filter((e: any) => !e.value)
+          .map((e: any) => e.id).length;
+
+        if (invalidCtr > 0) {
+          return failed(INCOMPLETE_FORM_MESSAGE);
+        }
+        return true;
+      }
+      //check inputs...
+    if (await validateFields()) {
+      setOffenses((prev) => [...prev, offense]);
+      try {
+        await dispatch(createAction({ body: {...offense, employeeNo}, access_token }));
+      } catch (error: any) {
+        console.log(error);
+      }
+      setOpen(false);
+      setOffense(initialState);
+    }
   };
 
   const subject = [],
@@ -110,10 +149,10 @@ const OffenseDialog = ({ open, setOpen, setOffenses }) => {
 
   const status = ['Open', 'Close'];
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => setOpen(false)} id="offense-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
-          <GavelTwoTone /> New Offense
+          <GavelTwoTone /> Add Disciplinary Case
         </p>
 
         <GridWrapper colSize='2'>
@@ -344,7 +383,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses }) => {
             className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
           >
             <SaveTwoTone fontSize='small' className='mr-2' />
-            Save Offense
+            Save
           </button>
           <button
             className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'

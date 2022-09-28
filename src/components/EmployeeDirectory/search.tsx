@@ -25,28 +25,28 @@ const Search = ({ setSearchText }: Props) => {
 
   return (
     <section className='flex-1 w-full desktop:max-w-[400px] laptop:max-w-[400px] tablet:max-w-full phone:max-w-full relative'>
-      <SearchTwoTone
+      {/* <SearchTwoTone
         className={`absolute left-[14px] top-[50%] translate-y-[-50%] cursor-pointer z-10 ${
           show ? 'opacity-0' : 'opacity-100'
         }`}
         onClick={() => setShow(true)}
-      />
+      /> */}
       <FormControl
         fullWidth
         size='small'
-        className={`transition-all duration-200 ${
-          show ? 'opacity-100' : 'opacity-0'
-        }`}
-        disabled={!show}
-        onBlur={searchValue ? () => {} : () => setShow(false)}
+        // className={`transition-all duration-200 ${
+        //   show ? 'opacity-100' : 'opacity-0'
+        // }`}
+        // disabled={!show}
+        // onBlur={searchValue ? () => {} : () => setShow(false)}
       >
-        {/* <InputLabel htmlFor='employee-search'>Search</InputLabel> */}
         <OutlinedInput
           autoFocus
+          placeholder='Search by Employee Name'
           ref={searchRef}
           id='employee-search'
           onChange={(e: any) => setSearchValue(e.target.value)}
-          startAdornment={<SearchTwoTone />}
+          endAdornment={<SearchTwoTone />}
         />
       </FormControl>
     </section>

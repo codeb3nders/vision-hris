@@ -31,8 +31,7 @@ import {
   getEmployeeUpdateError,
   resetCreate,
   resetUpdate,
-  updateEmployee,
-  getNewLandD, getNewLandDError, getNewLandDStatus, resetCreateLandD
+  updateEmployee
 } from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -224,36 +223,6 @@ const ProfileMain = ({
   // Employee History
   const employeeHistoryData = useSelector(_getEmployeeHistoryData);
   
-  // Learning and Development
-  const newLandDStatus = useSelector(getNewLandDStatus);
-  const newCreatedLandD = useSelector(getNewLandD);
-  const newLandDError = useSelector(getNewLandDError);
-
-  /**Learning and Development: NEW */
-  useEffect(() => { 
-    console.log({newLandDStatus})
-    if (newLandDStatus !== 'idle') {
-      if (newCreatedLandD && newLandDStatus === 'succeeded') {
-        // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
-        success(resetCreateLandD(), "newCreatedLandD");
-      } else {
-        failed(newLandDError);
-      }
-    }
-  }, [newLandDStatus])
-
-  /**Learning and Development: UPDATE */
-  // useEffect(() => { 
-  //   if (newLandDStatus !== 'idle') {
-  //     if (newCreatedLandD && newLandDStatus === 'succeeded') {
-  //       // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
-  //       success(resetCreateLandD());
-  //     } else {
-  //       failed(newLandDError);
-  //     }
-  //   }
-  // }, [newLandDStatus])
-
   /** Employees: NEW */
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });

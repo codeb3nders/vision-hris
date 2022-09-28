@@ -25,9 +25,15 @@ import GridWrapper from 'CustomComponents/GridWrapper';
 import { AppCtx } from 'App';
 import { useDispatch, useSelector } from 'react-redux';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
-import { createAssetAction } from 'slices/assets/createSlice';
-import { getByEmployeeNoAction, getEmployeeAssetsData, getEmployeeAssetsStatus } from 'slices/assets/getSlice';
-import { deleteAssetAction, getAssetDeleteStatus } from 'slices/assets/deleteSlice';
+import {
+  createAction,
+  deleteAction,
+  getByEmployeeNoAction,
+  data as getAssetsData, dataStatus as getAssetsDataStatus,
+  deleteStatus as getAssetDeleteStatus
+} from 'slices/assets';
+// import { getByEmployeeNoAction, getEmployeeAssetsData, getEmployeeAssetsStatus } from 'slices/assets/getSlice';
+// import { deleteAssetAction, getAssetDeleteStatus } from 'slices/assets/deleteSlice';
 
 type Props = {};
 
@@ -46,14 +52,14 @@ const AssetsTable = (props: Props) => {
   const [rows, setRows] = useState<AssetModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const employeeAssets = useSelector(getEmployeeAssetsData);
-  const employeeAssetsStatus = useSelector(getEmployeeAssetsStatus);
+  const employeeAssets = useSelector(getAssetsData);
+  const employeeAssetsStatus = useSelector(getAssetsDataStatus);
   const employeeDeleteAssetStatus = useSelector(getAssetDeleteStatus);
   const { access_token } = useContext(AppCtx);
+      console.log({rows})
 
   useEffect(() => {
     if (employeeAssetsStatus !== "idle") {
-      console.log({employeeAssets})
       setRows(employeeAssets)
     }
   }, [employeeAssetsStatus])
@@ -75,7 +81,7 @@ const AssetsTable = (props: Props) => {
   }
 
   const handleDelete = async(id: string) => {
-    await dispatch(deleteAssetAction({id, access_token}))
+    await dispatch(deleteAction({id, access_token}))
   };
 
   const handleEdit = async (id?: string) => {
@@ -162,7 +168,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
     if (await validateFields()) {
       setRows((prev: any) => [...prev, newAsset]);
       try {
-        await dispatch(createAssetAction({ body: {...newAsset, employeeNo: employeeNo}, access_token }));
+        await dispatch(createAction({ body: {...newAsset, employeeNo}, access_token }));
       } catch (error: any) {
         console.log(error);
       }
@@ -310,7 +316,7 @@ const columns: any = (handleDelete: any, handleEdit:any) => [
     headerName: 'Asset Name',
     flex: 1,
     renderCell: (params: any) => {
-      return params.value;
+      return `${params.value} - ${params.row.id}`;
     },
   },
   {

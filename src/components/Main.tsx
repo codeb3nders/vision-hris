@@ -89,8 +89,8 @@ const Main: React.FC<Props> = ({ role }) => {
                 component={EmployeeDatabase}
               />
               <PrivateRoute
-                is_allowed={isAllowed('employee_dept')}
-                path={HR.People.Departments}
+                is_allowed={isAllowed('employee_directory')}
+                path={HR.People.Directory}
                 component={EmployeeDirectory}
               />
               <Route path={Employee.Profile} component={ProfileMain} />

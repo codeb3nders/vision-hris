@@ -18,9 +18,12 @@ import GridWrapper from 'CustomComponents/GridWrapper';
 import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createLearningAndDevelopment } from 'slices/learningAndDevelopment/createSlice';
-import { deleteLearningAndDevelopment, getLearnAndDevDeleteStatus } from 'slices/learningAndDevelopment/deleteSlice';
-import { getByEmployeeNoAction, getEmployeeLandDData, getEmployeeLandDStatus } from 'slices/learningAndDevelopment/getSlice';
+import { createAction,
+  deleteAction,
+  getByEmployeeNoAction,
+  data as getData, dataStatus as getDataStatus,
+  deleteStatus as getDeleteStatus
+} from 'slices/learningAndDevelopment';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { ProfileCtx } from '../profile.main';
 
@@ -52,9 +55,9 @@ const initialData = {
 
 const SpecialTrainings = ({ type }: Props) => {
   const dispatch = useDispatch();
-  const employeeTrainings = useSelector(getEmployeeLandDData);
-  const employeeTrainingsStatus = useSelector(getEmployeeLandDStatus);
-  const employeeDeleteTrainingsStatus = useSelector(getLearnAndDevDeleteStatus);
+  const employeeTrainings = useSelector(getData);
+  const employeeTrainingsStatus = useSelector(getDataStatus);
+  const employeeDeleteTrainingsStatus = useSelector(getDeleteStatus);
   const { access_token } = useContext(AppCtx);
   const {employeeDetails, failed, resetNotif} = useContext(ProfileCtx)
   const [open, setOpen] = useState<boolean>(false);
@@ -69,22 +72,22 @@ const SpecialTrainings = ({ type }: Props) => {
 
   useEffect(() => {
     if (employeeDetails.employeeNo) {
-      getData();
+      handleData();
     }
   }, [employeeDetails.employeeNo])
 
   useEffect(() => {
     if (employeeDeleteTrainingsStatus === "succeeded") {
-      getData();
+      handleData();
     }
   }, [employeeDeleteTrainingsStatus])
 
-  const getData = async () => {
+  const handleData = async () => {
     await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
   }
 
   const handleDelete = async(id: string) => {
-    await dispatch(deleteLearningAndDevelopment({id, access_token}))
+    await dispatch(deleteAction({id, access_token}))
   };
 
   const handleEdit = async (id?: string) => {
@@ -166,7 +169,7 @@ const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings, employeeNo,
     if (await validateFields()) {
       setTrainings((prev: any) => [...prev, training]);
       try {
-        await dispatch(createLearningAndDevelopment({ body: {...training, employeeNo: employeeNo}, access_token }));
+        await dispatch(createAction({ body: {...training, employeeNo: employeeNo}, access_token }));
       } catch (error: any) {
         console.log(error);
       }
@@ -429,7 +432,7 @@ const attendedColumns = (handleDelete: any, handleEdit:any) => [
     headerName: 'Bond Length',
     flex: 1,
     renderCell: (params: any) => {
-      return `${params.value} months`
+      return params.value ? `${params.value} months` : ""
     },
   },
   {

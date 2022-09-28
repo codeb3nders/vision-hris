@@ -17,20 +17,20 @@ import NewEmployeeSlice from "slices/employees/createEmployeesSlice";
 import FilteredEmployeeSlice from "slices/employees/filteredEmployeesSlice";
 import UpdateEmployeeSlice from "slices/employees/updateEmployeesSlice";
 import employeeHistorySlice from "slices/employee_history/getEmployeeHistorySlice";
-import createLearnAndDevSlice from "slices/learningAndDevelopment/createSlice";
-import updateLearnAndDevSlice from "slices/learningAndDevelopment/updateSlice";
-import deleteLearnAndDevSlice from "slices/learningAndDevelopment/deleteSlice";
-import getLearnAndDevSlice from "slices/learningAndDevelopment/getSlice";
-import createAssetSlice from "slices/assets/createSlice";
-import getAssetsSlice from "slices/assets/getSlice";
-import updateAssetSlice from "slices/assets/updateSlice";
-import deleteAssetSlice from "slices/assets/deleteSlice";
+import learningAndDevelopmentSlice from "slices/learningAndDevelopment";
+import disciplinaryCaseSlice from "slices/disciplinaryCases";
+import assetsSlice from "slices/assets";
 
 const rootPersistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['employeesWithLeave', 'userAccess', 'newEmployee', 'filteredEmployees', 'updatedEmployee', 'employeeHistory', 'newLearningAndDev', 'updatedLearnAndDev', 'deleteLearnAndDev', 'newAsset', 'getAssets', 'updateAssetSlice', 'deleteAssetSlice']
+  blacklist: ['employeesWithLeave', 'userAccess',
+    'newEmployee', 'filteredEmployees', 'updatedEmployee', 'employeeHistory',
+    // 'newLearningAndDev', 'getLearnAndDev', 'updatedLearnAndDev', 'deleteLearnAndDev',
+    // 'newAsset', 'getAssets', 'updatedAsset', 'deleteAsset',
+    'disciplinaryCases', 'assets' ,'learningAndDevelopment'
+  ]
 }
 
 const appReducer = combineReducers({
@@ -43,14 +43,9 @@ const appReducer = combineReducers({
   filteredEmployees: FilteredEmployeeSlice,
   updatedEmployee: UpdateEmployeeSlice,
   employeeHistory: employeeHistorySlice,
-  newLearningAndDev: createLearnAndDevSlice,
-  updatedLearnAndDev: updateLearnAndDevSlice,
-  deleteLearnAndDev: deleteLearnAndDevSlice,
-  getLearnAndDev: getLearnAndDevSlice,
-  newAsset: createAssetSlice,
-  getAssets: getAssetsSlice,
-  updatedAsset: updateAssetSlice,
-  deleteAsset: deleteAssetSlice,
+  learningAndDevelopment: learningAndDevelopmentSlice,
+  disciplinaryCases: disciplinaryCaseSlice,
+  assets: assetsSlice
 })
 
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);

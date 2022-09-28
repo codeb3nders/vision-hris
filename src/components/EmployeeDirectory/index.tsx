@@ -15,12 +15,14 @@ import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
 import { getAvatar } from 'utils/functions';
 import { VISION_RED } from 'constants/Colors';
+import Search from './search';
 
 type Props = {};
 
 const EmployeeDirectory: React.FC<Props> = () => {
     const getEmployeeItems = useSelector(_getEmployeeItems);
     const [employees, setEmployees] = useState<EmployeeI[]>([]);
+    const [searchText, setSearchText] = useState<string>('');
 
     useEffect(() => {
         setEmployees(
@@ -34,6 +36,9 @@ const EmployeeDirectory: React.FC<Props> = () => {
 
     return <>
         <Card sx={{ mt: 5, p: 2 }}>
+            <section className='flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-left justify-left mb-2'>
+                <Search setSearchText={setSearchText} />
+            </section>
             <DataGrid
                 autoHeight
                 getRowHeight={() => 'auto'}
