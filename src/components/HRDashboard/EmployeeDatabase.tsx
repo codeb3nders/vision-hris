@@ -15,13 +15,15 @@ import {
   getAllEmployeesAction as _getEmployeesAction,
   getEmployeeStatus as _getEmployeeStatus,
   createUserAccess,
-  clearHistoryData, clearEmployeeDetails,
+  clearHistoryData,
+  clearEmployeeDetails,
 } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
+import Search from './../EmployeeDirectory/search';
 
 type Props = {};
 
@@ -52,6 +54,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const [open, setOpen] = useState(false);
   const [sendAccessList, setSendAccessList] = useState<string[]>([]);
 
+  const [searchText, setSearchText] = useState<string>('');
+
   useEffect(() => {
     if (location.pathname === '/people/employees') {
       setIsTable(true);
@@ -77,12 +81,12 @@ const EmployeeDatabase: React.FC<Props> = () => {
     setIsLoading(false);
   }, [getEmployeeItems]);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (!viewDetails.status) {
       dispatch(clearEmployeeDetails());
       dispatch(clearHistoryData());
     }
-  }, [viewDetails])
+  }, [viewDetails]);
 
   const columns = (setViewDetails: any) => [
     {
@@ -92,18 +96,18 @@ const EmployeeDatabase: React.FC<Props> = () => {
       renderCell: (cell) => {
         return (
           <Link
-              underline='none'
-              variant='button'
-              style={{ cursor: 'pointer' }}
-              onClick={() =>
-                setViewDetails({
-                  employeeNo: cell.row.employeeNo,
-                  status: true,
-                })
-              }
-            >
-              {cell.value}
-            </Link>
+            underline='none'
+            variant='button'
+            style={{ cursor: 'pointer' }}
+            onClick={() =>
+              setViewDetails({
+                employeeNo: cell.row.employeeNo,
+                status: true,
+              })
+            }
+          >
+            {cell.value}
+          </Link>
         );
       },
       sortComparator: (v1, v2) => v1.localeCompare(v2),
@@ -224,32 +228,36 @@ const EmployeeDatabase: React.FC<Props> = () => {
       />
 
       <Card sx={{ mt: 5, p: 2 }}>
-        <div style={{ marginBottom: 16, textAlign: 'right' }}>
-          <Button
-            onClick={sendCredentials}
-            startIcon={<KeyTwoTone />}
-            sx={{ mr: 1 }}
-          >
-            Send Credentials
-          </Button>
-          <Button
-            onClick={sendCredentials}
-            startIcon={<SupervisedUserCircleTwoTone />}
-            sx={{ mr: 1 }}
-          >
-            Change Team Leader
-          </Button>
-          <Button startIcon={<UploadTwoTone />} sx={{ mr: 1 }}>
-            Upload Employee Details
-          </Button>
-          <Button
-            startIcon={<AddCircleOutlineTwoTone />}
-            onClick={() => setOpen(true)}
-            id='add-new-employee-btn'
-          >
-            Add New Employee
-          </Button>
-        </div>
+        <section className='flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center'>
+          <Search setSearchText={setSearchText} />
+
+          <div className='flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left'>
+            <Button
+              onClick={sendCredentials}
+              startIcon={<KeyTwoTone />}
+              sx={{ mr: 1 }}
+            >
+              Send Credentials
+            </Button>
+            <Button
+              onClick={sendCredentials}
+              startIcon={<SupervisedUserCircleTwoTone />}
+              sx={{ mr: 1 }}
+            >
+              Change Team Leader
+            </Button>
+            <Button startIcon={<UploadTwoTone />} sx={{ mr: 1 }}>
+              Upload Employee Details
+            </Button>
+            <Button
+              startIcon={<AddCircleOutlineTwoTone />}
+              onClick={() => setOpen(true)}
+              id='add-new-employee-btn'
+            >
+              Add New Employee
+            </Button>
+          </div>
+        </section>
 
         {/* <div style={{ height: 'auto', width: '100%' }}> */}
         <DataGrid
