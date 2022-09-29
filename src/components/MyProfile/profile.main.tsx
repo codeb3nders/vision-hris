@@ -139,10 +139,11 @@ export type EnumsI = {
   assets: EnumI[];
   file201: EnumI[];
   allowance_types: EnumI[];
-  disciplinary_actions: EnumI[];
   employment_types: EnumI[];
   payroll_group: EnumI[];
   payment_method: EnumI[];
+  violations: EnumI[];
+  offenseLevel: EnumI[];
 };
 
 const enumsInitialState = {
@@ -158,10 +159,11 @@ const enumsInitialState = {
   assets: [],
   file201: [],
   allowance_types: [],
-  disciplinary_actions: [],
   employment_types: [],
   payroll_group: [],
-  payment_method:[]
+  payment_method: [],
+  violations: [],
+  offenseLevel: []
 };
 
 const ProfileMain = ({
@@ -385,11 +387,12 @@ console.log({updatedDetails}, {employeeDetails})
       assets: any = [],
       file201: any = [],
       allowance_types: any = [],
-      disciplinary_actions: any = [],
       employment_types: any = [],
       gender: any = [],
       payroll_group: any = [],
-      payment_method: any = [];
+      payment_method: any = [],
+      violations: any = [],
+      offenseLevel: any= [];
 
     enumsData.forEach((o: any) => {
       switch (o.type.toLowerCase()) {
@@ -429,9 +432,6 @@ console.log({updatedDetails}, {employeeDetails})
         case 'allowancetype':
           allowance_types.push(o);
           break;
-        case 'offenselevel':
-          disciplinary_actions.push(o);
-          break;
         case 'employmenttype':
           employment_types.push(o);
           break;
@@ -440,6 +440,12 @@ console.log({updatedDetails}, {employeeDetails})
           break;
         case 'paymentmethod':
           payment_method.push(o);
+          break;
+        case 'violations':
+          violations.push(o);
+          break;
+        case 'offenselevel':
+          offenseLevel.push(o);
           break;
       }
     });
@@ -456,10 +462,11 @@ console.log({updatedDetails}, {employeeDetails})
       assets,
       file201,
       allowance_types,
-      disciplinary_actions,
       employment_types,
       payroll_group,
-      payment_method
+      payment_method,
+      violations,
+      offenseLevel
     });
   }, [enumsData]);
 

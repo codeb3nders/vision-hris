@@ -69,7 +69,7 @@ const PayrollInformation = (props: Props) => {
             >
               {
                 payrollGroup.map((o: any, i:number) => {
-                  return <MenuItem id={`payRateType-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                  return <MenuItem id={`payRateType-${i}`} key={`payRateType-${i}`} value={o.code}>{ o.name}</MenuItem>
                 })
               }
             </Select>
@@ -87,7 +87,7 @@ const PayrollInformation = (props: Props) => {
             >
               {
                 paymentMethod.map((o: any, i:number) => {
-                  return <MenuItem id={`paymentMethod-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                  return <MenuItem id={`paymentMethod-${i}`} key={`paymentMethod-${i}`}  value={o.code}>{ o.name}</MenuItem>
                 })
               }
             </Select>
@@ -105,7 +105,7 @@ const PayrollInformation = (props: Props) => {
             >
               {
                 payrollGroup.map((o: any, i:number) => {
-                  return <MenuItem id={`payrollGroup-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                  return <MenuItem id={`payrollGroup-${i}`} key={`payrollGroup-${i}`} value={o.code}>{ o.name}</MenuItem>
                 })
               }
             </Select>
@@ -139,7 +139,7 @@ const PayrollInformation = (props: Props) => {
             >
               {
                 payrollGroup.map((o: any, i:number) => {
-                  return <MenuItem id={`deductPhilhealth-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                  return <MenuItem id={`deductPhilhealth-${i}`} key={`deductPhilhealth-${i}`} value={o.code}>{ o.name}</MenuItem>
                 })
               }
             </Select>
@@ -171,7 +171,7 @@ const PayrollInformation = (props: Props) => {
             >
               {
                 payrollGroup.map((o: any, i:number) => {
-                  return <MenuItem id={`fixedContributionRate-${i}`}  value={o.code}>{ o.name}</MenuItem>
+                  return <MenuItem id={`fixedContributionRate-${i}`} key={`fixedContributionRate-${i}`} value={o.code}>{ o.name}</MenuItem>
                 })
               }
             </Select>

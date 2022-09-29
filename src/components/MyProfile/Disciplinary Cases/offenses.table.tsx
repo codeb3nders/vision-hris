@@ -1,11 +1,13 @@
 import { GavelTwoTone, SaveTwoTone } from '@mui/icons-material';
 import {
+  Chip,
   Dialog,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  useMediaQuery,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -14,10 +16,19 @@ import { AppCtx } from 'App';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import AddButton from 'CustomComponents/AddButton';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProfileCtx } from '../profile.main';
-import {createAction, getByEmployeeNoAction, updateAction, deleteAction} from 'slices/disciplinaryCases';
+import {
+  createAction,
+  deleteAction,
+  getByEmployeeNoAction,
+  data, dataStatus,
+  deleteStatus as getAssetDeleteStatus,
+  dataError
+} from 'slices/disciplinaryCases';
+import { useTheme } from '@mui/material/styles';
+import moment from 'moment';
 
 type Props = {};
 
@@ -26,12 +37,13 @@ type OffenseI = {
   subject: string;
   description: string;
   offenseStage: string;
-  offenseLevel: string;
-  reportIssueDate: string;
-  explainIssueDate: string;
-  explanationDate: string;
+  violation: any;
+  offenseLevel: any;
+  reportIssueDate: Date | null;
+  explainIssueDate: Date | null;
+  explanationDate: Date | null;
   finalDisposition: string;
-  dispositionDate: string;
+  dispositionDate: Date | null;
   cleansingPeriod: string;
   status: string;
   aging: string;
@@ -39,11 +51,45 @@ type OffenseI = {
 
 const OffensesTable = (props: Props) => {
   const dispatch = useDispatch();
-  const {employeeDetails, failed, resetNotif } = useContext(ProfileCtx);
+  const {employeeDetails, failed, resetNotif, enums } = useContext(ProfileCtx);
   const { access_token} = useContext(AppCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [offenses, setOffenses] = useState<OffenseI[]>([]);
   const [showAll, setShowAll] = useState<boolean>(false);
+
+  const employeeCases = useSelector(data);
+  const employeeCasesStatus = useSelector(dataStatus);
+  const employeeDeleteCasesStatus = useSelector(dataError);
+
+  // useEffect(() => {
+  //   if (employeeCasesStatus !== "idle") {
+  //     setOffenses(employeeCases)
+  //   }
+  // }, [employeeCasesStatus])
+
+  // useEffect(() => {
+  //   if (employeeDetails.employeeNo) {
+  //     getData();
+  //   }
+  // }, [employeeDetails.employeeNo])
+
+  // useEffect(() => {
+  //   if (employeeDeleteCasesStatus === "succeeded") {
+  //     getData();
+  //   }
+  // }, [employeeDeleteCasesStatus])
+
+  // const getData = async () => {
+  //   await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
+  // }
+
+  // const handleDelete = async(id: string) => {
+  //   await dispatch(deleteAction({id, access_token}))
+  // };
+
+  const handleEdit = async (id?: string) => {
+    
+  }
 
   const CustomToolbar = () => {
     return (
@@ -70,6 +116,7 @@ const OffensesTable = (props: Props) => {
         employeeNo={employeeDetails.employeeNo}
         access_token={access_token}
         resetNotif={resetNotif}
+        enums={enums}
       />
       <div style={{ width: '100%' }}>
         <DataGrid
@@ -93,21 +140,72 @@ const initialState: OffenseI = {
   caseNumber: '',
   subject: '',
   description: '',
-  offenseStage: '',
-  offenseLevel: '',
-  reportIssueDate: '',
-  explainIssueDate: '',
-  explanationDate: '',
+  offenseStage: '1ST OFFENSE',
+  violation: {},
+  offenseLevel: {},
+  reportIssueDate: null,
+  explainIssueDate: new Date(),
+  explanationDate: null,
   finalDisposition: '',
-  dispositionDate: '',
+  dispositionDate: null,
   cleansingPeriod: '',
   status: '',
   aging: '',
 };
 
-const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_token, resetNotif }) => {
+const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_token, resetNotif, enums }) => {
   const dispatch = useDispatch();
   const [offense, setOffense] = useState<OffenseI>(initialState);
+  const [offenseLevels, setOffenseLevels] = useState<any[]>([]);
+  const [violationsList, setViolationsList] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  useEffect(() => {
+    setCategories(() => {
+      const data = violationsList.map((a: any) => a.Category);
+      return Array.from(new Set(data));
+    })
+  }, [violationsList])
+
+  useEffect(() => { 
+    setOffenseLevels(enums.offenseLevel)
+    setViolationsList(enums.violations)
+  }, [enums])
+
+  useEffect(() => { 
+    if (offense.description) {
+      const violationLevel = offense.violation;
+      let offenseLevel = offenseLevels.find((x: any) => x.code === violationLevel.Level)
+      let cleansingPeriod:any = null;
+      if (offenseLevel?.Cleansing_Days) {
+        cleansingPeriod = moment(offense.explainIssueDate).add(offenseLevel?.Cleansing_Days, "days").endOf("day");
+      }
+      const offenseStageCnt = parseInt(offense.offenseStage.replace(/\D/g, ""));
+      if (!isNaN(offenseStageCnt) && offenseStageCnt > 1) {
+        const violationLevelCnt = parseInt(violationLevel.Level.replace(/\D/g, ""));
+        offenseLevel = offenseLevels.find((x: any) => {
+          const codeCnt = parseInt(x.code.replace(/\D/g, ""));
+          console.log({codeCnt}, {violationLevelCnt}, {offenseStageCnt})
+          return (violationLevelCnt+(offenseStageCnt-1)) === codeCnt
+        })
+      }
+      setOffense((prev: any) => {
+        return { ...prev, offenseLevel, cleansingPeriod }
+      })
+    }
+  }, [offense.violation, offense.offenseStage])
+
+  useEffect(() => {
+    let cleansingPeriod: any = null;
+    if (offense.offenseLevel?.Cleansing_Days) {
+      cleansingPeriod = moment(offense.explainIssueDate).add(offense.offenseLevel?.Cleansing_Days, "days").endOf("day");
+    }
+    setOffense((prev: any) => {
+      return { ...prev, cleansingPeriod }
+    })
+  }, [offense.explainIssueDate, offense.offenseLevel])
 
   const handleSaveOffense = async() => {
     const validateFields = async () => {
@@ -126,7 +224,6 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
       }
       //check inputs...
     if (await validateFields()) {
-      setOffenses((prev) => [...prev, offense]);
       try {
         await dispatch(createAction({ body: {...offense, employeeNo}, access_token }));
       } catch (error: any) {
@@ -137,8 +234,6 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
     }
   };
 
-  const subject = [],
-    description = [];
   const offenseStage = [
     '1ST OFFENSE',
     '2ND OFFENSE',
@@ -146,74 +241,89 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
     '4TH OFFENSE',
     '5TH OFFENSE',
   ];
-
+console.log({offense}, {offenseLevels}, {violationsList})
   const status = ['Open', 'Close'];
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} id="offense-dialog">
-      <div className='p-6 flex flex-col gap-4 w-[550px]'>
+    <Dialog open={open} onClose={() => setOpen(false)} id="offense-dialog"
+      fullWidth={true}
+      maxWidth="xl"
+    >
+      <div className='p-6 flex flex-col gap-4 w-[100%]'>
         <p className='text-md font-bold '>
           <GavelTwoTone /> Add Disciplinary Case
         </p>
 
-        <GridWrapper colSize='2'>
+        <GridWrapper colSize='1'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <FormControl fullWidth size='small' variant='standard'>
               <InputLabel id='subject'>Subject</InputLabel>
               <Select
                 labelId='subject'
                 label='Subject'
+                value={offense.subject}
                 onChange={(e: any) =>
-                  setOffense((prev) => ({ ...prev, subject: e.target.value }))
+                  setOffense((prev) => ({ ...initialState, subject: e.target.value }))
                 }
+                autoWidth
               >
-                {subject.map((sub) => (
-                  <MenuItem key={sub} id={sub} value={sub}>
-                    {sub}
+                {categories.sort((a:any, b:any) => a.localeCompare(b)).map((category:any) => (
+                  <MenuItem key={category} id={category} value={category}>
+                    {category}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </div>
+        </GridWrapper>
 
+        <GridWrapper colSize='1'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl fullWidth size='small' variant='standard'>
+            <FormControl fullWidth size='small' variant='standard' style={{whiteSpace: "normal"}}>
               <InputLabel id='description'>Description</InputLabel>
               <Select
+                style={{whiteSpace: "normal"}}
                 labelId='description'
                 label='Description'
-                onChange={(e: any) =>
+                autoWidth
+                value={offense.description}
+                onChange={(e: any, option:any) =>
                   setOffense((prev) => ({
                     ...prev,
                     description: e.target.value,
+                    violation: option.props["data-value"]
                   }))
                 }
               >
-                {description.map((desc) => (
-                  <MenuItem key={desc} id={desc} value={desc}>
-                    {desc}
+                {violationsList.filter((x: any) => x.Category == offense.subject)
+                  .sort((a:any, b:any) => a.name.localeCompare(b.name))
+                  .map((a: any) => (
+                  <MenuItem key={a.code} id={a.code} data-value={a} style={{whiteSpace: 'normal'}} value={a.code}>
+                    {a.name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </div>
+        </GridWrapper>
 
+        <GridWrapper colSize='2'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <FormControl fullWidth size='small' variant='standard'>
               <InputLabel id='offense-stage'>Offense Stage</InputLabel>
               <Select
                 labelId='offense-stage'
                 label='Offense Stage'
-                defaultValue={'1ST OFFENSE'}
+                defaultValue={offense.offenseStage}
                 onChange={(e: any) =>
                   setOffense((prev) => ({
                     ...prev,
-                    offenseStage: e.target.value,
+                    offenseStage: e.target.value
                   }))
                 }
               >
-                {offenseStage.map((desc) => (
-                  <MenuItem key={desc} id={desc} value={desc}>
-                    {desc}
+                {offenseStage.map((a:any) => (
+                  <MenuItem key={a} id={a} value={a}>
+                    {a}
                   </MenuItem>
                 ))}
               </Select>
@@ -227,10 +337,14 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
               label='Offense Level'
               disabled
               variant='standard'
-              value={offense.offenseLevel}
+              InputProps={{
+                startAdornment: offense.offenseLevel !== undefined ? <Chip label={offense.offenseLevel.name} /> : "N/A",
+                disableUnderline: true
+              }}
             />
           </div>
-
+        </GridWrapper>
+        <GridWrapper colSize='3'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
@@ -241,7 +355,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
                     reportIssueDate: value,
                   }))
                 }
-                value={null}
+                value={offense.reportIssueDate}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -259,7 +373,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
                     explainIssueDate: value,
                   }))
                 }
-                value={null}
+                value={offense.explainIssueDate}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -277,14 +391,15 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
                     explanationDate: value,
                   }))
                 }
-                value={null}
+                value={offense.explanationDate}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
               />
             </LocalizationProvider>
           </div>
-
+        </GridWrapper>
+        <GridWrapper colSize='2'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
@@ -295,7 +410,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
                     finalDisposition: value,
                   }))
                 }
-                value={null}
+                value={offense.finalDisposition}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -313,14 +428,15 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
                     dispositionDate: value,
                   }))
                 }
-                value={null}
+                value={offense.dispositionDate}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
               />
             </LocalizationProvider>
           </div>
-
+        </GridWrapper>
+        <GridWrapper colSize='3'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
@@ -331,7 +447,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
                     cleansingPeriod: value,
                   }))
                 }
-                value={null}
+                value={offense.cleansingPeriod}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -345,6 +461,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
               <Select
                 labelId='status'
                 label='Status'
+                value="Open"
                 onChange={(e: any) =>
                   setOffense((prev) => ({
                     ...prev,
@@ -361,7 +478,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
             </FormControl>
           </div>
 
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <TextField
               size='small'
               variant='standard'
@@ -374,7 +491,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
                 }))
               }
             />
-          </div>
+          </div> */}
         </GridWrapper>
 
         <div className='grid grid-cols-5'>

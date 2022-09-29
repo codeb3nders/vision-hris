@@ -206,7 +206,7 @@ const Address = ({ data, isPermanent }: Props) => {
           >
             {municipalityList[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.map((municipality: any) => {
               return (
-                <MenuItem value={municipality.id} data-list={municipality} id={municipality.id}>
+                <MenuItem value={municipality.id} key={municipality.id} data-list={municipality} id={municipality.id}>
                   {municipality.id}
                 </MenuItem>
               );
@@ -233,7 +233,7 @@ const Address = ({ data, isPermanent }: Props) => {
           >
             {barangayList[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.map((barangay: any) => {
               return (
-                <MenuItem value={barangay} id={barangay}>
+                <MenuItem value={barangay} key={barangay} id={barangay}>
                   {barangay}
                 </MenuItem>
               );

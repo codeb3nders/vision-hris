@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import {
@@ -88,18 +88,6 @@ const AssetsTable = (props: Props) => {
     
   }
 
-  useEffect(() => {
-    !isNew &&
-      rows.length > 0 &&
-      setUpdatedDetails((prev: any) => ({ ...prev, assetManagement: rows }));
-      
-    rows.length <= 0 &&
-      setUpdatedDetails((prev: any) => {
-        delete prev?.assetManagement;
-        return prev;
-      });
-  }, [rows]);
-
   return (
     <div>
       <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} />
@@ -109,6 +97,12 @@ const AssetsTable = (props: Props) => {
           disableSelectionOnClick
           rows={rows}
           columns={columns(handleDelete, handleEdit)}
+          sx={{
+            [`& .${gridClasses.cell}`]: {
+              py: 1,
+              wordBreak: "break-word"
+            },
+          }}
           pageSize={30}
           rowsPerPageOptions={[30]}
           hideFooter={true}
@@ -315,9 +309,9 @@ const columns: any = (handleDelete: any, handleEdit:any) => [
     field: 'assetName',
     headerName: 'Asset Name',
     flex: 1,
-    renderCell: (params: any) => {
-      return `${params.value} - ${params.row.id}`;
-    },
+    // renderCell: (params: any) => {
+    //   return `${params.value} - ${params.row.id}`;
+    // },
   },
   {
     field: 'assetType',

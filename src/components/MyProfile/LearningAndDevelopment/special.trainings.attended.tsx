@@ -301,13 +301,13 @@ const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings, employeeNo,
                       }));
                     }}
                   >
-                    <MenuItem value='Done' id='Done'>
+                    <MenuItem value='Done' id='Done' key='Done'>
                       Done
                     </MenuItem>
-                    <MenuItem value='Ongoing' id='Ongoing'>
+                    <MenuItem value='Ongoing' id='Ongoing' key='Ongoing'>
                       Ongoing
                     </MenuItem>
-                    <MenuItem value='Not Started' id='Not Started'>
+                    <MenuItem value='Not Started' id='Not Started' key='Not Started'>
                       Not Started
                     </MenuItem>
                   </Select>
@@ -327,12 +327,12 @@ const SpecialTrainingsDialog = ({ open, setOpen, type, setTrainings, employeeNo,
                       }));
                     }}
                   >
-                    <MenuItem value={ 6}>6 Months</MenuItem>
-                    <MenuItem value={12}>12 Months</MenuItem>
-                    <MenuItem value={24}>24 Months</MenuItem>
-                    <MenuItem value={36}>36 Months</MenuItem>
-                    <MenuItem value={48}>48 Months</MenuItem>
-                    <MenuItem value={60}>60 Months</MenuItem>
+                    <MenuItem key={6} value={6}>6 Months</MenuItem>
+                    <MenuItem key={12} value={12}>12 Months</MenuItem>
+                    <MenuItem key={24} value={24}>24 Months</MenuItem>
+                    <MenuItem key={36} value={36}>36 Months</MenuItem>
+                    <MenuItem key={48} value={48}>48 Months</MenuItem>
+                    <MenuItem key={60} value={60}>60 Months</MenuItem>
                   </Select>
                 </FormControl>
               </div>

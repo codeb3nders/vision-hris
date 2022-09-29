@@ -367,7 +367,7 @@ console.log({getEmployeeItems})
           >
             {positions.map((position) => {
               return (
-                <MenuItem id={position._id} value={position.code} data-obj={position}>
+                <MenuItem id={position._id} key={position._id} value={position.code} data-obj={position}>
                   {position.name}
                 </MenuItem>
               );
@@ -611,7 +611,7 @@ const JobInfoFields = ({
           >
             {positions.map((position: any, i: number) => {
               return (
-                <MenuItem id={position._id} key={i} value={position.code}>
+                <MenuItem id={position._id} key={position._id} value={position.code}>
                   {position.name}
                 </MenuItem>
               );
@@ -641,7 +641,7 @@ const JobInfoFields = ({
           >
             {departments.map((department) => {
               return (
-                <MenuItem value={department.code}>{department.name}</MenuItem>
+                <MenuItem value={department.code} key={department.code}>{department.name}</MenuItem>
               );
             })}
           </Select>
@@ -743,7 +743,7 @@ const JobInfoFields = ({
               }}
             >
               {ranks.map((rank) => {
-                return <MenuItem value={rank.code}>{rank.name}</MenuItem>;
+                return <MenuItem value={rank.code} key={rank.code}>{rank.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
@@ -769,7 +769,7 @@ const JobInfoFields = ({
               }}
             >
               {employmentTypes.map((status) => {
-                return <MenuItem value={status.code}>{status.name}</MenuItem>;
+                return <MenuItem value={status.code} key={status.code}>{status.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
@@ -795,7 +795,7 @@ const JobInfoFields = ({
               }}
             >
               {employmentStatus.map((status) => {
-                return <MenuItem value={status.code}>{status.name}</MenuItem>;
+                return <MenuItem value={status.code} key={status.code}>{status.name}</MenuItem>;
               })}
             </Select>
           </FormControl>
@@ -930,7 +930,7 @@ const JobInfoFields = ({
               }
             >
               {USER_GROUP.map((group) => {
-                return <MenuItem value={group}>{group}</MenuItem>;
+                return <MenuItem value={group} key={group}>{group}</MenuItem>;
               })}
             </Select>
           </FormControl>

@@ -91,7 +91,7 @@ const FamilyBackgroundForm = ({ open, setOpen, setFamily, setWithUpdate }: Props
             }
           >
             {RELATION.map((relation) => {
-              return <MenuItem value={relation}>{relation}</MenuItem>;
+              return <MenuItem value={relation} key={relation}>{relation}</MenuItem>;
             })}
           </Select>
         </FormControl>
