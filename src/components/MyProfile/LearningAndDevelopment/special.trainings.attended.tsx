@@ -214,7 +214,7 @@ const SpecialTrainingsDialog = ({
   useEffect(() => {
     setTrainingData(data);
   }, [data]);
-console.log({trainingData}, {training})
+console.log({trainingData}, {training}, {type})
   const handleSave = async () => {
     const validateFields = async () => {
       const dialog: any = document.getElementById('trainings-dialog');
@@ -247,6 +247,7 @@ console.log({trainingData}, {training})
           );
         } else {
           delete training._id;
+          training.isAttended = (type === 'Attended');
           await dispatch(
             createAction({
               body: { ...training, employeeNo: employeeNo },
