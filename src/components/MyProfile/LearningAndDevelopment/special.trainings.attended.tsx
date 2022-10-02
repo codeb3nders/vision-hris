@@ -32,6 +32,10 @@ import {
   data as getData,
   dataStatus as getDataStatus,
   deleteStatus as getDeleteStatus,
+  updateAction,
+  updateStatus,
+  updateError,
+  newDataStatus,
 } from 'slices/learningAndDevelopment';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 import { ProfileCtx } from '../profile.main';
@@ -41,6 +45,7 @@ type Props = {
 };
 
 export interface SpecialTrainingI {
+  _id?: string;
   courseTitle: string;
   institution: string;
   venue: string;
@@ -54,6 +59,7 @@ export interface SpecialTrainingI {
 }
 
 const initialData = {
+  _id: '',
   courseTitle: '',
   institution: '',
   venue: '',
@@ -67,12 +73,14 @@ const SpecialTrainings = ({ type }: Props) => {
   const employeeTrainings = useSelector(getData);
   const employeeTrainingsStatus = useSelector(getDataStatus);
   const employeeDeleteTrainingsStatus = useSelector(getDeleteStatus);
+  const employeeUpdateTrainingsStatus = useSelector(updateStatus);
+  const employeeNewTrainingsStatus = useSelector(newDataStatus);
   const { access_token } = useContext(AppCtx);
   const { employeeDetails, failed, resetNotif } = useContext(ProfileCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [trainings, setTrainings] = useState<SpecialTrainingI[]>([]);
   const [trainingData, setTrainingData] =
-    useState<SpecialTrainingI>(initialData);
+    useState<any>(initialData);
   const [confirmDelete, setConfirmDelete] = useState<{
     row: any;
     status: boolean;
@@ -96,10 +104,10 @@ const SpecialTrainings = ({ type }: Props) => {
   }, [employeeDetails.employeeNo]);
 
   useEffect(() => {
-    if (employeeDeleteTrainingsStatus === 'succeeded') {
+    if (employeeDeleteTrainingsStatus === 'succeeded' || employeeUpdateTrainingsStatus === 'succeeded' || employeeNewTrainingsStatus === 'succeeded') {
       handleData();
     }
-  }, [employeeDeleteTrainingsStatus]);
+  }, [employeeDeleteTrainingsStatus, employeeUpdateTrainingsStatus, employeeNewTrainingsStatus]);
 
   useEffect(() => {
     !open && setTrainingData(initialData);
@@ -121,9 +129,10 @@ const SpecialTrainings = ({ type }: Props) => {
 
   const handleEdit = async (row: SpecialTrainingI) => {
     const training = trainings.filter(
-      (t) => t.courseTitle === row.courseTitle
+      (t) => t._id === row._id
     )[0];
-    training.courseTitle && setTrainingData(training);
+    console.log(training._id, "xxxxxxxxxxxxxxxxxxxxxx")
+    training._id && setTrainingData(training);
     setOpen(true);
   };
 
@@ -191,21 +200,21 @@ const SpecialTrainingsDialog = ({
 }) => {
   const dispatch = useDispatch();
   const [training, setTraining] = useState<SpecialTrainingI>(initialData);
-  const [trainingData, setTrainingData] =
-    useState<SpecialTrainingI>(initialData);
+  const [trainingData, setTrainingData] = useState<any>(initialData);
+  const isUpdate = trainingData._id;
 
   useEffect(() => {
     if (!open) {
       setTraining(initialData);
       resetNotif();
-      setTrainingData(initialData);
+      // setTrainingData(initialData);
     }
   }, [open]);
 
   useEffect(() => {
-    data.courseTitle && setTrainingData(data);
+    setTrainingData(data);
   }, [data]);
-
+console.log({trainingData}, {training})
   const handleSave = async () => {
     const validateFields = async () => {
       const dialog: any = document.getElementById('trainings-dialog');
@@ -223,14 +232,28 @@ const SpecialTrainingsDialog = ({
     };
     //check inputs...
     if (await validateFields()) {
-      setTrainings((prev: any) => [...prev, training]);
+      // setTrainings((prev: any) => [...prev, training]);
       try {
-        await dispatch(
-          createAction({
-            body: { ...training, employeeNo: employeeNo },
-            access_token,
-          })
-        );
+        if (trainingData._id) {
+          const { __v, timestamp, _id, ...rest } = trainingData;
+          await dispatch(
+            updateAction({
+              params: {
+                id: trainingData._id,
+                ...rest
+              },
+              access_token,
+            })
+          );
+        } else {
+          delete training._id;
+          await dispatch(
+            createAction({
+              body: { ...training, employeeNo: employeeNo },
+              access_token,
+            })
+          );
+        }
       } catch (error: any) {
         console.log(error);
       }
@@ -238,8 +261,6 @@ const SpecialTrainingsDialog = ({
       setTraining(initialData);
     }
   };
-
-  const isUpdate = trainingData.courseTitle;
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id='trainings-dialog'>
@@ -264,6 +285,10 @@ const SpecialTrainingsDialog = ({
                 ...prev,
                 courseTitle: e.target.value,
               }));
+              isUpdate && setTrainingData((prev: any) => ({
+                ...prev,
+                courseTitle: e.target.value,
+              }));
             }}
             defaultValue={trainingData.courseTitle}
           />
@@ -278,6 +303,10 @@ const SpecialTrainingsDialog = ({
             className='col-span-1'
             onChange={(e: any) => {
               setTraining((prev: any) => ({
+                ...prev,
+                institution: e.target.value,
+              }));
+              isUpdate && setTrainingData((prev: any) => ({
                 ...prev,
                 institution: e.target.value,
               }));
@@ -298,6 +327,10 @@ const SpecialTrainingsDialog = ({
                 ...prev,
                 venue: e.target.value,
               }));
+              isUpdate && setTrainingData((prev: any) => ({
+                ...prev,
+                venue: e.target.value,
+              }));
             }}
             defaultValue={trainingData.venue}
           />
@@ -312,6 +345,10 @@ const SpecialTrainingsDialog = ({
                     ...prev,
                     startDate: value,
                   }));
+                  isUpdate && setTrainingData((prev: any) => ({
+                  ...prev,
+                  startDate: value,
+                }));
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -334,6 +371,10 @@ const SpecialTrainingsDialog = ({
                 label='Training End Date'
                 onChange={(value: any) => {
                   setTraining((prev: any) => ({
+                    ...prev,
+                    endDate: value,
+                  }));
+                  isUpdate && setTrainingData((prev: any) => ({
                     ...prev,
                     endDate: value,
                   }));
@@ -367,6 +408,10 @@ const SpecialTrainingsDialog = ({
                         ...prev,
                         status: e.target.value,
                       }));
+                      isUpdate && setTrainingData((prev: any) => ({
+                        ...prev,
+                        status: e.target.value,
+                      }));
                     }}
                   >
                     <MenuItem value='Done' id='Done' key='Done'>
@@ -395,6 +440,10 @@ const SpecialTrainingsDialog = ({
                     defaultValue={trainingData.bondLength}
                     onChange={(e: any) => {
                       setTraining((prev: any) => ({
+                        ...prev,
+                        bondLength: e.target.value,
+                      }));
+                      isUpdate && setTrainingData((prev: any) => ({
                         ...prev,
                         bondLength: e.target.value,
                       }));
@@ -435,6 +484,10 @@ const SpecialTrainingsDialog = ({
                         ...prev,
                         bondStartDate: value,
                       }));
+                      isUpdate && setTrainingData((prev: any) => ({
+                        ...prev,
+                        bondStartDate: value,
+                      }));
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -457,6 +510,10 @@ const SpecialTrainingsDialog = ({
                     label='Training Bond End Date'
                     onChange={(value: any) => {
                       setTraining((prev: any) => ({
+                        ...prev,
+                        bondEndDate: value,
+                      }));
+                      isUpdate && setTrainingData((prev: any) => ({
                         ...prev,
                         bondEndDate: value,
                       }));

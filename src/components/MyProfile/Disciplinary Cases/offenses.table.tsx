@@ -254,7 +254,7 @@ console.log({offense}, {offenseLevels}, {violationsList})
         </p>
 
         <GridWrapper colSize='1'>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2 w[200px]'>
             <FormControl fullWidth size='small' variant='standard'>
               <InputLabel id='subject'>Subject</InputLabel>
               <Select
@@ -264,7 +264,7 @@ console.log({offense}, {offenseLevels}, {violationsList})
                 onChange={(e: any) =>
                   setOffense((prev) => ({ ...initialState, subject: e.target.value }))
                 }
-                autoWidth
+                // autoWidth
               >
                 {categories.sort((a:any, b:any) => a.localeCompare(b)).map((category:any) => (
                   <MenuItem key={category} id={category} value={category}>
@@ -278,13 +278,13 @@ console.log({offense}, {offenseLevels}, {violationsList})
 
         <GridWrapper colSize='1'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl fullWidth size='small' variant='standard' style={{whiteSpace: "normal"}}>
+            <FormControl fullWidth size='small' variant='standard'>
               <InputLabel id='description'>Description</InputLabel>
               <Select
                 style={{whiteSpace: "normal"}}
                 labelId='description'
                 label='Description'
-                autoWidth
+                // autoWidth
                 value={offense.description}
                 onChange={(e: any, option:any) =>
                   setOffense((prev) => ({
