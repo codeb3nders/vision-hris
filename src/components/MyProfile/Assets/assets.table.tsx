@@ -30,14 +30,19 @@ import {
   deleteAction,
   getByEmployeeNoAction,
   data as getAssetsData, dataStatus as getAssetsDataStatus,
-  deleteStatus as getAssetDeleteStatus
+  deleteStatus as getAssetDeleteStatus,
+  updateStatus as getAssetUpdateStatus,
+  newDataStatus as getNewAssetStatus,
+  updateAction
 } from 'slices/assets';
+import ConfirmDelete from 'components/Other/confirm.delete';
 // import { getByEmployeeNoAction, getEmployeeAssetsData, getEmployeeAssetsStatus } from 'slices/assets/getSlice';
 // import { deleteAssetAction, getAssetDeleteStatus } from 'slices/assets/deleteSlice';
 
 type Props = {};
 
 type AssetModel = {
+  id?: string;
   assetName: any;
   assetType: any;
   assetDetails: string;
@@ -47,6 +52,17 @@ type AssetModel = {
   remarks: string;
 };
 
+const initialState = {
+  id: '',
+  assetName: '',
+  assetDetails: '',
+  assetSerialNumber: '',
+  dateAssigned: null,
+  dateReturned: null,
+  remarks: '',
+  assetType: "",
+};
+
 const AssetsTable = (props: Props) => {
   const { setUpdatedDetails, isNew, employeeDetails } = useContext(ProfileCtx);
   const [rows, setRows] = useState<AssetModel[]>([]);
@@ -54,9 +70,16 @@ const AssetsTable = (props: Props) => {
   const dispatch = useDispatch();
   const employeeAssets = useSelector(getAssetsData);
   const employeeAssetsStatus = useSelector(getAssetsDataStatus);
+  const employeeUpdateAssetStatus = useSelector(getAssetUpdateStatus);
   const employeeDeleteAssetStatus = useSelector(getAssetDeleteStatus);
+  const employeeNewAssetStatus = useSelector(getNewAssetStatus);
   const { access_token } = useContext(AppCtx);
-      console.log({rows})
+  const [assetData, setAssetData] = useState<AssetModel>(initialState);
+  const [confirmDelete, setConfirmDelete] = useState<{
+    row: any;
+    status: boolean;
+  }>({ row: null, status: false });
+  const isUpdate = assetData.id;
 
   useEffect(() => {
     if (employeeAssetsStatus !== "idle") {
@@ -71,32 +94,51 @@ const AssetsTable = (props: Props) => {
   }, [employeeDetails.employeeNo])
 
   useEffect(() => {
-    if (employeeDeleteAssetStatus === "succeeded") {
+    if (employeeNewAssetStatus === "succeeded" || employeeDeleteAssetStatus === 'succeeded' || employeeUpdateAssetStatus === "succeeded") {
       getData();
     }
-  }, [employeeDeleteAssetStatus])
+  }, [employeeNewAssetStatus, employeeDeleteAssetStatus, employeeUpdateAssetStatus])
+
+  useEffect(() => {
+    !open && setAssetData(initialState);
+  }, [open]);
 
   const getData = async () => {
     await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
   }
 
-  const handleDelete = async(id: string) => {
-    await dispatch(deleteAction({id, access_token}))
+  const handleDelete = async (row: AssetModel) => {
+    await dispatch(deleteAction({id: row.id, access_token}))
+    setConfirmDelete({ row: null, status: false });
   };
 
-  const handleEdit = async (id?: string) => {
-    
+  const handleEdit = async (row: AssetModel) => {
+    const asset = rows.filter(
+      (t) => t.id === row.id
+    )[0];
+    asset.id && setAssetData(() => {
+      return {
+        ...asset,
+        assetType: asset.assetType.code
+      }
+    });
+    setOpen(true);
   }
 
   return (
     <div>
-      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} />
+      <ConfirmDelete
+        open={confirmDelete}
+        setOpen={setConfirmDelete}
+        handleDelete={handleDelete}
+      />
+      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} assetData={assetData} isUpdate={isUpdate} />
       <div style={{ width: '100%' }}>
         <DataGrid
           autoHeight
           disableSelectionOnClick
           rows={rows}
-          columns={columns(handleDelete, handleEdit)}
+          columns={columns(setConfirmDelete, handleEdit)}
           sx={{
             [`& .${gridClasses.cell}`]: {
               py: 1,
@@ -116,25 +158,20 @@ const AssetsTable = (props: Props) => {
   );
 };
 
-const initialState = {
-  assetName: '',
-  assetDetails: '',
-  assetSerialNumber: '',
-  dateAssigned: null,
-  dateReturned: null,
-  remarks: '',
-  assetType: "",
-};
-
-const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
+const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetData: data, isUpdate }) => {
   const [newAsset, setNewAsset] = useState<AssetModel>(initialState);
   const { enums, resetNotif, failed } = useContext(ProfileCtx);
   const dispatch = useDispatch();
   const [assetTypes, setAssetTypes] = useState<any[]>([]);
+  const [assetData, setAssetData] = useState<any>(initialState);
 
   useEffect(() => { 
     setAssetTypes(enums.assets)
   }, [enums])
+
+  useEffect(() => {
+    setAssetData(data);
+  }, [data]);
 
   useEffect(() => {
     if (!open) {
@@ -142,7 +179,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
       resetNotif()
     }
   }, [open]);
-  
+  console.log({assetData}, {newAsset})
   const handleSave = async () => {
     const validateFields = async () => {
         const dialog: any = document.getElementById("assets-dialog");
@@ -160,9 +197,27 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
       }
       //check inputs...
     if (await validateFields()) {
-      setRows((prev: any) => [...prev, newAsset]);
       try {
-        await dispatch(createAction({ body: {...newAsset, employeeNo}, access_token }));
+        if (isUpdate) {
+          const {id, timestamp, lastModifiedDate, ...rest } = assetData;
+          await dispatch(
+            updateAction({
+              params: {
+                id: assetData.id,
+                ...rest
+              },
+              access_token,
+            })
+          );
+        } else {
+          delete newAsset.id;
+          await dispatch(
+            createAction({
+              body: { ...newAsset, employeeNo: employeeNo },
+              access_token,
+            })
+          );
+        }
       } catch (error: any) {
         console.log(error);
       }
@@ -175,7 +230,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
     <Dialog open={open} onClose={() => setOpen(false)} id="assets-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
-          <LaptopChromebookTwoTone /> New Asset
+          <LaptopChromebookTwoTone /> {isUpdate ? 'Update' : 'Add'}{' '} Asset
         </p>
 
         <GridWrapper colSize='2'>
@@ -187,9 +242,14 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
               size='small'
               multiline
               label='Asset Name'
-              onChange={(e: any) =>
-                setNewAsset({ ...newAsset, assetName: e.target.value })
-              }
+              onChange={(e: any) => { 
+                setNewAsset({ ...newAsset, assetName: e.target.value });
+                isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetName: e.target.value,
+                }));
+              }}
+              defaultValue={assetData.assetName}
             />
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -200,9 +260,14 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
               size='small'
               multiline
               label='Asset Details'
-              onChange={(e: any) =>
-                setNewAsset({ ...newAsset, assetDetails: e.target.value })
-              }
+              onChange={(e: any) => {
+                setNewAsset({ ...newAsset, assetDetails: e.target.value });
+                isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetDetails: e.target.value,
+                }));
+              }}
+              defaultValue={assetData.assetDetails}
             />
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -211,9 +276,14 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
               <Select
                 label='Asset Type'
                 labelId='asset-type'
-                onChange={(e: any) =>
-                  setNewAsset({ ...newAsset, assetType: e.target.value })
-                }
+                onChange={(e: any) => {
+                  setNewAsset({ ...newAsset, assetType: e.target.value });
+                  isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetType: e.target.value,
+                }));
+                }}
+                defaultValue={assetData.assetType}
               >
                 {assetTypes.map((asset) => {
                   return (
@@ -231,22 +301,31 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
               variant='standard'
               size='small'
               label='Serial #'
-              onChange={(e: any) =>
-                setNewAsset({ ...newAsset, assetSerialNumber: e.target.value })
-              }
+              onChange={(e: any) => {
+                setNewAsset({ ...newAsset, assetSerialNumber: e.target.value });
+                isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetSerialNumber: e.target.value,
+                }));
+              }}
+              defaultValue={assetData.assetSerialNumber}
             />
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label='Date Assigned'
-                onChange={(value) =>
+                onChange={(value) => {
                   setNewAsset({
                     ...newAsset,
                     dateAssigned: value,
-                  })
-                }
-                value={newAsset.dateAssigned}
+                  });
+                  isUpdate && setAssetData((prev: any) => ({
+                    ...prev,
+                    dateAssigned: value,
+                  }));
+                }}
+                value={newAsset.dateAssigned || assetData.dateAssigned || null}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -257,13 +336,17 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label='Date Returned'
-                onChange={(value) =>
+                onChange={(value) => {
                   setNewAsset({
                     ...newAsset,
                     dateReturned: value,
-                  })
-                }
-                value={newAsset.dateReturned}
+                  });
+                  isUpdate && setAssetData((prev: any) => ({
+                    ...prev,
+                    dateReturned: value,
+                  }));
+                }}
+                value={newAsset.dateReturned || assetData.dateReturned || null}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -277,9 +360,14 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
               size='small'
               label='Remarks'
               multiline
-              onChange={(e: any) =>
-                setNewAsset({ ...newAsset, remarks: e.target.value })
-              }
+              onChange={(e: any) => {
+                setNewAsset({ ...newAsset, remarks: e.target.value });
+                isUpdate && setAssetData((prev: any) => ({
+                    ...prev,
+                    remarks: e.target.value,
+                  }));
+              }}
+              defaultValue={assetData.remarks}
             />
           </div>
         </GridWrapper>
@@ -304,7 +392,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token }) => {
   );
 };
 
-const columns: any = (handleDelete: any, handleEdit:any) => [
+const columns: any = (setConfirmDelete: any, handleEdit:any) => [
   {
     field: 'assetName',
     headerName: 'Asset Name',
@@ -364,10 +452,10 @@ const columns: any = (handleDelete: any, handleEdit:any) => [
     flex: 1,
     renderCell: (params: any) => {
       return <div>
-        <IconButton size='small' onClick={() => handleDelete(params.row?.id)}>
+        <IconButton size='small' onClick={() => setConfirmDelete({ row: params.row, status: true })}>
           <Delete />
         </IconButton>
-        <IconButton size='small' onClick={() => handleEdit(params.row?.id)}>
+        <IconButton size='small' onClick={() => handleEdit(params.row)}>
           <Edit />
         </IconButton>
       </div>
