@@ -7,10 +7,9 @@ import {
   DialogTitle,
 } from '@mui/material';
 import React from 'react';
-import { SpecialTrainingI } from './../MyProfile/LearningAndDevelopment/special.trainings.attended';
 
 type Props = {
-  open: { row: SpecialTrainingI; status: boolean };
+  open: { row: any; status: boolean };
   setOpen: React.Dispatch<React.SetStateAction<{ row: any; status: boolean }>>;
   handleDelete: any;
 };
@@ -25,25 +24,11 @@ const ConfirmDelete = ({ handleDelete, open, setOpen }: Props) => {
       id='confirm-delete-dialog'
     >
       <DialogTitle id='alert-dialog-title' className='text-[1rem]'>
-        Are you sure you want to delete{' '}
-        <strong>{open?.row?.courseTitle}</strong>?
+        Delete Confirmation
       </DialogTitle>
       <DialogContent>
         <DialogContentText id='alert-dialog-description'>
-          <section className='grid grid-cols-2'>
-            <div className='col-span-1'>Institution:</div>
-            <div className='col-span-1'>
-              <strong>{open.row?.institution}</strong>
-            </div>
-            <div className='col-span-1'>Address/Venue:</div>
-            <div className='col-span-1'>
-              <strong>{open.row?.venue}</strong>
-            </div>
-            <div className='col-span-1'>Status:</div>
-            <div className='col-span-1'>
-              <strong>{open.row?.status}</strong>
-            </div>
-          </section>
+          Are you sure you want to delete?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

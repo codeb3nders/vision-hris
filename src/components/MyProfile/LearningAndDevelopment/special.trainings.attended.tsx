@@ -45,7 +45,7 @@ type Props = {
 };
 
 export interface SpecialTrainingI {
-  _id?: string;
+  id?: string;
   courseTitle: string;
   institution: string;
   venue: string;
@@ -56,16 +56,18 @@ export interface SpecialTrainingI {
   bondLength?: string;
   bondStartDate?: string;
   bondEndDate?: string;
+  timestamp?: Date | null;
 }
 
 const initialData = {
-  _id: '',
+  id: '',
   courseTitle: '',
   institution: '',
   venue: '',
   startDate: '',
   endDate: '',
   isAttended: true,
+  timestamp: null
 };
 
 const SpecialTrainings = ({ type }: Props) => {
@@ -122,17 +124,17 @@ const SpecialTrainings = ({ type }: Props) => {
     );
   };
 
-  const handleDelete = async (id: string) => {
-    await dispatch(deleteAction({ id, access_token }));
+  const handleDelete = async (row: SpecialTrainingI) => {
+    console.log({row})
+    await dispatch(deleteAction({ id: row.id, access_token }));
     setConfirmDelete({ row: null, status: false });
   };
 
   const handleEdit = async (row: SpecialTrainingI) => {
     const training = trainings.filter(
-      (t) => t._id === row._id
+      (t) => t.id === row.id
     )[0];
-    console.log(training._id, "xxxxxxxxxxxxxxxxxxxxxx")
-    training._id && setTrainingData(training);
+    training.id && setTrainingData(training);
     setOpen(true);
   };
 
@@ -200,8 +202,8 @@ const SpecialTrainingsDialog = ({
 }) => {
   const dispatch = useDispatch();
   const [training, setTraining] = useState<SpecialTrainingI>(initialData);
-  const [trainingData, setTrainingData] = useState<any>(initialData);
-  const isUpdate = trainingData._id;
+  const [trainingData, setTrainingData] = useState<SpecialTrainingI>(initialData);
+  const isUpdate = trainingData.id;
 
   useEffect(() => {
     if (!open) {
@@ -232,21 +234,20 @@ console.log({trainingData}, {training}, {type})
     };
     //check inputs...
     if (await validateFields()) {
-      // setTrainings((prev: any) => [...prev, training]);
       try {
-        if (trainingData._id) {
-          const { __v, timestamp, _id, ...rest } = trainingData;
+        if (isUpdate) {
+          const { id, timestamp, ...rest } = trainingData;
           await dispatch(
             updateAction({
               params: {
-                id: trainingData._id,
+                id: trainingData.id,
                 ...rest
               },
               access_token,
             })
           );
         } else {
-          delete training._id;
+          delete training.id;
           training.isAttended = (type === 'Attended');
           await dispatch(
             createAction({
@@ -568,7 +569,7 @@ const attendedColumns = (setConfirmDelete: any, handleEdit: any) => [
     headerName: 'Start Date',
     flex: 1,
     renderCell: (params: any) => {
-      return moment(params.value).format('MM/DD/YYYY');
+      return moment(params.value).format('MM/DD/YYYY')
     },
   },
   {

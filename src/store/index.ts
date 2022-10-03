@@ -20,6 +20,7 @@ import employeeHistorySlice from "slices/employee_history/getEmployeeHistorySlic
 import learningAndDevelopmentSlice from "slices/learningAndDevelopment";
 import disciplinaryCaseSlice from "slices/disciplinaryCases";
 import assetsSlice from "slices/assets";
+import employeeDocsSlice from "slices/employee201files";
 
 const rootPersistConfig = {
   key: 'root',
@@ -29,7 +30,7 @@ const rootPersistConfig = {
     'newEmployee', 'filteredEmployees', 'updatedEmployee', 'employeeHistory',
     // 'newLearningAndDev', 'getLearnAndDev', 'updatedLearnAndDev', 'deleteLearnAndDev',
     // 'newAsset', 'getAssets', 'updatedAsset', 'deleteAsset',
-    'disciplinaryCases', 'assets' ,'learningAndDevelopment'
+    'disciplinaryCases', 'assets' ,'learningAndDevelopment', 'employeeDocuments'
   ]
 }
 
@@ -45,7 +46,8 @@ const appReducer = combineReducers({
   employeeHistory: employeeHistorySlice,
   learningAndDevelopment: learningAndDevelopmentSlice,
   disciplinaryCases: disciplinaryCaseSlice,
-  assets: assetsSlice
+  assets: assetsSlice,
+  employeeDocuments: employeeDocsSlice
 })
 
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);
