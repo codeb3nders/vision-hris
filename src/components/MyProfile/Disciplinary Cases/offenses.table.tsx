@@ -1,15 +1,16 @@
-import { GavelTwoTone, SaveTwoTone } from '@mui/icons-material';
+import { Delete, Edit, GavelTwoTone, SaveTwoTone } from '@mui/icons-material';
 import {
   Chip,
   Dialog,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   TextField,
   useMediaQuery,
 } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { AppCtx } from 'App';
@@ -24,15 +25,18 @@ import {
   deleteAction,
   getByEmployeeNoAction,
   data, dataStatus,
-  deleteStatus as getAssetDeleteStatus,
-  dataError
+  deleteStatus,
+  updateStatus,
+  newDataStatus
 } from 'slices/disciplinaryCases';
 import { useTheme } from '@mui/material/styles';
 import moment from 'moment';
+import ConfirmDelete from 'components/Other/confirm.delete';
 
 type Props = {};
 
 type OffenseI = {
+  id: string;
   caseNumber: string;
   subject: string;
   description: string;
@@ -56,39 +60,55 @@ const OffensesTable = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [offenses, setOffenses] = useState<OffenseI[]>([]);
   const [showAll, setShowAll] = useState<boolean>(false);
+  const [offenseData, setOffenseData] = useState<OffenseI>(initialState);
+  const [confirmDelete, setConfirmDelete] = useState<{
+    row: any;
+    status: boolean;
+  }>({ row: null, status: false });
+  const isUpdate = offenseData.id;
 
   const employeeCases = useSelector(data);
   const employeeCasesStatus = useSelector(dataStatus);
-  const employeeDeleteCasesStatus = useSelector(dataError);
+  const employeeNewCaseStatus = useSelector(newDataStatus);
+  const employeeUpdateCaseStatus = useSelector(updateStatus);
 
-  // useEffect(() => {
-  //   if (employeeCasesStatus !== "idle") {
-  //     setOffenses(employeeCases)
-  //   }
-  // }, [employeeCasesStatus])
+  useEffect(() => {
+    !open && setOffenseData(initialState);
+  }, [open]);
+console.log({employeeCases})
+  useEffect(() => {
+    if (employeeCasesStatus !== "idle") {
+      setOffenses(employeeCases)
+    }
+  }, [employeeCasesStatus])
 
-  // useEffect(() => {
-  //   if (employeeDetails.employeeNo) {
-  //     getData();
-  //   }
-  // }, [employeeDetails.employeeNo])
+  useEffect(() => {
+    if (employeeDetails.employeeNo) {
+      getData();
+    }
+  }, [employeeDetails.employeeNo])
 
-  // useEffect(() => {
-  //   if (employeeDeleteCasesStatus === "succeeded") {
-  //     getData();
-  //   }
-  // }, [employeeDeleteCasesStatus])
+  useEffect(() => {
+    if (employeeUpdateCaseStatus === "succeeded" || employeeNewCaseStatus === "succeeded") {
+      getData();
+    }
+  }, [employeeUpdateCaseStatus, employeeNewCaseStatus])
 
-  // const getData = async () => {
-  //   await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
-  // }
+  const getData = async () => {
+    await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
+  }
 
-  // const handleDelete = async(id: string) => {
-  //   await dispatch(deleteAction({id, access_token}))
-  // };
+  const handleDelete = async(row: OffenseI) => {
+    await dispatch(deleteAction({id: row.id, access_token}))
+    setConfirmDelete({ row: null, status: false });
+  };
 
-  const handleEdit = async (id?: string) => {
-    
+  const handleEdit = async (row: OffenseI) => {
+    const offense = offenses.filter(
+      (t) => t.id === row.id
+    )[0];
+    offense.id && setOffenseData(offense);
+    setOpen(true);
   }
 
   const CustomToolbar = () => {
@@ -108,6 +128,11 @@ const OffensesTable = (props: Props) => {
 
   return (
     <div>
+      <ConfirmDelete
+        open={confirmDelete}
+        setOpen={setConfirmDelete}
+        handleDelete={handleDelete}
+      />
       <OffenseDialog
         open={open}
         setOpen={setOpen}
@@ -121,14 +146,21 @@ const OffensesTable = (props: Props) => {
       <div style={{ width: '100%' }}>
         <DataGrid
           autoHeight
-          hideFooter={true}
-          experimentalFeatures={{ newEditingApi: true }}
           disableSelectionOnClick
+          columns={showAll ?  allColumns(setConfirmDelete, handleEdit) : columns(setConfirmDelete, handleEdit)}
+          sx={{
+            [`& .${gridClasses.cell}`]: {
+              py: 1,
+              wordBreak: "break-word"
+            },
+          }}
+          pageSize={30}
+          rowsPerPageOptions={[30]}
+          hideFooter={true}
           rows={offenses}
-          columns={showAll ? allColumns : columns}
           getRowHeight={() => 'auto'}
           components={{ Toolbar: CustomToolbar }}
-          getRowId={(data) => data.caseNumber}
+          getRowId={(data) => data.id}
         />
       </div>
       <AddButton setOpen={setOpen} text='Add Record' />
@@ -137,6 +169,7 @@ const OffensesTable = (props: Props) => {
 };
 
 const initialState: OffenseI = {
+  id: "",
   caseNumber: '',
   subject: '',
   description: '',
@@ -264,7 +297,6 @@ console.log({offense}, {offenseLevels}, {violationsList})
                 onChange={(e: any) =>
                   setOffense((prev) => ({ ...initialState, subject: e.target.value }))
                 }
-                // autoWidth
               >
                 {categories.sort((a:any, b:any) => a.localeCompare(b)).map((category:any) => (
                   <MenuItem key={category} id={category} value={category}>
@@ -401,27 +433,24 @@ console.log({offense}, {offenseLevels}, {violationsList})
         </GridWrapper>
         <GridWrapper colSize='2'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='Final Disposation'
-                onChange={(value: any) =>
-                  setOffense((prev) => ({
-                    ...prev,
-                    finalDisposition: value,
-                  }))
-                }
-                value={offense.finalDisposition}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
+            <TextField
+              size='small'
+              variant='standard'
+              fullWidth
+              label='Final Disposition'
+              onChange={(e: any) =>
+                setOffense((prev) => ({
+                  ...prev,
+                  finalDisposition: e.target.value,
+                }))
+              }
+            />
           </div>
 
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
-                label='Disposation Date'
+                label='Disposition Date'
                 onChange={(value: any) =>
                   setOffense((prev) => ({
                     ...prev,
@@ -514,7 +543,7 @@ console.log({offense}, {offenseLevels}, {violationsList})
   );
 };
 
-const columns: any = [
+const columns: any = (setConfirmDelete: any, handleEdit:any) => [
   {
     field: 'caseNumber',
     headerName: 'Case Number',
@@ -540,9 +569,24 @@ const columns: any = [
     headerName: 'Offense Stage',
     width: 180,
   },
+  {
+    field: 'actions',
+    headerName: 'Actions',
+    flex: 1,
+    renderCell: (params: any) => {
+      return <div>
+        <IconButton size='small' onClick={() => setConfirmDelete({ row: params.row, status: true })}>
+          <Delete />
+        </IconButton>
+        <IconButton size='small' onClick={() => handleEdit(params.row)}>
+          <Edit />
+        </IconButton>
+      </div>
+    },
+  },
 ];
 
-const allColumns: any = [
+const allColumns: any = (setConfirmDelete: any, handleEdit:any) => [
   ...columns,
   {
     field: 'reportIssueDate',

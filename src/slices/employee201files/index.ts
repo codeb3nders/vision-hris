@@ -109,7 +109,7 @@ export const deleteAction: any = createAsyncThunk(
   }
 );
 
-export const learningAndDevelopmentSlice = createSlice({
+export const employeeDocsSlice = createSlice({
   name,
   initialState: {
     ...initialCreateState,
@@ -222,6 +222,6 @@ export const deleteStatus = (state: any) => state[name].deleteStatus;
 export const deleteError = (state: any) => state[name].deleteError;
 
 
-export const { reset } = learningAndDevelopmentSlice.actions;
+export const { reset } = employeeDocsSlice.actions;
 
-export default learningAndDevelopmentSlice.reducer;
+export default employeeDocsSlice.reducer;
