@@ -23,7 +23,8 @@ import ViewEmployeeProfile from './view.employee.profile';
 import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
-import Search from './../EmployeeDirectory/search';
+import Search from './search';
+import { searchEmployeeEndpoint } from 'apis/employees';
 
 type Props = {};
 
@@ -51,6 +52,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
+  const [tempEmployees, setTempEmployees] = useState<EmployeeDBI[]>([]);
   const [open, setOpen] = useState(false);
   const [sendAccessList, setSendAccessList] = useState<string[]>([]);
 
@@ -71,15 +73,23 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [access_token, refresh]);
 
   useEffect(() => {
-    setEmployees(
-      getEmployeeItems.map((r: EmployeeDBI) => {
-        const mi = r.middleName ? r.middleName.charAt(0) : '';
-        const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
-        return { ...r, id: r.employeeNo, full_name };
-      })
-    );
+    const employees = getEmployeeItems.map((r: EmployeeDBI) => {
+      const mi = r.middleName ? r.middleName.charAt(0) : '';
+      const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+      return { ...r, id: r.employeeNo, full_name };
+    });
+
+    setEmployees(employees);
+    setTempEmployees(employees);
+
     setIsLoading(false);
   }, [getEmployeeItems]);
+
+  useEffect(() => {
+    if (searchText.length <= 0) {
+      setEmployees(tempEmployees);
+    }
+  }, [searchText]);
 
   useEffect(() => {
     if (!viewDetails.status) {
@@ -96,8 +106,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
       renderCell: (cell) => {
         return (
           <Link
-            underline='none'
-            variant='button'
+            underline="none"
+            variant="button"
             style={{ cursor: 'pointer' }}
             onClick={() =>
               setViewDetails({
@@ -219,6 +229,32 @@ const EmployeeDatabase: React.FC<Props> = () => {
     }
   };
 
+  const handleSearch = async (e: any) => {
+    e.preventDefault();
+    if (e.key === 'Enter') {
+      console.log({ searchText });
+      try {
+        const res = await searchEmployeeEndpoint({
+          name: searchText.toUpperCase(),
+          access_token,
+        });
+
+        if (res.data.length > 0) {
+          const employees = res.data.map((r: EmployeeDBI) => {
+            const mi = r.middleName ? r.middleName.charAt(0) : '';
+            const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+            return { ...r, id: r.employeeNo, full_name };
+          });
+          setEmployees(employees);
+        } else {
+          setEmployees([]);
+        }
+      } catch (error) {
+        console.log('handleSearch error:', error);
+      }
+    }
+  };
+
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
       <NewEmployeeProfile open={open} setOpen={setOpen} />
@@ -228,10 +264,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
       />
 
       <Card sx={{ mt: 5, p: 2 }}>
-        <section className='flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center'>
-          <Search setSearchText={setSearchText} />
+        <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
+          <Search setSearchText={setSearchText} handleSearch={handleSearch} />
 
-          <div className='flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left'>
+          <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
             <Button
               onClick={sendCredentials}
               startIcon={<KeyTwoTone />}
@@ -252,7 +288,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
             <Button
               startIcon={<AddCircleOutlineTwoTone />}
               onClick={() => setOpen(true)}
-              id='add-new-employee-btn'
+              id="add-new-employee-btn"
             >
               Add New Employee
             </Button>
@@ -263,7 +299,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
         <DataGrid
           components={{ Toolbar: GridToolbar }}
           autoHeight
-          density='compact'
+          density="compact"
           disableSelectionOnClick
           onSelectionModelChange={(ids: any[]) => {
             setSendAccessList(ids);
