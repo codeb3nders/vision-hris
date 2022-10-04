@@ -45,7 +45,7 @@ const requiredHeaders = [
 const EmployeeUploader = ({ open, setOpen }: Props) => {
   const [file, setFile] = useState<any>(null);
   const [error, setError] = useState<string>('');
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any>([]);
   const [missingHeaders, setMissingHeaders] = useState<string[]>([]);
   const [show, setShow] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -86,12 +86,21 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
       const parsedData: any = csv?.data;
       const columns = Object.keys(parsedData[0]);
 
-      const file_obj = columns?.reduce((prevVal: any, curVal: any) => {
-        return {
-          ...prevVal,
-          [parsedData[0][curVal]]: parsedData[1][curVal],
-        };
-      }, {});
+      const file_obj = parsedData
+        .filter((data: any, idx: number) => {
+          return idx > 0;
+        })
+        .map((data: any) => {
+          return columns?.reduce((prevVal: any, curVal: any) => {
+            return {
+              ...prevVal,
+              [parsedData[0][curVal]]: data[curVal],
+            };
+          }, {});
+        })
+        .filter((data: any) => data.lastName && data.firstName);
+
+      console.log(file_obj);
 
       setData(file_obj);
 
@@ -128,7 +137,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
 
   const handleRemoveFile = () => {
     setFile(null);
-    setData(null);
+    setData([]);
     setError('');
     setMissingHeaders([]);
     setShow(false);
@@ -227,7 +236,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
         )}
 
         {file && show && !error && missingHeaders.length <= 0 && (
-          <UploaderTable rows={data && [data]} />
+          <UploaderTable rows={data && data} />
         )}
 
         <Divider />
