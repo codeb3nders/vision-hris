@@ -1,5 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Alert, Button, Dialog, Divider, IconButton } from '@mui/material';
+import {
+  Alert,
+  Button,
+  Dialog,
+  Divider,
+  IconButton,
+  Snackbar,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Papa from 'papaparse';
 import {
@@ -42,6 +49,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
   const [missingHeaders, setMissingHeaders] = useState<string[]>([]);
   const [show, setShow] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -107,6 +115,11 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
       console.log({ data });
       setTimeout(() => {
         setSaving(false);
+        setSaved(true);
+
+        setTimeout(() => {
+          setOpen(false);
+        }, 2000);
       }, 2000);
     } catch (error) {
       console.log('handleSave error:', error);
@@ -119,6 +132,8 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
     setError('');
     setMissingHeaders([]);
     setShow(false);
+    setSaved(false);
+    setSaving(false);
   };
 
   const disabled = error ? true : false || missingHeaders.length > 0;
@@ -129,6 +144,15 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
         <strong className="text-sm">
           <PersonAddTwoTone /> Upload Employee Details
         </strong>
+
+        <Snackbar
+          open={saved}
+          autoHideDuration={2000}
+          onClose={() => setSaved(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert severity="success">Employee Details Saved</Alert>
+        </Snackbar>
 
         <Divider />
         <label
