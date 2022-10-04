@@ -10,3 +10,4 @@ export const URL_LEARNING_AND_DEV = `${env.BASE_URL}/learning-development/`;
 export const URL_ASSETS = `${env.BASE_URL}/asset-management/`;
 export const URL_DISCIPLINARY_CASES = `${env.BASE_URL}/asset-management/`;
 export const URL_EMPLOYEE_DOCUMENTS = `${env.BASE_URL}/employee-documents/`;
+export const URL_EMPLOYEE_SEARCH = `${env.BASE_URL}/employees/search?`;

@@ -4,6 +4,7 @@ import {
   URL_EMPLOYEES_WITH_LEAVES,
 } from 'constants/EndpointPath';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import { URL_EMPLOYEE_SEARCH } from './../../constants/EndpointPath';
 
 export const createEmployeeEndpoint = async (body: EmployeeI, config = {}) => {
   return await axios.post(URL_EMPLOYEES, body, {
@@ -70,6 +71,20 @@ export const deleteEmployeeEndpoint = async (employeeNo: string) => {
     return await axios.delete(url, { ...internalConfig });
   } catch (error: any) {
     console.error('ERROR in getEmployeesEndpoint', error);
+    return error.message;
+  }
+};
+
+export const searchEmployeeEndpoint = async ({ name, access_token }) => {
+  const internalConfig = {
+    headers: { Authorization: `Bearer ${access_token}` },
+  };
+
+  try {
+    const url = `${URL_EMPLOYEE_SEARCH}name=${name}`;
+    return await axios.get(url, { ...internalConfig });
+  } catch (error: any) {
+    console.error('ERROR in searchEmployeeEndpoint', error);
     return error.message;
   }
 };
