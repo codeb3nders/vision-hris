@@ -15,6 +15,7 @@ import {
 import NavbarDropdown from './NavbarDropdown';
 import ProfileDropdown from './ProfileDropdown';
 import NavDrawer from './nav.drawer';
+import { VISION_LOGO, VISION_LOGO_WHITE } from 'assets';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -48,7 +49,7 @@ const Navbar = () => {
   }, [isLoggedIn, userGroup]);
 
   return (
-    <Disclosure as='nav' className='bg-v-red'>
+    <Disclosure as="nav" className="bg-v-red">
       {({ open }) => (
         <>
           <NavDrawer
@@ -57,43 +58,45 @@ const Navbar = () => {
             navigation={navigation}
           />
 
-          <div className='max-w-7xl mx-auto px-2 phone:px-6 laptop:px-8'>
-            <div className='relative flex items-center justify-between h-16'>
-              <div className='absolute inset-y-0 left-0 phone:flex items-center laptop:hidden'>
+          <div className="max-w-7xl mx-auto px-2 phone:px-6 laptop:px-8">
+            <div className="relative flex items-center justify-between h-16">
+              <div className="absolute inset-y-0 left-0 phone:flex items-center laptop:hidden">
                 {/* Mobile menu button*/}
                 <Disclosure.Button
                   onClick={() => setOpenDrawer(true)}
-                  className='inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 '
+                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 "
                 >
-                  <span className='sr-only'>Open main menu</span>
+                  <span className="sr-only">Open main menu</span>
                   {openDrawer ? (
                     <XIcon
-                      className='block h-6 w-6 text-white'
-                      aria-hidden='true'
+                      className="block h-6 w-6 text-white"
+                      aria-hidden="true"
                     />
                   ) : (
                     <MenuIcon
-                      className='block h-6 w-6 text-white'
-                      aria-hidden='true'
+                      className="block h-6 w-6 text-white"
+                      aria-hidden="true"
                     />
                   )}
                 </Disclosure.Button>
               </div>
-              <div className='flex-1 flex items-center phone:justify-center phone:items-stretch laptop:justify-start'>
-                <div className='tablet:flex-shrink-0 flex items-center justify-center'>
-                  <img
-                    className='phone:block laptop:hidden h-8 w-auto'
-                    src={Logo}
-                    alt='VisionProperties Dev. Corp.'
-                  />
-                  <img
-                    className='phone:hidden laptop:block h-8 w-auto'
-                    src={Logo}
-                    alt='VisionProperties Dev. Corp.'
-                  />
+              <div className="flex-1 flex items-center phone:justify-center phone:items-stretch laptop:justify-start">
+                <div className="tablet:flex-shrink-0 flex items-center justify-center">
+                  <Link to="/">
+                    <img
+                      className="phone:block laptop:hidden h-10 w-auto"
+                      src={VISION_LOGO_WHITE}
+                      alt="VisionProperties Dev. Corp."
+                    />
+                    <img
+                      className="phone:hidden laptop:block h-10 w-auto"
+                      src={VISION_LOGO_WHITE}
+                      alt="VisionProperties Dev. Corp."
+                    />
+                  </Link>
                 </div>
-                <div className='laptop:block phone:hidden phone:ml-6'>
-                  <div className='flex space-x-2'>
+                <div className="laptop:block phone:hidden phone:ml-6">
+                  <div className="flex space-x-2">
                     {navigation.map((item) => {
                       return item.menus ? (
                         <NavbarDropdown key={item.name} menu={item} />
