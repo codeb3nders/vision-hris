@@ -7,7 +7,7 @@ import {
   IconButton,
   Snackbar,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Papa from 'papaparse';
 import {
   Clear,
@@ -21,6 +21,9 @@ import {
 } from '@mui/icons-material';
 import UploaderTable from './uploader.table';
 import { LoadingButton } from '@mui/lab';
+import { useDispatch } from 'react-redux';
+import { createEmployee } from 'slices';
+import { AppCtx } from 'App';
 
 type Props = {
   open: boolean;
@@ -43,6 +46,8 @@ const requiredHeaders = [
 ];
 
 const EmployeeUploader = ({ open, setOpen }: Props) => {
+  const { access_token } = useContext(AppCtx);
+  const dispatch = useDispatch();
   const [file, setFile] = useState<any>(null);
   const [error, setError] = useState<string>('');
   const [data, setData] = useState<any>([]);
@@ -86,22 +91,27 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
       const parsedData: any = csv?.data;
       const columns = Object.keys(parsedData[0]);
 
+      console.log({ parsedData });
+
+      const altered_columns: any = columns.map((col) => {
+        const column = col.split(' ').join('');
+        return column.charAt(0).toLowerCase() + column.slice(1);
+      });
+
       const file_obj = parsedData
-        .filter((data: any, idx: number) => {
-          return idx > 0;
-        })
         .map((data: any) => {
-          return columns?.reduce((prevVal: any, curVal: any) => {
+          return columns?.reduce((prevVal: any, curVal: any, idx: number) => {
+            console.log({ data, curVal });
+
             return {
               ...prevVal,
-              [parsedData[0][curVal]]: data[curVal],
+              [altered_columns[idx]]: data[curVal],
             };
-          }, {});
+          }, []);
         })
         .filter((data: any) => data.lastName && data.firstName);
 
       console.log(file_obj);
-
       setData(file_obj);
 
       const missingHeaders: string[] = [];
@@ -121,7 +131,11 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      console.log({ data });
+      // const res = await dispatch(
+      //   createEmployee({ body: data[2], access_token })
+      // );
+      // console.log({ res });
+
       setTimeout(() => {
         setSaving(false);
         setSaved(true);
@@ -190,8 +204,21 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
           />
         </label>
 
+        {missingHeaders.length > 0 ? (
+          <Alert severity="error">
+            <strong>{missingHeaders.join(', ')}</strong>{' '}
+            {missingHeaders.length > 1 ? 'are' : 'is'} required.
+          </Alert>
+        ) : (
+          error && <Alert severity="error">{error}</Alert>
+        )}
+
+        {file && !error && missingHeaders.length <= 0 && (
+          <Alert severity="success">File validation success.</Alert>
+        )}
+
         {file && (
-          <div className="flex flex-row gap-2 items-center">
+          <div className="flex flex-row gap-2 items-center p-2 border border-gray-200 rounded-md hover:bg-green-50 hover:border-green-200 transition-all duration-200">
             <div className="uppercase p-1 bg-green-500 rounded-md text-white font-bold">
               {file?.type.split('/')[1]}
             </div>
@@ -220,19 +247,6 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
               <Clear />
             </IconButton>
           </div>
-        )}
-
-        {missingHeaders.length > 0 ? (
-          <Alert severity="error">
-            <strong>{missingHeaders.join(', ')}</strong>{' '}
-            {missingHeaders.length > 1 ? 'are' : 'is'} required.
-          </Alert>
-        ) : (
-          error && <Alert severity="error">{error}</Alert>
-        )}
-
-        {file && !error && missingHeaders.length <= 0 && (
-          <Alert severity="success">File validation success.</Alert>
         )}
 
         {file && show && !error && missingHeaders.length <= 0 && (

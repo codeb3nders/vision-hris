@@ -9,7 +9,9 @@ const UploaderTable = ({ rows = [] }: Props) => {
     <DataGrid
       columns={columns}
       rows={rows}
-      getRowId={(data) => data?.lastName}
+      getRowId={(data) =>
+        `${data?.lastName}${data?.firstName}${data.personalContactNumber}`
+      }
       autoHeight
       density="compact"
       disableSelectionOnClick
