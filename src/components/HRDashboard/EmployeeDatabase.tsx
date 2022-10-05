@@ -25,6 +25,7 @@ import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
 import Search from './search';
 import { searchEmployeeEndpoint } from 'apis/employees';
+import EmployeeUploader from './EmployeeUploader/employee.uploader';
 
 type Props = {};
 
@@ -57,6 +58,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const [sendAccessList, setSendAccessList] = useState<string[]>([]);
 
   const [searchText, setSearchText] = useState<string>('');
+  const [openUploader, setOpenUploader] = useState(false);
 
   useEffect(() => {
     if (location.pathname === '/people/employees') {
@@ -282,9 +284,15 @@ const EmployeeDatabase: React.FC<Props> = () => {
             >
               Change Team Leader
             </Button>
-            <Button startIcon={<UploadTwoTone />} sx={{ mr: 1 }}>
+
+            <Button
+              startIcon={<UploadTwoTone />}
+              sx={{ mr: 1 }}
+              onClick={() => setOpenUploader(true)}
+            >
               Upload Employee Details
             </Button>
+
             <Button
               startIcon={<AddCircleOutlineTwoTone />}
               onClick={() => setOpen(true)}
@@ -294,6 +302,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
             </Button>
           </div>
         </section>
+
+        <EmployeeUploader open={openUploader} setOpen={setOpenUploader} />
 
         {/* <div style={{ height: 'auto', width: '100%' }}> */}
         <DataGrid
