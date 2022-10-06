@@ -134,7 +134,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Position',
       width: 200,
       renderCell: (cell: any) => cell.row.position?.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      sortComparator: (v1, v2) => v1?.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.position?.name;
       },
@@ -144,7 +144,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Rank',
       width: 120,
       renderCell: (cell: any) => cell.row.rank?.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.rank?.name;
       },
@@ -160,9 +160,9 @@ const EmployeeDatabase: React.FC<Props> = () => {
           </Tooltip>
         );
       },
-      sortComparator: (v1, v2) => v1.code.localeCompare(v2.code),
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
-        return params.row.department?.name;
+        return params.row.department?.code;
       },
     },
     {
@@ -181,7 +181,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Employment Type',
       width: 140,
       renderCell: (cell: any) => cell.row.employmentType?.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.employmentType?.name;
       },
@@ -191,7 +191,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Employment Status',
       width: 140,
       renderCell: (cell: any) => cell.row.employmentStatus.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.employmentStatus?.name;
       },
@@ -201,8 +201,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Team Leader',
       width: 140,
       renderCell: (cell) => cell.row.reportsTo?.employeeName || '',
-      sortComparator: (v1, v2) =>
-        v1.employeeName.localeCompare(v2.employeeName),
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.reportsTo?.employeeName || '';
       },
