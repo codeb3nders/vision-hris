@@ -31,7 +31,9 @@ import {
   getEmployeeUpdateError,
   resetCreate,
   resetUpdate,
-  updateEmployee
+  updateEmployee,
+  checkEmployeeExists,
+  filteredEmployeeStore
 } from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -49,6 +51,8 @@ import {
 import useRequiredChecker from 'hooks/useRequiredChecker';
 import { EMPLOYMENT_HISTORY_TYPE, JOB_HISTORY_TYPE } from 'constants/Values';
 import { SvgIconComponent } from '@mui/icons-material';
+import moment from 'moment';
+import EmployeeExists from 'components/Other/check.employee.exists';
 
 const ProfileDetails = lazy(() => import('./profile.details'));
 const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
@@ -224,7 +228,25 @@ const ProfileMain = ({
 
   // Employee History
   const employeeHistoryData = useSelector(_getEmployeeHistoryData);
+
+  // Filtered Employees
+  const {employeeExistsStatus, employeeExists } = useSelector(filteredEmployeeStore);
   
+  useEffect(() => {
+    if (isNew && employeeDetails.firstName && employeeDetails.birthDate) {
+      checkForDuplicate();
+    }
+  }, [employeeDetails.firstName, employeeDetails.birthDate])
+
+  useEffect(() => {
+    if (employeeExistsStatus !== "idle") {
+      console.log({ employeeExists })
+      if (employeeExists.length > 0) {
+        
+      }
+    }
+   }, [employeeExistsStatus])
+
   /** Employees: NEW */
   useEffect(() => {
     console.log({ newEmployeeData }, { newEmployeeStatus });
@@ -598,6 +620,14 @@ console.log({updatedDetails}, {employeeDetails})
     return icon;
   };
 
+  const checkForDuplicate = async () => {
+    await dispatch(checkEmployeeExists({
+      access_token, params: {
+      firstName: employeeDetails.firstName,
+      birthDate: moment(employeeDetails.birthDate).format("YYYY-MM-DD")
+    }}))
+  }
+
   return (
     <ProfileCtx.Provider
       value={{
@@ -620,6 +650,7 @@ console.log({updatedDetails}, {employeeDetails})
         resetNotif
       }}
     >
+      <EmployeeExists />
       <Dialog open={loading.status}>
         <div className='p-4 pt-6 flex flex-col items-center justify-center'>
           <CircularProgress />
