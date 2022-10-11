@@ -11,9 +11,7 @@ import { MainCtx } from './Main';
 import {
   getAllEmployeesAction as _getEmployeesAction,
   getEmployeeStatus as _getEmployeeStatus,
-  getEmployeeItems as _getEmployeeItems,
-  filteredEmployeeStore,
-  getFilteredEmployeesAction,
+  getEmployeeItems as _getEmployeeItems
 } from 'slices';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import moment from 'moment';
@@ -41,8 +39,6 @@ const Dashboard = () => {
     }
   }, [location]);
 
-  const { filteredData, status } = useSelector(filteredEmployeeStore);
-
   useEffect(() => {
     if (userGroup.toLocaleUpperCase() === 'HR ADMIN') {
       setIsHR(true);
@@ -51,67 +47,54 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (access_token) {
-      if (userGroup.toUpperCase() === 'HR ADMIN') {
-        dispatch(_getEmployeesAction({ access_token }));
-      } else {
-        dispatch(getFilteredEmployeesAction({ access_token }));
-      }
+      dispatch(_getEmployeesAction({ access_token, params: {isActive: true} }));
     }
   }, [access_token]);
 
   useEffect(() => {
-    if (!isHR) {
-      const activeEmployees = filteredData.filter(
-        (x: EmployeeI) => x.isActive
-      );
-      getCelebrations(activeEmployees);
+    if (isHR) {
+      let active = 0,
+        contractEnd = 0,
+        probationaryEnd = 0,
+        countPerDept: any[] = [];
+      getEmployeeItems.map((o: any) => {
+        const key = o.department?.code;
+        active++;
+        if (o.employmentType?.code.toLocaleLowerCase() == 'project') {
+          if (
+            moment(o.contractEndDate)
+              .endOf('day')
+              .diff(moment().endOf('day'), 'month') < 1
+          ) {
+            contractEnd++;
+          }
+        } else if (o.employmentType?.code.toLocaleLowerCase() == 'probationary') {
+          if (
+            moment(o.endOfProbationary)
+              .endOf('day')
+              .diff(moment().endOf('day'), 'month') < 1
+          ) {
+            probationaryEnd++;
+          }
+        }
+        const index = countPerDept.findIndex((c: any) => c.x === key);
+        if (index < 0) {
+          countPerDept.push({
+            x: key,
+            y: 1,
+            name: o.department?.name,
+          });
+        } else {
+          countPerDept[index].y++;
+        }
+      });
+      
+      setActiveEmployeesCount(active);
+      setCountContract(contractEnd);
+      setCountProbation(probationaryEnd);
+      setHeadCount(countPerDept);
     }
-  }, [filteredData]);
-
-  useEffect(() => {
-    let active = 0,
-      contractEnd = 0,
-      probationaryEnd = 0,
-      countPerDept: any[] = [];
-    const activeEmployees = getEmployeeItems.filter(
-      (x: EmployeeI) => x.isActive
-    );
-    activeEmployees.map((o: any) => {
-      const key = o.department?.code;
-      active++;
-      if (o.employmentType?.code.toLocaleLowerCase() == 'project') {
-        if (
-          moment(o.contractEndDate)
-            .endOf('day')
-            .diff(moment().endOf('day'), 'month') < 1
-        ) {
-          contractEnd++;
-        }
-      } else if (o.employmentType?.code.toLocaleLowerCase() == 'probationary') {
-        if (
-          moment(o.endOfProbationary)
-            .endOf('day')
-            .diff(moment().endOf('day'), 'month') < 1
-        ) {
-          probationaryEnd++;
-        }
-      }
-      const index = countPerDept.findIndex((c: any) => c.x === key);
-      if (index < 0) {
-        countPerDept.push({
-          x: key,
-          y: 1,
-          name: o.department?.name,
-        });
-      } else {
-        countPerDept[index].y++;
-      }
-    });
-    getCelebrations(activeEmployees)
-    setActiveEmployeesCount(active);
-    setCountContract(contractEnd);
-    setCountProbation(probationaryEnd);
-    setHeadCount(countPerDept);
+    getCelebrations(getEmployeeItems)
   }, [getEmployeeItems]);
 
   const getCelebrations = async (activeEmployees: any[]) => {

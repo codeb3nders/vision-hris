@@ -184,7 +184,7 @@ const ChecklistTable = (props: Props) => {
   };
 
   const processRowUpdate = (newRow: GridRowModel) => {
-    const updatedRow = { ...newRow, isNew: false };
+    const updatedRow:any = { ...newRow, isNew: false };
     console.log({ newRow, updatedRow });
     const handleSave = async () => {
       console.log(updatedRow.documentType, "updatedRow.documentTypeupdatedRow.documentType")

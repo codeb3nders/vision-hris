@@ -37,15 +37,8 @@ const AdminMainDashboard = (props: Props) => {
 
   // Employees
   useEffect(() => {
-    if (getEmployeeStatus === "idle") {
-      setTimeout(() => {
-        dispatch(_getEmployeesAction()); // or add employeeNo as parameter
-      }, 5000);
-
-
-
-    }
-  }, [getEmployeeStatus, dispatch]);
+      // dispatch(_getEmployeesAction({params: {isActive: false}}));
+  }, []);
 
 
   // Employees with leave
