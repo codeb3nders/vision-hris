@@ -10,6 +10,7 @@ import { ProfileCtx } from '../profile.main';
 import CollapseWrapper from './collapse.wrapper';
 import { EducationI, EmployeeI } from 'slices/interfaces/employeeI';
 import * as func from 'utils/functions'
+import { initialState } from '../employee.initialstate';
 
 type Props = {};
 
@@ -17,21 +18,20 @@ const Education = (props: Props) => {
   const {
     setEmployeeDetails,
     employeeDetails,
-    setUpdatedDetails, 
-    isNew,getIcon
+    setUpdatedDetails,
+    isNew, getIcon
   } = useContext(ProfileCtx);
   const [educationData, setEducationData] = useState<any[]>([]);
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
   const yearSelect = func.generateArrayOfYears(60);
 
   const withData = useMemo(() => {
-    return educationData.some((x:any) => x.yrFrom || x.yrTo || x.schoolAndAddress || x.degree || x.honors)
+    return educationData.some((x: any) => x.yrFrom || x.yrTo || x.schoolAndAddress || x.degree || x.honors)
   }, [educationData])
 
   useEffect(() => {
-    setEducationData(employeeDetails.educationalBackground);
+    setEducationData([...initialState.educationalBackground, ...employeeDetails.educationalBackground || []]);
   }, [employeeDetails.educationalBackground]);
-      console.log({educationData})
 
   useEffect(() => {
     if (withUpdate) {
@@ -53,7 +53,7 @@ const Education = (props: Props) => {
         }
       }
       if (withData) {
-        setEmployeeDetails((prev:EmployeeI) => {
+        setEmployeeDetails((prev: EmployeeI) => {
           return {
             ...prev,
             educationalBackground: educationData
@@ -71,12 +71,12 @@ const Education = (props: Props) => {
   }, [educationData])
 
   const handleEducation = (col: string, value: any, level: string) => {
-    setEducationData((prev:any[]) => {
+    setEducationData((prev: any[]) => {
       return prev.map((o: any) => {
         if (o?.level === level) {
           return {
             ...o,
-            [col]:value
+            [col]: value
           }
         }
         return o;
@@ -94,16 +94,16 @@ const Education = (props: Props) => {
         const level = params.row.level;
         return <FormControl variant='standard' fullWidth size='small'>
           <Select
-          key={`education-yrfrom-${level}`}
-          value={params.value}
-          onChange={(e: any) =>
-            handleEducation('yrFrom', e.target.value, level)
-          }
+            key={`education-yrfrom-${level}`}
+            value={params.value}
+            onChange={(e: any) =>
+              handleEducation('yrFrom', e.target.value, level)
+            }
           >
             {
               yearSelect.map((o: any) => {
                 return <MenuItem value={o} key={`yrFrom-${o}`}>{o}</MenuItem>
-            })
+              })
             }
           </Select>
         </FormControl>
@@ -117,16 +117,16 @@ const Education = (props: Props) => {
         const level = params.row.level;
         return <FormControl variant='standard' fullWidth size='small'>
           <Select
-          key={`education-yrTo-${level}`}
-          value={params.value}
-          onChange={(e: any) =>
-            handleEducation('yrTo', e.target.value, level)
-          }
+            key={`education-yrTo-${level}`}
+            value={params.value}
+            onChange={(e: any) =>
+              handleEducation('yrTo', e.target.value, level)
+            }
           >
             {
               yearSelect.map((o: any) => {
                 return <MenuItem value={o} key={`yrTo-${o}`}>{o}</MenuItem>
-            })
+              })
             }
           </Select>
         </FormControl>
@@ -148,14 +148,14 @@ const Education = (props: Props) => {
           variant='standard'
           size='small'
           fullWidth
-          onKeyDown={(event)=>event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
           value={params.value}
           onChange={(e: any) => {
-              handleEducation(
-                'schoolAndAddress',
-                e.target.value,
-                level
-              )
+            handleEducation(
+              'schoolAndAddress',
+              e.target.value,
+              level
+            )
           }}
         />
       },
@@ -167,15 +167,15 @@ const Education = (props: Props) => {
       renderCell: (params: any) => {
         const level = params.row.level;
         return <TextField
-            key={`degree-${level}`}
-            variant='standard'
-            size='small'
-            fullWidth
-            onKeyDown={(event)=>event.stopPropagation()}
-            value={params.value}
-            onChange={(e: any) =>
-              handleEducation('degree', e.target.value, level)
-            }
+          key={`degree-${level}`}
+          variant='standard'
+          size='small'
+          fullWidth
+          onKeyDown={(event) => event.stopPropagation()}
+          value={params.value}
+          onChange={(e: any) =>
+            handleEducation('degree', e.target.value, level)
+          }
         />
       },
     },
@@ -186,22 +186,22 @@ const Education = (props: Props) => {
       renderCell: (params: any) => {
         const level = params.row.level;
         return <TextField
-            key={`honors-${level}`}
-            variant='standard'
-            size='small'
-            fullWidth
-            onKeyDown={(event)=>event.stopPropagation()}
-            value={params.value}
-            onChange={(e: any) =>
-              handleEducation('honors', e.target.value, level)
-            }
+          key={`honors-${level}`}
+          variant='standard'
+          size='small'
+          fullWidth
+          onKeyDown={(event) => event.stopPropagation()}
+          value={params.value}
+          onChange={(e: any) =>
+            handleEducation('honors', e.target.value, level)
+          }
         />
       },
     },
   ];
 
   return (
-    <CollapseWrapper panelTitle='Educational Attainment' icon={() => getIcon(<SchoolTwoTone/>, "educationalBackground")}>
+    <CollapseWrapper panelTitle='Educational Attainment' icon={() => getIcon(<SchoolTwoTone />, "educationalBackground")}>
       <div style={{ width: '100%' }}>
         <DataGrid
           getRowId={(data: any) => data.level}

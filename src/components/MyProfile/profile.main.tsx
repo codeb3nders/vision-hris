@@ -98,23 +98,23 @@ export type ProfileModel = {
 
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
-  setIndex: () => {},
+  setIndex: () => { },
   isNew: false,
   isView: false,
   employeeDetails: initialState,
-  setEmployeeDetails: () => {},
-  setDisplayPhoto: () => {},
+  setEmployeeDetails: () => { },
+  setDisplayPhoto: () => { },
   displayPhoto: {
     employeeNo: '',
     photo: '',
   },
   isOwner: false,
   enums: {},
-  setUpdatedDetails: () => {},
+  setUpdatedDetails: () => { },
   updatedDetails: null,
-  handleUpdateEmployee: () => {},
-  getIcon: () => {},
-  failed: () => {},
+  handleUpdateEmployee: () => { },
+  getIcon: () => { },
+  failed: () => { },
   resetNotif: () => { },
   setEducationalBgData: () => { },
   educationalBgData: [],
@@ -216,6 +216,10 @@ const ProfileMain = ({
     action: '',
   });
   const [educationalBgData, setEducationalBgData] = useState<any[]>([]);
+  const [duplicates, setDuplicates] = useState<any>({
+    data: [], status: false
+  })
+
   const { enumsData } = useSelector(enumsStore);
   const newEmployeeStatus = useSelector(getEmployeeCreateStatus);
   const newEmployeeData = useSelector(getEmployeeCreatedItem);
@@ -230,22 +234,25 @@ const ProfileMain = ({
   const employeeHistoryData = useSelector(_getEmployeeHistoryData);
 
   // Filtered Employees
-  const {employeeExistsStatus, employeeExists } = useSelector(filteredEmployeeStore);
-  
+  const { employeeExistsStatus, employeeExists: employeesDuplicates } = useSelector(filteredEmployeeStore);
+
   useEffect(() => {
-    if (isNew && employeeDetails.firstName && employeeDetails.birthDate) {
+    if (isNew && employeeDetails.firstName && employeeDetails.birthDate && moment(employeeDetails.birthDate).isValid()) {
       checkForDuplicate();
     }
   }, [employeeDetails.firstName, employeeDetails.birthDate])
 
   useEffect(() => {
     if (employeeExistsStatus !== "idle") {
-      console.log({ employeeExists })
-      if (employeeExists.length > 0) {
-        
+      console.log({ employeesDuplicates })
+      if (employeesDuplicates.length > 0) {
+        setDuplicates({
+          data: employeesDuplicates,
+          status: true
+        })
       }
     }
-   }, [employeeExistsStatus])
+  }, [employeeExistsStatus])
 
   /** Employees: NEW */
   useEffect(() => {
@@ -294,7 +301,7 @@ const ProfileMain = ({
       );
     }
   }, [access_token, employeeNo]);
-console.log({updatedDetails}, {employeeDetails})
+  console.log({ updatedDetails }, { employeeDetails })
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex(index);
@@ -349,7 +356,7 @@ console.log({updatedDetails}, {employeeDetails})
   };
 
   const success = (cb: any, test: string) => {
-    console.log({test})
+    console.log({ test })
     setLoading({ status: false, action: '' });
     setRefresh(true);
     const type = isNew ? 'created' : 'updated';
@@ -414,7 +421,7 @@ console.log({updatedDetails}, {employeeDetails})
       payroll_group: any = [],
       payment_method: any = [],
       violations: any = [],
-      offenseLevel: any= [];
+      offenseLevel: any = [];
 
     enumsData.forEach((o: any) => {
       switch (o.type.toLowerCase()) {
@@ -528,18 +535,18 @@ console.log({updatedDetails}, {employeeDetails})
       JSON.stringify(
         displayPhotos?.length > 0
           ? [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-              ...displayPhotos,
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+            ...displayPhotos,
+          ]
           : [
-              {
-                employeeNo,
-                photo: displayPhoto.photo,
-              },
-            ]
+            {
+              employeeNo,
+              photo: displayPhoto.photo,
+            },
+          ]
       )
     );
   };
@@ -559,7 +566,7 @@ console.log({updatedDetails}, {employeeDetails})
     try {
       consoler(updatedDetails, 'orange', 'updateEmployee');
       if (updatedDetails.employeeBenefits) {
-        updatedDetails.employeeBenefits = updatedDetails.employeeBenefits.map((o:any) => o.benefit)
+        updatedDetails.employeeBenefits = updatedDetails.employeeBenefits.map((o: any) => o.benefit)
       }
       await dispatch(
         updateEmployee({
@@ -623,9 +630,10 @@ console.log({updatedDetails}, {employeeDetails})
   const checkForDuplicate = async () => {
     await dispatch(checkEmployeeExists({
       access_token, params: {
-      firstName: employeeDetails.firstName,
-      birthDate: moment(employeeDetails.birthDate).format("YYYY-MM-DD")
-    }}))
+        firstName: employeeDetails.firstName,
+        birthDate: moment(employeeDetails.birthDate).format("YYYY-MM-DD")
+      }
+    }))
   }
 
   return (
@@ -650,7 +658,7 @@ console.log({updatedDetails}, {employeeDetails})
         resetNotif
       }}
     >
-      <EmployeeExists />
+      {isNew && <EmployeeExists duplicates={duplicates} setViewDetails={setViewDetails} setOpen={setOpen} setEmployeeDetails={setEmployeeDetails} setDuplicates={setDuplicates} />}
       <Dialog open={loading.status}>
         <div className='p-4 pt-6 flex flex-col items-center justify-center'>
           <CircularProgress />
@@ -668,12 +676,11 @@ console.log({updatedDetails}, {employeeDetails})
 
       <TabContext value={index}>
         <section
-          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${
-            isNew ? '!pb-0' : ''
-          }`}
+          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${isNew ? '!pb-0' : ''
+            }`}
         >
           <Suspense fallback={<div>Loading...</div>}>
-            <ProfileDetails />
+            <ProfileDetails setViewDetails={setViewDetails} setOpen={setOpen} />
           </Suspense>
           <section className='grid grid-cols-12 w-full gap-4'>
             {!isNew && (
@@ -686,11 +693,10 @@ console.log({updatedDetails}, {employeeDetails})
             )}
 
             <article
-              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${
-                isNew
-                  ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
-                  : ''
-              }`}
+              className={`laptop:col-span-9 desktop:col-span-9 phone:col-span-12 flex ${isNew
+                ? 'laptop:col-span-12 desktop:col-span-12 phone:col-span-12 desktop:p-4 laptop:p-4 phone:p-0'
+                : ''
+                }`}
             >
               <Suspense fallback={<div>Loading...</div>}>
                 <ProfileTabContent className='self-stretch' />
@@ -709,7 +715,7 @@ console.log({updatedDetails}, {employeeDetails})
           </button>
         )}
       </TabContext>
-    </ProfileCtx.Provider>
+    </ProfileCtx.Provider >
   );
 };
 

@@ -70,7 +70,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   useEffect(() => {
     if (access_token) {
-      dispatch(_getEmployeesAction({ access_token }));
+      dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
     }
   }, [access_token, refresh]);
 
@@ -168,7 +168,8 @@ const EmployeeDatabase: React.FC<Props> = () => {
     {
       field: 'location',
       headerName: 'Location',
-      width: 140,
+      // width: 140,
+      flex: 1,
       renderCell: (cell) =>
         cell.row.location?.map((o: any) => o.name).join(', '),
       sortable: false,
@@ -180,26 +181,27 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'employmentType',
       headerName: 'Employment Type',
       width: 140,
-      renderCell: (cell: any) => cell.row.employmentType?.name,
+      renderCell: (cell: any) => <div style={{ textAlign: "center" }}>{cell.row.employmentType?.name}</div>,
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.employmentType?.name;
       },
     },
-    {
-      field: 'employmentStatus',
-      headerName: 'Employment Status',
-      width: 140,
-      renderCell: (cell: any) => cell.row.employmentStatus.name,
-      sortComparator: (v1, v2) => v1.localeCompare(v2),
-      valueGetter: (params) => {
-        return params.row.employmentStatus?.name;
-      },
-    },
+    // {
+    //   field: 'employmentStatus',
+    //   headerName: 'Employment Status',
+    //   width: 140,
+    //   renderCell: (cell: any) => cell.row.employmentStatus.name,
+    //   sortComparator: (v1, v2) => v1.localeCompare(v2),
+    //   valueGetter: (params) => {
+    //     return params.row.employmentStatus?.name;
+    //   },
+    // },
     {
       field: 'reportsTo',
       headerName: 'Team Leader',
-      width: 140,
+      // width: 140,
+      flex: 1,
       renderCell: (cell) => cell.row.reportsTo?.employeeName || '',
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
@@ -217,7 +219,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
     //   ),
     // },
   ];
-
+  console.log({ viewDetails })
   const sendCredentials = async () => {
     if (sendAccessList.length > 0) {
       Promise.all(
@@ -258,7 +260,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
-      <NewEmployeeProfile open={open} setOpen={setOpen} />
+      <NewEmployeeProfile open={open} setOpen={setOpen} setViewDetails={setViewDetails} />
       <ViewEmployeeProfile
         viewDetails={viewDetails}
         setViewDetails={setViewDetails}

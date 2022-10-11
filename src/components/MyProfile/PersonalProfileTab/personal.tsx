@@ -43,8 +43,10 @@ const Personal = (props: Props) => {
     setCivilStatus(enums.civil_status);
     setReligion(enums.religions);
     setGenders(enums.gender);
+    console.log({ employeeDetails }, "vvvvvvvvvvvvvvvvvvvvvvv")
   }, [enums]);
-  console.log({ employeeDetails }, {updatedDetails})
+
+  console.log({ employeeDetails }, { updatedDetails })
   useEffect(() => {
     console.log({ sameAddress })
     if (sameAddress) {
@@ -62,15 +64,15 @@ const Personal = (props: Props) => {
             },
           }
         })
-        setEmployeeDetails((prev: any) => ({
-          ...prev,
-          permanentAddress: {
-            addressLine: prev.presentAddress.addressLine,
-            region: prev.presentAddress.region,
-            province: prev.presentAddress.province,
-            municipality: prev.presentAddress.municipality,
-            barangay: prev.presentAddress.barangay,
-          }
+      setEmployeeDetails((prev: any) => ({
+        ...prev,
+        permanentAddress: {
+          addressLine: prev.presentAddress.addressLine,
+          region: prev.presentAddress.region,
+          province: prev.presentAddress.province,
+          municipality: prev.presentAddress.municipality,
+          barangay: prev.presentAddress.barangay,
+        }
       }));
     }
   }, [sameAddress]);
@@ -145,13 +147,13 @@ const Personal = (props: Props) => {
         ...prev,
         ...value
       }))
-      setEmployeeDetails((prev: EmployeeI) => ({
-        ...prev,
-        ...value
-      }));
+    setEmployeeDetails((prev: EmployeeI) => ({
+      ...prev,
+      ...value
+    }));
   };
 
-  const handleSelectChange = (col:string, value:any, option:any) => {
+  const handleSelectChange = (col: string, value: any, option: any) => {
     if (!isNew) {
       setUpdatedDetails((prev: any) => ({
         ...prev,
@@ -181,7 +183,7 @@ const Personal = (props: Props) => {
   return (
     <CollapseWrapper
       panelTitle='Personal Information'
-      icon={()=>getIcon(<AccountCircleTwoTone />, "Personal")}
+      icon={() => getIcon(<AccountCircleTwoTone />, "Personal")}
       open
     >
       <GridWrapper colSize='7'>
@@ -195,7 +197,7 @@ const Personal = (props: Props) => {
             variant='standard'
             fullWidth
             value={employeeDetails.firstName}
-            onChange={(e: any) => handleChange({firstName: e.target.value})}
+            onChange={(e: any) => handleChange({ firstName: e.target.value })}
           />
         </div>
         <div className='desktop:col-span-2 laptop:col-span-2 phone:col-span-7'>
