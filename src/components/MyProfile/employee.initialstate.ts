@@ -1,36 +1,36 @@
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
 export const personalCols = [
-  'firstName', 
-  'lastName', 
-  'middleName', 
-  'suffix', 
-  'citizenship', 
-  'gender', 
-  'birthDate', 
-  'personalContactNumber', 
-  'personalEmail', 
-  'civilStatus', 
-  'religion', 
-  'presentAddress', 
+  'firstName',
+  'lastName',
+  'middleName',
+  'suffix',
+  'citizenship',
+  'gender',
+  'birthDate',
+  'personalContactNumber',
+  'personalEmail',
+  'civilStatus',
+  'religion',
+  'presentAddress',
   'permanentAddress'
 ]
 
 export const compensationBenefitsCols = [
-  'sss', 
-  'philHealth', 
-  'pagIbig', 
-  'tin', 
-  'numberOfDependents', 
+  'sss',
+  'philHealth',
+  'pagIbig',
+  'tin',
+  'numberOfDependents',
   'taxExemption'
 ]
 
 export const payrollInfoCols = [
-  'basicPay', 
-  'payRateType', 
-  'paymentMethod', 
-  'payrollGroup', 
-  'deductionSSS', 
+  'basicPay',
+  'payRateType',
+  'paymentMethod',
+  'payrollGroup',
+  'deductionSSS',
   'deductPhilhealth',
   'deductHMDF',
   'fixedContributionRate',
@@ -38,47 +38,47 @@ export const payrollInfoCols = [
 ]
 
 const levels = [
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Elementary',
-      degree: '',
-      schoolAndAddress: '',
-      honors: '',
-    },
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Secondary',
-      degree: '',
-      schoolAndAddress: '',
-      honors: '',
-    },
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Tertiary',
-      schoolAndAddress: '',
-      degree: '',
-      honors: '',
-    },
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Post Graduate',
-      degree: '',
-      schoolAndAddress: '',
-      honors: '',
-    },
-    {
-      yrFrom: null,
-      yrTo: null,
-      level: 'Others',
-      degree: '',
-      schoolAndAddress: '',
-      honors: '',
-    },
-  ];
+  {
+    yrFrom: null,
+    yrTo: null,
+    level: 'Elementary',
+    degree: '',
+    schoolAndAddress: '',
+    honors: '',
+  },
+  {
+    yrFrom: null,
+    yrTo: null,
+    level: 'Secondary',
+    degree: '',
+    schoolAndAddress: '',
+    honors: '',
+  },
+  {
+    yrFrom: null,
+    yrTo: null,
+    level: 'Tertiary',
+    schoolAndAddress: '',
+    degree: '',
+    honors: '',
+  },
+  {
+    yrFrom: null,
+    yrTo: null,
+    level: 'Post Graduate',
+    degree: '',
+    schoolAndAddress: '',
+    honors: '',
+  },
+  {
+    yrFrom: null,
+    yrTo: null,
+    level: 'Others',
+    degree: '',
+    schoolAndAddress: '',
+    honors: '',
+  },
+];
 
 export const initialState: EmployeeI = {
   employeeNo: '',
@@ -158,5 +158,6 @@ export const initialState: EmployeeI = {
   employmentLastUpdate: undefined,
   jobLastUpdate: undefined,
   lastModifiedDate: undefined,
-  dateCreated: undefined
+  dateCreated: undefined,
+  isRehire: false
 };

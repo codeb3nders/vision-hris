@@ -17,7 +17,7 @@ export const getAllEmployeesAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await getEmployeesEndpoint(config);
+      const response = await getEmployeesEndpoint({config, params: data.params});
       return [...response.data];
     } catch (err: any) {
       console.error("ERROR in getEmployees", err);
@@ -33,7 +33,7 @@ export const getOneEmployeeAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await getEmployeesEndpoint(config, data.params.employeeNo);
+      const response = await getEmployeesEndpoint({config, employeeNo: data.params.employeeNo});
       return response.data;
     } catch (err: any) {
       console.error("ERROR in getEmployees", err);

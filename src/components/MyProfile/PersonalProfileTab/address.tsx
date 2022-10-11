@@ -26,13 +26,26 @@ const Address = ({ data, isPermanent }: Props) => {
   const [barangayList, setBarangayList] = useState<any>({});
   const [addressLine, setAddressLine] = useState<string>('');
   const [regionFile, setRegionFile] = useState<any[]>([]);
+  const [employeeData, setEmployeeData] = useState<any>({})
 
   useEffect(() => {
-    console.log({data})
+    console.log({ data })
     if (data) {
       setRegionFile(data)
     }
   }, [data])
+
+  useEffect(() => {
+    setEmployeeData(() => {
+      let presentAddress = employeeDetails.presentAddress || {};
+      let permanentAddress = employeeDetails.permanentAddress || {};
+      return {
+        ...employeeDetails,
+        ...presentAddress,
+        ...permanentAddress
+      }
+    })
+  }, [employeeDetails])
 
   useEffect(() => {
     if (regionFile.length > 0 && employeeDetails) {
@@ -114,7 +127,7 @@ const Address = ({ data, isPermanent }: Props) => {
           size='small'
           variant='standard'
           fullWidth
-          value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['addressLine']}
+          value={employeeData.addressLine}
           onChange={(e: any) => {
             handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-addressLine`]: e.target.value });
 
@@ -127,7 +140,7 @@ const Address = ({ data, isPermanent }: Props) => {
         <FormControl variant='standard' size='small' fullWidth>
           <InputLabel>Region</InputLabel>
           <Select
-            value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['region']}
+            value={employeeData['region']}
             id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-region`}
             onChange={(e: any, options: any) => {
               handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-region`]: e.target.value });
@@ -163,7 +176,7 @@ const Address = ({ data, isPermanent }: Props) => {
         >
           <InputLabel>Province</InputLabel>
           <Select
-            value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['province']}
+            value={employeeData['province']}
             id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-province`}
             onChange={(e: any, options: any) => {
               handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-province`]: e.target.value });
@@ -194,7 +207,7 @@ const Address = ({ data, isPermanent }: Props) => {
         >
           <InputLabel>Municipality</InputLabel>
           <Select
-            value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['municipality']}
+            value={employeeData['municipality']}
             id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-municipality`}
             onChange={(e: any, options: any) => {
               handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-municipality`]: e.target.value });
@@ -224,7 +237,7 @@ const Address = ({ data, isPermanent }: Props) => {
         >
           <InputLabel>Barangay</InputLabel>
           <Select
-            value={employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]['barangay']}
+            value={employeeData['barangay']}
             id={`${isPermanent ? 'permanentAddress' : 'presentAddress'}-barangay`}
             onChange={(e: any) => {
               handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-barangay`]: e.target.value });

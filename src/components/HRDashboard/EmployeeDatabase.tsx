@@ -70,7 +70,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   useEffect(() => {
     if (access_token) {
-      dispatch(_getEmployeesAction({ access_token }));
+      dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
     }
   }, [access_token, refresh]);
 
@@ -134,7 +134,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Position',
       width: 200,
       renderCell: (cell: any) => cell.row.position?.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      sortComparator: (v1, v2) => v1?.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.position?.name;
       },
@@ -144,7 +144,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       headerName: 'Rank',
       width: 120,
       renderCell: (cell: any) => cell.row.rank?.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.rank?.name;
       },
@@ -160,15 +160,16 @@ const EmployeeDatabase: React.FC<Props> = () => {
           </Tooltip>
         );
       },
-      sortComparator: (v1, v2) => v1.code.localeCompare(v2.code),
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
-        return params.row.department?.name;
+        return params.row.department?.code;
       },
     },
     {
       field: 'location',
       headerName: 'Location',
-      width: 140,
+      // width: 140,
+      flex: 1,
       renderCell: (cell) =>
         cell.row.location?.map((o: any) => o.name).join(', '),
       sortable: false,
@@ -180,29 +181,29 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'employmentType',
       headerName: 'Employment Type',
       width: 140,
-      renderCell: (cell: any) => cell.row.employmentType?.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
+      renderCell: (cell: any) => <div style={{ textAlign: "center" }}>{cell.row.employmentType?.name}</div>,
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.employmentType?.name;
       },
     },
-    {
-      field: 'employmentStatus',
-      headerName: 'Employment Status',
-      width: 140,
-      renderCell: (cell: any) => cell.row.employmentStatus.name,
-      sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
-      valueGetter: (params) => {
-        return params.row.employmentStatus?.name;
-      },
-    },
+    // {
+    //   field: 'employmentStatus',
+    //   headerName: 'Employment Status',
+    //   width: 140,
+    //   renderCell: (cell: any) => cell.row.employmentStatus.name,
+    //   sortComparator: (v1, v2) => v1.localeCompare(v2),
+    //   valueGetter: (params) => {
+    //     return params.row.employmentStatus?.name;
+    //   },
+    // },
     {
       field: 'reportsTo',
       headerName: 'Team Leader',
-      width: 140,
+      // width: 140,
+      flex: 1,
       renderCell: (cell) => cell.row.reportsTo?.employeeName || '',
-      sortComparator: (v1, v2) =>
-        v1.employeeName.localeCompare(v2.employeeName),
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params) => {
         return params.row.reportsTo?.employeeName || '';
       },
@@ -218,7 +219,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
     //   ),
     // },
   ];
-
+  console.log({ viewDetails })
   const sendCredentials = async () => {
     if (sendAccessList.length > 0) {
       Promise.all(
@@ -259,7 +260,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
-      <NewEmployeeProfile open={open} setOpen={setOpen} />
+      <NewEmployeeProfile open={open} setOpen={setOpen} setViewDetails={setViewDetails} />
       <ViewEmployeeProfile
         viewDetails={viewDetails}
         setViewDetails={setViewDetails}

@@ -130,6 +130,7 @@ export interface EmployeeI {
   jobLastUpdate: Date | Moment | undefined;
   lastModifiedDate: Date | Moment | undefined;
   dateCreated: Date | Moment | undefined;
+  isRehire: boolean;
 }
 
 export interface LoginI {

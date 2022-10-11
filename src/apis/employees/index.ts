@@ -12,18 +12,13 @@ export const createEmployeeEndpoint = async (body: EmployeeI, config = {}) => {
   });
 };
 
-export const updateEmployeeEndpoint = async (data: EmployeeI, config?: any) => {
-  // const access_token = localStorage.getItem('access_token');
-  // const internalConfig = {
-  //   headers: { Authorization: `Bearer ${access_token}` },
-  // };
+export const updateEmployeeEndpoint = async (data: EmployeeI, config: any) => {
   const employeeNo = data.employeeNo;
   let tmp_body: any = data;
   delete tmp_body.employeeNo;
   const body = tmp_body;
   try {
     return await axios.patch(`${URL_EMPLOYEES}${employeeNo}`, body, {
-      // ...internalConfig,
       ...config,
     });
   } catch (error: any) {
@@ -32,13 +27,14 @@ export const updateEmployeeEndpoint = async (data: EmployeeI, config?: any) => {
   }
 };
 
-export const getEmployeesEndpoint = async (
-  config?: any,
-  employeeNo?: string
-) => {
+export const getEmployeesEndpoint = async (data: any = {
+  config: {},
+  employeeNo: "",
+  params: {}
+}) => {
   try {
-    const url = employeeNo ? `${URL_EMPLOYEES}${employeeNo}` : URL_EMPLOYEES;
-    return await axios.get(url, { ...config });
+    const url = data.employeeNo ? `${URL_EMPLOYEES}${data.employeeNo}` : URL_EMPLOYEES;
+    return await axios.get(url, { ...data.config, params: data.params });
   } catch (error: any) {
     console.error('ERROR in getEmployeesEndpoint', error);
     return error.message;
