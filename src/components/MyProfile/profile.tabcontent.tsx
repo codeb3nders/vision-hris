@@ -24,6 +24,7 @@ const FamilyBackground = lazy(
 );
 const Contacts = lazy(() => import('./Emergency/contacts'));
 const JobInfo = lazy(() => import('./EmploymentTab/job.info'));
+const UserGroupAccess = lazy(() => import('./EmploymentTab/userAccessGroup'));
 const GovernmentDetails = lazy(
   () => import('./PersonalProfileTab/government.details')
 );
@@ -61,15 +62,15 @@ const ProfileTabContent = ({ className }: Props) => {
       <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
 
       {employeesTabs.indexOf(index) >= 0 && !isNew &&
-      <div className='mb-2 flex flex-row justify-end'>
-        <button
-          disabled={!updatedDetails}
-          onClick={handleUpdateEmployee}
-          className='px-4 py-1 bg-green-500 hover:bg-green-400 transition-all duration-200 text-white disabled:bg-gray-300 disabled:cursor-not-allowed rounded-sm'
-        >
-          Save Changes
-        </button>
-      </div>
+        <div className='mb-2 flex flex-row justify-end'>
+          <button
+            disabled={!updatedDetails}
+            onClick={handleUpdateEmployee}
+            className='px-4 py-1 bg-green-500 hover:bg-green-400 transition-all duration-200 text-white disabled:bg-gray-300 disabled:cursor-not-allowed rounded-sm'
+          >
+            Save Changes
+          </button>
+        </div>
       }
       <div
         className={
@@ -106,6 +107,7 @@ const ProfileTabContent = ({ className }: Props) => {
           <TabPanel value='2' className='p-0 grid' id='EmploymentStatus'>
             <JobInfo />
             {!isNew && <EmployementStatus />}
+            {!isNew && <UserGroupAccess />}
           </TabPanel>
         </Suspense>
 

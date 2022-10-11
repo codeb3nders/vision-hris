@@ -1,4 +1,4 @@
-import {} from '@mui/icons-material';
+import { } from '@mui/icons-material';
 import {
   List,
   ListItemIcon,
@@ -112,9 +112,8 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
           />
         </ListItemButton>
 
-        {/* <p className='text-xs font-bold text-gray-500 mt-2'>MY TEAMMATES</p> */}
         <CollapseWrapper
-          panelTitle='My Teammates'
+          panelTitle='Teammates'
           titleClassName='text-xs font-bold text-gray-500 mt-2 uppercase'
           titleWrapperClassName='!pl-0'
           open
