@@ -1,11 +1,11 @@
 import './App.css';
 import React, { useEffect, createContext, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
-import SignInSide from './Login';
 import Main from './components/Main';
 import { useSelector } from 'react-redux';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { initialState } from 'components/MyProfile/employee.initialstate';
+import Slider from './components/Auth/slider';
 
 type AppModel = {
   access_token: string;
@@ -19,22 +19,17 @@ type AppModel = {
 };
 
 export const AppCtx = createContext<AppModel>({
-  access_token: "",
+  access_token: '',
   isLoggedIn: false,
-  userData: { ...initialState, full_name: "" },
-  userGroup: "",
-  setIsHRLogin: () => { },
+  userData: { ...initialState, full_name: '' },
+  userGroup: '',
+  setIsHRLogin: () => {},
   isHRLogin: false,
-  setCurrentPage: () => { },
-  currentPage: "login",
+  setCurrentPage: () => {},
+  currentPage: 'login',
 });
 
 type Props = {};
-
-type Login = {
-  userData: any | null;
-  alias: string | null;
-};
 
 export const consoler = (data: any, bgColor: string, title: string) => {
   console.log(`%c 📝 ${title}:`, `background: ${bgColor}; color: white`, data);
@@ -57,15 +52,17 @@ const App: React.FC<Props> = () => {
   });
 
   useEffect(() => {
-    if (userData && userData.userGroup.code == "HR ADMIN") {
+    if (userData && userData.userGroup.code === 'HR ADMIN') {
       setIsHRLogin(true);
     }
-  }, [userData])
+  }, [userData]);
 
   return (
     <div className={`App h-[100vh]`} style={{ background: '#fafbff' }}>
       <ThemeProvider theme={theme}>
-        {!isLoggedIn ? <SignInSide /> :
+        {!isLoggedIn ? (
+          <Slider />
+        ) : (
           <AppCtx.Provider
             value={{
               access_token,
@@ -80,7 +77,7 @@ const App: React.FC<Props> = () => {
           >
             <Main role={userGroup} />
           </AppCtx.Provider>
-        }
+        )}
       </ThemeProvider>
     </div>
   );
