@@ -45,6 +45,7 @@ const Personal = (props: Props) => {
     setGenders(enums.gender);
     console.log({ employeeDetails }, "vvvvvvvvvvvvvvvvvvvvvvv")
   }, [enums]);
+    console.log(employeeDetails.gender?.code, "employeeDetails.gender.code")
 
   console.log({ employeeDetails }, { updatedDetails })
   useEffect(() => {
@@ -267,7 +268,7 @@ const Personal = (props: Props) => {
               labelId='genderLabel'
               size='small'
               onChange={(e: any, option: any) => handleSelectChange("gender", e.target.value, option)}
-              value={employeeDetails?.gender?.code}
+              value={employeeDetails.gender?.code}
             >
               {genders.map((gender: any, i: number) => {
                 return (

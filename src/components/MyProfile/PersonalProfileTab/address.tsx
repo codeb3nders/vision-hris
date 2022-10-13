@@ -24,7 +24,6 @@ const Address = ({ data, isPermanent }: Props) => {
   const [provinceList, setProvinceList] = useState<any>({});
   const [municipalityList, setMunicipalityList] = useState<any>({});
   const [barangayList, setBarangayList] = useState<any>({});
-  const [addressLine, setAddressLine] = useState<string>('');
   const [regionFile, setRegionFile] = useState<any[]>([]);
   const [employeeData, setEmployeeData] = useState<any>({})
 
@@ -127,7 +126,7 @@ const Address = ({ data, isPermanent }: Props) => {
           size='small'
           variant='standard'
           fullWidth
-          value={employeeData.addressLine}
+          value={employeeData.addressLine || ""}
           onChange={(e: any) => {
             handleChange({ [`${isPermanent ? 'permanentAddress' : 'presentAddress'}-addressLine`]: e.target.value });
 

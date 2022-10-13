@@ -12,6 +12,12 @@ import moment from 'moment';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
 type Props = {
+  setLoading: React.Dispatch<
+    React.SetStateAction<{
+      status: boolean;
+      action: string;
+    }>
+  >;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setEmployeeDetails: React.Dispatch<React.SetStateAction<EmployeeI>>;
   setViewDetails?: React.Dispatch<
@@ -32,7 +38,7 @@ type Props = {
   >;
 };
 
-const EmployeeExists = ({ duplicates, setDuplicates, setOpen, setEmployeeDetails, setViewDetails }: Props) => {
+const EmployeeExists = ({setLoading, duplicates, setDuplicates, setOpen, setEmployeeDetails, setViewDetails }: Props) => {
   const { data, status } = duplicates;
   return (
     <Dialog
@@ -83,12 +89,15 @@ const EmployeeExists = ({ duplicates, setDuplicates, setOpen, setEmployeeDetails
                     }
                   })
                   setDuplicates({ data: [], status: false });
+                  setLoading({ status: true, action: 'Retrieving Data' });
                 }}> Select for REHIRE</Button> : <Button size="small" onClick={() => {
                   setViewDetails &&
                     setViewDetails({
                       employeeNo: o.employeeNo,
                       status: true
                     });
+                    setDuplicates({ data: [], status: false })
+                    setLoading({ status: true, action: 'Retrieving Data' });
                 }}>Go to Employee Profile</Button>
               }
             >

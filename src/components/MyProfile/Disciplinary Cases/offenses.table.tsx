@@ -27,7 +27,8 @@ import {
   data, dataStatus,
   deleteStatus,
   updateStatus,
-  newDataStatus
+  newDataStatus,
+  updateAction
 } from 'slices/disciplinaryCases';
 import { useTheme } from '@mui/material/styles';
 import moment from 'moment';
@@ -37,11 +38,11 @@ type Props = {};
 
 type OffenseI = {
   id: string;
+  employeeNo: string;
   caseNumber: string;
-  subject: string;
-  description: string;
-  offenseStage: string;
-  violation: any;
+  violationCategory: any;
+  offenseStage: any;
+  violations: any;
   offenseLevel: any;
   reportIssueDate: Date | null;
   explainIssueDate: Date | null;
@@ -102,7 +103,7 @@ console.log({employeeCases})
     await dispatch(deleteAction({id: row.id, access_token}))
     setConfirmDelete({ row: null, status: false });
   };
-
+console.log({offenses}, {offenseData})
   const handleEdit = async (row: OffenseI) => {
     const offense = offenses.filter(
       (t) => t.id === row.id
@@ -142,6 +143,8 @@ console.log({employeeCases})
         access_token={access_token}
         resetNotif={resetNotif}
         enums={enums}
+        offenseData={offenseData}
+        isUpdate={isUpdate}
       />
       <div style={{ width: '100%' }}>
         <DataGrid
@@ -170,11 +173,11 @@ console.log({employeeCases})
 
 const initialState: OffenseI = {
   id: "",
+  employeeNo: "",
   caseNumber: '',
-  subject: '',
-  description: '',
-  offenseStage: '1ST OFFENSE',
-  violation: {},
+  violationCategory: {},
+  offenseStage: {},
+  violations: {},
   offenseLevel: {},
   reportIssueDate: null,
   explainIssueDate: new Date(),
@@ -182,53 +185,58 @@ const initialState: OffenseI = {
   finalDisposition: '',
   dispositionDate: null,
   cleansingPeriod: '',
-  status: '',
+  status: 'Open',
   aging: '',
 };
 
-const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_token, resetNotif, enums }) => {
+const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_token, resetNotif, enums, offenseData: data, isUpdate }) => {
   const dispatch = useDispatch();
   const [offense, setOffense] = useState<OffenseI>(initialState);
   const [offenseLevels, setOffenseLevels] = useState<any[]>([]);
   const [violationsList, setViolationsList] = useState<any[]>([]);
+  const [offenseStages, setOffenseStages] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+   const [offenseData, setOffenseData] = useState<any>(initialState);
+
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    setCategories(() => {
-      const data = violationsList.map((a: any) => a.Category);
-      return Array.from(new Set(data));
-    })
-  }, [violationsList])
-
-  useEffect(() => { 
+    setCategories(enums.violationCategories)
     setOffenseLevels(enums.offenseLevel)
     setViolationsList(enums.violations)
+    setOffenseStages(enums.offenseStages)
   }, [enums])
 
+  useEffect(() => {
+    setOffenseData(data);
+  }, [data]);
+
   useEffect(() => { 
-    if (offense.description) {
-      const violationLevel = offense.violation;
+    if (offense.violations?.code && offense.offenseStage?.code) {
+      const violationLevel = offense.violations;
       let offenseLevel = offenseLevels.find((x: any) => x.code === violationLevel.Level)
       let cleansingPeriod:any = null;
       if (offenseLevel?.Cleansing_Days) {
         cleansingPeriod = moment(offense.explainIssueDate).add(offenseLevel?.Cleansing_Days, "days").endOf("day");
       }
-      const offenseStageCnt = parseInt(offense.offenseStage.replace(/\D/g, ""));
+      const offenseStageCnt = parseInt(offense.offenseStage?.code.replace(/\D/g, ""));
       if (!isNaN(offenseStageCnt) && offenseStageCnt > 1) {
         const violationLevelCnt = parseInt(violationLevel.Level.replace(/\D/g, ""));
         offenseLevel = offenseLevels.find((x: any) => {
           const codeCnt = parseInt(x.code.replace(/\D/g, ""));
-          console.log({codeCnt}, {violationLevelCnt}, {offenseStageCnt})
           return (violationLevelCnt+(offenseStageCnt-1)) === codeCnt
         })
       }
       setOffense((prev: any) => {
         return { ...prev, offenseLevel, cleansingPeriod }
       })
+      isUpdate && setOffenseData((prev: any) => ({
+        ...prev,
+        offenseLevel, cleansingPeriod
+      }));
     }
-  }, [offense.violation, offense.offenseStage])
+  }, [offense.violations, offense.offenseStage])
 
   useEffect(() => {
     let cleansingPeriod: any = null;
@@ -238,6 +246,10 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
     setOffense((prev: any) => {
       return { ...prev, cleansingPeriod }
     })
+    isUpdate && setOffenseData((prev: any) => ({
+      ...prev,
+      cleansingPeriod
+    }));
   }, [offense.explainIssueDate, offense.offenseLevel])
 
   const handleSaveOffense = async() => {
@@ -250,7 +262,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
           .filter((e: any) => !e.value)
           .map((e: any) => e.id).length;
 
-        if (invalidCtr > 0) {
+        if (invalidCtr > 0 || ((!isUpdate && offense.offenseLevel?.code === undefined) || (isUpdate && offenseData.offenseLevel?.code === undefined))) {
           return failed(INCOMPLETE_FORM_MESSAGE);
         }
         return true;
@@ -258,7 +270,44 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
       //check inputs...
     if (await validateFields()) {
       try {
-        await dispatch(createAction({ body: {...offense, employeeNo}, access_token }));
+        if (isUpdate) {
+          const data = {
+            violationCategory: offense.violationCategory.code,
+            violations: offense.violations.code,
+            offenseLevel: offense.offenseLevel.code,
+            offenseStage: offense.offenseStage.code,
+            cleansingPeriod: offense.cleansingPeriod,
+            dispositionDate: offense.dispositionDate,
+            noticeToExplainIssueDate: offense.explainIssueDate,
+            explanationDate: offense.explanationDate,
+            finalDisposition: offense.finalDisposition,
+            misconductReportIssueDate: offense.reportIssueDate,
+            status: offense.status
+          }
+          await dispatch(updateAction({
+              params: {
+                id: offenseData.id,
+                ...data
+              },
+              access_token,
+            }));
+        } else {
+          const data = {
+            violationCategory: offense.violationCategory.code,
+            violations: offense.violations.code,
+            offenseLevel: offense.offenseLevel.code,
+            offenseStage: offense.offenseStage.code,
+            cleansingPeriod: offense.cleansingPeriod,
+            dispositionDate: offense.dispositionDate,
+            noticeToExplainIssueDate: offense.explainIssueDate,
+            explanationDate: offense.explanationDate,
+            finalDisposition: offense.finalDisposition,
+            misconductReportIssueDate: offense.reportIssueDate,
+            status: offense.status,
+            caseNumber: "2022-0000001"
+          }
+          await dispatch(createAction({ body: {...data, employeeNo}, access_token }));
+        }
       } catch (error: any) {
         console.log(error);
       }
@@ -267,14 +316,6 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
     }
   };
 
-  const offenseStage = [
-    '1ST OFFENSE',
-    '2ND OFFENSE',
-    '3RD OFFENSE',
-    '4TH OFFENSE',
-    '5TH OFFENSE',
-  ];
-console.log({offense}, {offenseLevels}, {violationsList})
   const status = ['Open', 'Close'];
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="offense-dialog"
@@ -288,19 +329,25 @@ console.log({offense}, {offenseLevels}, {violationsList})
 
         <GridWrapper colSize='1'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2 w[200px]'>
-            <FormControl fullWidth size='small' variant='standard'>
-              <InputLabel id='subject'>Subject</InputLabel>
+            <FormControl fullWidth size='small' variant='standard' required>
+              <InputLabel id='category'>Subject</InputLabel>
               <Select
-                labelId='subject'
+                labelId='category'
                 label='Subject'
-                value={offense.subject}
-                onChange={(e: any) =>
-                  setOffense((prev) => ({ ...initialState, subject: e.target.value }))
-                }
+                value={offense.violationCategory?.code}
+                defaultValue={offenseData.violationCategory.code}
+                onChange={(e: any, option: any) => {
+                  setOffense((prev) => ({ ...initialState, violationCategory: option.props["data-value"] }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    violationCategory: option.props["data-value"]
+                  }));
+                }}
               >
-                {categories.sort((a:any, b:any) => a.localeCompare(b)).map((category:any) => (
-                  <MenuItem key={category} id={category} value={category}>
-                    {category}
+                {categories.sort((a:any, b:any) => a.name.localeCompare(b.name))
+                  .map((a: any) => (
+                  <MenuItem key={a.code} id={a.code} data-value={a} style={{whiteSpace: 'normal'}} value={a.code}>
+                    {a.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -310,23 +357,30 @@ console.log({offense}, {offenseLevels}, {violationsList})
 
         <GridWrapper colSize='1'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl fullWidth size='small' variant='standard'>
+            <FormControl fullWidth size='small' variant='standard' required>
               <InputLabel id='description'>Description</InputLabel>
               <Select
-                style={{whiteSpace: "normal"}}
+                style={{ whiteSpace: "normal" }}
                 labelId='description'
                 label='Description'
-                // autoWidth
-                value={offense.description}
-                onChange={(e: any, option:any) =>
+                defaultValue={offenseData.violations.code}
+                onChange={(e: any, option: any) => {
                   setOffense((prev) => ({
                     ...prev,
-                    description: e.target.value,
-                    violation: option.props["data-value"]
-                  }))
-                }
+                    violations: option.props["data-value"]
+                  }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    violations: option.props["data-value"]
+                  }));
+                }}
               >
-                {violationsList.filter((x: any) => x.Category == offense.subject)
+                {violationsList.filter((x: any) => {
+                  if (!isUpdate) {
+                    return x.Category == offense.violationCategory?.code
+                  }
+                  return x.Category == offenseData.violationCategory?.code
+                })
                   .sort((a:any, b:any) => a.name.localeCompare(b.name))
                   .map((a: any) => (
                   <MenuItem key={a.code} id={a.code} data-value={a} style={{whiteSpace: 'normal'}} value={a.code}>
@@ -340,22 +394,26 @@ console.log({offense}, {offenseLevels}, {violationsList})
 
         <GridWrapper colSize='2'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl fullWidth size='small' variant='standard'>
+            <FormControl fullWidth size='small' variant='standard' required>
               <InputLabel id='offense-stage'>Offense Stage</InputLabel>
               <Select
                 labelId='offense-stage'
                 label='Offense Stage'
-                defaultValue={offense.offenseStage}
-                onChange={(e: any) =>
+                defaultValue={offenseData.offenseStage.code}
+                onChange={(e: any, option: any) => {
                   setOffense((prev) => ({
                     ...prev,
-                    offenseStage: e.target.value
-                  }))
-                }
+                    offenseStage: option.props["data-value"]
+                  }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    offenseStage: option.props["data-value"]
+                  }));
+                }}
               >
-                {offenseStage.map((a:any) => (
-                  <MenuItem key={a} id={a} value={a}>
-                    {a}
+                {offenseStages.map((a:any) => (
+                  <MenuItem key={a.code} id={a.code} data-value={a} style={{whiteSpace: 'normal'}} value={a.code.toUpperCase()}>
+                    {a.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -370,7 +428,7 @@ console.log({offense}, {offenseLevels}, {violationsList})
               disabled
               variant='standard'
               InputProps={{
-                startAdornment: offense.offenseLevel !== undefined ? <Chip label={offense.offenseLevel.name} /> : "N/A",
+                startAdornment: offense.offenseLevel !== undefined ? <Chip label={offense.offenseLevel.name || offenseData.offenseLevel.name} /> : "N/A",
                 disableUnderline: true
               }}
             />
@@ -381,15 +439,19 @@ console.log({offense}, {offenseLevels}, {violationsList})
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label='Workplace Misconduct Report Issue Date'
-                onChange={(value: any) =>
+                onChange={(value: any) => {
                   setOffense((prev) => ({
                     ...prev,
                     reportIssueDate: value,
-                  }))
-                }
-                value={offense.reportIssueDate}
+                  }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    reportIssueDate: value
+                  }));
+                }}
+                value={offense.reportIssueDate || offenseData.misconductReportIssueDate || null}
                 renderInput={(params) => (
-                  <TextField {...params} fullWidth variant='standard' />
+                  <TextField {...params} fullWidth required variant='standard' />
                 )}
               />
             </LocalizationProvider>
@@ -399,13 +461,17 @@ console.log({offense}, {offenseLevels}, {violationsList})
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label='Notice To Explain Issue Date'
-                onChange={(value: any) =>
+                onChange={(value: any) => {
                   setOffense((prev) => ({
                     ...prev,
                     explainIssueDate: value,
-                  }))
-                }
-                value={offense.explainIssueDate}
+                  }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    explainIssueDate: value
+                  }));
+                }}
+                value={offense.explainIssueDate || offenseData.noticeToExplainIssueDate || null}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -417,13 +483,17 @@ console.log({offense}, {offenseLevels}, {violationsList})
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label='Explanation Date'
-                onChange={(value: any) =>
+                onChange={(value: any) => {
                   setOffense((prev) => ({
                     ...prev,
                     explanationDate: value,
-                  }))
-                }
-                value={offense.explanationDate}
+                  }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    explanationDate: value
+                  }));
+                }}
+                value={offense.explanationDate || offenseData.explanationDate || null}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -437,13 +507,18 @@ console.log({offense}, {offenseLevels}, {violationsList})
               size='small'
               variant='standard'
               fullWidth
+              defaultValue={offenseData.finalDisposition}
               label='Final Disposition'
-              onChange={(e: any) =>
+              onChange={(e: any) => {
                 setOffense((prev) => ({
                   ...prev,
                   finalDisposition: e.target.value,
-                }))
-              }
+                }));
+                isUpdate && setOffenseData((prev: any) => ({
+                  ...prev,
+                  finalDisposition: e.target.value
+                }));
+              }}
             />
           </div>
 
@@ -451,13 +526,17 @@ console.log({offense}, {offenseLevels}, {violationsList})
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label='Disposition Date'
-                onChange={(value: any) =>
+                onChange={(value: any) => {
                   setOffense((prev) => ({
                     ...prev,
                     dispositionDate: value,
-                  }))
-                }
-                value={offense.dispositionDate}
+                  }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    dispositionDate: value
+                  }));
+                }}
+                value={offense.dispositionDate || offenseData.dispositionDate || null}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -470,13 +549,17 @@ console.log({offense}, {offenseLevels}, {violationsList})
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label='Cleansing Period'
-                onChange={(value: any) =>
+                onChange={(value: any) => {
                   setOffense((prev) => ({
                     ...prev,
                     cleansingPeriod: value,
-                  }))
-                }
-                value={offense.cleansingPeriod}
+                  }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    cleansingPeriod: value
+                  }));
+                }}
+                value={offense.cleansingPeriod || offenseData.cleansingPeriod}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -491,12 +574,17 @@ console.log({offense}, {offenseLevels}, {violationsList})
                 labelId='status'
                 label='Status'
                 value="Open"
-                onChange={(e: any) =>
+                defaultValue={offenseData.status}
+                onChange={(e: any) => {
                   setOffense((prev) => ({
                     ...prev,
                     status: e.target.value,
-                  }))
-                }
+                  }));
+                  isUpdate && setOffenseData((prev: any) => ({
+                    ...prev,
+                    status: e.target.value
+                  }));
+                }}
               >
                 {status.map((stat) => (
                   <MenuItem key={stat} id={stat} value={stat}>
@@ -507,20 +595,19 @@ console.log({offense}, {offenseLevels}, {violationsList})
             </FormControl>
           </div>
 
-          {/* <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          {isUpdate && <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <TextField
               size='small'
-              variant='standard'
               fullWidth
               label='Aging'
-              onChange={(e: any) =>
-                setOffense((prev) => ({
-                  ...prev,
-                  aging: e.target.value,
-                }))
-              }
+              disabled
+              variant='standard'
+              InputProps={{
+                startAdornment: <Chip label={offenseData.aging} />,
+                disableUnderline: true
+              }}
             />
-          </div> */}
+          </div>}
         </GridWrapper>
 
         <div className='grid grid-cols-5'>
@@ -553,21 +640,25 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
     field: 'offenseLevel',
     headerName: 'Offense Level',
     width: 180,
+    renderCell: (params: any) => params.value.name
   },
   {
-    field: 'subject',
+    field: 'violationCategory',
     headerName: 'Subject',
     width: 180,
+    renderCell: (params:any) => params.value.name
   },
   {
-    field: 'description',
+    field: 'violations',
     headerName: 'Description',
     width: 200,
+    renderCell: (params:any) => params.value.name
   },
   {
     field: 'offenseStage',
     headerName: 'Offense Stage',
     width: 180,
+    renderCell: (params:any) => params.value.name
   },
   {
     field: 'actions',
@@ -589,12 +680,12 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
 const allColumns: any = (setConfirmDelete: any, handleEdit:any) => [
   ...columns,
   {
-    field: 'reportIssueDate',
+    field: 'misconductReportIssueDate',
     headerName: 'Workplace Misconduct Report Issue Date',
     width: 120,
   },
   {
-    field: 'explainIssueDate',
+    field: 'noticeToExplainIssueDate',
     headerName: 'Notice To Explain Issue Date',
     width: 120,
   },
@@ -617,6 +708,7 @@ const allColumns: any = (setConfirmDelete: any, handleEdit:any) => [
     field: 'cleansingPeriod',
     headerName: 'Cleansing Period',
     width: 120,
+    renderCell: (params:any) => params.value && moment(params.value).format("YYYY/MM/DD")
   },
   {
     field: 'status',

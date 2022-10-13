@@ -148,6 +148,8 @@ export type EnumsI = {
   payment_method: EnumI[];
   violations: EnumI[];
   offenseLevel: EnumI[];
+  offenseStages: EnumI[];
+  violationCategories: EnumI[];
 };
 
 const enumsInitialState = {
@@ -167,7 +169,9 @@ const enumsInitialState = {
   payroll_group: [],
   payment_method: [],
   violations: [],
-  offenseLevel: []
+  offenseLevel: [],
+  offenseStages: [],
+  violationCategories: []
 };
 
 const ProfileMain = ({
@@ -236,23 +240,23 @@ const ProfileMain = ({
   // Filtered Employees
   const { employeeExistsStatus, employeeExists: employeesDuplicates } = useSelector(filteredEmployeeStore);
 
-  useEffect(() => {
-    if (isNew && employeeDetails.firstName && employeeDetails.birthDate && moment(employeeDetails.birthDate).isValid()) {
-      checkForDuplicate();
-    }
-  }, [employeeDetails.firstName, employeeDetails.birthDate])
+  // useEffect(() => {
+  //   if (isNew && employeeDetails.firstName && employeeDetails.birthDate && moment(employeeDetails.birthDate).isValid()) {
+  //     checkForDuplicate();
+  //   }
+  // }, [employeeDetails.firstName, employeeDetails.birthDate])
 
-  useEffect(() => {
-    if (employeeExistsStatus !== "idle") {
-      console.log({ employeesDuplicates })
-      if (employeesDuplicates.length > 0) {
-        setDuplicates({
-          data: employeesDuplicates,
-          status: true
-        })
-      }
-    }
-  }, [employeeExistsStatus])
+  // useEffect(() => {
+  //   if (employeeExistsStatus !== "idle") {
+  //     console.log({ employeesDuplicates })
+  //     if (employeesDuplicates.length > 0) {
+  //       setDuplicates({
+  //         data: employeesDuplicates,
+  //         status: true
+  //       })
+  //     }
+  //   }
+  // }, [employeeExistsStatus])
 
   /** Employees: NEW */
   useEffect(() => {
@@ -421,7 +425,9 @@ const ProfileMain = ({
       payroll_group: any = [],
       payment_method: any = [],
       violations: any = [],
-      offenseLevel: any = [];
+      offenseLevel: any = [],
+      offenseStages: any = [],
+      violationCategories: any = [];
 
     enumsData.forEach((o: any) => {
       switch (o.type.toLowerCase()) {
@@ -476,6 +482,12 @@ const ProfileMain = ({
         case 'offenselevel':
           offenseLevel.push(o);
           break;
+        case 'offensestage':
+          offenseStages.push(o);
+          break;
+        case 'violationcategory':
+          violationCategories.push(o);
+          break;
       }
     });
     setEnums({
@@ -495,7 +507,9 @@ const ProfileMain = ({
       payroll_group,
       payment_method,
       violations,
-      offenseLevel
+      offenseLevel,
+      offenseStages,
+      violationCategories
     });
   }, [enumsData]);
 
@@ -658,7 +672,7 @@ const ProfileMain = ({
         resetNotif
       }}
     >
-      {isNew && <EmployeeExists duplicates={duplicates} setViewDetails={setViewDetails} setOpen={setOpen} setEmployeeDetails={setEmployeeDetails} setDuplicates={setDuplicates} />}
+      
       <Dialog open={loading.status}>
         <div className='p-4 pt-6 flex flex-col items-center justify-center'>
           <CircularProgress />
@@ -673,6 +687,8 @@ const ProfileMain = ({
       >
         <Alert severity={openNotif.severity}>{openNotif.message}</Alert>
       </Snackbar>
+
+      {/* {!employeeDetails.employeeNo && duplicates.length > 0 && <EmployeeExists setLoading={setLoading} duplicates={duplicates} setViewDetails={setViewDetails} setOpen={setOpen} setEmployeeDetails={setEmployeeDetails} setDuplicates={setDuplicates} />} */}
 
       <TabContext value={index}>
         <section
