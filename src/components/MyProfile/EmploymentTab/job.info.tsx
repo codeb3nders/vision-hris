@@ -29,10 +29,10 @@ import {
   getEmployeeUpdateStatus as _getEmployeeUpdateStatus,
   getEmployeeUpdateError as _getEmployeeUpdateError,
   getOneEmployeeAction as _getOneEmployeeAction,
-  resetUpdate, updateEmployee
+  resetUpdate, updateEmployee, filteredEmployeeStore
 } from 'slices';
 import { useDispatch, useSelector } from 'react-redux';
-import { EmployeeI } from 'slices/interfaces/employeeI';
+import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
 import { AppCtx, consoler } from 'App';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
@@ -92,7 +92,7 @@ const JobInfo = (props: Props) => {
     let data: any[] = [], prev_remarks = "";
     //updated employee job info..
     
-    if (employeeDetails.job_history.length > 0) {
+    if (employeeDetails.job_history && employeeDetails.job_history.length > 0) {
       const o:any = employeeDetails.job_history;
       for (var i = 0; i < o.length; i++){
         const history_data = {
@@ -508,6 +508,17 @@ const JobInfoFields = ({
   const [ranks, setRanks] = useState<any[]>([]);
   const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
   const [isProjectEmployee, setIsProjectEmployee] = useState<boolean>(false);
+  const [duplicates, setDuplicates] = useState<any[]>([]);
+
+    // Filtered Employees
+  const { employeeExistsStatus, employeeExists: employeesDuplicates } = useSelector(filteredEmployeeStore);
+
+  console.log({ duplicates })
+  useEffect(() => {
+    if (employeeExistsStatus !== "idle") {
+      setDuplicates(employeesDuplicates)
+    }
+  }, [employeeExistsStatus])
 
   useEffect(() => {
     setDepartments(enums.departments);
@@ -707,7 +718,8 @@ const JobInfoFields = ({
               {getEmployeeItems
                 ?.filter(
                   (x: any) => x.department?.code === employeeDetails.department && employeeDetails.employeeNo !== x.employeeNo
-                )
+              )
+                .sort((a:any, b:any) => a.firstName.localeCompare(b.firstName))
                 .map((employee) => {
                   return (
                     <MenuItem
@@ -879,7 +891,7 @@ const JobInfoFields = ({
         </div>
       </GridWrapper>
 
-      <GridWrapper colSize='3' className='col-span-2'>
+      <GridWrapper colSize='4' className='col-span-2'>
         <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
           <TextField
             required
@@ -935,6 +947,27 @@ const JobInfoFields = ({
             </Select>
           </FormControl>
         </div>
+        
+        <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+          <FormControl variant='standard' fullWidth size='small' required={duplicates.length > 0}>
+            <InputLabel id='oldEmployeeNoLbl'>Old Employee# (For Rehire ONLY)</InputLabel>
+            <Select
+              id="oldEmployeeNo"
+              labelId='oldEmployeeNoLbl'
+              onChange={(e: any) =>
+                setEmployeeDetails({
+                  ...employeeDetails,
+                  oldEmployeeNo: e.target.value,
+                })
+              }
+            >
+              {duplicates.map((e:EmployeeDBI, i:number) => {
+                return <MenuItem value={e.employeeNo} key={i}>{e.employeeNo}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </div>
+
       </GridWrapper>
     </GridWrapper>
   );

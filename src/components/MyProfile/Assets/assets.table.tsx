@@ -79,6 +79,7 @@ const AssetsTable = (props: Props) => {
     row: any;
     status: boolean;
   }>({ row: null, status: false });
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const isUpdate = assetData.id;
 
   useEffect(() => {
@@ -132,8 +133,11 @@ const AssetsTable = (props: Props) => {
         setOpen={setConfirmDelete}
         handleDelete={handleDelete}
       />
-      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} assetData={assetData} isUpdate={isUpdate} />
+      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} />
       <div style={{ width: '100%' }}>
+        <div style={{marginBottom: 10}}>
+          <AddButton setOpen={setOpen} text='Add Record' />
+        </div>
         <DataGrid
           autoHeight
           disableSelectionOnClick
@@ -152,13 +156,11 @@ const AssetsTable = (props: Props) => {
           getRowId={(data) => data.assetName}
         />
       </div>
-
-      <AddButton text='Add Asset' setOpen={setOpen} />
     </div>
   );
 };
 
-const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetData: data, isUpdate }) => {
+const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetData: data, isUpdate, isSaving, setIsSaving }) => {
   const [newAsset, setNewAsset] = useState<AssetModel>(initialState);
   const { enums, resetNotif, failed } = useContext(ProfileCtx);
   const dispatch = useDispatch();
@@ -179,7 +181,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
       resetNotif()
     }
   }, [open]);
-  console.log({assetData}, {newAsset})
+
   const handleSave = async () => {
     const validateFields = async () => {
         const dialog: any = document.getElementById("assets-dialog");
@@ -197,6 +199,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
       }
       //check inputs...
     if (await validateFields()) {
+      setIsSaving(true);
       try {
         if (isUpdate) {
           const {id, timestamp, lastModifiedDate, ...rest } = assetData;
@@ -374,6 +377,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
 
         <div className='grid grid-cols-7'>
           <button
+            disabled={isSaving}
             onClick={handleSave}
             className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
           >

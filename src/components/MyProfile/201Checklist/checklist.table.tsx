@@ -290,7 +290,7 @@ const columns: any = (
   {
     field: 'documentCode',
     headerName: 'Document',
-    width: 220,
+    width: 300,
     renderCell: (params: any) => {
       return <span className='text-xs'><Tooltip title={params.row.documentDescription} ><Description fontSize='small' /></Tooltip>{" " }{params.value} </span>
     },

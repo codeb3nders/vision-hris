@@ -261,11 +261,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
       <NewEmployeeProfile open={open} setOpen={setOpen} setViewDetails={setViewDetails} />
-      <ViewEmployeeProfile
+      { viewDetails.status && <ViewEmployeeProfile
         viewDetails={viewDetails}
         setViewDetails={setViewDetails}
       />
-
+      }
       <Card sx={{ mt: 5, p: 2 }}>
         <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
           <Search setSearchText={setSearchText} handleSearch={handleSearch} />

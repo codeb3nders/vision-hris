@@ -25,6 +25,7 @@ const FamilyBackground = lazy(
 const Contacts = lazy(() => import('./Emergency/contacts'));
 const JobInfo = lazy(() => import('./EmploymentTab/job.info'));
 const UserGroupAccess = lazy(() => import('./EmploymentTab/userAccessGroup'));
+const Rehire = lazy(() => import('./EmploymentTab/rehire'));
 const GovernmentDetails = lazy(
   () => import('./PersonalProfileTab/government.details')
 );
@@ -74,7 +75,7 @@ const ProfileTabContent = ({ className }: Props) => {
       }
       <div
         className={
-          isNew || isView
+          isNew // || isView
             ? 'overflow-y-auto desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
             : ''
         }
@@ -108,6 +109,7 @@ const ProfileTabContent = ({ className }: Props) => {
             <JobInfo />
             {!isNew && <EmployementStatus />}
             {!isNew && <UserGroupAccess />}
+            {!isNew && <Rehire />}
           </TabPanel>
         </Suspense>
 

@@ -1,4 +1,4 @@
-import { EmployeeI } from 'slices/interfaces/employeeI';
+import { EmployeeI, EmployeeDBI } from 'slices/interfaces/employeeI';
 
 export const personalCols = [
   'firstName',
@@ -80,7 +80,7 @@ const levels = [
   },
 ];
 
-export const initialState: EmployeeI = {
+export const initialState: EmployeeDBI= {
   employeeNo: '',
   firstName: '',
   lastName: '',
@@ -92,11 +92,11 @@ export const initialState: EmployeeI = {
   department: null,
   location: [],
   isActive: true,
-  userGroup: null,
+  userGroup: "EMPLOYEE",
   reportsTo: null,
   dateHired: new Date(),
   employmentType: null,
-  employmentStatus: null,
+  employmentStatus: "ACTIVE",
   endOfProbationary: null,
   contractEndDate: null,
   gender: null,
@@ -113,7 +113,7 @@ export const initialState: EmployeeI = {
     bankBranch: ''
   },
   civilStatus: null,
-  religion: null,
+  religion: "",
   numberOfDependents: undefined,
   sss: '',
   philHealth: '',
@@ -122,18 +122,17 @@ export const initialState: EmployeeI = {
   emergencyContact: [],
   govtProfExamsPassed: [],
   familyBackground: [],
-  leave_requests: [],
   basicPay: 0.00,
   dateInactive: null,
   deductHMDF: 0.00,
   deductionSSS: 0.00,
-  deductPhilhealth: null,
+  deductPhilhealth: "",
   deductWithholdingTax: 0.00,
   employeeBenefits: [],
-  fixedContributionRate: null,
+  fixedContributionRate: "",
   paymentMethod: '',
-  payRateType: null,
-  payrollGroup: null,
+  payRateType: "",
+  payrollGroup: "",
   presentAddress: {
     addressLine: "",
     barangay: "",
@@ -152,12 +151,10 @@ export const initialState: EmployeeI = {
   employmentRecords: [],
   licensesCertifications: [],
   allowanceDetails: [],
-  yearsInService: 0,
-  employment_history: [],
-  job_history: [],
   employmentLastUpdate: undefined,
   jobLastUpdate: undefined,
   lastModifiedDate: undefined,
   dateCreated: undefined,
-  isRehire: false
+  isRehire: false,
+  oldEmployeeNo: null
 };

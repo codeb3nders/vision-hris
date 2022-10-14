@@ -49,7 +49,7 @@ type OffenseI = {
   explanationDate: Date | null;
   finalDisposition: string;
   dispositionDate: Date | null;
-  cleansingPeriod: string;
+  cleansingPeriod: Date | null;
   status: string;
   aging: string;
 };
@@ -66,6 +66,7 @@ const OffensesTable = (props: Props) => {
     row: any;
     status: boolean;
   }>({ row: null, status: false });
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const isUpdate = offenseData.id;
 
   const employeeCases = useSelector(data);
@@ -76,7 +77,7 @@ const OffensesTable = (props: Props) => {
   useEffect(() => {
     !open && setOffenseData(initialState);
   }, [open]);
-console.log({employeeCases})
+
   useEffect(() => {
     if (employeeCasesStatus !== "idle") {
       setOffenses(employeeCases)
@@ -92,6 +93,7 @@ console.log({employeeCases})
   useEffect(() => {
     if (employeeUpdateCaseStatus === "succeeded" || employeeNewCaseStatus === "succeeded") {
       getData();
+      setIsSaving(false);
     }
   }, [employeeUpdateCaseStatus, employeeNewCaseStatus])
 
@@ -103,7 +105,7 @@ console.log({employeeCases})
     await dispatch(deleteAction({id: row.id, access_token}))
     setConfirmDelete({ row: null, status: false });
   };
-console.log({offenses}, {offenseData})
+
   const handleEdit = async (row: OffenseI) => {
     const offense = offenses.filter(
       (t) => t.id === row.id
@@ -115,14 +117,15 @@ console.log({offenses}, {offenseData})
   const CustomToolbar = () => {
     return (
       <div className='flex flex-row justify-end p-2'>
-        <button
+        <AddButton setOpen={setOpen} text='Add Record' />
+        {/* <button
           onClick={() => setShowAll(!showAll)}
           className={`px-2 py-1 text-sky-400 hover:text-sky-500 transition-all duration-200 rounded-sm`}
         >
           <span className='uppercase'>
             {showAll ? 'Hide Other' : 'Show All'} Columns
           </span>
-        </button>
+        </button> */}
       </div>
     );
   };
@@ -137,7 +140,8 @@ console.log({offenses}, {offenseData})
       <OffenseDialog
         open={open}
         setOpen={setOpen}
-        setOffenses={setOffenses}
+        isSaving={isSaving}
+        setIsSaving={setIsSaving}
         failed={failed}
         employeeNo={employeeDetails.employeeNo}
         access_token={access_token}
@@ -147,6 +151,9 @@ console.log({offenses}, {offenseData})
         isUpdate={isUpdate}
       />
       <div style={{ width: '100%' }}>
+        <div style={{marginBottom: 10}}>
+          <AddButton setOpen={setOpen} text='Add Record' />
+        </div>
         <DataGrid
           autoHeight
           disableSelectionOnClick
@@ -162,11 +169,10 @@ console.log({offenses}, {offenseData})
           hideFooter={true}
           rows={offenses}
           getRowHeight={() => 'auto'}
-          components={{ Toolbar: CustomToolbar }}
+          // components={{ Toolbar: CustomToolbar }}
           getRowId={(data) => data.id}
         />
       </div>
-      <AddButton setOpen={setOpen} text='Add Record' />
     </div>
   );
 };
@@ -184,12 +190,12 @@ const initialState: OffenseI = {
   explanationDate: null,
   finalDisposition: '',
   dispositionDate: null,
-  cleansingPeriod: '',
+  cleansingPeriod: null,
   status: 'Open',
   aging: '',
 };
 
-const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_token, resetNotif, enums, offenseData: data, isUpdate }) => {
+const OffenseDialog = ({ open, setOpen, failed, employeeNo, access_token, resetNotif, enums, offenseData: data, isUpdate, isSaving, setIsSaving }) => {
   const dispatch = useDispatch();
   const [offense, setOffense] = useState<OffenseI>(initialState);
   const [offenseLevels, setOffenseLevels] = useState<any[]>([]);
@@ -211,6 +217,13 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
   useEffect(() => {
     setOffenseData(data);
   }, [data]);
+
+   useEffect(() => {
+    if (!open) {
+      setOffense(initialState)
+      resetNotif()
+    }
+  }, [open]);
 
   useEffect(() => { 
     if (offense.violations?.code && offense.offenseStage?.code) {
@@ -241,18 +254,25 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
   useEffect(() => {
     let cleansingPeriod: any = null;
     if (offense.offenseLevel?.Cleansing_Days) {
-      cleansingPeriod = moment(offense.explainIssueDate).add(offense.offenseLevel?.Cleansing_Days, "days").endOf("day");
-    }
-    setOffense((prev: any) => {
-      return { ...prev, cleansingPeriod }
-    })
-    isUpdate && setOffenseData((prev: any) => ({
+        cleansingPeriod = moment(offense.explainIssueDate).add(offense.offenseLevel?.Cleansing_Days, "days").endOf("day");
+      }
+      setOffense((prev: any) => {
+        return { ...prev, cleansingPeriod }
+      })
+  }, [offense.explainIssueDate, offense.offenseLevel])
+
+  useEffect(() => {
+    let cleansingPeriod: any = null;
+    if (offenseData.offenseLevel?.Cleansing_Days) {
+        cleansingPeriod = moment(offense.explainIssueDate).add(offense.offenseLevel?.Cleansing_Days, "days").endOf("day");
+      }
+      setOffenseData((prev: any) => ({
       ...prev,
       cleansingPeriod
     }));
-  }, [offense.explainIssueDate, offense.offenseLevel])
+  }, [offenseData.explainIssueDate, offenseData.offenseLevel])
 
-  const handleSaveOffense = async() => {
+  const handleSaveOffense = async () => {
     const validateFields = async () => {
         const dialog: any = document.getElementById("offense-dialog");
         const required = dialog.querySelectorAll("[required]");
@@ -269,7 +289,8 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
       }
       //check inputs...
     if (await validateFields()) {
-      try {
+      setIsSaving(true);
+       try {
         if (isUpdate) {
           const data = {
             violationCategory: offense.violationCategory.code,
@@ -303,8 +324,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
             explanationDate: offense.explanationDate,
             finalDisposition: offense.finalDisposition,
             misconductReportIssueDate: offense.reportIssueDate,
-            status: offense.status,
-            caseNumber: "2022-0000001"
+            status: offense.status
           }
           await dispatch(createAction({ body: {...data, employeeNo}, access_token }));
         }
@@ -612,6 +632,7 @@ const OffenseDialog = ({ open, setOpen, setOffenses, failed, employeeNo, access_
 
         <div className='grid grid-cols-5'>
           <button
+          disabled={(!isUpdate && offense.offenseLevel?.code === undefined) || (isUpdate && offenseData.offenseLevel?.code === undefined) || isSaving}
             onClick={handleSaveOffense}
             className='col-span-3 px-2 py-1 bg-green-500 text-white rounded-md w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
           >
@@ -666,9 +687,9 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
     flex: 1,
     renderCell: (params: any) => {
       return <div>
-        <IconButton size='small' onClick={() => setConfirmDelete({ row: params.row, status: true })}>
+        {/* <IconButton size='small' onClick={() => setConfirmDelete({ row: params.row, status: true })}>
           <Delete />
-        </IconButton>
+        </IconButton> */}
         <IconButton size='small' onClick={() => handleEdit(params.row)}>
           <Edit />
         </IconButton>
@@ -683,16 +704,19 @@ const allColumns: any = (setConfirmDelete: any, handleEdit:any) => [
     field: 'misconductReportIssueDate',
     headerName: 'Workplace Misconduct Report Issue Date',
     width: 120,
+    renderCell: (params:any) => params.value && moment(params.value).format("YYYY/MM/DD")
   },
   {
     field: 'noticeToExplainIssueDate',
     headerName: 'Notice To Explain Issue Date',
     width: 120,
+    renderCell: (params:any) => params.value && moment(params.value).format("YYYY/MM/DD")
   },
   {
     field: 'explanationDate',
     headerName: 'Explanation Date',
     width: 120,
+    renderCell: (params:any) => params.value && moment(params.value).format("YYYY/MM/DD")
   },
   {
     field: 'finalDisposition',
@@ -703,6 +727,7 @@ const allColumns: any = (setConfirmDelete: any, handleEdit:any) => [
     field: 'dispositionDate',
     headerName: 'Disposition Date',
     width: 120,
+    renderCell: (params:any) => params.value && moment(params.value).format("YYYY/MM/DD")
   },
   {
     field: 'cleansingPeriod',

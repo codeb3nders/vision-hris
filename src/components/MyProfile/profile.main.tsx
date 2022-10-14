@@ -18,7 +18,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { EmployeeI } from 'slices/interfaces/employeeI';
+import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
 import { compensationBenefitsCols, initialState, payrollInfoCols, personalCols } from './employee.initialstate';
 import ProfileOther from './profile.other';
 import ProfileTeam from './profile.team';
@@ -33,7 +33,6 @@ import {
   resetUpdate,
   updateEmployee,
   checkEmployeeExists,
-  filteredEmployeeStore
 } from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -52,7 +51,6 @@ import useRequiredChecker from 'hooks/useRequiredChecker';
 import { EMPLOYMENT_HISTORY_TYPE, JOB_HISTORY_TYPE } from 'constants/Values';
 import { SvgIconComponent } from '@mui/icons-material';
 import moment from 'moment';
-import EmployeeExists from 'components/Other/check.employee.exists';
 
 const ProfileDetails = lazy(() => import('./profile.details'));
 const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
@@ -75,7 +73,7 @@ export type ProfileModel = {
   setIndex: React.Dispatch<React.SetStateAction<string>>;
   isNew?: boolean;
   isView?: boolean;
-  employeeDetails: EmployeeI;
+  employeeDetails: EmployeeDBI;
   setEmployeeDetails: React.Dispatch<React.SetStateAction<EmployeeI>>;
   setDisplayPhoto: React.Dispatch<
     React.SetStateAction<{
@@ -188,7 +186,7 @@ const ProfileMain = ({
   const { isLoggedIn, userData, access_token, userGroup } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
   const [employeeDetails, setEmployeeDetails] =
-    useState<EmployeeI>(initialState);
+    useState<EmployeeDBI>(initialState);
   const [displayPhoto, setDisplayPhoto] = useState<{
     employeeNo: string;
     photo: string;
@@ -237,26 +235,11 @@ const ProfileMain = ({
   // Employee History
   const employeeHistoryData = useSelector(_getEmployeeHistoryData);
 
-  // Filtered Employees
-  const { employeeExistsStatus, employeeExists: employeesDuplicates } = useSelector(filteredEmployeeStore);
-
-  // useEffect(() => {
-  //   if (isNew && employeeDetails.firstName && employeeDetails.birthDate && moment(employeeDetails.birthDate).isValid()) {
-  //     checkForDuplicate();
-  //   }
-  // }, [employeeDetails.firstName, employeeDetails.birthDate])
-
-  // useEffect(() => {
-  //   if (employeeExistsStatus !== "idle") {
-  //     console.log({ employeesDuplicates })
-  //     if (employeesDuplicates.length > 0) {
-  //       setDuplicates({
-  //         data: employeesDuplicates,
-  //         status: true
-  //       })
-  //     }
-  //   }
-  // }, [employeeExistsStatus])
+  useEffect(() => {
+    if (isNew && employeeDetails.firstName && employeeDetails.birthDate && moment(employeeDetails.birthDate).isValid()) {
+      checkForDuplicate();
+    }
+  }, [employeeDetails.firstName, employeeDetails.birthDate])
 
   /** Employees: NEW */
   useEffect(() => {
@@ -513,16 +496,16 @@ const ProfileMain = ({
     });
   }, [enumsData]);
 
-  useEffect(() => {
-    handleCompanyEmail();
-    if (employeeDetails.employeeNo && displayPhotos?.length > 0) {
-      const employee_dp = displayPhotos.filter(
-        (dp) => dp.employeeNo === employeeDetails.employeeNo
-      )[0];
+  // useEffect(() => {
+  //   handleCompanyEmail();
+  //   if (employeeDetails.employeeNo && displayPhotos?.length > 0) {
+  //     const employee_dp = displayPhotos.filter(
+  //       (dp) => dp.employeeNo === employeeDetails.employeeNo
+  //     )[0];
 
-      setDisplayPhoto(employee_dp);
-    }
-  }, [displayPhotos, employeeDetails]);
+  //     setDisplayPhoto(employee_dp);
+  //   }
+  // }, [displayPhotos, employeeDetails]);
 
   const handleGetDisplayPhoto = () => {
     const local_dps: any = localStorage.getItem('display_photos');
@@ -535,7 +518,7 @@ const ProfileMain = ({
     const { firstName, lastName, rank, companyEmail } = employeeDetails;
     if (rank === 'RANK AND FILE' && !companyEmail) {
       const companyEmail =
-        `${firstName}${lastName}.vpdcph@gmail.com`.toLowerCase();
+        `${firstName.replace(" ", "")}${lastName}.vpdcph@gmail.com`.toLowerCase();
       setEmployeeDetails((employeeDetails: EmployeeI) => ({
         ...employeeDetails,
         companyEmail,
@@ -569,7 +552,8 @@ const ProfileMain = ({
     setLoading({ status: true, action: 'Saving' });
     try {
       consoler(employeeDetails, 'blue', 'saveEmployee');
-      await dispatch(createEmployee({ body: employeeDetails, access_token }));
+      const { employment_history, job_history, ...rest} = employeeDetails;
+      await dispatch(createEmployee({ body: rest, access_token }));
     } catch (error: any) {
       setLoading({ status: false, action: '' });
       console.log(error);

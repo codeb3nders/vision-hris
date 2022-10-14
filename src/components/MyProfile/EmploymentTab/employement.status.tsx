@@ -50,7 +50,7 @@ console.log({employmentUpdate}, {editEmployment})
     let data: any[] = [], prev_remarks = "";
     //updated employee job info..
     
-    if (employeeDetails.employment_history.length > 0) {
+    if (employeeDetails.employment_history && employeeDetails.employment_history.length > 0) {
       const o:any = employeeDetails.employment_history;
       for (var i = 0; i < o.length; i++){
         const history_data = {

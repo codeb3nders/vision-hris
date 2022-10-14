@@ -64,8 +64,10 @@ export interface AllowanceDetailsI {
 }
 
 export interface EmployeeDBI extends EmployeeI {
-  full_name: string;
-  employmentType: any;
+  full_name?: string;
+  yearsInService?: number;
+  employment_history?: any[];
+  job_history?: any[];
 }
 
 export interface EmployeeI {
@@ -105,7 +107,6 @@ export interface EmployeeI {
   emergencyContact: any[] | null;
   govtProfExamsPassed: GovtProfExamsPassedI[] | null;
   familyBackground: FamilyBackgroundI[] | null;
-  leave_requests?: any;
   basicPay: number;
   dateInactive: Date | Moment | null;
   deductHMDF: number;
@@ -123,14 +124,12 @@ export interface EmployeeI {
   employmentRecords: EmploymentRecordsI[] | null;
   licensesCertifications: LicensesCertificationsI[] | null;
   allowanceDetails: AllowanceDetailsI[] | null;
-  yearsInService: number;
-  employment_history: any[];
-  job_history: any[];
   employmentLastUpdate: Date | Moment | undefined;
   jobLastUpdate: Date | Moment | undefined;
   lastModifiedDate: Date | Moment | undefined;
   dateCreated: Date | Moment | undefined;
   isRehire: boolean;
+  oldEmployeeNo: string | null;
 }
 
 export interface LoginI {

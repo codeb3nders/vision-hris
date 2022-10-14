@@ -87,6 +87,7 @@ const SpecialTrainings = ({ type }: Props) => {
     row: any;
     status: boolean;
   }>({ row: null, status: false });
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   useEffect(() => {
     if (employeeTrainingsStatus !== 'idle') {
@@ -159,7 +160,16 @@ const SpecialTrainings = ({ type }: Props) => {
         employeeNo={employeeDetails.employeeNo}
         failed={failed}
         resetNotif={resetNotif}
+        isSaving={isSaving} setIsSaving={setIsSaving} 
       />
+      <div className='flex justify-end'>
+        <button
+          onClick={() => setOpen(true)}
+          className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
+        >
+          <Add fontSize='small' className='mr-1' /> Add {type} Training
+        </button>
+      </div>
       <DataGrid
         rows={trainings}
         columns={
@@ -176,15 +186,6 @@ const SpecialTrainings = ({ type }: Props) => {
         loading={false}
         getRowId={(data: any) => data.courseTitle}
       />
-
-      <div className='flex justify-end'>
-        <button
-          onClick={() => setOpen(true)}
-          className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
-        >
-          <Add fontSize='small' className='mr-1' /> Add {type} Training
-        </button>
-      </div>
     </CollapseWrapper>
   );
 };
@@ -199,6 +200,7 @@ const SpecialTrainingsDialog = ({
   failed,
   resetNotif,
   trainingData: data,
+  isSaving, setIsSaving
 }) => {
   const dispatch = useDispatch();
   const [training, setTraining] = useState<SpecialTrainingI>(initialData);
@@ -234,6 +236,7 @@ console.log({trainingData}, {training}, {type})
     };
     //check inputs...
     if (await validateFields()) {
+      setIsSaving(true);
       try {
         if (isUpdate) {
           const { id, timestamp, ...rest } = trainingData;
@@ -538,6 +541,7 @@ console.log({trainingData}, {training}, {type})
 
         <div className='grid grid-cols-7'>
           <button
+            disabled={isSaving}
             onClick={handleSave}
             className={`col-span-5 px-2 py-1 text-xs ${
               isUpdate

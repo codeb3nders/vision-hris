@@ -26,7 +26,8 @@ const useRequiredChecker = ({ employeeDetails }) => {
       rank,
       employmentStatus,
       companyEmail,
-      companyContactNumber
+      companyContactNumber,
+      
     } = employeeDetails;
 
     return (
