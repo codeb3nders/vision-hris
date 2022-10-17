@@ -678,8 +678,13 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
   {
     field: 'offenseStage',
     headerName: 'Offense Stage',
-    width: 180,
+    flex: 1,
     renderCell: (params:any) => params.value.name
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    flex: 1
   },
   {
     field: 'actions',

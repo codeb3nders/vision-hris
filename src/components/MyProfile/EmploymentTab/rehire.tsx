@@ -59,7 +59,7 @@ const Rehire = (props: Props) => {
   }, [employeeDetails.isRehire])
 
   const handleUpdate = async () => {
-    const params:any = { isRehire, employeeNo: employeeDetails.employeeNo }
+    const params:any = { isRehire, oldEmployeeNo, employeeNo: employeeDetails.employeeNo }
     try {
       await dispatch(
         updateEmployee({

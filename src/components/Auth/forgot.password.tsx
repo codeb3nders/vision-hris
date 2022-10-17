@@ -1,25 +1,37 @@
 import { ForwardToInbox, Login, VpnKey } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
+import { getForgotPasswordEndpoint } from 'apis/userAccess';
+import { consoler } from 'App';
 import { ERROR } from 'assets';
 import React, { useContext, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { SliderCtx } from './slider';
 
 type Props = {};
 
 const ForgotPassword = (props: Props) => {
+  const dispatch = useDispatch();
   const { setIndex, index } = useContext(SliderCtx);
   const [loading, setLoading] = useState(false);
-  const [employeeNo, setEmployeeNo] = useState(null);
+  const [employeeNo, setEmployeeNo] = useState<string>("");
 
   const handleSendCode = async () => {
     setLoading(true);
     try {
+      const {status, data} = await getForgotPasswordEndpoint(employeeNo);
+      if (status === 200) {
+        console.log({ data });
+        // setIndex(2);
+        // setLoading(false);
+      }
       setTimeout(() => {
         setIndex(2);
         setLoading(false);
       }, 2000);
-    } catch (error) {}
+    } catch (error) {
+      consoler(error, "red", "ERROR in handleSendCode")
+    }
   };
 
   useEffect(() => {
@@ -27,7 +39,7 @@ const ForgotPassword = (props: Props) => {
 
     if (index !== 1) {
       setLoading(false);
-      setEmployeeNo(null);
+      setEmployeeNo("");
     }
   }, [index]);
 
