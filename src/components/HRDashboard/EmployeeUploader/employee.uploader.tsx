@@ -24,6 +24,10 @@ import { LoadingButton } from '@mui/lab';
 import { useDispatch } from 'react-redux';
 import { createEmployee } from 'slices';
 import { AppCtx } from 'App';
+import { initialState } from 'components/MyProfile/employee.initialstate';
+import { EmployeeI } from 'slices/interfaces/employeeI';
+import { generateCompanyEmail, getContractEndDate, getProbationaryEndDate } from 'utils/functions';
+import moment from 'moment';
 
 type Props = {
   open: boolean;
@@ -43,6 +47,7 @@ const requiredHeaders = [
   'Citizenship',
   'Personal Contact Number',
   'Personal Email',
+  'Date Hired', 'Employment Type', 'Rank', 'Position', 'Department', 'Location'
 ];
 
 const EmployeeUploader = ({ open, setOpen }: Props) => {
@@ -55,6 +60,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
   const [show, setShow] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [tableColumns, setTableColumns] = useState<any[]>([])
 
   useEffect(() => {
     if (!open) {
@@ -91,18 +97,24 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
       const parsedData: any = csv?.data;
       const columns = Object.keys(parsedData[0]);
 
-      console.log({ parsedData });
+      // console.log({ parsedData });
 
       const altered_columns: any = columns.map((col) => {
         const column = col.split(' ').join('');
         return column.charAt(0).toLowerCase() + column.slice(1);
       });
 
+      let tableCols: any = [];
+
       const file_obj = parsedData
         .map((data: any) => {
           return columns?.reduce((prevVal: any, curVal: any, idx: number) => {
-            console.log({ data, curVal });
-
+            // console.log({ data, curVal });
+            tableCols.push({
+              field: altered_columns[idx],
+              headerName: curVal,
+              width: 200
+            })
             return {
               ...prevVal,
               [altered_columns[idx]]: data[curVal],
@@ -111,8 +123,9 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
         })
         .filter((data: any) => data.lastName && data.firstName);
 
-      console.log(file_obj);
+      // console.log(file_obj);
       setData(file_obj);
+      setTableColumns(tableCols)
 
       const missingHeaders: string[] = [];
       requiredHeaders.forEach((header) => {
@@ -127,15 +140,30 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
     };
     reader.readAsText(file);
   };
-
+console.log({data})
   const handleSave = async () => {
     setSaving(true);
     try {
-      // const res = await dispatch(
-      //   createEmployee({ body: data[2], access_token })
-      // );
-      // console.log({ res });
-
+      const test = Promise.all(
+        data.map(async (o: EmployeeI) => {
+          const d = {
+            ...initialState,
+            ...o,
+            location: [o.location],
+            companyEmail: generateCompanyEmail(o.firstName, o.lastName, o.rank),
+            birthDate: moment(o.birthDate).valueOf(),
+            dateHired: moment(o.dateHired).valueOf(),
+            endOfProbationary: o.employmentType.toLowerCase() != 'project' ? moment(getProbationaryEndDate(o.dateHired)).valueOf() : null,
+            contractEndDate: o.employmentType.toLowerCase() == 'project' ? moment(getContractEndDate(o.dateHired)).valueOf() : null,
+            employmentLastUpdate:moment(o.dateHired).valueOf(),
+            jobLastUpdate: moment(o.dateHired).valueOf()
+          }
+          await dispatch(
+            createEmployee({ body: d, access_token })
+          );
+        })
+      );
+console.log({test})
       setTimeout(() => {
         setSaving(false);
         setSaved(true);
@@ -162,8 +190,8 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
   const disabled = error ? true : false || missingHeaders.length > 0;
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
-      <section className="w-full max-w-[550px] min-w-[550px] rounded-sm p-4 flex flex-col gap-4">
+    <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="lg">
+      <section className="w-full rounded-sm p-4 flex flex-col gap-4">
         <strong className="text-sm">
           <PersonAddTwoTone /> Upload Employee Details
         </strong>
@@ -250,7 +278,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
         )}
 
         {file && show && !error && missingHeaders.length <= 0 && (
-          <UploaderTable rows={data && data} />
+          <UploaderTable rows={data && data} columns={tableColumns} />
         )}
 
         <Divider />

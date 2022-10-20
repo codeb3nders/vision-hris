@@ -35,6 +35,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
 import { AppCtx, consoler } from 'App';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
+import { generateCompanyEmail, getContractEndDate, getProbationaryEndDate } from 'utils/functions';
 
 type Props = {};
 
@@ -536,20 +537,25 @@ const JobInfoFields = ({
       employeeDetails.firstName &&
       employeeDetails.lastName
     ) {
-      const firstName = employeeDetails.firstName.split(' ');
-      if (employeeDetails.rank.toLowerCase() === 'rank and file') {
-        setEmployeeDetails((prev: EmployeeI) => ({
-          ...prev,
-          companyEmail:
-            `${firstName[0][0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
-        }));
-      } else {
-        setEmployeeDetails((prev: EmployeeI) => ({
-          ...prev,
-          companyEmail:
-            `${firstName[0]}.${employeeDetails.lastName}@vcdcph.com`.toLowerCase(),
-        }));
-      }
+      setEmployeeDetails((prev: EmployeeI) => ({
+        ...prev,
+        companyEmail:
+          generateCompanyEmail(employeeDetails.firstName, employeeDetails.lastName, employeeDetails.rank)
+      }));
+      // const firstName = employeeDetails.firstName.split(' ');
+      // if (employeeDetails.rank.toLowerCase() === 'rank and file') {
+      //   setEmployeeDetails((prev: EmployeeI) => ({
+      //     ...prev,
+      //     companyEmail:
+      //       `${firstName[0][0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
+      //   }));
+      // } else {
+      //   setEmployeeDetails((prev: EmployeeI) => ({
+      //     ...prev,
+      //     companyEmail:
+      //       `${firstName[0]}.${employeeDetails.lastName}@vcdcph.com`.toLowerCase(),
+      //   }));
+      // }
     }
   }, [employeeDetails.rank]);
 
@@ -564,20 +570,14 @@ const JobInfoFields = ({
         setIsProjectEmployee(true);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
-          contractEndDate: moment(employeeDetails.dateHired)
-            .endOf('day')
-            .add(6, 'months')
-            .endOf('day'),
+          contractEndDate: getContractEndDate(employeeDetails.dateHired),
           endOfProbationary: null,
         }));
       } else {
         setIsProjectEmployee(false);
         setEmployeeDetails((prev: EmployeeI) => ({
           ...prev,
-          endOfProbationary: moment(employeeDetails.dateHired)
-            .endOf('day')
-            .add(6, 'months')
-            .endOf('day'),
+          endOfProbationary: getProbationaryEndDate(employeeDetails.dateHired),
           contractEndDate: null,
         }));
       }

@@ -93,7 +93,7 @@ export const initialState: EmployeeDBI= {
   location: [],
   isActive: true,
   userGroup: "EMPLOYEE",
-  reportsTo: null,
+  reportsTo: "",
   dateHired: new Date(),
   employmentType: null,
   employmentStatus: "ACTIVE",

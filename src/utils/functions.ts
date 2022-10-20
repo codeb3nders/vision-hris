@@ -1,4 +1,5 @@
 import { MALE_PHOTO_PLACEHOLDER, FEMALE_PHOTO_PLACEHOLDER } from 'assets';
+import moment from 'moment';
 
 export function getAvatar(gender: string = 'male') {
   if (gender.toLocaleLowerCase() == 'female') {
@@ -29,4 +30,27 @@ export function generateArrayOfYears(lessYears:number) {
     years.push(i)
   }
   return years
+}
+
+export function generateCompanyEmail(fName, lName, rank) {
+  const firstName = fName.split(' ');
+  if (rank.toLowerCase() === 'rank and file') {
+    return `${firstName[0][0]}${lName}.vcdcph@gmail.com`.toLowerCase();
+  } else {
+    return `${firstName[0]}.${lName}@vcdcph.com`.toLowerCase();
+  }
+}
+
+export function getProbationaryEndDate(dateHired) {
+  return moment(dateHired)
+            .endOf('day')
+            .add(6, 'months')
+            .endOf('day')
+}
+
+export function getContractEndDate(dateHired) {
+  return moment(dateHired)
+            .endOf('day')
+            .add(6, 'months')
+            .endOf('day')
 }
