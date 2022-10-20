@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  ContentCopy,
   Login,
   VerifiedUser,
   Visibility,
@@ -12,7 +11,6 @@ import {
   FilledInput,
   FormControl,
   IconButton,
-  Input,
   InputAdornment,
   InputLabel,
   TextField,
@@ -24,7 +22,7 @@ import { SliderCtx } from "./slider";
 type Props = {};
 
 const CodeVerification = (props: Props) => {
-  const { setIndex, index, setCopied, copied } = useContext(SliderCtx);
+  const { setIndex, index } = useContext(SliderCtx);
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState(false);
@@ -52,13 +50,6 @@ const CodeVerification = (props: Props) => {
       setVerificationCode(null);
     }
   }, [index]);
-
-  const handleCopyPassword = () => {
-    const newPass: any = document.querySelector("#new-password");
-    const val: any = newPass?.innerHTML;
-    navigator.clipboard.writeText(val);
-    setCopied(true);
-  };
 
   return (
     <section className="w-full h-[100%] flex flex-row relative">

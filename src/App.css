@@ -81,3 +81,12 @@
 .MuiFormLabel-asterisk {
   @apply text-v-red;
 }
+
+
+.dropdown-icon {
+  @apply text-gray-400 group-hover:text-v-red transition-all duration-200 ease-in-out;
+}
+
+.dropdown-text {
+  @apply transition-all duration-200 ease-in-out;
+}

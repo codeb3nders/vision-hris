@@ -4,14 +4,15 @@ import {
   Grid,
   Snackbar,
   ThemeProvider,
-} from '@mui/material';
-import { VISION_RED } from 'constants/Colors';
-import CustomCard from 'CustomComponents/CustomCard';
-import Login from 'Login';
-import React, { createContext, useState } from 'react';
-import SwipeableViews from 'react-swipeable-views';
-import CodeVerification from './code.verification';
-import ForgotPassword from './forgot.password';
+} from "@mui/material";
+import { VISION_RED } from "constants/Colors";
+import CustomCard from "CustomComponents/CustomCard";
+import Login from "Login";
+import React, { createContext, useState } from "react";
+import SwipeableViews from "react-swipeable-views";
+import ChangePassword from "./ChangePassword/change.password";
+import CodeVerification from "./code.verification";
+import ForgotPassword from "./forgot.password";
 
 type Props = {};
 
@@ -42,7 +43,7 @@ const Slider = (props: Props) => {
           autoHideDuration={6000}
           onClose={() => setCopied(false)}
           message="Password Copied!"
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           className="z-10"
         />
         <CssBaseline />
@@ -52,20 +53,21 @@ const Slider = (props: Props) => {
           sm={12}
           md={12}
           sx={{
-            backgroundAttachment: '',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center center',
-            backgroundBlendMode: 'overlay',
+            backgroundAttachment: "",
+            backgroundSize: "cover",
+            backgroundPosition: "center center",
+            backgroundBlendMode: "overlay",
             backgroundColor: VISION_RED,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
           className="h-[100vh] p-4"
         >
           <CustomCard className="px-0 py-0 w-[90%] laptop:max-w-[800px] tablet:max-w-[600px] phone:max-w-full shadow-xl max-h-[472px]">
+            {/* <ChangePassword /> */}
             <SliderCtx.Provider value={{ setIndex, index, setCopied, copied }}>
-              <SwipeableViews disabled index={index} style={{ width: '100%' }}>
+              <SwipeableViews disabled index={index} style={{ width: "100%" }}>
                 <Login />
                 <ForgotPassword />
                 <CodeVerification />
