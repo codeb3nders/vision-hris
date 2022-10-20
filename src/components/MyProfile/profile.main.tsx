@@ -514,18 +514,6 @@ const ProfileMain = ({
     setDisplayPhotos(dps);
   };
 
-  const handleCompanyEmail = () => {
-    const { firstName, lastName, rank, companyEmail } = employeeDetails;
-    if (rank === 'RANK AND FILE' && !companyEmail) {
-      const companyEmail =
-        `${firstName.replace(" ", "")}${lastName}.vpdcph@gmail.com`.toLowerCase();
-      setEmployeeDetails((employeeDetails: EmployeeI) => ({
-        ...employeeDetails,
-        companyEmail,
-      }));
-    }
-  };
-
   const handleSaveDisplayPhoto = (employeeNo: string) => {
     localStorage.setItem(
       'display_photos',
