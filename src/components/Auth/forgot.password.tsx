@@ -1,12 +1,17 @@
-import { ForwardToInbox, Login, VpnKey } from '@mui/icons-material';
-import { LoadingButton } from '@mui/lab';
-import { TextField } from '@mui/material';
-import { getForgotPasswordEndpoint } from 'apis/userAccess';
-import { consoler } from 'App';
-import { ERROR } from 'assets';
-import React, { useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { SliderCtx } from './slider';
+import {
+  ArrowBackIos,
+  ForwardToInbox,
+  Login,
+  VpnKey,
+} from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
+import { TextField } from "@mui/material";
+import { getForgotPasswordEndpoint } from "apis/userAccess";
+import { consoler } from "App";
+import { ERROR } from "assets";
+import React, { useContext, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { SliderCtx } from "./slider";
 
 type Props = {};
 
@@ -19,7 +24,7 @@ const ForgotPassword = (props: Props) => {
   const handleSendCode = async () => {
     setLoading(true);
     try {
-      const {status, data} = await getForgotPasswordEndpoint(employeeNo);
+      const { status, data } = await getForgotPasswordEndpoint(employeeNo);
       if (status === 200) {
         console.log({ data });
         // setIndex(2);
@@ -30,7 +35,7 @@ const ForgotPassword = (props: Props) => {
         setLoading(false);
       }, 2000);
     } catch (error) {
-      consoler(error, "red", "ERROR in handleSendCode")
+      consoler(error, "red", "ERROR in handleSendCode");
     }
   };
 
@@ -58,7 +63,7 @@ const ForgotPassword = (props: Props) => {
           Company Email Address.
         </p>
 
-        <div className="flex flex-col items-end">
+        <div className="flex flex-col">
           {index === 1 && (
             <TextField
               label="Employee No."
@@ -66,23 +71,36 @@ const ForgotPassword = (props: Props) => {
               size="small"
               fullWidth
               disabled={loading}
-              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               onChange={(e: any) => setEmployeeNo(e.target.value)}
               value={employeeNo}
             />
           )}
-          <LoadingButton
-            className="bg-sky-500 hover:bg-sky-600 text-md ease-in-out mt-4"
-            loading={loading}
-            loadingPosition="start"
-            startIcon={<ForwardToInbox />}
-            variant="contained"
-            disabled={loading || !employeeNo}
-            onClick={handleSendCode}
-            disableElevation
-          >
-            {loading ? 'Sending' : 'Send'} Code
-          </LoadingButton>
+
+          <div className="flex-1 flex flex-row items-center mt-4">
+            <div className="flex-1">
+              <button
+                disabled={loading}
+                onClick={() => setIndex(0)}
+                className="py-1 px-4 bg-gray-0 hover:bg-gray-100 rounded-md flex flex-row items-center"
+              >
+                <ArrowBackIos />
+                <span className="flex-1">Back</span>
+              </button>
+            </div>
+            <LoadingButton
+              className="bg-sky-500 hover:bg-sky-600 text-md ease-in-out"
+              loading={loading}
+              loadingPosition="start"
+              startIcon={<ForwardToInbox />}
+              variant="contained"
+              disabled={loading || !employeeNo}
+              onClick={handleSendCode}
+              disableElevation
+            >
+              {loading ? "Sending" : "Send"} Code
+            </LoadingButton>
+          </div>
         </div>
 
         <div className="flex-1 flex flex-row items-end justify-center">
