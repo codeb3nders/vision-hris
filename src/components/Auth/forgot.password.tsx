@@ -5,21 +5,19 @@ import {
   VpnKey,
 } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { TextField } from "@mui/material";
+import { Alert, TextField } from "@mui/material";
 import { getForgotPasswordEndpoint } from "apis/userAccess";
 import { consoler } from "App";
 import { ERROR } from "assets";
 import React, { useContext, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { SliderCtx } from "./slider";
 
 type Props = {};
 
 const ForgotPassword = (props: Props) => {
-  const dispatch = useDispatch();
-  const { setIndex, index } = useContext(SliderCtx);
+  const { setIndex, index, employeeNo, setEmployeeNo, setExpiresIn } = useContext(SliderCtx);
   const [loading, setLoading] = useState(false);
-  const [employeeNo, setEmployeeNo] = useState<string>("");
+  const [error, setError] = useState("");
 
   const handleSendCode = async () => {
     setLoading(true);
@@ -27,13 +25,14 @@ const ForgotPassword = (props: Props) => {
       const { status, data } = await getForgotPasswordEndpoint(employeeNo);
       if (status === 200) {
         console.log({ data });
-        // setIndex(2);
-        // setLoading(false);
+        if (data.isValid) {
+          setIndex(2);
+          setExpiresIn(data.expiresInSeconds)
+        }else{
+          setError(data.error)
+        }
+        setLoading(false);  
       }
-      setTimeout(() => {
-        setIndex(2);
-        setLoading(false);
-      }, 2000);
     } catch (error) {
       consoler(error, "red", "ERROR in handleSendCode");
     }
@@ -42,9 +41,10 @@ const ForgotPassword = (props: Props) => {
   useEffect(() => {
     console.log({ index });
 
-    if (index !== 1) {
+    if (index === 0) {
       setLoading(false);
       setEmployeeNo("");
+      setExpiresIn(0);
     }
   }, [index]);
 
@@ -69,6 +69,8 @@ const ForgotPassword = (props: Props) => {
               label="Employee No."
               variant="filled"
               size="small"
+              defaultValue={""}
+              autoComplete='off'
               fullWidth
               disabled={loading}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -103,6 +105,12 @@ const ForgotPassword = (props: Props) => {
           </div>
         </div>
 
+        {error &&
+          <div className="flex-1 flex-row items-center justify-center mt-4">
+            <Alert severity="error">{error}</Alert>
+          </div>
+        }
+
         <div className="flex-1 flex flex-row items-end justify-center">
           <button
             className="p-2 w-full bg-gray-200 rounded-sm mt-2 text-sm hover:bg-gray-300 ease-in-out duration-150 uppercase flex flex-row items-center justify-center gap-2"
@@ -116,4 +124,4 @@ const ForgotPassword = (props: Props) => {
   );
 };
 
-export default ForgotPassword;
+export default React.memo(ForgotPassword);

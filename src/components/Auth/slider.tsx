@@ -21,6 +21,10 @@ type SliderI = {
   index: number;
   setCopied: React.Dispatch<React.SetStateAction<boolean>>;
   copied: boolean;
+  setEmployeeNo: React.Dispatch<React.SetStateAction<string>>;
+  employeeNo: string;
+  setExpiresIn: React.Dispatch<React.SetStateAction<number>>;
+  expiresIn: number;
 };
 
 export const SliderCtx = createContext<SliderI>({
@@ -28,11 +32,17 @@ export const SliderCtx = createContext<SliderI>({
   index: 0,
   setCopied: () => {},
   copied: false,
+  setEmployeeNo: () => {},
+  employeeNo: "",
+  setExpiresIn: () => {},
+  expiresIn: 0
 });
 
 const Slider = (props: Props) => {
   const [index, setIndex] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [employeeNo, setEmployeeNo] = useState("");
+  const [expiresIn, setExpiresIn] = useState(0);
 
   return (
     <ThemeProvider theme={theme}>
@@ -64,7 +74,7 @@ const Slider = (props: Props) => {
           className="h-[100vh] p-4"
         >
           <CustomCard className="px-0 py-0 w-[90%] laptop:max-w-[800px] tablet:max-w-[600px] phone:max-w-full shadow-xl max-h-[472px]">
-            <SliderCtx.Provider value={{ setIndex, index, setCopied, copied }}>
+            <SliderCtx.Provider value={{ setIndex, index, setCopied, copied, setEmployeeNo, employeeNo, expiresIn, setExpiresIn }}>
               <SwipeableViews disabled index={index} style={{ width: '100%' }}>
                 <Login />
                 <ForgotPassword />
@@ -78,4 +88,4 @@ const Slider = (props: Props) => {
   );
 };
 
-export default Slider;
+export default React.memo(Slider);

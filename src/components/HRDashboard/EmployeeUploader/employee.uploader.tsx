@@ -47,7 +47,7 @@ const requiredHeaders = [
   'Citizenship',
   'Personal Contact Number',
   'Personal Email',
-  'Date Hired', 'Employment Type', 'Rank', 'Position', 'Department', 'Location'
+  'Date Hired', 'Employment Type', 'Rank', 'Position', 'Department', 'Location', 'Reports To'
 ];
 
 const EmployeeUploader = ({ open, setOpen }: Props) => {
@@ -97,8 +97,6 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
       const parsedData: any = csv?.data;
       const columns = Object.keys(parsedData[0]);
 
-      // console.log({ parsedData });
-
       const altered_columns: any = columns.map((col) => {
         const column = col.split(' ').join('');
         return column.charAt(0).toLowerCase() + column.slice(1);
@@ -113,11 +111,15 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
             tableCols.push({
               field: altered_columns[idx],
               headerName: curVal,
-              width: 200
+              width: 150
             })
+            let value = data[curVal];
+            if (altered_columns[idx].toLowerCase() === "location") {
+              value = value.split(", ")
+            }
             return {
               ...prevVal,
-              [altered_columns[idx]]: data[curVal],
+              [altered_columns[idx]]: value
             };
           }, []);
         })
@@ -149,7 +151,7 @@ console.log({data})
           const d = {
             ...initialState,
             ...o,
-            location: [o.location],
+            location: o.location,
             companyEmail: generateCompanyEmail(o.firstName, o.lastName, o.rank),
             birthDate: moment(o.birthDate).valueOf(),
             dateHired: moment(o.dateHired).valueOf(),
@@ -163,7 +165,7 @@ console.log({data})
           );
         })
       );
-console.log({test})
+
       setTimeout(() => {
         setSaving(false);
         setSaved(true);
