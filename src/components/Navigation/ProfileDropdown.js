@@ -1,21 +1,32 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Fragment, useContext } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import { AppCtx } from '../../App';
-import { Link, useHistory } from 'react-router-dom';
-import { Path } from 'constants/Path';
-import { useDispatch } from 'react-redux';
-import { clearAuthData, setUserGroup } from 'slices/userAccess/authSlice';
-import { clearEmployeesData, clearEnumsData } from 'slices';
+import React, { Fragment, useContext, useState } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { AppCtx } from "../../App";
+import { Link, useHistory } from "react-router-dom";
+import { Path } from "constants/Path";
+import { useDispatch } from "react-redux";
+import { clearAuthData, setUserGroup } from "slices/userAccess/authSlice";
+import { clearEmployeesData, clearEnumsData } from "slices";
+import ChangePassword from "components/Auth/ChangePassword/change.password";
+import {
+  AccountCircle,
+  ListAlt,
+  Logout,
+  SwitchAccessShortcut,
+  SyncLock,
+  ToggleOff,
+  ToggleOn,
+} from "@mui/icons-material";
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 const ProfileDropdown = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { userData, userGroup, isHRLogin } = useContext(AppCtx);
+  const [changePassword, setChangePassword] = useState(false);
 
   const handleLogout = () => {
     dispatch(clearAuthData());
@@ -26,102 +37,140 @@ const ProfileDropdown = () => {
     <Link
       to={Path.Employee.Profile}
       className={classNames(
-        active ? 'bg-gray-100' : '',
-        'block px-4 py-2 text-sm text-gray-700'
+        active ? "bg-gray-100" : "",
+        "block p-4 py-3 text-sm text-gray-700 group"
       )}
     >
-      My Profile
+      <div className="flex flex-row gap-2 items-center">
+        <AccountCircle fontSize="small" className="dropdown-icon" />
+        <span className="dropdown-text">My Profile</span>
+      </div>
     </Link>
   );
 
   const switchToEmployee = async () => {
-    await dispatch(setUserGroup('EMPLOYEE'));
+    await dispatch(setUserGroup("EMPLOYEE"));
     history.push(Path.Dashboard);
   };
 
   const switchToHR = async () => {
-    await dispatch(setUserGroup('HR ADMIN'));
+    await dispatch(setUserGroup("HR ADMIN"));
     history.push(Path.Dashboard);
   };
 
   const getSwitchLink = (active) => {
-    if (isHRLogin && userGroup == 'EMPLOYEE') {
+    if (isHRLogin && userGroup === "EMPLOYEE") {
       return (
         <Link
-          component={'button'}
+          component={"button"}
           onClick={switchToHR}
           className={classNames(
-            active ? 'bg-gray-100' : '',
-            'block px-4 py-2 text-sm text-gray-700'
+            active ? "bg-gray-100" : "",
+            "block p-4 py-3 text-sm text-gray-700 w-full group"
           )}
         >
-          Switch to HR ADMIN Portal
+          <div className="flex flex-row gap-2 items-center">
+            <ToggleOff fontSize="small" className="dropdown-icon" />
+            <span className="text-left dropdown-text">
+              <small className="block">Switch to</small> HR ADMIN PORTAL
+            </span>
+          </div>
         </Link>
       );
     }
     return (
       <Link
-        component={'button'}
+        component={"button"}
         onClick={switchToEmployee}
         className={classNames(
-          active ? 'bg-gray-100' : '',
-          'block px-4 py-2 text-sm text-gray-700'
+          active ? "bg-gray-100" : "",
+          "p-4 py-3 text-sm text-gray-700 text-left w-full group"
         )}
       >
-        Switch to EMPLOYEE Portal
+        <div className="flex flex-row gap-2 items-center ">
+          <ToggleOn fontSize="small" className="dropdown-icon" />
+          <span className="dropdown-text">
+            <small className="block">Switch to</small> EMPLOYEE PORTAL
+          </span>
+        </div>
       </Link>
     );
   };
 
   return (
-    <Menu as='div' className='ml-3 relative z-10'>
-      <div>
-        <Menu.Button className='bg-white flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-gray-80'>
-          <span className='sr-only'>Open user menu</span>
-          {/* <img
+    <Fragment>
+      <ChangePassword show={changePassword} setShow={setChangePassword} />
+      <Menu as="div" className="ml-3 relative z-10">
+        <div>
+          <Menu.Button className="bg-white flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-gray-80">
+            <span className="sr-only">Open user menu</span>
+            {/* <img
             className='h-8 w-8 rounded-full'
             src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
             alt=''
           /> */}
-          <div className='w-8 h-8 rounded-full flex justify-center items-center font-medium hover:text-red-600'>
-            {userData?.firstName ? userData?.firstName?.split('')[0] : 'V'}
-            {userData?.lastName ? userData?.lastName?.split('')[0] : 'S'}
-          </div>
-        </Menu.Button>
-      </div>
-      <Transition
-        as={Fragment}
-        enter='transition ease-out duration-100'
-        enterFrom='transform opacity-0 scale-95'
-        enterTo='transform opacity-100 scale-100'
-        leave='transition ease-in duration-75'
-        leaveFrom='transform opacity-100 scale-100'
-        leaveTo='transform opacity-0 scale-95'
-      >
-        <Menu.Items className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg overflow-hidden bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'>
-          <div className='w-full p-2 bg-slate-100 text-xs text-center'>
-            {userData.firstName} {userData.lastName}
-          </div>
-          {isHRLogin && (
-            <Menu.Item>{({ active }) => getSwitchLink(active)}</Menu.Item>
-          )}
-          {userGroup?.toLocaleLowerCase() === 'employee' && (
-            <Menu.Item>{({ active }) => getEmployeeLink(active)}</Menu.Item>
-          )}
-          <Menu.Item>
-            {({ active }) => (
-              <a
-                href='#'
-                className={classNames(
-                  active ? 'bg-gray-100' : '',
-                  'block px-4 py-2 text-sm text-gray-700'
-                )}
-              >
-                My Activities
-              </a>
+            <div className="w-8 h-8 rounded-full flex justify-center items-center font-medium hover:text-red-600">
+              {userData?.firstName ? userData?.firstName?.split("")[0] : "V"}
+              {userData?.lastName ? userData?.lastName?.split("")[0] : "S"}
+            </div>
+          </Menu.Button>
+        </div>
+        <Transition
+          as={Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+          <Menu.Items className="origin-top-right absolute right-0 mt-2 w-[250px] rounded-md shadow-2xl overflow-hidden bg-white ring-1 ring-black ring-opacity-5 focus:outline-none ">
+            <div className="w-full p-2 bg-slate-100 text-xs text-center">
+              {userData.firstName} {userData.lastName}
+            </div>
+            {isHRLogin && (
+              <Menu.Item>
+                {({ active }) => <div>{getSwitchLink(active)}</div>}
+              </Menu.Item>
             )}
-          </Menu.Item>
-          {/* <Menu.Item>
+            {userGroup?.toLocaleLowerCase() === "employee" && (
+              <Menu.Item>{({ active }) => getEmployeeLink(active)}</Menu.Item>
+            )}
+
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? "bg-gray-100" : "",
+                    "block p-4 py-3 text-sm text-gray-700 group transition-all duration-150"
+                  )}
+                >
+                  <div className="flex flex-row gap-2 items-center">
+                    <ListAlt fontSize="small" className="dropdown-icon" />
+                    <span className="dropdown-text">My Activities</span>
+                  </div>
+                </a>
+              )}
+            </Menu.Item>
+
+            <Menu.Item>
+              {({ active }) => (
+                <span
+                  onClick={() => setChangePassword(true)}
+                  className={classNames(
+                    active ? "bg-gray-100" : "",
+                    "block p-4 py-3 text-sm text-gray-700 cursor-pointer group transition-all duration-150"
+                  )}
+                >
+                  <div className="flex flex-row gap-2">
+                    <SyncLock fontSize="small" className="dropdown-icon" />{" "}
+                    <span className="dropdown-text">Change Password</span>
+                  </div>
+                </span>
+              )}
+            </Menu.Item>
+            {/* <Menu.Item>
             {({ active }) => (
               <a
                 href='#'
@@ -134,22 +183,26 @@ const ProfileDropdown = () => {
               </a>
             )}
           </Menu.Item> */}
-          <Menu.Item>
-            {({ active }) => (
-              <button
-                className={classNames(
-                  active ? 'bg-gray-100' : '',
-                  'block px-4 py-2 text-sm text-gray-700 w-full text-left'
-                )}
-                onClick={handleLogout}
-              >
-                Sign out
-              </button>
-            )}
-          </Menu.Item>
-        </Menu.Items>
-      </Transition>
-    </Menu>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  className={classNames(
+                    active ? "bg-gray-100" : "",
+                    "block p-4 py-3 text-sm text-gray-700 w-full text-left group transition-all duration-150"
+                  )}
+                  onClick={handleLogout}
+                >
+                  <div className="flex flex-row gap-2">
+                    <Logout className="dropdown-icon" fontSize="small" />{" "}
+                    <span className="dropdown-text">Sign out</span>
+                  </div>
+                </button>
+              )}
+            </Menu.Item>
+          </Menu.Items>
+        </Transition>
+      </Menu>
+    </Fragment>
   );
 };
 

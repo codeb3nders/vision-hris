@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  ContentCopy,
   Login,
   RestartAlt,
   VerifiedUser,
@@ -13,7 +12,6 @@ import {
   FilledInput,
   FormControl,
   IconButton,
-  Input,
   InputAdornment,
   InputLabel,
   TextField,
