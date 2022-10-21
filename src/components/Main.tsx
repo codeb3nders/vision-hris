@@ -1,18 +1,18 @@
-import React, { createContext, useState, useCallback } from 'react';
+import React, { createContext, useState, useCallback } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Redirect,
-} from 'react-router-dom';
-import Navbar from './Navigation/Navbar';
-import Dashboard from './DashboardSwitcher';
-import EmployeeDatabase from './HRDashboard/EmployeeDatabase';
-import EmployeeDirectory from './EmployeeDirectory';
-import { Path } from 'constants/Path';
-import ProfileMain from './MyProfile/profile.main';
-import { ROLE_ACCESS } from 'constants/access';
-import ErrorPage from './Other/error.page';
+} from "react-router-dom";
+import Navbar from "./Navigation/Navbar";
+import Dashboard from "./DashboardSwitcher";
+import EmployeeDatabase from "./HRDashboard/EmployeeDatabase";
+import EmployeeDirectory from "./EmployeeDirectory";
+import { Path } from "constants/Path";
+import ProfileMain from "./MyProfile/profile.main";
+import { ROLE_ACCESS } from "constants/access";
+import ErrorPage from "./Other/error.page";
 const { Employee, HR } = Path;
 
 type MainCtxI = {
@@ -36,7 +36,7 @@ const Main: React.FC<Props> = ({ role }) => {
     if (!module_id) return true;
     if (!role) return true;
 
-    const code = role.toLowerCase().replace(' ', '_');
+    const code = role.toLowerCase().replace(" ", "_");
     const haveAcess = ROLE_ACCESS[code].indexOf(module_id);
     if (haveAcess !== -1) {
       return true;
@@ -66,37 +66,37 @@ const Main: React.FC<Props> = ({ role }) => {
         <Router>
           <Navbar />
           <section
-            className={`tablet:px-8 phone:px-4 max-w-[1200px] desktop:max-w-[1200px] laptop:max-w-[1200px] sm:max-w-full mx-auto ${
-              isTable ? 'desktop:max-w-full laptop:max-w-full' : ''
+            className={`tablet:px-8 phone:px-4 max-w-7xl desktop:max-w-7xl laptop:max-w-7xl sm:max-w-full mx-auto ${
+              isTable ? "desktop:max-w-full laptop:max-w-full" : ""
             }`}
           >
             <Switch>
               <PrivateRoute
-                is_allowed={isAllowed('dashboard')}
-                module_id='dashboard'
+                is_allowed={isAllowed("dashboard")}
+                module_id="dashboard"
                 exact
                 path={Path.Dashboard}
                 component={Dashboard}
               />
               <PrivateRoute
-                is_allowed={isAllowed('employees_db')}
+                is_allowed={isAllowed("employees_db")}
                 path={HR.People.Employees}
                 component={EmployeeDatabase}
               />
               <PrivateRoute
-                is_allowed={isAllowed('employees_db')}
+                is_allowed={isAllowed("employees_db")}
                 path={HR.People.Employees}
                 component={EmployeeDatabase}
               />
               <PrivateRoute
-                is_allowed={isAllowed('employee_directory')}
+                is_allowed={isAllowed("employee_directory")}
                 path={HR.People.Directory}
                 component={EmployeeDirectory}
               />
               <Route path={Employee.Profile} component={ProfileMain} />
 
-              <Route component={ErrorPage} path='/noaccess/:page' />
-              <Route component={ErrorPage} path='*' />
+              <Route component={ErrorPage} path="/noaccess/:page" />
+              <Route component={ErrorPage} path="*" />
             </Switch>
           </section>
         </Router>
