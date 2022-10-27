@@ -1,8 +1,8 @@
 import { Add, ArrowRightAltOutlined } from '@mui/icons-material';
-import moment from 'moment';
 import React, { useContext } from 'react';
 import { WelcomeCtx } from './welcome';
 
+var moment = require('moment-business-days');
 type Props = {};
 
 const Announcement = (props: Props) => {

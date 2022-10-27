@@ -23,7 +23,6 @@ import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppCtx } from 'App';
 import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
-import moment from 'moment';
 
 type Props = {
   activeEmployeesCount: number;

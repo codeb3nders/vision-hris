@@ -12,7 +12,7 @@ export const createEmployeeEndpoint = async (body: EmployeeI, config = {}) => {
   });
 };
 
-export const updateEmployeeEndpoint = async (data: EmployeeI, config: any) => {
+export const updateEmployeeEndpoint = async (data: any, config: any) => {
   const employeeNo = data.employeeNo;
   let tmp_body: any = data;
   delete tmp_body.employeeNo;

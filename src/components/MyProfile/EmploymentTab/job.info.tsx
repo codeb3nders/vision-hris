@@ -163,7 +163,7 @@ const JobInfo = (props: Props) => {
       headerName: 'Rank',
       flex: 1,
       renderCell: (params: any) => {
-        return <div className='text-xs p-1'>{params.row.rank.name}</div>;
+        return <div className='text-xs p-1'>{params.row.rank?.name}</div>;
       },
     },
     {
@@ -465,10 +465,10 @@ console.log({getEmployeeItems})
       </div>
     </Dialog>
   }
-
+console.log({isNew})
   return (
     <CollapseWrapper
-      panelTitle='Personnel Information'
+      panelTitle={isNew ? 'Personnel Information' : 'Job Information'}
       icon={EngineeringTwoTone}
       contentClassName='p-0'
       open

@@ -25,7 +25,6 @@ const FamilyBackground = lazy(
 const Contacts = lazy(() => import('./Emergency/contacts'));
 const JobInfo = lazy(() => import('./EmploymentTab/job.info'));
 const UserGroupAccess = lazy(() => import('./EmploymentTab/userAccessGroup'));
-const Rehire = lazy(() => import('./EmploymentTab/rehire'));
 const GovernmentDetails = lazy(
   () => import('./PersonalProfileTab/government.details')
 );
@@ -109,7 +108,6 @@ const ProfileTabContent = ({ className }: Props) => {
             <JobInfo />
             {!isNew && <EmployementStatus />}
             {!isNew && <UserGroupAccess />}
-            {!isNew && <Rehire />}
           </TabPanel>
         </Suspense>
 

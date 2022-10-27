@@ -1,5 +1,6 @@
 export const Path = {
   Dashboard: '/',
+  AssetManagement: '/asset-management',
   Employee: {
     Dashboard: '/',
     ESS: {
@@ -10,7 +11,7 @@ export const Path = {
       OTNew: '/ess/ot-applications/new',
       WorkersOT: '/ess/workers-ot-applications',
     },
-    Attendance: '/attendance',
+    Attendance: '/timekeeping',
     People: {
       Directory: '/people/directory',
       Team: '/people/my-team',
@@ -47,7 +48,7 @@ export const Path = {
       Approvers: '/people/approvers',
       Org: '/people/org-chart',
     },
-    Attendance: '/attendance',
+    Attendance: '/timekeeping',
     Reports: '/reports',
     Announcements: '/announcements',
   },
@@ -66,7 +67,7 @@ export const Path = {
       UserAccounts: '/people/user-accounts',
       Org: '/people/org-chart',
     },
-    Attendance: '/attendance',
+    Attendance: '/timekeeping',
     Reports: {
       Audit: '/reports/audit',
       Tracker: '/reports/assets-tracker',

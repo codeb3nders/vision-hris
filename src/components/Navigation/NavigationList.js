@@ -21,7 +21,7 @@ export const EmployeeNavigation = [
       },
     ],
   },
-  { name: 'Attendance', href: Employee.Attendance },
+  { name: 'Timekeeping', href: Employee.Attendance },
   { name: 'Announcements', href: Employee.Announcements },
 ];
 
@@ -85,9 +85,10 @@ export const HRNavigation = [
       { label: 'Org. Chart', href: HR.People.Org },
     ],
   },
-  { name: 'Attendance', href: HR.Attendance },
+  { name: 'Timekeeping', href: HR.Attendance },
   { name: 'Reports', href: HR.Reports },
   { name: 'Announcements', href: HR.Announcements },
+  { name: 'Asset Management', href: Path.AssetManagement },
 ];
 
 export const AdminNavigation = [
@@ -121,7 +122,7 @@ export const AdminNavigation = [
       { label: 'Org. Chart', href: Admin.People.Org },
     ],
   },
-  { name: 'Attendance', href: Admin.Attendance },
+  { name: 'Timekeeping', href: Admin.Attendance },
   {
     name: 'Reports',
     menus: [

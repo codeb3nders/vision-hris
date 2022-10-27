@@ -2,10 +2,10 @@ import { ArrowRightOutlined } from '@mui/icons-material';
 import { Chip, List, ListItem, ListItemButton } from '@mui/material';
 import { Path } from 'constants/Path';
 import CardWTitle from 'CustomComponents/CardWTitle';
-import moment from 'moment';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+var moment = require('moment-business-days');
 type Props = {
   className?: string;
 };

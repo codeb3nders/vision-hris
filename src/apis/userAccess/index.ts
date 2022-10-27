@@ -3,7 +3,7 @@ import {
     URL_USER_CREDENTIALS, URL_FORGOT_PASSWORD, URL_VALIDATE_CODE, URL_CHANGE_PASSWORD
 } from 'constants/EndpointPath';
 
-interface UserCredentialsI { employeeNo: string }
+export interface UserCredentialsI { employeeNo: string, accessGroup: string, isActive?: boolean }
 
 export interface CodeValidationI { employeeNo: string, code: string, password: string }
 
@@ -65,7 +65,7 @@ export const changePasswordEndpoint = async (config: any, body: PasswordChangeI)
         const employeeNo = body.employeeNo;
         const params = {
             oldPassword: body.oldPassword,
-            newPassword: body.oldPassword
+            newPassword: body.newPassword
         }
         return await axios.patch(`${URL_CHANGE_PASSWORD}${employeeNo}`, params, config);
     } catch (error: any) {

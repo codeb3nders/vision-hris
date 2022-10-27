@@ -18,9 +18,11 @@ import {
 } from "@mui/material";
 import { validateCodeEndpoint } from "apis/userAccess";
 import { CODE_NEW } from "assets";
-import moment, { Moment } from "moment";
+import { Moment } from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { SliderCtx } from "./slider";
+
+var moment = require('moment-business-days');
 
 type Props = {};
 
@@ -34,10 +36,11 @@ const CodeVerification = (props: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<any>(null);
   const [loop, setLoop] = useState<any>(null);
+  const [isExpired, setIsExpired] = useState<boolean>(false);
 
   useEffect(() => {
     if (expiresIn > 0) {
-      var time = 6000;
+      var time = expiresIn * 1000;
       var duration = moment.duration(time, 'milliseconds');
       var interval = 1000;
 
@@ -51,13 +54,22 @@ const CodeVerification = (props: Props) => {
     }
   }, [expiresIn]);
 
-  useEffect(() => { 
-    if (moment.duration(timeRemaining).seconds() == 0) {
-      stopHandler();
+  useEffect(() => {
+    if (expiresIn > 0 && timeRemaining !== null) {
+      const remainingSec = moment.duration(timeRemaining).asSeconds();
+      console.log({ remainingSec })
+      if (remainingSec === 0) {
+        setIsExpired(true);
+        stopHandler();
+      }
     }
   }, [timeRemaining])
 
   const stopHandler = () => {
+    console.log(moment.duration(timeRemaining).asSeconds(), "xxxxxxxxxxxxxxx")
+    setVerificationCode("");
+    setNewPassword("");
+    setExpiresIn(0);
     setLoop(interval => {
         clearInterval(interval);
         return null;
@@ -71,14 +83,14 @@ console.log({timeRemaining}, {expiresIn}, moment.duration(timeRemaining).seconds
       const { status, data } = await validateCodeEndpoint({employeeNo, code: verificationCode, password: newPassword});
       if (status === 200) {
         console.log({ data });
-        if (data) {
+        if (data !== false) {
+          stopHandler();
           setUpdated(true);
-          setExpiresIn(0);
         } else {
           setError(true)
         }
-        setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       setError(true);
     }
@@ -114,7 +126,7 @@ console.log({timeRemaining}, {expiresIn}, moment.duration(timeRemaining).seconds
             </p>
 
             {expiresIn && !loading && timeRemaining !== null && (
-              moment.duration(timeRemaining).seconds() >=0 ? <Alert severity="warning">
+              !isExpired ? <Alert severity="warning">
                 Verification code will expire in {moment(timeRemaining.asMilliseconds()).utcOffset('+0800').format('mm:ss')}
               </Alert> : 
                 <Alert severity="error">
@@ -124,8 +136,7 @@ console.log({timeRemaining}, {expiresIn}, moment.duration(timeRemaining).seconds
 
             {error && !loading && (
               <Alert severity="error">
-                Invalid verification code or something went wrong.{" "}
-                <span className="underline">Contact us.</span>
+                Invalid verification code
               </Alert>
             )}
 
@@ -139,9 +150,10 @@ console.log({timeRemaining}, {expiresIn}, moment.duration(timeRemaining).seconds
                         variant="filled"
                         size="small"
                         autoComplete='off'
+                        value={verificationCode}
+                        disabled={loading || isExpired}
                         fullWidth
                         defaultValue={""}
-                        disabled={loading}
                         error={error && !loading}
                         onChange={(e: any) =>
                           setVerificationCode(e.target.value)
@@ -155,9 +167,9 @@ console.log({timeRemaining}, {expiresIn}, moment.duration(timeRemaining).seconds
                           id="new-password"
                           size="small"
                           autoComplete='off'
+                          disabled={loading || isExpired}
                           fullWidth
                           defaultValue={""}
-                          disabled={loading}
                           error={error && !loading}
                           type={showPassword ? "text" : "password"}
                           onChange={(e: any) => setNewPassword(e.target.value)}
@@ -200,7 +212,7 @@ console.log({timeRemaining}, {expiresIn}, moment.duration(timeRemaining).seconds
                     loadingPosition="start"
                     startIcon={<VerifiedUser />}
                     variant="contained"
-                    disabled={loading || !verificationCode || !newPassword}
+                    disabled={loading || !verificationCode || !newPassword || isExpired}
                     onClick={handleVerify}
                     disableElevation
                   >

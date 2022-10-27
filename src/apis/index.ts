@@ -32,8 +32,8 @@ export const getByParamsEndpoint = async (url:string,
 ) => {
     try {
         const urlParams = params ? new URLSearchParams(params) : {};
-        console.log({urlParams})
-        return await axios.get(url, { ...config, ...urlParams });
+        console.log({params})
+        return await axios.get(url, { ...config, params });
     } catch (error: any) {
         console.error(`ERROR in getByParamsEndpoint: ${url}`, error);
         return error.message;

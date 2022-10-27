@@ -139,9 +139,9 @@ const columns = () => [
     headerName: "Reports To",
     flex: 1,
     renderCell: (cell) => {
-      return cell.row.reportsTo.employeeName;
+      return cell.row.reportsTo?.employeeName;
     },
-    sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName),
+    // sortComparator: (v1, v2) => v1.employeeName.localeCompare(v2.employeeName),
   },
 ];
 

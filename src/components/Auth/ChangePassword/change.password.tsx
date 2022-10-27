@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
+  Alert,
   Dialog,
   FormControl,
   IconButton,
@@ -15,6 +16,8 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
+import { changePasswordEndpoint } from "apis/userAccess";
+import { AppCtx } from "App";
 
 type Props = {
   show: boolean;
@@ -22,18 +25,36 @@ type Props = {
 };
 
 const ChangePassword = ({ show, setShow }: Props) => {
+  const { access_token, userData } = useContext(AppCtx);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [newPassword, setNewPassword] = useState(null);
-  const [confirmPassword, setConfirmPassword] = useState(null);
-
+  const [newPassword, setNewPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
+console.log({oldPassword}, {newPassword})
   const handleChangePassword = async () => {
+    setLoading(true);
+    setIsSuccess(false);
+    setError("");
     try {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-    } catch (error) {}
+      const config = {
+          headers: { Authorization: `Bearer ${access_token}` },
+      };
+      const { status, data } = await changePasswordEndpoint(config, { oldPassword, newPassword, employeeNo: userData.employeeNo })
+      console.log({data})
+      if (status === 200) {
+        if (data.isValid === false) {
+          setError(data.error)
+        }else{
+          setIsSuccess(true);
+        }
+      }
+      setLoading(false);
+    } catch (error: any) {
+      console.log(error);
+      setIsSuccess(false);
+    }
   };
 
   return (
@@ -45,6 +66,28 @@ const ChangePassword = ({ show, setShow }: Props) => {
         </div>
 
         <div>
+          <FormControl fullWidth variant="standard" disabled={loading}>
+            <InputLabel>Old Password</InputLabel>
+            <Input
+              type={showPassword ? "text" : "password"}
+              fullWidth
+              size="small"
+              className="mb-4"
+              onChange={(e: any) => setOldPassword(e.target.value)}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+
           <FormControl fullWidth variant="standard" disabled={loading}>
             <InputLabel>New Password</InputLabel>
             <Input
@@ -66,29 +109,16 @@ const ChangePassword = ({ show, setShow }: Props) => {
               }
             />
           </FormControl>
-
-          <FormControl fullWidth variant="standard" disabled={loading}>
-            <InputLabel>Confirm Password</InputLabel>
-            <Input
-              type={showPassword ? "text" : "password"}
-              fullWidth
-              size="small"
-              className="mb-4"
-              onChange={(e: any) => setConfirmPassword(e.target.value)}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
         </div>
+
+        {isSuccess &&
+          <Alert severity="success">
+            Your password was successfully updated.
+          </Alert>
+        }
+        {error &&
+          <Alert severity="error">{ error}</Alert>
+        }
 
         <div className="flex flex-row gap-4 mt-8 justify-between items-center">
           <button
@@ -105,9 +135,8 @@ const ChangePassword = ({ show, setShow }: Props) => {
             variant="contained"
             disabled={
               loading ||
-              newPassword !== confirmPassword ||
               !newPassword ||
-              !confirmPassword
+              !oldPassword
             }
             onClick={handleChangePassword}
             disableElevation

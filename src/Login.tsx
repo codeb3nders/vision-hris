@@ -19,7 +19,7 @@ import {
   Login as LoginIcon,
 } from '@mui/icons-material';
 import { VISION_LOGO } from 'assets';
-import { getEnumsAction as _getEnumsAction } from 'slices';
+import { getAllDataAction as _getEnumsAction } from 'slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   authAction,
@@ -120,7 +120,7 @@ export default function Login() {
     try {
       setError({ status: false, message: '' });
       event.preventDefault();
-      const response = await dispatch(
+      await dispatch(
         authAction({
           username: loginData.username,
           password: loginData.password,

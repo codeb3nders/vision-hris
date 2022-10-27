@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createEndpoint, deleteEndpoint, getByParamsEndpoint, updateEndpoint, getByEmployeeEndpoint } from 'apis';
-import { URL_ENUMS } from "constants/EndpointPath";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createEndpoint, deleteEndpoint, getByEmployeeEndpoint, getByParamsEndpoint, updateEndpoint } from 'apis';
+import { URL_AUDIT_LOGS } from 'constants/EndpointPath';
 
 const initialCreateState: any = {
   createItem: null,
@@ -19,9 +19,9 @@ const initialDeleteState: any = {
 };
 
 const initialGetState: any = {
-  enumsData: [],
-  status: 'idle',
-  error: null,
+  getItems: [],
+  getStatus: 'idle',
+  getError: null,
 };
 
 const initialGetByEmployeeState: any = {
@@ -30,7 +30,7 @@ const initialGetByEmployeeState: any = {
   getByEmployeeError: null,
 };
 
-const name = "enums";
+const name = "audit_logs";
 
 export const createAction: any = createAsyncThunk(
   `${name}/create`,
@@ -39,7 +39,7 @@ export const createAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      return await createEndpoint(URL_ENUMS, data.body, config);
+      return await createEndpoint(URL_AUDIT_LOGS, data.body, config);
     } catch (err: any) {
       console.error(`${name}/create`, err);
       return err;
@@ -49,13 +49,12 @@ export const createAction: any = createAsyncThunk(
 
 export const getAllDataAction: any = createAsyncThunk(
   `${name}/get`,
-    async (data: { access_token: string, params?: any }) => {
-      console.log(data.params, "vvvvvvvvvvvvvvv")
+  async (data: { access_token: string, params?: any }) => {
     try {
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await getByParamsEndpoint(URL_ENUMS, config, data.params);
+      const response = await getByParamsEndpoint(URL_AUDIT_LOGS, config, data.params);
       return [...response.data];
     } catch (err: any) {
       console.error(`${name}/get`, err);
@@ -71,7 +70,7 @@ export const getByEmployeeNoAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await getByEmployeeEndpoint(URL_ENUMS, config, data.employeeNo);
+      const response = await getByEmployeeEndpoint(URL_AUDIT_LOGS, config, data.employeeNo);
       return response.data;
     } catch (err: any) {
       console.error(`${name}/getByEmployeeNo`, err);
@@ -87,7 +86,7 @@ export const updateAction: any = createAsyncThunk(
           const config = {
               headers: { Authorization: `Bearer ${data.access_token}` },
           };
-          return await updateEndpoint(URL_ENUMS, data.params, config);
+          return await updateEndpoint(URL_AUDIT_LOGS, data.params, config);
       } catch (err: any) {
           console.error(`${name}/update`, err);
           return err;
@@ -102,7 +101,7 @@ export const deleteAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      return await deleteEndpoint(URL_ENUMS, data.id, config);
+      return await deleteEndpoint(URL_AUDIT_LOGS, data.id, config);
     } catch (err: any) {
       console.error(`${name}/delete`, err);
       return err;
@@ -110,7 +109,7 @@ export const deleteAction: any = createAsyncThunk(
   }
 );
 
-export const enumsSlice = createSlice({
+export const auditLogsSlice = createSlice({
   name,
   initialState: {
     ...initialCreateState,
@@ -151,15 +150,15 @@ export const enumsSlice = createSlice({
         state.createError = action.error.message;
       })
     .addCase(getAllDataAction.pending, (state) => {
-        state.status = 'loading';
+        state.getStatus = 'loading';
       })
       .addCase(getAllDataAction.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.enumsData = action.payload;
+        state.getStatus = "succeeded";
+        state.getItems = action.payload;
       })
       .addCase(getAllDataAction.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        state.getStatus = 'failed';
+        state.getError = action.error.message;
       })
     .addCase(getByEmployeeNoAction.pending, (state) => {
         state.getByEmployeeStatus = 'loading';
@@ -212,13 +211,13 @@ export const newData = (state: any) => state[name].createItem;
 export const newDataStatus = (state: any) => state[name].createStatus;
 export const newDataError = (state: any) => state[name].createError;
 
-export const enumsData = (state: any) => state[name].enumsData;
-export const status = (state: any) => state[name].status;
-export const error = (state: any) => state[name].error;
+export const data = (state: any) => state[name].getItems || [];
+export const dataStatus = (state: any) => state[name].getStatus;
+export const dataError = (state: any) => state[name].getError;
 
-export const data = (state: any) => state[name].getByEmployeeItems;
-export const dataStatus = (state: any) => state[name].getByEmployeeStatus;
-export const dataError = (state: any) => state[name].getByEmployeeError;
+export const employeeData = (state: any) => state[name].getByEmployeeItems;
+export const employeeDataStatus = (state: any) => state[name].getByEmployeeStatus;
+export const employeeDataError = (state: any) => state[name].getByEmployeeError;
 
 export const updateStatus = (state: any) => state[name].updateStatus;
 export const updateError = (state: any) => state[name].updateError;
@@ -227,6 +226,6 @@ export const deleteStatus = (state: any) => state[name].deleteStatus;
 export const deleteError = (state: any) => state[name].deleteError;
 
 
-export const { reset } = enumsSlice.actions;
+export const { reset } = auditLogsSlice.actions;
 
-export default enumsSlice.reducer;
+export default auditLogsSlice.reducer;

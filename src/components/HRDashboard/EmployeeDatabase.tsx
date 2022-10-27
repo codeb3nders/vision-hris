@@ -2,12 +2,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Card, Button, Link, Tooltip } from '@mui/material';
+import { Card, Button, Link, Tooltip, Checkbox, Avatar, Badge, Snackbar } from '@mui/material';
 import {
   AddCircleOutlineTwoTone,
+  AdminPanelSettings,
   KeyTwoTone,
+  Person,
   SupervisedUserCircleTwoTone,
+  SupervisorAccount,
   UploadTwoTone,
+  GppGoodOutlined,
 } from '@mui/icons-material';
 import NewEmployeeProfile from './new.employee.profile';
 import {
@@ -17,6 +21,7 @@ import {
   createUserAccess,
   clearHistoryData,
   clearEmployeeDetails,
+  userAccess,
 } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import ViewEmployeeProfile from './view.employee.profile';
@@ -26,6 +31,12 @@ import { AppCtx } from 'App';
 import Search from './search';
 import { searchEmployeeEndpoint } from 'apis/employees';
 import EmployeeUploader from './EmployeeUploader/employee.uploader';
+import { LoadingButton } from '@mui/lab';
+import { URL_USER_CREDENTIALS } from 'constants/EndpointPath';
+import { getByParamsEndpoint } from 'apis';
+import { getAvatar } from 'utils/functions';
+import { VISION_RED } from 'constants/Colors';
+import { createCredentialsEndpoint } from 'apis/userAccess';
 
 type Props = {};
 
@@ -39,7 +50,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   // Employees
   const getEmployeeItems = useSelector(_getEmployeeItems);
-  // const getEmployeeStatus = useSelector(_getEmployeeStatus);
+  const getEmployeeStatus = useSelector(_getEmployeeStatus);
 
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
@@ -59,6 +70,17 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   const [searchText, setSearchText] = useState<string>('');
   const [openUploader, setOpenUploader] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [userCredentials, setUserCredentials] = useState<any[]>([]);
+  const [credentialsCreated, setCredentialsCreated] = useState<boolean>(false);
+
+  useEffect(() => { getUserCredentials()}, [])
+
+  useEffect(() => { 
+    if (getEmployeeStatus === "succeeded") {
+      setIsLoading(false);
+    }
+  }, [getEmployeeStatus])
 
   useEffect(() => {
     if (location.pathname === '/people/employees') {
@@ -78,14 +100,23 @@ const EmployeeDatabase: React.FC<Props> = () => {
     const employees = getEmployeeItems.map((r: EmployeeDBI) => {
       const mi = r.middleName ? r.middleName.charAt(0) : '';
       const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
-      return { ...r, id: r.employeeNo, full_name };
+      const withUserCredentials = userCredentials.filter((x: any) => x.employeeNo === r.employeeNo).length > 0;
+      return { ...r, id: r.employeeNo, full_name, withUserCredentials };
     });
 
     setEmployees(employees);
     setTempEmployees(employees);
-
-    setIsLoading(false);
   }, [getEmployeeItems]);
+console.log({loading})
+  const getUserCredentials = async () => {
+    const config = {
+      headers: { Authorization: `Bearer ${access_token}` },
+    };
+    const { status, data } = await getByParamsEndpoint(URL_USER_CREDENTIALS, config, {});
+    if (status === 200) {
+      setUserCredentials(data);
+    }
+  }
 
   useEffect(() => {
     if (searchText.length <= 0) {
@@ -100,7 +131,41 @@ const EmployeeDatabase: React.FC<Props> = () => {
     }
   }, [viewDetails]);
 
+  const handleSendAccess = async (isChecked:boolean, data:any) => {
+    console.log(data, "vvv")
+    if (isChecked) {
+      setSendAccessList([...sendAccessList, data])
+    } else {
+      setSendAccessList(sendAccessList.filter((x:any) => x.employeeNo !== data.employeeNo))
+    }
+  }
+console.log({sendAccessList})
   const columns = (setViewDetails: any) => [
+    {
+      field: 'userGroup',
+      headerName: '',
+      width: 35,
+      renderCell: (params: any) => {
+        if (params.value.code === "APPROVER") {
+          return <Tooltip title={params.value.code}>
+          <Badge overlap="circular" badgeContent={<SupervisorAccount color="error" />} anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}>
+          <Avatar src={getAvatar(params.row.gender.code)} className='w-[30px] h-[30px]' />
+        </Badge></Tooltip>
+        } else if (params.value.code === "EMPLOYEE") {
+          return <Tooltip title={params.value.code}><Avatar src={getAvatar(params.row.gender.code)} className='w-[30px] h-[30px]' /></Tooltip>
+        } else {
+          return <Tooltip title={params.value.code}><Badge overlap="circular" badgeContent={<AdminPanelSettings color="error" />} anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}>
+          <Avatar src={getAvatar(params.row.gender.code)} className='w-[30px] h-[30px]' />
+        </Badge></Tooltip>
+        }
+      }
+    },
     {
       field: 'full_name',
       headerName: 'Employee name',
@@ -208,27 +273,33 @@ const EmployeeDatabase: React.FC<Props> = () => {
         return params.row.reportsTo?.employeeName || '';
       },
     },
-    // {
-    //   field: 'withUserCredentials',
-    //   headerName: 'Send Access?',
-    //   renderCell: (params) => (
-    //     <Checkbox
-    //       value={params.row.employeeNo}
-    //       onChange={(e: any) => handleSendAccess(e.target.value)}
-    //     />
-    //   ),
-    // },
+    {
+      field: 'withUserCredentials',
+      headerName: 'With Access',
+      renderCell: (params) => {
+        return params.value ? <Checkbox
+          checked={params.value}
+          disabled={params.value}
+        /> :
+          <Checkbox
+          onChange={(e: any) => handleSendAccess(e.target.checked, {employeeNo: params.row.employeeNo, accessGroup: params.row.userGroup.code})}
+        />
+      }
+    },
   ];
   console.log({ viewDetails })
   const sendCredentials = async () => {
+    setSending(true);
     if (sendAccessList.length > 0) {
       Promise.all(
-        sendAccessList.map(async (employeeNo: string) => {
-          await dispatch(
-            createUserAccess({ body: { employeeNo }, access_token })
-          );
+        sendAccessList.map(async (o: any) => {
+          return await createCredentialsEndpoint(o)
         })
-      );
+      ).then((values: any) => {
+        setSending(false);
+        setSendAccessList([]);
+        setCredentialsCreated(true);
+      })
     }
   };
 
@@ -267,24 +338,35 @@ const EmployeeDatabase: React.FC<Props> = () => {
       />
       }
       <Card sx={{ mt: 5, p: 2 }}>
+        <Snackbar
+          open={credentialsCreated}
+          autoHideDuration={6000}
+          onClose={() => setCredentialsCreated(false)}
+          message="User Credentials were successfully created and sent to the employees' company email address."
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          className="z-10"
+        />
         <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
           <Search setSearchText={setSearchText} handleSearch={handleSearch} />
 
           <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
-            <Button
+            <LoadingButton
               onClick={sendCredentials}
               startIcon={<KeyTwoTone />}
               sx={{ mr: 1 }}
+              disabled={sendAccessList.length === 0}
+              loading={sending}
+              loadingPosition="start"
             >
               Send Credentials
-            </Button>
-            <Button
+            </LoadingButton>
+            {/* <Button
               onClick={sendCredentials}
               startIcon={<SupervisedUserCircleTwoTone />}
               sx={{ mr: 1 }}
             >
               Change Team Leader
-            </Button>
+            </Button> */}
 
             <Button
               startIcon={<UploadTwoTone />}
@@ -310,16 +392,13 @@ const EmployeeDatabase: React.FC<Props> = () => {
         <DataGrid
           components={{ Toolbar: GridToolbar }}
           autoHeight
-          density="compact"
+          density="standard"
           disableSelectionOnClick
-          onSelectionModelChange={(ids: any[]) => {
-            setSendAccessList(ids);
-          }}
           rows={employees}
           columns={columns(setViewDetails)}
           pageSize={30}
           rowsPerPageOptions={[30]}
-          checkboxSelection={true}
+          checkboxSelection={false}
           loading={loading}
           getRowId={(row: any) => row.employeeNo}
         />

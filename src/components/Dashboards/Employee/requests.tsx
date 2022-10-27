@@ -9,7 +9,7 @@ import {
   ListItemText,
   useTheme,
 } from '@mui/material';
-import moment from 'moment';
+var moment = require('moment-business-days');
 
 type Props = {
   requests: any[];

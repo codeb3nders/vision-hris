@@ -6,3 +6,4 @@ export { default as MALE_PHOTO_PLACEHOLDER } from './images/placeholder.webp';
 export { default as FEMALE_PHOTO_PLACEHOLDER } from './images/woman-placeholder.jpg';
 export { default as ERROR } from './images/error.png';
 export { default as CODE_NEW } from './images/icon-otp.png';
+export { default as EXCEL } from './images/excel.png';

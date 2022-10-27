@@ -13,6 +13,9 @@ import { Path } from "constants/Path";
 import ProfileMain from "./MyProfile/profile.main";
 import { ROLE_ACCESS } from "constants/access";
 import ErrorPage from "./Other/error.page";
+import AssetManagement from "./AssetManagement";
+import Timekeeping from "./Timekeeping";
+import TimekeepingDetails from "./Timekeeping/details"
 const { Employee, HR } = Path;
 
 type MainCtxI = {
@@ -93,6 +96,23 @@ const Main: React.FC<Props> = ({ role }) => {
                 path={HR.People.Directory}
                 component={EmployeeDirectory}
               />
+              <PrivateRoute
+                is_allowed={isAllowed("asset_management")}
+                path={Path.AssetManagement}
+                component={AssetManagement}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed("timekeeping")}
+                path={Path.HR.Attendance}
+                exact
+                component={Timekeeping}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed("timekeeping")}
+                path={`${Path.HR.Attendance}/details`}
+                component={TimekeepingDetails}
+              />
+
               <Route path={Employee.Profile} component={ProfileMain} />
 
               <Route component={ErrorPage} path="/noaccess/:page" />

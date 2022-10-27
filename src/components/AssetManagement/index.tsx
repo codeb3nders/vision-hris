@@ -1,13 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import {
-  Autocomplete,
-  Chip,
+  Checkbox,
   Dialog,
-  Divider,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputLabel,
   MenuItem,
@@ -23,7 +21,6 @@ import {
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import AddButton from 'CustomComponents/AddButton';
-import { ProfileCtx } from '../profile.main';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { AppCtx } from 'App';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,91 +28,85 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import {
   createAction,
   deleteAction,
-  getByEmployeeNoAction,
-  data as getAssetsData, dataStatus as getAssetsDataStatus,
+  getAllDataAction,
+  data as _getCompanyAssetsData, dataStatus as _getCompanyAssetsDataStatus,
   deleteStatus as getAssetDeleteStatus,
   updateStatus as getAssetUpdateStatus,
   newDataStatus as getNewAssetStatus,
   updateAction
-} from 'slices/assets';
-import {
-  data as _getCompanyAssetsData, dataStatus as _getCompanyAssetsDataStatus, getAllDataAction
 } from 'slices/companyAssets';
+import {
+  enumsData,
+  enumsData as getEnumsData, status as getEnumsDataStatus
+} from 'slices/enums/enumsSlice'
 import ConfirmDelete from 'components/Other/confirm.delete';
-import { styled, lighten, darken } from '@mui/system';
+import { getEmployeeItems as _getEmployeeItems } from 'slices';
+import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { ASSET_CONDITIONS } from 'constants/Values';
 
-// import { getByEmployeeNoAction, getEmployeeAssetsData, getEmployeeAssetsStatus } from 'slices/assets/getSlice';
-// import { deleteAssetAction, getAssetDeleteStatus } from 'slices/assets/deleteSlice';
-
+var moment = require('moment-business-days');
 type Props = {};
 
-type AssetModel = {
+type CompanyAssetModel = {
   id: string;
-  companyAssetId: string;
-  dateAssigned: Date | null;
-  dateReturned: Date | null;
-  conditionAssigned: string;
-  conditionReturned: string;
-  remarks: string;
+  assetName: string;
+  assetDetails: string;
+  assetType: any;
+  assetSerialNumber: string;
+  status: string;
 };
 
 const initialState = {
-  id: '',
-  companyAssetId: '',
-  dateAssigned: null,
-  dateReturned: null,
-  conditionAssigned: '',
-  conditionReturned: '',
-  remarks: ''
+  id: "",
+  assetName: "",
+  assetDetails: "",
+  assetType: "",
+  assetSerialNumber: "",
+  status: ""
 };
 
-const GroupHeader = styled('div')(({ theme }) => ({
-  position: 'sticky',
-  top: '-8px',
-  padding: '4px 10px',
-  color: theme.palette.primary.main,
-  backgroundColor:
-    theme.palette.mode === 'light'
-      ? lighten(theme.palette.primary.light, 0.85)
-      : darken(theme.palette.primary.main, 0.8),
-}));
-
-const GroupItems = styled('ul')({
-  padding: 0,
-});
-
-const AssetsTable = (props: Props) => {
-  const { setUpdatedDetails, isNew, employeeDetails } = useContext(ProfileCtx);
-  const [rows, setRows] = useState<AssetModel[]>([]);
+const AssetManagement = (props: Props) => {
+  const [rows, setRows] = useState<CompanyAssetModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const employeeAssets = useSelector(getAssetsData);
-  const employeeAssetsStatus = useSelector(getAssetsDataStatus);
+  const enumsData = useSelector(getEnumsData);
+  const assetsData = useSelector(_getCompanyAssetsData);
+  const assetsDataStatus = useSelector(_getCompanyAssetsDataStatus);
   const employeeUpdateAssetStatus = useSelector(getAssetUpdateStatus);
   const employeeDeleteAssetStatus = useSelector(getAssetDeleteStatus);
   const employeeNewAssetStatus = useSelector(getNewAssetStatus);
   const { access_token } = useContext(AppCtx);
-  const [assetData, setAssetData] = useState<AssetModel>(initialState);
+  const [assetData, setAssetData] = useState<CompanyAssetModel>(initialState);
   const [confirmDelete, setConfirmDelete] = useState<{
     row: any;
     status: boolean;
   }>({ row: null, status: false });
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
+  const [assetTypes, setAssetTypes] = useState<any[]>([]);
+  const getEmployeeItems = useSelector(_getEmployeeItems);
+
   const isUpdate = assetData.id;
 
   useEffect(() => {
-    if (employeeAssetsStatus !== "idle") {
-      setRows(employeeAssets)
-    }
-  }, [employeeAssetsStatus])
+    getData();
+  }, [])
 
   useEffect(() => {
-    if (employeeDetails.employeeNo) {
-      getData();
+    if (assetsDataStatus !== 'idle') {
+      setRows(assetsData)
     }
-  }, [employeeDetails.employeeNo])
+  }, [assetsDataStatus])
 
+  useEffect(() => { 
+    setAssetTypes(enumsData.filter((x:any) => x.type == "assetType"))
+  }, [enumsData])
+
+  useEffect(() => {
+    const employees = [...getEmployeeItems];
+    setEmployees(employees.sort((a:any, b:any) => a.lastName.localeCompare(b.lastName)))
+  }, [getEmployeeItems])
+console.log({assetsData})
   useEffect(() => {
     if (employeeNewAssetStatus === "succeeded" || employeeDeleteAssetStatus === 'succeeded' || employeeUpdateAssetStatus === "succeeded") {
       getData();
@@ -127,22 +118,27 @@ const AssetsTable = (props: Props) => {
   }, [open]);
 
   const getData = async () => {
-    await dispatch(getByEmployeeNoAction({access_token, employeeNo: employeeDetails.employeeNo}))
+    await dispatch(getAllDataAction({access_token}))
   }
 
-  const handleDelete = async (row: AssetModel) => {
-    await dispatch(deleteAction({id: row.id, access_token}))
+  const handleDelete = async (row: CompanyAssetModel) => {
+    await dispatch(deleteAction({code: row.id, access_token}))
     setConfirmDelete({ row: null, status: false });
   };
 
-  const handleEdit = async (row: AssetModel) => {
+  const handleEdit = async (row: CompanyAssetModel) => {
     const asset = rows.filter(
       (t) => t.id === row.id
     )[0];
-    asset.id && setAssetData(asset);
+    asset.id && setAssetData(() => {
+      return {
+        ...asset,
+        assetType: asset.assetType.code
+      }
+    });
     setOpen(true);
   }
-
+console.log({assetData})
   return (
     <div>
       <ConfirmDelete
@@ -150,7 +146,7 @@ const AssetsTable = (props: Props) => {
         setOpen={setConfirmDelete}
         handleDelete={handleDelete}
       />
-      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} />
+      <AssetDialog setOpen={setOpen} open={open} employees={employees} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} />
       <div style={{ width: '100%' }}>
         <div style={{marginBottom: 10}}>
           <AddButton setOpen={setOpen} text='Add Record' />
@@ -177,25 +173,17 @@ const AssetsTable = (props: Props) => {
   );
 };
 
-const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetData: data, isUpdate, isSaving, setIsSaving }) => {
-  const [newAsset, setNewAsset] = useState<AssetModel>(initialState);
-  const { enums, resetNotif, failed } = useContext(ProfileCtx);
+const AssetDialog = ({ open, setOpen, employees, access_token, assetData: data, isUpdate, isSaving, setIsSaving }) => {
+  const [newAsset, setNewAsset] = useState<any>(initialState);
   const dispatch = useDispatch();
   const [assetTypes, setAssetTypes] = useState<any[]>([]);
-  const [assetData, setAssetData] = useState<any>([]);
-  const assetsDataStatus = useSelector(_getCompanyAssetsDataStatus);
-  const assetsData = useSelector(_getCompanyAssetsData);
-  console.log({ assetsData });
+  const [assetData, setAssetData] = useState<any>(initialState);
+  const [isAssigned, setIsAssigned] = useState<boolean>(false);
+  const enums = useSelector(enumsData)
 
   useEffect(() => { 
-    getCompanyAssets();
-  }, [])
-
-  useEffect(() => {
-    if (assetsDataStatus !== 'idle') {
-      // setAssetTypes(assetsData)
-    }
-  }, [assetsDataStatus])
+    setAssetTypes(enums.filter((x:any) => x.type.toLocaleLowerCase() === "assettype"))
+  }, [enums])
 
   useEffect(() => {
     setAssetData(data);
@@ -204,17 +192,12 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
   useEffect(() => {
     if (!open) {
       setNewAsset(initialState)
-      resetNotif()
     }
   }, [open]);
-
-  const getCompanyAssets = async() => {
-    await dispatch(getAllDataAction({access_token}))
-  }
-
+console.log({isUpdate})
   const handleSave = async () => {
     const validateFields = async () => {
-        const dialog: any = document.getElementById("assets-dialog");
+        const dialog: any = document.getElementById("company-assets-dialog");
         const required = dialog.querySelectorAll("[required]");
         let invalidCtr = 0;
 
@@ -223,7 +206,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
           .map((e: any) => e.id).length;
 
         if (invalidCtr > 0) {
-          return failed(INCOMPLETE_FORM_MESSAGE);
+          // return failed(INCOMPLETE_FORM_MESSAGE);
         }
         return true;
       }
@@ -246,7 +229,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
           const { id, ...rest } = newAsset;
           await dispatch(
             createAction({
-              body: { ...rest, employeeNo: employeeNo },
+              body: { ...rest },
               access_token,
             })
           );
@@ -260,49 +243,153 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
   };
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} id="assets-dialog">
+    <Dialog open={open} onClose={() => setOpen(false)} id="company-assets-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
-          <LaptopChromebookTwoTone /> {isUpdate ? 'Update' : 'Assign'}{' '} Asset
+          <LaptopChromebookTwoTone /> {isUpdate ? 'Update' : 'Add'}{' '} Asset
         </p>
 
-        <GridWrapper colSize='1'>
+        <GridWrapper colSize='2'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-               <Autocomplete
-                  id="company-asset-autpcomplete"
-                  options={assetTypes.sort((a, b) => -b.assetName.localeCompare(a.assetName))}
-                  groupBy={(option:any) => option.assetType}
-              getOptionLabel={(option: any) => {
-                console.log({ option })
-                return option && `${option.assetName} - ${option.assetDetails} (${option.assetSerialNumber})`
-                  }}
-                  defaultValue={assetData.companyAssetId}
-                  renderInput={(params) => <TextField {...params} label="Company Asset" />}
-                  onChange={(e: any) => {
-                    setNewAsset({ ...newAsset, companyAssetId: e.target.value });
-                    isUpdate && setAssetData((prev: any) => ({
-                    ...prev,
-                    companyAssetId: e.target.value,
-                  }));
-                  }}
-                  renderGroup={(params) => (
-                    <li>
-                      <GroupHeader>{params.group}</GroupHeader>
-                      <GroupItems>{params.children}</GroupItems>
-                    </li>
-                  )}
-                />
+            <FormControl variant='standard' size='small' fullWidth required>
+              <InputLabel id='asset-type'>Asset Type</InputLabel>
+              <Select
+                label='Asset Type'
+                labelId='asset-type'
+                onChange={(e: any) => {
+                  setNewAsset({ ...newAsset, assetType: e.target.value });
+                  isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetType: e.target.value,
+                }));
+                }}
+                defaultValue={assetData.assetType}
+              >
+                {assetTypes.map((asset) => {
+                  return (
+                    <MenuItem key={asset.code} value={asset.code}>
+                      {asset.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
           </div>
-          </GridWrapper>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              required
+              fullWidth
+              variant='standard'
+              size='small'
+              multiline
+              label='Asset Name'
+              onChange={(e: any) => { 
+                setNewAsset({ ...newAsset, assetName: e.target.value });
+                isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetName: e.target.value,
+                }));
+              }}
+              defaultValue={assetData.assetName}
+            />
+          </div>
+        </GridWrapper>
+        <GridWrapper colSize='2'>         
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <TextField
+              fullWidth
+              variant='standard'
+              size='small'
+              label='Serial #'
+              onChange={(e: any) => {
+                setNewAsset({ ...newAsset, assetSerialNumber: e.target.value });
+                isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetSerialNumber: e.target.value,
+                }));
+              }}
+              defaultValue={assetData.assetSerialNumber}
+            />
+          </div>
+          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+            <FormControl variant='standard' size='small' fullWidth required>
+              <InputLabel id='condition'>Condition</InputLabel>
+              <Select
+                label='Condition'
+                labelId='condition'
+                onChange={(e: any) => {
+                  setNewAsset({ ...newAsset, status: e.target.value });
+                  isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  status: e.target.value,
+                }));
+                }}
+                defaultValue={assetData.status}
+              >
+                {ASSET_CONDITIONS.map((o) => {
+                  return (
+                    <MenuItem key={o} value={o}>
+                      {o}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </div>
+        </GridWrapper>
         <GridWrapper colSize='2'>
           <div className='col-span-2'>
-            <Divider textAlign='left'>
-              <Chip label="ASSIGNMENT" />
-              </Divider>
+            <TextField
+              required
+              fullWidth
+              variant='standard'
+              size='small'
+              multiline
+              label='Asset Details'
+              onChange={(e: any) => {
+                setNewAsset({ ...newAsset, assetDetails: e.target.value });
+                isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetDetails: e.target.value,
+                }));
+              }}
+              defaultValue={assetData.assetDetails}
+            />
+          </div>
+        </GridWrapper>
+        <GridWrapper colSize='2'>  
+          <div className='col-span-2'>
+            <FormControlLabel control={<Checkbox onChange={(e:any) => setIsAssigned(e.target.checked)} />} label="Assign to Employee?" />
+          </div>
+          {isAssigned && <>
+          <div className='col-span-2'>
+            <FormControl variant='standard' size='small' fullWidth required>
+              <InputLabel id='assigned-to'>Assigned To</InputLabel>
+              <Select
+                label='Assigned To'
+                labelId='assigned-to'
+                onChange={(e: any) => {
+                  // setNewAsset({ ...newAsset, assetType: e.target.value });
+                  isUpdate && setAssetData((prev: any) => ({
+                  ...prev,
+                  assetType: e.target.value,
+                }));
+                }}
+                defaultValue={assetData.assetType}
+              >
+                {employees.map((employee:EmployeeDBI) => {
+                  return (
+                    <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
+                      {employee.lastName}, {employee.firstName} ({employee.employeeNo})
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
+                <DatePicker
                 label='Date Assigned'
                 onChange={(value) => {
                   setNewAsset({
@@ -314,7 +401,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
                     dateAssigned: value,
                   }));
                 }}
-                value={newAsset.dateAssigned || assetData.dateAssigned || null}
+                value={assetData.dateAssigned || null}
                 renderInput={(params) => (
                   <TextField {...params} fullWidth variant='standard' />
                 )}
@@ -322,7 +409,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
             </LocalizationProvider>
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth required>
+            <FormControl variant='standard' size='small' fullWidth>
               <InputLabel id='condition'>Condition</InputLabel>
               <Select
                 label='Condition'
@@ -346,11 +433,6 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
               </Select>
             </FormControl>
           </div>
-          <div className='col-span-2'>
-            <Divider textAlign='left'>
-              <Chip label="RETURN" />
-              </Divider>
-          </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
@@ -373,17 +455,17 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
             </LocalizationProvider>
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth required>
+            <FormControl variant='standard' size='small' fullWidth>
               <InputLabel id='condition'>Condition</InputLabel>
               <Select
                 label='Condition'
                 labelId='condition'
                 onChange={(e: any) => {
-                  setNewAsset({ ...newAsset, conditionReturned: e.target.value });
-                  isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  conditionReturned: e.target.value,
-                }));
+                //   setNewAsset({ ...newAsset, conditionReturned: e.target.value });
+                //   isUpdate && setAssetData((prev: any) => ({
+                //   ...prev,
+                //   conditionReturned: e.target.value,
+                // }));
                 }}
                 defaultValue={assetData.conditionReturned}
               >
@@ -405,7 +487,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
               label='Remarks'
               multiline
               onChange={(e: any) => {
-                setNewAsset({ ...newAsset, remarks: e.target.value });
+                // setNewAsset({ ...newAsset, remarks: e.target.value });
                 isUpdate && setAssetData((prev: any) => ({
                     ...prev,
                     remarks: e.target.value,
@@ -414,6 +496,8 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
               defaultValue={assetData.remarks}
             />
           </div>
+            </>
+          }
         </GridWrapper>
 
         <div className='grid grid-cols-7'>
@@ -439,20 +523,20 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
 
 const columns: any = (setConfirmDelete: any, handleEdit:any) => [
   {
-    field: 'assetName',
-    headerName: 'Asset Name',
-    flex: 1,
-    // renderCell: (params: any) => {
-    //   return `${params.value} - ${params.row.id}`;
-    // },
-  },
-  {
     field: 'assetType',
     headerName: 'Asset Type',
     flex: 1,
     renderCell: (params: any) => {
       return params.row?.assetType?.name || params.value;
     },
+  },
+  {
+    field: 'assetName',
+    headerName: 'Asset Name',
+    flex: 1,
+    // renderCell: (params: any) => {
+    //   return `${params.value} - ${params.row.id}`;
+    // },
   },
   {
     field: 'assetDetails',
@@ -472,19 +556,16 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
   },
   {
     field: 'dateAssigned',
-    headerName: 'Date Assigned',
+    headerName: 'Assigned To',
     flex: 1,
     renderCell: (params: any) => {
-      return params.value && moment(params.value).format('MM/DD/YYYY');
+      return params.value ? "YES" : "NO";
     },
   },
   {
-    field: 'dateReturned',
-    headerName: 'Date Returned',
-    flex: 1,
-    renderCell: (params: any) => {
-      return params.value && moment(params.value).format('MM/DD/YYYY');
-    },
+    field: 'status',
+    headerName: 'Condition',
+    flex: 1
   },
   {
     field: 'remarks',
@@ -508,4 +589,4 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
   },
 ];
 
-export default AssetsTable;
+export default AssetManagement;

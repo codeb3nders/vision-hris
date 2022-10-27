@@ -36,7 +36,7 @@ import {
 } from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  enumsStore,
+  enumsData as getEnumsData, status as getEnumsDataStatus,
   getOneEmployeeAction as _getOneEmployeeAction,
   getEmployeeStatusOne as _getOneEmployeeStatus,
   getEmployeeDetails as _getOneEmployeeDetails,
@@ -222,7 +222,7 @@ const ProfileMain = ({
     data: [], status: false
   })
 
-  const { enumsData } = useSelector(enumsStore);
+  const enumsData = useSelector(getEnumsData);
   const newEmployeeStatus = useSelector(getEmployeeCreateStatus);
   const newEmployeeData = useSelector(getEmployeeCreatedItem);
   const newEmployeeError = useSelector(getEmployeeCreateError);
@@ -390,7 +390,7 @@ const ProfileMain = ({
       severity: '',
     });
   }
-
+console.log({enumsData})
   useEffect(() => {
     var positions: any = [],
       departments: any = [],

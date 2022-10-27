@@ -73,7 +73,7 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
                 {o.lastName}, {o.firstName}
               </span>
             }
-            secondary={<span className='text-xs '>{o.position.name}</span>}
+            secondary={<span className='text-xs '>{o.position?.name}</span>}
           />
         </ListItemButton>
       );

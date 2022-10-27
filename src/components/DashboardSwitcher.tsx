@@ -13,8 +13,8 @@ import {
   getEmployeeStatus as _getEmployeeStatus,
   getEmployeeItems as _getEmployeeItems
 } from 'slices';
-import { EmployeeI } from 'slices/interfaces/employeeI';
-import moment from 'moment';
+
+var moment = require('moment-business-days');
 
 const Dashboard = () => {
   const location = useLocation();

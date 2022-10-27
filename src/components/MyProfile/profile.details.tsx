@@ -78,7 +78,12 @@ const ProfileDetails = ({ setViewDetails, setOpen }: Props) => {
         </div>
       </section>
       {!isNew && (
-        <section className='laptop:col-span-9 desktop:col-span-9 tablet:col-span-9 phone:col-span-12 phone:text-xs flex flex-col justify-center phone:text-center tablet:text-left laptop:text-left desktop:text-left'>
+        <section className='laptop:col-span-9 desktop:col-span-9 tablet:col-span-9 phone:col-span-12 phone:text-xs flex flex-col justify-center phone:text-center tablet:text-left laptop:text-left desktop:text-left relative'>
+          <div className='cursor-pointer absolute top-[16px] right-[10px] z-10 w-[36px] h-[36px] bg-white/75 rounded-full flex items-center justify-center'>
+            <IconButton onClick={() => !isNew && setViewDetails ? setViewDetails({ employeeNo: '', status: false }) : (setOpen && setOpen(false))}>
+              <Close />
+            </IconButton>
+          </div>
           <p
             className={`font-bold text-xl phone:text-sm ${isNew ? '' : 'desktop:mb-4 laptop:mb-4 tablet:mb-4 phone:mb-0'
               } uppercase min-h-[20px]`}
@@ -122,11 +127,6 @@ const ProfileDetails = ({ setViewDetails, setOpen }: Props) => {
           </p>
         </section>
       )}
-      <Box>
-        <IconButton onClick={() => !isNew && setViewDetails ? setViewDetails({ employeeNo: '', status: false }) : (setOpen && setOpen(false))}>
-          <Close />
-        </IconButton>
-      </Box>
 
       {/* {isNew && ( */}
       <section className='laptop:col-span-12 desktop:col-span-12 tablet:col-span-12 phone:col-span-12 phone:text-xs flex flex-col justify-end phone:text-center tablet:text-left laptop:text-left desktop:text-left'>

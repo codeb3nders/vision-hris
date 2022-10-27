@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getByParamsEndpoint } from 'apis';
 import { createCredentialsEndpoint, updateUserCredentialsEndpoint } from 'apis/userAccess';
+import { URL_USER_CREDENTIALS } from 'constants/EndpointPath';
 
 const initialState: any = {
     data: {},
@@ -9,7 +11,7 @@ const initialState: any = {
     updateError: null
 };
 
-interface UserCredentialsI { employeeNo: string }
+interface UserCredentialsI { employeeNo: string, accessGroup: string }
 
 export const createUserAccess: any = createAsyncThunk(
     'userAccess/create',
