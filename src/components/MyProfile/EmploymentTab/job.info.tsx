@@ -68,18 +68,27 @@ const JobInfo = (props: Props) => {
   const [ranks, setRanks] = useState<any[]>([]);
   const [editJob, setEditJob] = useState<any>(null);
   const [jobUpdate, setJobUpdate] = useState<any>(null);
+  const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
+  const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
 
   useEffect(() => {
     setDepartments(enums.departments);
     setLocations(enums.locations);
     setPositions(enums.positions);
     setRanks(enums.ranks);
+    setEmploymentStatus(enums.employment_status);
+    setEmploymentTypes(enums.employment_types);
   }, [enums]);
 
   const values = {
     employeeDetails,
     setEmployeeDetails,
-    enums,
+    departments,
+    locations,
+    positions,
+    ranks,
+    employmentStatus,
+    employmentTypes,
     isView,
     setUpdatedDetails,
   };
@@ -106,7 +115,7 @@ const JobInfo = (props: Props) => {
           jobLastUpdate: o[i]?.effectiveDate,
           remarks: prev_remarks,
           ...o[i].details,
-          index: i,
+          index: i
         };
         prev_remarks = o[i]?.remarks || "";
         data.push(history_data);
@@ -127,6 +136,17 @@ const JobInfo = (props: Props) => {
     setInfos(data);
   }
 
+  const getName = (type: any[], code: string) => {
+    const data: any = type.find((x: any) => x.code === code);
+    return data ? data.name : code;
+  }
+
+  const getEmployeeName = (employeeNo: string) => {
+    console.log({employeeNo}, {getEmployeeItems})
+    const data: any = getEmployeeItems.find((x: any) => x.employeeNo === employeeNo);
+    return data ? `${data.firstName} ${data.lastName}` : employeeNo;
+  }
+
   const columns: GridColDef[] = [
     {
       field: 'jobLastUpdate',
@@ -145,7 +165,7 @@ const JobInfo = (props: Props) => {
       renderCell: (params: any) => {
         return (
           <div className='text-xs p-1'>
-            {params.row.location.map((o: any) => o.name).join(', ')}
+            {params.row.location.map((o: any) => o.name || getName(locations, o)).join(', ')}
           </div>
         );
       },
@@ -155,7 +175,7 @@ const JobInfo = (props: Props) => {
       headerName: 'Department',
       flex: 1,
       renderCell: (params: any) => {
-        return <div className='text-xs p-1'>{params.row.department.name}</div>;
+        return <div className='text-xs p-1'>{params.row.department?.name || getName(departments, params.row.department)}</div>;
       },
     },
     {
@@ -163,7 +183,7 @@ const JobInfo = (props: Props) => {
       headerName: 'Rank',
       flex: 1,
       renderCell: (params: any) => {
-        return <div className='text-xs p-1'>{params.row.rank?.name}</div>;
+        return <div className='text-xs p-1'>{params.row.rank?.name || getName(ranks, params.row.rank)}</div>;
       },
     },
     {
@@ -171,7 +191,7 @@ const JobInfo = (props: Props) => {
       headerName: 'Position',
       flex: 1,
       renderCell: (params: any) => {
-        return <div className='text-xs p-1'>{params.row.position.name}</div>;
+        return <div className='text-xs p-1'>{params.row.position?.name || getName(positions, params.row.position)}</div>;
       },
     },
     {
@@ -179,9 +199,7 @@ const JobInfo = (props: Props) => {
       headerName: 'Reports To',
       flex: 1,
       renderCell: (params: any) => {
-        return (
-          <div className='text-xs p-1'>{params.row.reportsTo?.employeeName || params.row.reportsTo}</div> //TODO: change this once modification is done in the backend
-        );
+        return <div className='text-xs p-1'>{params.row.reportsTo?.employeeName || getEmployeeName(params.row.reportsTo)}</div>;
       },
     },
     {
@@ -199,7 +217,13 @@ const JobInfo = (props: Props) => {
             <Button
               variant='outlined'
               size='small'
-              onClick={() => setEditJob(params.row)}
+              onClick={() => setEditJob({
+                location: params.row.location.map((o:any) => o.code),
+                department: params.row.department.code,
+                rank: params.row.rank.code,
+                position: params.row.position.code,
+                reportsTo: params.row.reportsTo.employeeNo,
+              })}
               startIcon={<EditTwoTone />}
             >
               Edit
@@ -210,20 +234,20 @@ const JobInfo = (props: Props) => {
       },
     },
   ];
-console.log({getEmployeeItems})
+
   const getDialog = () => {
     const handleSaveChanges = async () => {
 
       const update = async () => {
         try {
-          jobUpdate.type = JOB_HISTORY_TYPE;
-          jobUpdate.effectiveDate = employeeDetails.jobLastUpdate;
-          jobUpdate.jobLastUpdate = moment(jobUpdate.jobLastUpdate).endOf("day")
+          editJob.type = JOB_HISTORY_TYPE;
+          editJob.effectiveDate = employeeDetails.jobLastUpdate;
+          editJob.jobLastUpdate = moment(editJob.jobLastUpdate).endOf("day")
           
-          consoler(jobUpdate, 'blue', 'updateEmployment');
+          consoler(editJob, 'blue', 'updateEmployment');
           await dispatch(updateEmployee(
             {
-              params: { ...jobUpdate, employeeNo: employeeDetails.employeeNo },
+              params: { ...editJob, employeeNo: employeeDetails.employeeNo },
               access_token
             }))
           setEditJob(null);
@@ -256,7 +280,6 @@ console.log({getEmployeeItems})
         } else if (employmentType.toLowerCase() == "project" && !contractEndDate) {
           invalidCtr++;
         }
-        console.log({ invalidCtr })
         if (invalidCtr > 0) {
           return failed(INCOMPLETE_FORM_MESSAGE);
         }
@@ -277,7 +300,7 @@ console.log({getEmployeeItems})
             id='jobinfo-location-update'
             multiple
             labelId='loc'
-            value={editJob?.location.map((o: any) => o.code)}
+            value={editJob?.location}
             onChange={(e: any, option: any) => {
               setJobUpdate((prev: any) => ({
                 ...prev,
@@ -285,7 +308,7 @@ console.log({getEmployeeItems})
               }));
               setEditJob((prev: any) => ({
                 ...prev,
-                location: [...prev.location, option.props['data-obj']],
+                location: [...prev.location, e.target.value],
               }));
             }}
           >
@@ -308,7 +331,7 @@ console.log({getEmployeeItems})
           <Select
             id='jobinfo-department-update'
             labelId='dept'
-            value={editJob?.department.code}
+            value={editJob?.department}
             onChange={(e: any, option: any) => {
               setJobUpdate((prev: any) => ({
                 ...prev,
@@ -316,7 +339,7 @@ console.log({getEmployeeItems})
               }));
               setEditJob((prev: any) => ({
                 ...prev,
-                department: option.props['data-obj']
+                department: e.target.value
               }))
             }}
           >
@@ -332,7 +355,7 @@ console.log({getEmployeeItems})
           <Select
             labelId='rankLbl'
             id="rank-update"
-            value={editJob?.rank.code}
+            value={editJob?.rank}
             onChange={(e: any, option: any) => {
               setJobUpdate((prev: any) => ({
                 ...prev,
@@ -340,7 +363,7 @@ console.log({getEmployeeItems})
               }));
               setEditJob((prev: any) => ({
                 ...prev,
-                rank: option.props['data-obj']
+                rank: e.target.value
               }))
             }}
           >
@@ -354,7 +377,7 @@ console.log({getEmployeeItems})
           <Select
             id='jobinfo-position-update'
             labelId='positionLbl'
-            value={editJob?.position.code}
+            value={editJob?.position}
             onChange={(e: any, option: any) => {
               setJobUpdate((prev: any) => ({
                 ...prev,
@@ -362,7 +385,7 @@ console.log({getEmployeeItems})
               }));
               setEditJob((prev: any) => ({
                 ...prev,
-                position: option.props['data-obj']
+                position: e.target.value
               }))
             }}
           >
@@ -380,7 +403,7 @@ console.log({getEmployeeItems})
           <Select
             id='jobinfo-teamleader-update'
             labelId='tl'
-            value={editJob?.reportsTo?.employeeNo}
+            value={editJob?.reportsTo}
             onChange={(e: any, option: any) => {
               setJobUpdate((prev: any) => ({
                 ...prev,
@@ -388,7 +411,7 @@ console.log({getEmployeeItems})
               }));
               setEditJob((prev: any) => ({
                 ...prev,
-                reportsTo: option.props['data-obj']
+                reportsTo: e.target.value
               }))
             }}
           >
@@ -465,7 +488,7 @@ console.log({getEmployeeItems})
       </div>
     </Dialog>
   }
-console.log({isNew})
+
   return (
     <CollapseWrapper
       panelTitle={isNew ? 'Personnel Information' : 'Job Information'}
@@ -497,39 +520,28 @@ console.log({isNew})
 const JobInfoFields = ({
   employeeDetails,
   setEmployeeDetails,
-  enums,
+  locations,
+  positions,
+  ranks,
+  departments,
+  employmentStatus,
+  employmentTypes,
   isView,
   setUpdatedDetails,
 }) => {
   const getEmployeeItems = useSelector(_getEmployeeItems);
-  const [departments, setDepartments] = useState<any[]>([]);
-  const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
-  const [locations, setLocations] = useState<any[]>([]);
-  const [positions, setPositions] = useState<any[]>([]);
-  const [ranks, setRanks] = useState<any[]>([]);
-  const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
   const [isProjectEmployee, setIsProjectEmployee] = useState<boolean>(false);
   const [duplicates, setDuplicates] = useState<any[]>([]);
 
     // Filtered Employees
   const { employeeExistsStatus, employeeExists: employeesDuplicates } = useSelector(filteredEmployeeStore);
 
-  console.log({ duplicates })
   useEffect(() => {
     if (employeeExistsStatus !== "idle") {
       setDuplicates(employeesDuplicates)
     }
   }, [employeeExistsStatus])
 
-  useEffect(() => {
-    setDepartments(enums.departments);
-    setEmploymentStatus(enums.employment_status);
-    setLocations(enums.locations);
-    setPositions(enums.positions);
-    setRanks(enums.ranks);
-    setEmploymentTypes(enums.employment_types);
-  }, [enums]);
-  console.log({ employeeDetails });
   useEffect(() => {
     if (
       !employeeDetails.employeeNo &&
@@ -542,20 +554,6 @@ const JobInfoFields = ({
         companyEmail:
           generateCompanyEmail(employeeDetails.firstName, employeeDetails.lastName, employeeDetails.rank)
       }));
-      // const firstName = employeeDetails.firstName.split(' ');
-      // if (employeeDetails.rank.toLowerCase() === 'rank and file') {
-      //   setEmployeeDetails((prev: EmployeeI) => ({
-      //     ...prev,
-      //     companyEmail:
-      //       `${firstName[0][0]}${employeeDetails.lastName}.vcdcph@gmail.com`.toLowerCase(),
-      //   }));
-      // } else {
-      //   setEmployeeDetails((prev: EmployeeI) => ({
-      //     ...prev,
-      //     companyEmail:
-      //       `${firstName[0]}.${employeeDetails.lastName}@vcdcph.com`.toLowerCase(),
-      //   }));
-      // }
     }
   }, [employeeDetails.rank]);
 

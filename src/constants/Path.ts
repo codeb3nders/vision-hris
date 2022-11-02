@@ -1,6 +1,6 @@
 export const Path = {
   Dashboard: '/',
-  AssetManagement: '/asset-management',
+  CompanyAssets: '/company-assets',
   Employee: {
     Dashboard: '/',
     ESS: {

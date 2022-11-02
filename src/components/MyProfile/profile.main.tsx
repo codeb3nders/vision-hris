@@ -354,6 +354,7 @@ const ProfileMain = ({
         severity: 'success',
       });
       dispatch(cb);
+      setOpen && setOpen(false);
     } else {
       setOpenNotif({
         message: `${employeeDetails.firstName} ${employeeDetails.lastName} has been successfully ${type}.`,
@@ -361,17 +362,18 @@ const ProfileMain = ({
         severity: 'success',
       });
       dispatch(cb);
-    }
-
-    setTimeout(() => {
-      setRefresh(false);
-      setOpenNotif({
-        message: '',
-        status: false,
-        severity: 'success',
-      });
       setOpen && setOpen(false);
-    }, 2000);
+    }
+    setOpen && setOpen(false);
+    // setTimeout(() => {
+    //   setRefresh(false);
+    //   setOpenNotif({
+    //     message: '',
+    //     status: false,
+    //     severity: 'success',
+    //   });
+    //   setOpen && setOpen(false);
+    // }, 2000);
   };
 
   const failed = (message: string) => {

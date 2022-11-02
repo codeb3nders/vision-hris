@@ -13,7 +13,7 @@ import { Path } from "constants/Path";
 import ProfileMain from "./MyProfile/profile.main";
 import { ROLE_ACCESS } from "constants/access";
 import ErrorPage from "./Other/error.page";
-import AssetManagement from "./AssetManagement";
+import CompanyAssets from "./CompanyAssets";
 import Timekeeping from "./Timekeeping";
 import TimekeepingDetails from "./Timekeeping/details"
 const { Employee, HR } = Path;
@@ -98,8 +98,8 @@ const Main: React.FC<Props> = ({ role }) => {
               />
               <PrivateRoute
                 is_allowed={isAllowed("asset_management")}
-                path={Path.AssetManagement}
-                component={AssetManagement}
+                path={Path.CompanyAssets}
+                component={CompanyAssets}
               />
               <PrivateRoute
                 is_allowed={isAllowed("timekeeping")}

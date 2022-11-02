@@ -50,24 +50,30 @@ import { ASSET_CONDITIONS } from 'constants/Values';
 
 type Props = {};
 
-type AssetModel = {
+export type AssetModel = {
   id: string;
+  timestamp: number;
+  employeeNo: string;
   companyAssetId: string;
   dateAssigned: Date | null;
   dateReturned: Date | null;
   conditionAssigned: string;
   conditionReturned: string;
   remarks: string;
+  companyAssetDetails?: any;
 };
 
-const initialState = {
+export const AssetInitialState = {
   id: '',
+  timestamp: 0,
+  employeeNo: '',
   companyAssetId: '',
   dateAssigned: null,
   dateReturned: null,
   conditionAssigned: '',
   conditionReturned: '',
-  remarks: ''
+  remarks: '',
+  companyAssetDetails: {}
 };
 
 const GroupHeader = styled('div')(({ theme }) => ({
@@ -96,7 +102,7 @@ const AssetsTable = (props: Props) => {
   const employeeDeleteAssetStatus = useSelector(getAssetDeleteStatus);
   const employeeNewAssetStatus = useSelector(getNewAssetStatus);
   const { access_token } = useContext(AppCtx);
-  const [assetData, setAssetData] = useState<AssetModel>(initialState);
+  const [assetData, setAssetData] = useState<AssetModel>(AssetInitialState);
   const [confirmDelete, setConfirmDelete] = useState<{
     row: any;
     status: boolean;
@@ -123,7 +129,7 @@ const AssetsTable = (props: Props) => {
   }, [employeeNewAssetStatus, employeeDeleteAssetStatus, employeeUpdateAssetStatus])
 
   useEffect(() => {
-    !open && setAssetData(initialState);
+    !open && setAssetData(AssetInitialState);
   }, [open]);
 
   const getData = async () => {
@@ -178,7 +184,7 @@ const AssetsTable = (props: Props) => {
 };
 
 const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetData: data, isUpdate, isSaving, setIsSaving }) => {
-  const [newAsset, setNewAsset] = useState<AssetModel>(initialState);
+  const [newAsset, setNewAsset] = useState<AssetModel>(AssetInitialState);
   const { enums, resetNotif, failed } = useContext(ProfileCtx);
   const dispatch = useDispatch();
   const [assetTypes, setAssetTypes] = useState<any[]>([]);
@@ -203,7 +209,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
 
   useEffect(() => {
     if (!open) {
-      setNewAsset(initialState)
+      setNewAsset(AssetInitialState)
       resetNotif()
     }
   }, [open]);
@@ -243,7 +249,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
             })
           );
         } else {
-          const { id, ...rest } = newAsset;
+          const { id, timestamp, companyAssetDetails, ...rest } = newAsset;
           await dispatch(
             createAction({
               body: { ...rest, employeeNo: employeeNo },
@@ -255,7 +261,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
         console.log(error);
       }
       setOpen(false);
-      setNewAsset(initialState);
+      setNewAsset(AssetInitialState);
     }
   };
 

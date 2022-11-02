@@ -61,7 +61,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
     status: false,
   });
   const [loading, setIsLoading] = useState<boolean>(true);
-  const [refresh, setRefresh] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(true);
 
   const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
   const [tempEmployees, setTempEmployees] = useState<EmployeeDBI[]>([]);
@@ -91,7 +91,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [location]);
 
   useEffect(() => {
-    if (access_token) {
+    if (access_token && refresh) {
       dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
     }
   }, [access_token, refresh]);

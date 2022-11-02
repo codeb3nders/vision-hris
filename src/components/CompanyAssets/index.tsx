@@ -2,6 +2,7 @@
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { useContext, useEffect, useState } from 'react';
 import {
+  Button,
   Checkbox,
   Dialog,
   FormControl,
@@ -24,7 +25,6 @@ import AddButton from 'CustomComponents/AddButton';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { AppCtx } from 'App';
 import { useDispatch, useSelector } from 'react-redux';
-import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import {
   createAction,
   deleteAction,
@@ -39,15 +39,21 @@ import {
   enumsData,
   enumsData as getEnumsData, status as getEnumsDataStatus
 } from 'slices/enums/enumsSlice'
+import {
+  createAction as createEmployeeAsset,
+  newDataStatus as createEmployeeAssetStatus,
+  // updateAction
+} from 'slices/assets';
 import ConfirmDelete from 'components/Other/confirm.delete';
-import { getEmployeeItems as _getEmployeeItems } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { ASSET_CONDITIONS } from 'constants/Values';
+import { AssetInitialState, AssetModel } from 'components/MyProfile/Assets/assets.table';
+import AssetAssignment from './assignment';
 
 var moment = require('moment-business-days');
 type Props = {};
 
-type CompanyAssetModel = {
+export type CompanyAssetModel = {
   id: string;
   assetName: string;
   assetDetails: string;
@@ -56,7 +62,7 @@ type CompanyAssetModel = {
   status: string;
 };
 
-const initialState = {
+export const CompanyAssetInitialState = {
   id: "",
   assetName: "",
   assetDetails: "",
@@ -65,9 +71,10 @@ const initialState = {
   status: ""
 };
 
-const AssetManagement = (props: Props) => {
+const CompanyAssets = (props: Props) => {
   const [rows, setRows] = useState<CompanyAssetModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [openAssignment, setOpenAssignment] = useState<boolean>(false);
   const dispatch = useDispatch();
   const enumsData = useSelector(getEnumsData);
   const assetsData = useSelector(_getCompanyAssetsData);
@@ -76,15 +83,12 @@ const AssetManagement = (props: Props) => {
   const employeeDeleteAssetStatus = useSelector(getAssetDeleteStatus);
   const employeeNewAssetStatus = useSelector(getNewAssetStatus);
   const { access_token } = useContext(AppCtx);
-  const [assetData, setAssetData] = useState<CompanyAssetModel>(initialState);
+  const [assetData, setAssetData] = useState<CompanyAssetModel>(CompanyAssetInitialState);
   const [confirmDelete, setConfirmDelete] = useState<{
     row: any;
     status: boolean;
   }>({ row: null, status: false });
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
-  const [assetTypes, setAssetTypes] = useState<any[]>([]);
-  const getEmployeeItems = useSelector(_getEmployeeItems);
 
   const isUpdate = assetData.id;
 
@@ -98,14 +102,6 @@ const AssetManagement = (props: Props) => {
     }
   }, [assetsDataStatus])
 
-  useEffect(() => { 
-    setAssetTypes(enumsData.filter((x:any) => x.type == "assetType"))
-  }, [enumsData])
-
-  useEffect(() => {
-    const employees = [...getEmployeeItems];
-    setEmployees(employees.sort((a:any, b:any) => a.lastName.localeCompare(b.lastName)))
-  }, [getEmployeeItems])
 console.log({assetsData})
   useEffect(() => {
     if (employeeNewAssetStatus === "succeeded" || employeeDeleteAssetStatus === 'succeeded' || employeeUpdateAssetStatus === "succeeded") {
@@ -114,7 +110,7 @@ console.log({assetsData})
   }, [employeeNewAssetStatus, employeeDeleteAssetStatus, employeeUpdateAssetStatus])
 
   useEffect(() => {
-    !open && setAssetData(initialState);
+    !open && setAssetData(CompanyAssetInitialState);
   }, [open]);
 
   const getData = async () => {
@@ -146,7 +142,8 @@ console.log({assetData})
         setOpen={setConfirmDelete}
         handleDelete={handleDelete}
       />
-      <AssetDialog setOpen={setOpen} open={open} employees={employees} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} />
+      <AssetDialog setOpen={setOpen} open={open} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} />
+      <AssetAssignment setOpen={setOpenAssignment} open={openAssignment} access_token={access_token} assetData={assetData} />
       <div style={{ width: '100%' }}>
         <div style={{marginBottom: 10}}>
           <AddButton setOpen={setOpen} text='Add Record' />
@@ -155,7 +152,7 @@ console.log({assetData})
           autoHeight
           disableSelectionOnClick
           rows={rows}
-          columns={columns(setConfirmDelete, handleEdit)}
+          columns={columns(setConfirmDelete, handleEdit, setOpenAssignment)}
           sx={{
             [`& .${gridClasses.cell}`]: {
               py: 1,
@@ -173,12 +170,13 @@ console.log({assetData})
   );
 };
 
-const AssetDialog = ({ open, setOpen, employees, access_token, assetData: data, isUpdate, isSaving, setIsSaving }) => {
-  const [newAsset, setNewAsset] = useState<any>(initialState);
+const AssetDialog = ({ open, setOpen, access_token, assetData: data, isUpdate, isSaving, setIsSaving }) => {
+  const [newAsset, setNewAsset] = useState<any>(CompanyAssetInitialState);
   const dispatch = useDispatch();
   const [assetTypes, setAssetTypes] = useState<any[]>([]);
-  const [assetData, setAssetData] = useState<any>(initialState);
+  const [assetData, setAssetData] = useState<any>(CompanyAssetInitialState);
   const [isAssigned, setIsAssigned] = useState<boolean>(false);
+  const [assignedAsset, setAssignedAsset] = useState<AssetModel>(AssetInitialState);
   const enums = useSelector(enumsData)
 
   useEffect(() => { 
@@ -189,9 +187,15 @@ const AssetDialog = ({ open, setOpen, employees, access_token, assetData: data, 
     setAssetData(data);
   }, [data]);
 
+  useEffect(() => { 
+    if (isAssigned && isUpdate) {
+      setAssignedAsset({...assignedAsset, companyAssetId: assetData.id})
+    }
+  }, [isAssigned])
+
   useEffect(() => {
     if (!open) {
-      setNewAsset(initialState)
+      setNewAsset(CompanyAssetInitialState)
     }
   }, [open]);
 console.log({isUpdate})
@@ -234,14 +238,23 @@ console.log({isUpdate})
             })
           );
         }
+        if (assignedAsset.employeeNo) {
+          const { companyAssetDetails, id, timestamp, ...rest } = assignedAsset;
+          await dispatch(
+            createEmployeeAsset({
+              body: { ...rest },
+              access_token,
+            })
+          );
+        }
       } catch (error: any) {
         console.log(error);
       }
       setOpen(false);
-      setNewAsset(initialState);
+      setNewAsset(CompanyAssetInitialState);
     }
   };
-
+console.log({assignedAsset})
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="company-assets-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
@@ -357,148 +370,6 @@ console.log({isUpdate})
             />
           </div>
         </GridWrapper>
-        <GridWrapper colSize='2'>  
-          <div className='col-span-2'>
-            <FormControlLabel control={<Checkbox onChange={(e:any) => setIsAssigned(e.target.checked)} />} label="Assign to Employee?" />
-          </div>
-          {isAssigned && <>
-          <div className='col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth required>
-              <InputLabel id='assigned-to'>Assigned To</InputLabel>
-              <Select
-                label='Assigned To'
-                labelId='assigned-to'
-                onChange={(e: any) => {
-                  // setNewAsset({ ...newAsset, assetType: e.target.value });
-                  isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  assetType: e.target.value,
-                }));
-                }}
-                defaultValue={assetData.assetType}
-              >
-                {employees.map((employee:EmployeeDBI) => {
-                  return (
-                    <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
-                      {employee.lastName}, {employee.firstName} ({employee.employeeNo})
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DatePicker
-                label='Date Assigned'
-                onChange={(value) => {
-                  setNewAsset({
-                    ...newAsset,
-                    dateAssigned: value,
-                  });
-                  isUpdate && setAssetData((prev: any) => ({
-                    ...prev,
-                    dateAssigned: value,
-                  }));
-                }}
-                value={assetData.dateAssigned || null}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth>
-              <InputLabel id='condition'>Condition</InputLabel>
-              <Select
-                label='Condition'
-                labelId='condition'
-                onChange={(e: any) => {
-                  setNewAsset({ ...newAsset, conditionAssigned: e.target.value });
-                  isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  conditionAssigned: e.target.value,
-                }));
-                }}
-                defaultValue={assetData.conditionAssigned}
-              >
-                {ASSET_CONDITIONS.map((o) => {
-                  return (
-                    <MenuItem key={o} value={o}>
-                      {o}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='Date Returned'
-                onChange={(value) => {
-                  setNewAsset({
-                    ...newAsset,
-                    dateReturned: value,
-                  });
-                  isUpdate && setAssetData((prev: any) => ({
-                    ...prev,
-                    dateReturned: value,
-                  }));
-                }}
-                value={newAsset.dateReturned || assetData.dateReturned || null}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth>
-              <InputLabel id='condition'>Condition</InputLabel>
-              <Select
-                label='Condition'
-                labelId='condition'
-                onChange={(e: any) => {
-                //   setNewAsset({ ...newAsset, conditionReturned: e.target.value });
-                //   isUpdate && setAssetData((prev: any) => ({
-                //   ...prev,
-                //   conditionReturned: e.target.value,
-                // }));
-                }}
-                defaultValue={assetData.conditionReturned}
-              >
-                {ASSET_CONDITIONS.map((o) => {
-                  return (
-                    <MenuItem key={o} value={o}>
-                      {o}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </div>
-          <div className='col-span-2'>
-            <TextField
-              fullWidth
-              variant='standard'
-              size='small'
-              label='Remarks'
-              multiline
-              onChange={(e: any) => {
-                // setNewAsset({ ...newAsset, remarks: e.target.value });
-                isUpdate && setAssetData((prev: any) => ({
-                    ...prev,
-                    remarks: e.target.value,
-                  }));
-              }}
-              defaultValue={assetData.remarks}
-            />
-          </div>
-            </>
-          }
-        </GridWrapper>
 
         <div className='grid grid-cols-7'>
           <button
@@ -521,7 +392,7 @@ console.log({isUpdate})
   );
 };
 
-const columns: any = (setConfirmDelete: any, handleEdit:any) => [
+const columns: any = (setConfirmDelete: any, handleEdit:any, setOpenAssignment: any) => [
   {
     field: 'assetType',
     headerName: 'Asset Type',
@@ -555,11 +426,11 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
     },
   },
   {
-    field: 'dateAssigned',
+    field: 'assignedTo',
     headerName: 'Assigned To',
     flex: 1,
     renderCell: (params: any) => {
-      return params.value ? "YES" : "NO";
+      return params.value || <Button onClick={() => setOpenAssignment(true)}>Assign</Button> ;
     },
   },
   {
@@ -589,4 +460,4 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
   },
 ];
 
-export default AssetManagement;
+export default CompanyAssets;

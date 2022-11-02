@@ -88,7 +88,7 @@ export const HRNavigation = [
   { name: 'Timekeeping', href: HR.Attendance },
   { name: 'Reports', href: HR.Reports },
   { name: 'Announcements', href: HR.Announcements },
-  { name: 'Asset Management', href: Path.AssetManagement },
+  { name: 'Asset Management', href: Path.CompanyAssets },
 ];
 
 export const AdminNavigation = [

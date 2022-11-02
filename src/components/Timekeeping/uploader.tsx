@@ -214,44 +214,51 @@ const TimekeepingUploader = ({ open, setOpen }: Props) => {
         </Backdrop>
 
         <Divider />
-        <GridWrapper colSize='3'>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <DatePicker
-              label='Payroll Cutoff Start Date'
-              onChange={(value) => {
-                setParams({...params, periodStartDate: value})
-              }}
-              value={params.periodStartDate}
-              renderInput={(params) => (
-                <TextField {...params} required fullWidth variant='standard' />
-              )}
-            />
-          </LocalizationProvider>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <DatePicker
-              label='Payroll Cutoff End Date'
-              onChange={(value) => {
-                setParams({...params, periodEndDate: value})
-              }}
-              value={params.periodEndDate}
-              renderInput={(params) => (
-                <TextField {...params} required fullWidth variant='standard' />
-              )}
-            />
-          </LocalizationProvider>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <DatePicker
-              label='Verification Due Date'
-              onChange={(value) => {
-                setParams({...params, verificationDueDate: value})
-              }}
-              value={params.verificationDueDate}
-              renderInput={(params) => (
-                <TextField {...params} required fullWidth variant='standard' />
-              )}
-            />
-          </LocalizationProvider>
-        </GridWrapper>
+        {/* <GridWrapper colSize='5'> */}
+          <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col">
+
+          <div className="grid gap-4 grid-cols-2">
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label='Payroll Cutoff Start Date'
+                onChange={(value) => {
+                  setParams({...params, periodStartDate: value})
+                }}
+                value={params.periodStartDate}
+                renderInput={(params) => (
+                  <TextField {...params} required variant='outlined' size='small' />
+                )}
+              />
+            </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label='Payroll Cutoff End Date'
+                onChange={(value) => {
+                  setParams({...params, periodEndDate: value})
+                }}
+                value={params.periodEndDate}
+                renderInput={(params) => (
+                  <TextField {...params} required variant='outlined' size='small'  />
+                )}
+              />
+              </LocalizationProvider>
+            </div>
+          <div className="flex-1 text-right">
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label='Verification Due Date'
+                onChange={(value) => {
+                  setParams({...params, verificationDueDate: value})
+                }}
+                value={params.verificationDueDate}
+                renderInput={(params) => (
+                  <TextField {...params} required variant='outlined' size='small'  />
+                )}
+              />
+              </LocalizationProvider>
+            </div>
+          </section>
+        {/* </GridWrapper> */}
         <label
           className={`flex flex-col items-center justify-center h-[100px] w-full border border-dashed ${
             error ? 'border-red-300' : 'border-gray-300'
