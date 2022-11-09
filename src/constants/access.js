@@ -6,7 +6,8 @@ export const ROLE_ACCESS = {
         'employees_db',
         'employee_directory',
         'asset_management',
-        'timekeeping'
+        'timekeeping',
+        'team-leaders'
     ],
     system_admin: [
         'dashboard',

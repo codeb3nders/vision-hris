@@ -84,13 +84,13 @@ export interface EmployeeI {
   isActive: boolean;
   userGroup: any;
   reportsTo: any;
-  dateHired: Date | Moment;
+  dateHired: Date | Moment | number;
   employmentStatus: any;
   employmentType: any;
-  endOfProbationary: Date | Moment | null;
-  contractEndDate: Date | Moment | null;
+  endOfProbationary: Date | Moment | null | number;
+  contractEndDate: Date | Moment | null | number;
   gender: any;
-  birthDate: Date | null;
+  birthDate: Date | null | number;
   personalContactNumber: string;
   companyContactNumber: string;
   taxExemption: string;
@@ -124,8 +124,8 @@ export interface EmployeeI {
   employmentRecords: EmploymentRecordsI[] | null;
   licensesCertifications: LicensesCertificationsI[] | null;
   allowanceDetails: AllowanceDetailsI[] | null;
-  employmentLastUpdate: Date | Moment | undefined;
-  jobLastUpdate: Date | Moment | undefined;
+  employmentLastUpdate: Date | Moment | undefined | number;
+  jobLastUpdate: Date | Moment | undefined | number;
   lastModifiedDate: Date | Moment | undefined;
   dateCreated: Date | Moment | undefined;
   isRehire: boolean;

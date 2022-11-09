@@ -29,6 +29,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { Moment } from 'moment';
 import holidays from '../../constants/holidays';
+import { createAction } from 'slices/timekeeping';
 
 var moment = require('moment-business-days');
  
@@ -40,12 +41,14 @@ moment.updateLocale('us', {
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsSaving: React.Dispatch<React.SetStateAction<boolean>>;
+  isSaving: boolean;
 };
 
 // Allowed extensions for input file
 const allowedExtensions = ['vnd.ms-excel'];
 
-const TimekeepingUploader = ({ open, setOpen }: Props) => {
+const TimekeepingUploader = ({ open, setOpen, setIsSaving, isSaving }: Props) => {
   const { access_token } = useContext(AppCtx);
   const dispatch = useDispatch();
   const [file, setFile] = useState<any>(null);
@@ -53,7 +56,6 @@ const TimekeepingUploader = ({ open, setOpen }: Props) => {
   const [data, setData] = useState<any>([]);
   const [missingHeaders, setMissingHeaders] = useState<string[]>([]);
   const [show, setShow] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [saved, setSaved] = useState(false);
     const [tableColumns, setTableColumns] = useState<any[]>([])
@@ -160,19 +162,15 @@ const TimekeepingUploader = ({ open, setOpen }: Props) => {
       
   };
 
-    const handleSave = async () => {
-    setSaving(true);
-        try {
-            console.log({ data });
-            debugger;
-      setTimeout(() => {
-        setSaving(false);
-        setSaved(true);
-
-        setTimeout(() => {
-          setOpen(false);
-        }, 2000);
-      }, 2000);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await dispatch(
+        createAction({
+          body: data,
+          access_token,
+        })
+      );
     } catch (error) {
       console.log('handleSave error:', error);
     }
@@ -185,7 +183,7 @@ const TimekeepingUploader = ({ open, setOpen }: Props) => {
     setMissingHeaders([]);
     setShow(false);
     setSaved(false);
-    setSaving(false);
+    setIsSaving(false);
   };
 
   const disabled = error ? true : false || missingHeaders.length > 0;
@@ -276,7 +274,7 @@ const TimekeepingUploader = ({ open, setOpen }: Props) => {
             Click to <strong className="text-sky-500">browse</strong> files.
           </span>
           <input
-            disabled={saving || processing || !params.periodStartDate || !params.periodEndDate || !params.verificationDueDate}
+            disabled={isSaving || processing || !params.periodStartDate || !params.periodEndDate || !params.verificationDueDate}
             hidden
             accept=".xls"
             type="file"
@@ -316,7 +314,7 @@ const TimekeepingUploader = ({ open, setOpen }: Props) => {
             <IconButton
               size="small"
               onClick={handleRemoveFile}
-              disabled={saving || processing}
+              disabled={isSaving || processing}
             >
               <Clear />
             </IconButton>
@@ -327,7 +325,7 @@ const TimekeepingUploader = ({ open, setOpen }: Props) => {
 
         <section className="flex items-center justify-end">
           <LoadingButton
-            loading={saving}
+            loading={isSaving}
             size="small"
             variant="contained"
             color="primary"
@@ -338,7 +336,7 @@ const TimekeepingUploader = ({ open, setOpen }: Props) => {
             onClick={handleSave}
             loadingPosition="start"
           >
-            {saving ? 'Saving' : 'Save'} Timekeeping Data
+            {isSaving ? 'Saving' : 'Save'} Timekeeping Data
           </LoadingButton>
           <Button
             size="small"

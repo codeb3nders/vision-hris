@@ -4,6 +4,7 @@ import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import {
   Autocomplete,
+  Button,
   Chip,
   Dialog,
   Divider,
@@ -13,8 +14,11 @@ import {
   MenuItem,
   Select,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import {
+  AssignmentReturn,
+  Close,
   Delete,
   Edit,
   LaptopChromebookTwoTone,
@@ -55,11 +59,11 @@ export type AssetModel = {
   timestamp: number;
   employeeNo: string;
   companyAssetId: string;
-  dateAssigned: Date | null;
-  dateReturned: Date | null;
-  conditionAssigned: string;
-  conditionReturned: string;
-  remarks: string;
+  dateAssigned?: Date | null;
+  dateReturned?: Date | null;
+  conditionAssigned?: string;
+  conditionReturned?: string;
+  remarks?: string;
   companyAssetDetails?: any;
 };
 
@@ -108,7 +112,8 @@ const AssetsTable = (props: Props) => {
     status: boolean;
   }>({ row: null, status: false });
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const isUpdate = assetData.id;
+  const [isReturn, setIsReturn] = useState<boolean>(false);
+  const isUpdate = assetData?.id;
 
   useEffect(() => {
     if (employeeAssetsStatus !== "idle") {
@@ -129,7 +134,10 @@ const AssetsTable = (props: Props) => {
   }, [employeeNewAssetStatus, employeeDeleteAssetStatus, employeeUpdateAssetStatus])
 
   useEffect(() => {
-    !open && setAssetData(AssetInitialState);
+    if (!open) {
+      setAssetData(AssetInitialState);
+      setIsReturn(false);
+    }
   }, [open]);
 
   const getData = async () => {
@@ -149,6 +157,15 @@ const AssetsTable = (props: Props) => {
     setOpen(true);
   }
 
+  const handleReturn = async (row: AssetModel) => {
+    const asset = rows.filter(
+      (t) => t.id === row.id
+    )[0];
+    asset.id && setAssetData(asset);
+    setOpen(true);
+    setIsReturn(true);
+  }
+
   return (
     <div>
       <ConfirmDelete
@@ -156,7 +173,7 @@ const AssetsTable = (props: Props) => {
         setOpen={setConfirmDelete}
         handleDelete={handleDelete}
       />
-      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} />
+      <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} isReturn={isReturn} />
       <div style={{ width: '100%' }}>
         <div style={{marginBottom: 10}}>
           <AddButton setOpen={setOpen} text='Add Record' />
@@ -165,7 +182,7 @@ const AssetsTable = (props: Props) => {
           autoHeight
           disableSelectionOnClick
           rows={rows}
-          columns={columns(setConfirmDelete, handleEdit)}
+          columns={columns(setConfirmDelete, handleEdit, handleReturn)}
           sx={{
             [`& .${gridClasses.cell}`]: {
               py: 1,
@@ -183,7 +200,7 @@ const AssetsTable = (props: Props) => {
   );
 };
 
-const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetData: data, isUpdate, isSaving, setIsSaving }) => {
+const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetData: data, isUpdate, isSaving, setIsSaving, isReturn }) => {
   const [newAsset, setNewAsset] = useState<AssetModel>(AssetInitialState);
   const { enums, resetNotif, failed } = useContext(ProfileCtx);
   const dispatch = useDispatch();
@@ -191,7 +208,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
   const [assetData, setAssetData] = useState<any>([]);
   const assetsDataStatus = useSelector(_getCompanyAssetsDataStatus);
   const assetsData = useSelector(_getCompanyAssetsData);
-  console.log({ assetsData });
+  const disabled = data?.dateReturned;
 
   useEffect(() => { 
     getCompanyAssets();
@@ -199,7 +216,14 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
 
   useEffect(() => {
     if (assetsDataStatus !== 'idle') {
-      // setAssetTypes(assetsData)
+      const options = assetsData.map((option) => {
+        const type = option.assetType.name;
+        return {
+          type,
+          ...option,
+        };
+      });
+      setAssetTypes(options)
     }
   }, [assetsDataStatus])
 
@@ -238,7 +262,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
       setIsSaving(true);
       try {
         if (isUpdate) {
-          const {id, timestamp, lastModifiedDate, ...rest } = assetData;
+          const {id, timestamp, lastModifiedDate, assetDetails, ...rest } = assetData;
           await dispatch(
             updateAction({
               params: {
@@ -264,145 +288,155 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
       setNewAsset(AssetInitialState);
     }
   };
-
+console.log({newAsset}, {assetData}, {assetTypes})
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="assets-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
-          <LaptopChromebookTwoTone /> {isUpdate ? 'Update' : 'Assign'}{' '} Asset
+          <LaptopChromebookTwoTone /> {isReturn ? (disabled ? "Asset Return Details" : 'Return Asset') : (isUpdate ? (disabled ? "Asset Assignment Details" : 'Update Asset') : 'Assign Asset')}{' '}
         </p>
+        <div className='cursor-pointer absolute top-[16px] right-[10px] z-10 w-[36px] h-[36px] bg-white/75 rounded-full flex items-center justify-center'>
+          <IconButton onClick={() => setOpen(false)}>
+            <Close />
+          </IconButton>
+        </div>
 
         <GridWrapper colSize='1'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
                <Autocomplete
                   id="company-asset-autpcomplete"
-                  options={assetTypes.sort((a, b) => -b.assetName.localeCompare(a.assetName))}
-                  groupBy={(option:any) => option.assetType}
-              getOptionLabel={(option: any) => {
-                console.log({ option })
-                return option && `${option.assetName} - ${option.assetDetails} (${option.assetSerialNumber})`
+                  options={assetTypes.sort((a, b) => -b.type.localeCompare(a.type))}
+                  getOptionDisabled={(option) => option.assignedTo !== undefined && option.assignedTo.employeeNo !== employeeNo}
+                  disabled={isReturn || disabled}
+                  groupBy={(option:any) => option.type}
+                  getOptionLabel={(option: any) => {
+                    console.log({option})
+                    if (!isUpdate) {
+                      return option && option.assetName ? `${option.assetName} - ${option.assetDetails} (${option.assetSerialNumber})` : "";
+                    }
+                    return option && option.assetName ? `${option.assetName} - ${option.assetDetails} (${option.assetSerialNumber})` : "";
                   }}
-                  defaultValue={assetData.companyAssetId}
+                  defaultValue={assetData.assetDetails}
+                  // value={assetData.companyAssetId}
                   renderInput={(params) => <TextField {...params} label="Company Asset" />}
-                  onChange={(e: any) => {
-                    setNewAsset({ ...newAsset, companyAssetId: e.target.value });
+                  onChange={(e: any, newValue: any) => {
+                    setNewAsset({ ...newAsset, companyAssetId: newValue.id });
                     isUpdate && setAssetData((prev: any) => ({
-                    ...prev,
-                    companyAssetId: e.target.value,
-                  }));
+                      ...prev,
+                      companyAssetId: newValue.id,
+                    }));
                   }}
-                  renderGroup={(params) => (
-                    <li>
+                  renderGroup={(params:any) => (
+                    <li key={params.group}>
                       <GroupHeader>{params.group}</GroupHeader>
                       <GroupItems>{params.children}</GroupItems>
                     </li>
                   )}
                 />
           </div>
-          </GridWrapper>
+        </GridWrapper>
+        
         <GridWrapper colSize='2'>
-          <div className='col-span-2'>
-            <Divider textAlign='left'>
-              <Chip label="ASSIGNMENT" />
-              </Divider>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='Date Assigned'
-                onChange={(value) => {
-                  setNewAsset({
-                    ...newAsset,
-                    dateAssigned: value,
-                  });
-                  isUpdate && setAssetData((prev: any) => ({
-                    ...prev,
-                    dateAssigned: value,
-                  }));
-                }}
-                value={newAsset.dateAssigned || assetData.dateAssigned || null}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth required>
-              <InputLabel id='condition'>Condition</InputLabel>
-              <Select
-                label='Condition'
-                labelId='condition'
-                onChange={(e: any) => {
-                  setNewAsset({ ...newAsset, conditionAssigned: e.target.value });
-                  isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  conditionAssigned: e.target.value,
-                }));
-                }}
-                defaultValue={assetData.conditionAssigned}
-              >
-                {ASSET_CONDITIONS.map((o) => {
-                  return (
-                    <MenuItem key={o} value={o}>
-                      {o}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </div>
-          <div className='col-span-2'>
-            <Divider textAlign='left'>
-              <Chip label="RETURN" />
-              </Divider>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='Date Returned'
-                onChange={(value) => {
-                  setNewAsset({
-                    ...newAsset,
-                    dateReturned: value,
-                  });
-                  isUpdate && setAssetData((prev: any) => ({
-                    ...prev,
-                    dateReturned: value,
-                  }));
-                }}
-                value={newAsset.dateReturned || assetData.dateReturned || null}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth required>
-              <InputLabel id='condition'>Condition</InputLabel>
-              <Select
-                label='Condition'
-                labelId='condition'
-                onChange={(e: any) => {
-                  setNewAsset({ ...newAsset, conditionReturned: e.target.value });
-                  isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  conditionReturned: e.target.value,
-                }));
-                }}
-                defaultValue={assetData.conditionReturned}
-              >
-                {ASSET_CONDITIONS.map((o) => {
-                  return (
-                    <MenuItem key={o} value={o}>
-                      {o}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </div>
+          {isReturn ? <>
+            <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  label='Date Returned'
+                  onChange={(value) => {
+                    setNewAsset({
+                      ...newAsset,
+                      dateReturned: value,
+                    });
+                    isUpdate && setAssetData((prev: any) => ({
+                      ...prev,
+                      dateReturned: value,
+                    }));
+                  }}
+                  disabled={disabled}
+                  value={newAsset.dateReturned || assetData.dateReturned || null}
+                  renderInput={(params) => (
+                    <TextField {...params} fullWidth variant='standard' />
+                  )}
+                />
+              </LocalizationProvider>
+            </div>
+            <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+              <FormControl variant='standard' size='small' fullWidth>
+                <InputLabel id='condition'>Condition</InputLabel>
+                <Select
+                  label='Condition'
+                  disabled={disabled}
+                  labelId='condition'
+                  onChange={(e: any) => {
+                    setNewAsset({ ...newAsset, conditionReturned: e.target.value });
+                    isUpdate && setAssetData((prev: any) => ({
+                      ...prev,
+                      conditionReturned: e.target.value,
+                    }));
+                  }}
+                  defaultValue={assetData.conditionReturned}
+                >
+                  {ASSET_CONDITIONS.map((o) => {
+                    return (
+                      <MenuItem key={o} value={o}>
+                        {o}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </div> </>
+            : <>
+              <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+                <LocalizationProvider dateAdapter={AdapterMoment}>
+                  <DatePicker
+                    label='Date Assigned'
+                    disabled={disabled}
+                    onChange={(value) => {
+                      setNewAsset({
+                        ...newAsset,
+                        dateAssigned: value,
+                      });
+                      isUpdate && setAssetData((prev: any) => ({
+                        ...prev,
+                        dateAssigned: value,
+                      }));
+                    }}
+                    value={newAsset.dateAssigned || assetData.dateAssigned || null}
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth variant='standard' />
+                    )}
+                  />
+                </LocalizationProvider>
+              </div>
+              <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+                <FormControl variant='standard' size='small' fullWidth>
+                  <InputLabel id='condition'>Condition</InputLabel>
+                  <Select
+                    label='Condition'
+                    disabled={disabled}
+                    labelId='condition'
+                    onChange={(e: any) => {
+                      setNewAsset({ ...newAsset, conditionAssigned: e.target.value });
+                      isUpdate && setAssetData((prev: any) => ({
+                        ...prev,
+                        conditionAssigned: e.target.value,
+                      }));
+                    }}
+                    defaultValue={assetData.conditionAssigned}
+                  >
+                    {ASSET_CONDITIONS.map((o) => {
+                      return (
+                        <MenuItem key={o} value={o}>
+                          {o}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </div>
+            </>
+          }
           <div className='col-span-2'>
             <TextField
               fullWidth
@@ -410,6 +444,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
               size='small'
               label='Remarks'
               multiline
+              disabled={disabled}
               onChange={(e: any) => {
                 setNewAsset({ ...newAsset, remarks: e.target.value });
                 isUpdate && setAssetData((prev: any) => ({
@@ -422,66 +457,60 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
           </div>
         </GridWrapper>
 
-        <div className='grid grid-cols-7'>
-          <button
-            disabled={isSaving}
-            onClick={handleSave}
-            className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
-          >
-            <SaveTwoTone fontSize='small' className='mr-2' />
-            Save
-          </button>
-          <button
-            className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-            onClick={() => setOpen(false)}
-          >
-            Cancel
-          </button>
-        </div>
+        {!disabled &&
+          <div className='grid grid-cols-7'>
+            <button
+              disabled={isSaving}
+              onClick={handleSave}
+              className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+            >
+              <SaveTwoTone fontSize='small' className='mr-2' />
+              Save
+            </button>
+            <button
+              className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        }
       </div>
     </Dialog>
   );
 };
 
-const columns: any = (setConfirmDelete: any, handleEdit:any) => [
+const columns: any = (setConfirmDelete: any, handleEdit:any, handleReturn:any) => [
   {
-    field: 'assetName',
+    field: 'assetDetails.assetName',
     headerName: 'Asset Name',
     flex: 1,
-    // renderCell: (params: any) => {
-    //   return `${params.value} - ${params.row.id}`;
-    // },
+    renderCell: (params: any) => params.row.assetDetails.assetName
   },
   {
-    field: 'assetType',
+    field: 'assetDetails.assetType',
     headerName: 'Asset Type',
     flex: 1,
-    renderCell: (params: any) => {
-      return params.row?.assetType?.name || params.value;
-    },
+    renderCell: (params: any) => params.row.assetDetails.assetType
   },
   {
-    field: 'assetDetails',
+    field: 'assetDetails.assetDetails',
     headerName: 'Asset Details',
     flex: 1,
-    renderCell: (params: any) => {
-      return params.value;
-    },
+    renderCell: (params: any) => params.row.assetDetails.assetDetails
   },
   {
-    field: 'assetSerialNumber',
+    field: 'assetDetails.assetSerialNumber',
     headerName: 'Serial #',
     flex: 1,
-    renderCell: (params: any) => {
-      return params.value;
-    },
+    renderCell: (params: any) => params.row.assetDetails.assetSerialNumber
   },
   {
     field: 'dateAssigned',
     headerName: 'Date Assigned',
     flex: 1,
     renderCell: (params: any) => {
-      return params.value && moment(params.value).format('MM/DD/YYYY');
+      return params.value && <Button onClick={() => handleEdit(params.row)}>{ moment(params.value).format('MM/DD/YYYY')}</Button>;
     },
   },
   {
@@ -489,7 +518,7 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
     headerName: 'Date Returned',
     flex: 1,
     renderCell: (params: any) => {
-      return params.value && moment(params.value).format('MM/DD/YYYY');
+      return params.value && <Button onClick={() => handleReturn(params.row)}>{moment(params.value).format('MM/DD/YYYY')}</Button>;
     },
   },
   {
@@ -500,15 +529,24 @@ const columns: any = (setConfirmDelete: any, handleEdit:any) => [
   {
     field: 'actions',
     headerName: 'Actions',
-    flex: 1,
+    width: 150,
     renderCell: (params: any) => {
       return <div>
-        <IconButton size='small' onClick={() => setConfirmDelete({ row: params.row, status: true })}>
-          <Delete />
-        </IconButton>
-        <IconButton size='small' onClick={() => handleEdit(params.row)}>
-          <Edit />
-        </IconButton>
+        <Tooltip title="Delete Data">
+          <IconButton size='small' disabled={params.row.dateReturned} onClick={() => setConfirmDelete({ row: params.row, status: true })}>
+            <Delete />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Edit Assignment Details">
+          <IconButton size='small' disabled={params.row.dateReturned} onClick={() => handleEdit(params.row)}>
+            <Edit />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Return Asset">
+          <IconButton size='small' disabled={params.row.dateReturned} onClick={() => handleReturn(params.row)}>
+            <AssignmentReturn />
+          </IconButton>
+        </Tooltip>
       </div>
     },
   },

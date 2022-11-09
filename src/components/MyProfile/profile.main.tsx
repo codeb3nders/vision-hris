@@ -364,16 +364,7 @@ const ProfileMain = ({
       dispatch(cb);
       setOpen && setOpen(false);
     }
-    setOpen && setOpen(false);
-    // setTimeout(() => {
-    //   setRefresh(false);
-    //   setOpenNotif({
-    //     message: '',
-    //     status: false,
-    //     severity: 'success',
-    //   });
-    //   setOpen && setOpen(false);
-    // }, 2000);
+    // setOpen && setOpen(false);
   };
 
   const failed = (message: string) => {

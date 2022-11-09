@@ -21,8 +21,8 @@ import {
 } from '@mui/icons-material';
 import UploaderTable from './uploader.table';
 import { LoadingButton } from '@mui/lab';
-import { useDispatch } from 'react-redux';
-import { createEmployee } from 'slices';
+import { useDispatch, useSelector } from 'react-redux';
+import { createEmployee, getEmployeeCreatedItem, getEmployeeCreateError, getEmployeeCreateStatus, resetCreate } from 'slices';
 import { AppCtx } from 'App';
 import { initialState } from 'components/MyProfile/employee.initialstate';
 import { EmployeeI } from 'slices/interfaces/employeeI';
@@ -47,7 +47,7 @@ const requiredHeaders = [
   'Citizenship',
   'Personal Contact Number',
   'Personal Email',
-  'Date Hired', 'Employment Type', 'Rank', 'Position', 'Department', 'Location', 'Reports To'
+  'Date Hired', 'Employment Type', 'Rank', 'Position', 'Department', 'Location', 'Reports To', 'Is Rehire'
 ];
 
 const EmployeeUploader = ({ open, setOpen }: Props) => {
@@ -62,6 +62,23 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
   const [saved, setSaved] = useState(false);
   const [tableColumns, setTableColumns] = useState<any[]>([])
 
+  const newEmployeeStatus = useSelector(getEmployeeCreateStatus);
+  const newEmployeeData = useSelector(getEmployeeCreatedItem);
+  const newEmployeeError = useSelector(getEmployeeCreateError);
+
+  /** Employees: NEW */
+  useEffect(() => {
+    console.log({ newEmployeeData }, { newEmployeeStatus });
+    if (newEmployeeStatus !== 'idle') {
+      if (newEmployeeData && newEmployeeStatus === 'succeeded') {
+        // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
+        success();
+      } else {
+        failed(newEmployeeError);
+      }
+    }
+  }, [newEmployeeStatus]);
+
   useEffect(() => {
     if (!open) {
       handleRemoveFile();
@@ -71,6 +88,20 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
   useEffect(() => {
     file && handleParse();
   }, [file]);
+
+  const success = () => {
+    setSaving(false);
+    setSaved(true);
+    dispatch(resetCreate());
+    setOpen && setOpen(false);
+  };
+
+  const failed = (message: string) => {
+    setSaving(false);
+    setSaved(false);
+    setError(message);
+    dispatch(resetCreate());
+  };
 
   const handleChange = (e: any) => {
     const csv = e.target?.files[0];
@@ -152,7 +183,7 @@ console.log({data})
             ...initialState,
             ...o,
             location: o.location,
-            companyEmail: generateCompanyEmail(o.firstName, o.lastName, o.rank),
+            companyEmail: generateCompanyEmail(o.firstName, o.lastName, o.rank, o.isRehire),
             birthDate: moment(o.birthDate).valueOf(),
             dateHired: moment(o.dateHired).valueOf(),
             endOfProbationary: o.employmentType.toLowerCase() != 'project' ? moment(getProbationaryEndDate(o.dateHired)).valueOf() : null,
@@ -165,15 +196,8 @@ console.log({data})
           );
         })
       );
+console.log({test})
 
-      setTimeout(() => {
-        setSaving(false);
-        setSaved(true);
-
-        setTimeout(() => {
-          setOpen(false);
-        }, 2000);
-      }, 2000);
     } catch (error) {
       console.log('handleSave error:', error);
     }

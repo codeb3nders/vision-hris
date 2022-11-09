@@ -3,6 +3,9 @@ import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { useContext, useEffect, useState } from 'react';
 import {
   Alert,
+  Autocomplete,
+  Badge,
+  BadgeProps,
   Button,
   Card,
   Dialog,
@@ -20,10 +23,13 @@ import {
   AssignmentReturn,
   Delete,
   Edit,
+  Groups,
   LaptopChromebookTwoTone,
   SaveTwoTone,
+  SupervisorAccount,
   TransferWithinAStation,
 } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
 import AddButton from 'CustomComponents/AddButton';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { AppCtx } from 'App';
@@ -51,43 +57,57 @@ import {
   newDataError as createEmployeeAssetError,
   reset
 } from 'slices/assets';
+import {
+  getEmployeeItems as _getEmployeeItems,
+  getAllEmployeesAction as _getEmployeesAction,
+  getEmployeeStatus as _getEmployeeStatus
+} from 'slices/employees/getEmployeesSlice';
 import ConfirmDelete from 'components/Other/confirm.delete';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { ASSET_CONDITIONS } from 'constants/Values';
 import { AssetInitialState, AssetModel } from 'components/MyProfile/Assets/assets.table';
-import AssetAssignment from './assignment';
-import AssetTransfer from './transfer';
+import TeamMembers from './members';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import { MainCtx } from 'components/Main';
-import AssetReturn from './return';
+import moment, { Moment } from 'moment';
 
-var moment = require('moment-business-days');
 type Props = {};
 
-export type CompanyAssetModel = {
+export type TeamLeaderModel = {
   id: string;
-  assetName: string;
-  assetDetails: string;
-  assetType: any;
-  assetSerialNumber: string;
-  status: string;
-  assignedTo?: any;
+  employeeNo: string;
+  isDelegated: boolean;
+  startDate: Moment | Date;
+  endDate: Moment | Date;
+  remarks: string;
+  department?: string;
+  location?: string;
+  position?: string;
+  isActive?: boolean;
 };
 
-export const CompanyAssetInitialState = {
+export const TeamLeaderInitialState = {
   id: "",
-  assetName: "",
-  assetDetails: "",
-  assetType: "",
-  assetSerialNumber: "",
-  status: ""
+  employeeNo: "",
+  isDelegated: false,
+  startDate: new Date(),
+  endDate: moment(new Date()).add(5, 'days'),
+  remarks: ""
 };
 
-const CompanyAssets = (props: Props) => {
-  const [rows, setRows] = useState<CompanyAssetModel[]>([]);
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
+
+const TeamLeaders = (props: Props) => {
+  const [rows, setRows] = useState<TeamLeaderModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  const [openAssignment, setOpenAssignment] = useState<boolean>(false);
-  const [openReturn, setOpenReturn] = useState<boolean>(false);
+  const [openMembers, setOpenMembers] = useState<boolean>(false);
   const dispatch = useDispatch();
   const enumsData = useSelector(getEnumsData);
   const assetsData = useSelector(_getCompanyAssetsData);
@@ -96,8 +116,7 @@ const CompanyAssets = (props: Props) => {
   const deleteAssetStatus = useSelector(getAssetDeleteStatus);
   const newAssetStatus = useSelector(getNewAssetStatus);
   const { access_token } = useContext(AppCtx);
-  const [assetData, setAssetData] = useState<CompanyAssetModel>(CompanyAssetInitialState);
-  const [assignedAssetData, setAssignedAssetData] = useState<AssetModel>(AssetInitialState);
+  const [TLdata, setTLdata] = useState<TeamLeaderModel>(TeamLeaderInitialState);
   const [confirmDelete, setConfirmDelete] = useState<{
     row: any;
     status: boolean;
@@ -109,13 +128,34 @@ const CompanyAssets = (props: Props) => {
     status: boolean;
     severity: any;
   }>({ message: '', status: false, severity: '' });
+  const [employees, setEmployees] = useState<EmployeeDBI[]>([])
 
   const assignAssetStatus = useSelector(createEmployeeAssetStatus);
   const assignReturnStatus = useSelector(updateEmployeeAssetStatus);
   const assignAssetError = useSelector(getNewAssetStatus);
   const assignReturnError = useSelector(updateEmployeeAssetError);
   const { setIsTable } = useContext(MainCtx);
-  const isUpdate = assetData.id;
+  const isUpdate = TLdata.id;
+
+  // Employees
+  const getEmployeeItems = useSelector(_getEmployeeItems);
+  const getEmployeeStatus = useSelector(_getEmployeeStatus);
+
+  useEffect(() => {
+    if (access_token) {
+      dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
+    }
+  }, [access_token]);
+
+  useEffect(() => { 
+    if (getEmployeeStatus === "succeeded") {
+      setEmployees(getEmployeeItems.map((r: EmployeeDBI) => {
+        const mi = r.middleName ? r.middleName.charAt(0) : '';
+        const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+        return { ...r, full_name };
+      }))
+    }
+  }, [getEmployeeStatus])
 
   useEffect(() => {
     getData();
@@ -141,74 +181,32 @@ const CompanyAssets = (props: Props) => {
   }, [newAssetStatus, deleteAssetStatus, updateAssetStatus])
 
   useEffect(() => {
-    !open && setAssetData(CompanyAssetInitialState);
+    !open && setTLdata(TeamLeaderInitialState);
   }, [open]);
 
   useEffect(() => {
     if (assignAssetStatus !== "idle") {
       if (assignAssetStatus === "succeeded") {
         success(reset(), "Asset was successfully assigned.");
-        setOpenAssignment(false);
+        setOpenMembers(false);
       } else {
         failed(assignAssetError)
       }
     }
   }, [assignAssetStatus])
 
-  useEffect(() => {
-    if (assignReturnStatus !== "idle") {
-      if (assignReturnStatus === "succeeded") {
-        success(reset(), "Asset assignment/return was successfully updated.");
-        setOpenReturn(false);
-      } 
-    }
-  }, [assignReturnStatus])
-
   const getData = async () => {
     await dispatch(getAllDataAction({ access_token }));
   }
 
-  const handleDelete = async (row: CompanyAssetModel) => {
+  const handleDelete = async (row: TeamLeaderModel) => {
     await dispatch(deleteAction({code: row.id, access_token}))
     setConfirmDelete({ row: null, status: false });
   };
 
-  const handleEdit = async (row: CompanyAssetModel) => {
-    const asset = rows.filter(
-      (t) => t.id === row.id
-    )[0];
-    asset.id && setAssetData(() => {
-      return {
-        ...asset,
-        assetType: asset.assetType.code
-      }
-    });
+  const handleEdit = async (row: TeamLeaderModel) => {
+    setTLdata(row);
     setOpen(true);
-  }
-
-  const handleAssign = async (row: CompanyAssetModel) => {
-    setAssignedAssetData({
-      ...assignedAssetData,
-      companyAssetId: row.id,
-      conditionAssigned: row.status
-    });
-    setOpenAssignment(true);
-  }
-
-  const handleReturn = async (row: CompanyAssetModel) => {
-    console.log({row})
-    setAssignedAssetData({
-      ...assignedAssetData,
-      companyAssetId: row.id,
-      conditionReturned: row.status,
-      id: row.assignedTo?.id
-    });
-    setOpenReturn(true);
-  }
-
-  const handleTransfer = async (row: CompanyAssetModel) => {
-    setAssetData(row);
-    setOpenTransfer(true);
   }
 
   const success = (cb: any, message: string) => {
@@ -239,6 +237,9 @@ const CompanyAssets = (props: Props) => {
     });
   };
   
+  const handleView = async () => { 
+    
+  }
 
   return (
     <>
@@ -254,14 +255,13 @@ const CompanyAssets = (props: Props) => {
         setOpen={setConfirmDelete}
         handleDelete={handleDelete}
       />
-      <AssetDialog setOpen={setOpen} open={open} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} failed={failed} />
-      {openAssignment && <AssetAssignment setOpen={setOpenAssignment} open={openAssignment} access_token={access_token} assetData={assignedAssetData} failed={failed} />}
-      {openReturn && <AssetReturn setOpen={setOpenReturn} open={openReturn} access_token={access_token} assetData={assignedAssetData} failed={failed} />}
-      <AssetTransfer setOpenTransfer={setOpenTransfer} openTransfer={openTransfer} access_token={access_token} assetData={assetData} failed={failed}/>
+      <TLDialog setOpen={setOpen} open={open} access_token={access_token} data={TLdata} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} failed={failed} />
+      {openMembers && <TeamMembers setOpen={setOpenMembers} open={openMembers} access_token={access_token} data={TLdata} failed={failed} />}
+      
       <Card className="phone:mt-0 desktop:mt-5 desktop:p-2 laptop:mt-5 laptop:p-2">
         <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
           <div className="flex-1 desktop:text-left laptop:text-left">
-            <Typography variant="h5">Company Assets</Typography>
+            <Typography variant="h5">Team Leaders</Typography>
           </div>
           <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
             <AddButton setOpen={setOpen} text='Add Record' />
@@ -271,7 +271,7 @@ const CompanyAssets = (props: Props) => {
           autoHeight
           disableSelectionOnClick
           rows={rows}
-          columns={columns(setConfirmDelete, handleEdit, handleAssign, handleReturn, handleTransfer)}
+          columns={columns(setConfirmDelete, handleEdit, handleView)}
           sx={{
             [`& .${gridClasses.cell}`]: {
               py: 1,
@@ -289,38 +289,43 @@ const CompanyAssets = (props: Props) => {
   );
 };
 
-const AssetDialog = ({ open, setOpen, access_token, assetData: data, isUpdate, isSaving, setIsSaving, failed }) => {
-  const [newAsset, setNewAsset] = useState<any>(CompanyAssetInitialState);
+const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIsSaving, failed }) => {
+  const [newData, setNewData] = useState<any>(TeamLeaderInitialState);
   const dispatch = useDispatch();
+  const getEmployeeItems = useSelector(_getEmployeeItems);
   const [assetTypes, setAssetTypes] = useState<any[]>([]);
-  const [assetData, setAssetData] = useState<any>(CompanyAssetInitialState);
-  const [isAssigned, setIsAssigned] = useState<boolean>(false);
-  const [assignedAsset, setAssignedAsset] = useState<AssetModel>(AssetInitialState);
+  const [TLData, setTLData] = useState<any>(TeamLeaderInitialState);
   const enums = useSelector(enumsData)
+  const [nonRankAndFileEmployees, setNonRankAndFileEmployees] = useState<any[]>([]);
+
+  useEffect(() => {
+    const employees = getEmployeeItems
+      .filter((x: EmployeeDBI) => x.rank.name.toLocaleLowerCase() !== "rank and file")
+      .map((r: EmployeeDBI) => {
+        const mi = r.middleName ? r.middleName.charAt(0) : '';
+        const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+        return { id: r.employeeNo, label: full_name };
+      })
+    setNonRankAndFileEmployees(employees.sort((a:any, b:any) => a.label.localeCompare(b.label)));
+  }, [getEmployeeItems]);
 
   useEffect(() => { 
     setAssetTypes(enums.filter((x:any) => x.type.toLocaleLowerCase() === "assettype"))
   }, [enums])
 
   useEffect(() => {
-    setAssetData(data);
+    setTLData(data);
   }, [data]);
-
-  useEffect(() => { 
-    if (isAssigned && isUpdate) {
-      setAssignedAsset({...assignedAsset, companyAssetId: assetData.id})
-    }
-  }, [isAssigned])
 
   useEffect(() => {
     if (!open) {
-      setNewAsset(CompanyAssetInitialState)
+      setNewData(TeamLeaderInitialState)
     }
   }, [open]);
-console.log({isUpdate})
+
   const handleSave = async () => {
     const validateFields = async () => {
-        const dialog: any = document.getElementById("company-assets-dialog");
+        const dialog: any = document.getElementById("team-leader-dialog");
         const required = dialog.querySelectorAll("[required]");
         let invalidCtr = 0;
 
@@ -338,29 +343,20 @@ console.log({isUpdate})
       setIsSaving(true);
       try {
         if (isUpdate) {
-          const {id, timestamp, lastModifiedDate, ...rest } = assetData;
+          const {id, timestamp, lastModifiedDate, ...rest } = TLData;
           await dispatch(
             updateAction({
               params: {
-                id: assetData.id,
+                id: TLData.id,
                 ...rest
               },
               access_token,
             })
           );
         } else {
-          const { id, ...rest } = newAsset;
+          const { id, ...rest } = newData;
           await dispatch(
             createAction({
-              body: { ...rest },
-              access_token,
-            })
-          );
-        }
-        if (assignedAsset.employeeNo) {
-          const { companyAssetDetails, id, timestamp, ...rest } = assignedAsset;
-          await dispatch(
-            createEmployeeAsset({
               body: { ...rest },
               access_token,
             })
@@ -370,42 +366,26 @@ console.log({isUpdate})
         console.log(error);
       }
       setOpen(false);
-      setNewAsset(CompanyAssetInitialState);
+      setNewData(TeamLeaderInitialState);
     }
   };
-console.log({assignedAsset})
+
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} id="company-assets-dialog">
+    <Dialog open={open} onClose={() => setOpen(false)} id="team-leader-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
-          <LaptopChromebookTwoTone /> {isUpdate ? 'Update' : 'Add'}{' '} Asset
+          <SupervisorAccount /> {isUpdate ? 'Update' : 'Add'}{' '} Team Leader
         </p>
 
         <GridWrapper colSize='2'>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth required>
-              <InputLabel id='asset-type'>Asset Type</InputLabel>
-              <Select
-                label='Asset Type'
-                labelId='asset-type'
-                onChange={(e: any) => {
-                  setNewAsset({ ...newAsset, assetType: e.target.value });
-                  isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  assetType: e.target.value,
-                }));
-                }}
-                defaultValue={assetData.assetType}
-              >
-                {assetTypes.map((asset) => {
-                  return (
-                    <MenuItem key={asset.code} value={asset.code}>
-                      {asset.name}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
+            <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={nonRankAndFileEmployees}
+            sx={{ width: "100%" }}
+            renderInput={(params) => <TextField {...params} label="Delegated Approver" variant="standard" />}
+          />
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <TextField
@@ -416,13 +396,13 @@ console.log({assignedAsset})
               multiline
               label='Asset Name'
               onChange={(e: any) => { 
-                setNewAsset({ ...newAsset, assetName: e.target.value });
-                isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  assetName: e.target.value,
-                }));
+                // setNewAsset({ ...newAsset, assetName: e.target.value });
+                // isUpdate && setAssetData((prev: any) => ({
+                //   ...prev,
+                //   assetName: e.target.value,
+                // }));
               }}
-              defaultValue={assetData.assetName}
+              // defaultValue={assetData.assetName}
             />
           </div>
         </GridWrapper>
@@ -434,13 +414,13 @@ console.log({assignedAsset})
               size='small'
               label='Serial #'
               onChange={(e: any) => {
-                setNewAsset({ ...newAsset, assetSerialNumber: e.target.value });
-                isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  assetSerialNumber: e.target.value,
-                }));
+                // setNewAsset({ ...newAsset, assetSerialNumber: e.target.value });
+                // isUpdate && setAssetData((prev: any) => ({
+                //   ...prev,
+                //   assetSerialNumber: e.target.value,
+                // }));
               }}
-              defaultValue={assetData.assetSerialNumber}
+              // defaultValue={assetData.assetSerialNumber}
             />
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
@@ -450,13 +430,13 @@ console.log({assignedAsset})
                 label='Condition'
                 labelId='condition'
                 onChange={(e: any) => {
-                  setNewAsset({ ...newAsset, status: e.target.value });
-                  isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  status: e.target.value,
-                }));
+                //   setNewAsset({ ...newAsset, status: e.target.value });
+                //   isUpdate && setAssetData((prev: any) => ({
+                //   ...prev,
+                //   status: e.target.value,
+                // }));
                 }}
-                defaultValue={assetData.status}
+                // defaultValue={assetData.status}
               >
                 {ASSET_CONDITIONS.map((o) => {
                   return (
@@ -479,13 +459,13 @@ console.log({assignedAsset})
               multiline
               label='Asset Details'
               onChange={(e: any) => {
-                setNewAsset({ ...newAsset, assetDetails: e.target.value });
-                isUpdate && setAssetData((prev: any) => ({
-                  ...prev,
-                  assetDetails: e.target.value,
-                }));
+                // setNewAsset({ ...newAsset, assetDetails: e.target.value });
+                // isUpdate && setAssetData((prev: any) => ({
+                //   ...prev,
+                //   assetDetails: e.target.value,
+                // }));
               }}
-              defaultValue={assetData.assetDetails}
+              // defaultValue={assetData.assetDetails}
             />
           </div>
         </GridWrapper>
@@ -513,50 +493,58 @@ console.log({assignedAsset})
 
 const columns: any = (setConfirmDelete: any, handleEdit:any, handleAssign: any, handleReturn, handleTransfer) => [
   {
-    field: 'assetType',
-    headerName: 'Asset Type',
-    flex: 1,
-    renderCell: (params: any) => {
-      return params.row?.assetType?.name || params.value;
-    },
-  },
-  {
-    field: 'assetName',
-    headerName: 'Asset Name',
+    field: 'department',
+    headerName: 'Department',
     flex: 1
   },
   {
-    field: 'assetDetails',
-    headerName: 'Asset Details',
+    field: 'location',
+    headerName: 'Location',
     flex: 1,
-    renderCell: (params: any) => {
-      return params.value || null;
-    },
+    // renderCell: (params: any) => {
+    //   return params.row?.assetType?.name || params.value;
+    // },
   },
   {
-    field: 'assetSerialNumber',
-    headerName: 'Serial #',
+    field: 'name',
+    headerName: 'Name',
     flex: 1,
-    renderCell: (params: any) => {
-      return params.value || null;
-    },
+    // renderCell: (params: any) => {
+    //   return params.value || null;
+    // },
   },
   {
-    field: 'assignedTo',
-    headerName: 'Assigned To',
+    field: 'position',
+    headerName: 'Position',
     flex: 1,
-    renderCell: (params: any) => {
-      return params.value && !params.row.assignedTo.dateReturned ? params.row.assignedTo.name : <Button onClick={() => handleAssign(params.row)}>Assign</Button> ;
-    },
+    // renderCell: (params: any) => {
+    //   return params.value || null;
+    // },
   },
   {
-    field: 'status',
-    headerName: 'Condition',
+    field: 'isDelegated',
+    headerName: 'Is Delegated',
+    flex: 1,
+    // renderCell: (params: any) => {
+    //   return params.value && !params.row.assignedTo.dateReturned ? params.row.assignedTo.name : <Button onClick={() => handleAssign(params.row)}>Assign</Button> ;
+    // },
+  },
+  {
+    field: 'isActive',
+    headerName: 'Is Active',
+    flex: 1,
+    // renderCell: (params: any) => {
+    //   return params.row.assignedTo && params.row.assignedTo.dateReturned ? params.row.assignedTo.name : "";
+    // },
+  },
+  {
+    field: 'startDate',
+    headerName: 'Start Date',
     flex: 1
   },
   {
-    field: 'remarks',
-    headerName: 'Remarks',
+    field: 'endDate',
+    headerName: 'End Date',
     flex: 1
   },
   {
@@ -565,24 +553,16 @@ const columns: any = (setConfirmDelete: any, handleEdit:any, handleAssign: any, 
     width: 180,
     renderCell: (params: any) => {
       return <div>
-        <Tooltip title="Delete Asset">
-          <IconButton size='small' disabled={params.row.assignedTo} onClick={() => setConfirmDelete({ row: params.row, status: true })}>
-            <Delete />
-          </IconButton>
-        </Tooltip>
         <Tooltip title="Edit Details">
           <IconButton size='small' disabled={params.row.assignedTo} onClick={() => handleEdit(params.row)}>
             <Edit />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Return Asset">
-          <IconButton size='small' disabled={!params.row.assignedTo || params.row.assignedTo?.dateReturned} onClick={() => handleReturn(params.row)}>
-            <AssignmentReturn />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Transfer Asset">
-          <IconButton size='small' disabled={!params.row.assignedTo || params.row.assignedTo?.dateReturned} onClick={() => handleTransfer(params.row)}>
-            <TransferWithinAStation />
+        <Tooltip title="Employees">
+          <IconButton size='small' onClick={() => handleReturn(params.row)}>
+            <StyledBadge badgeContent={4} color="secondary">
+              <Groups />
+            </StyledBadge>
           </IconButton>
         </Tooltip>
       </div>
@@ -590,4 +570,4 @@ const columns: any = (setConfirmDelete: any, handleEdit:any, handleAssign: any, 
   },
 ];
 
-export default CompanyAssets;
+export default TeamLeaders;

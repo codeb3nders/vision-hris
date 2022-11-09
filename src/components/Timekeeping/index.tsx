@@ -10,6 +10,8 @@ import {
   Avatar,
   Chip,
   Typography,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   AddCircleOutlineTwoTone,
@@ -19,25 +21,19 @@ import {
   UploadTwoTone,
 } from "@mui/icons-material";
 import {
-  getAllDataAction, data as _timekeepingData, dataStatus as _dataStatus
+  getAllDataAction, data as _timekeepingData, dataStatus as _dataStatus,
+  newDataStatus as _newDataStatus,
+  newDataError as _newDataError,
+  reset
 } from "slices/timekeeping";
 import { EmployeeI } from "slices/interfaces/employeeI";
 import { MainCtx } from "components/Main";
 import { AppCtx } from "App";
-import { getAvatar } from "utils/functions";
-import { VISION_RED } from "constants/Colors";
-import Search from "../HRDashboard/search";
 import TimekeepingUploader from './uploader';
 import moment from "moment";
+import { TimekeepingI, TimekeepingLogI } from "slices/interfaces/timekeepingI";
 
 type Props = {};
-
-type TimekeepingLogI = {
-  period: string;
-  total_record: number;
-  timestamp: Date;
-  total_verified: number;
-};
 
 const Timekeeping: React.FC<Props> = () => {
   const dispatch = useDispatch();
@@ -47,23 +43,99 @@ const Timekeeping: React.FC<Props> = () => {
   const [employees, setEmployees] = useState<EmployeeI[]>([]);
   const [data, setData] = useState<TimekeepingLogI[]>([]);
   const [openUploader, setOpenUploader] = useState(false);
+  const { setIsTable } = useContext(MainCtx);
+  const [openNotif, setOpenNotif] = useState<{
+    message: string;
+    status: boolean;
+    severity: any;
+  }>({ message: '', status: false, severity: '' });
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const newDataStatus = useSelector(_newDataStatus);
+  const newDataError = useSelector(_newDataError);
+  
+  useEffect(() => {
+    if (newDataStatus !== "idle") {
+      if (newDataStatus === "succeeded") {
+        success(reset(), "Timekeeping file was successfully processed.");
+        setOpenUploader(false);
+      } else {
+        failed(newDataError)
+      }
+    }
+  }, [newDataStatus])
 
   useEffect(() => {
     if (dataStatus !== "idle") {
-      // setData(timekeepingData);
+      var result:TimekeepingLogI[] = [];
+      timekeepingData.reduce(function (res:any, curr: TimekeepingI) {
+        const period:string = `${curr.periodStartDate} - ${curr.periodEndDate}`;
+        if (!res[period]) {
+          res[period] = { period, total_record: 0, dateUploaded: moment(curr.timestamp).format("lll"), total_verified: 0 };
+          result.push(res[period]);
+        }
+        res[period].total_record++;
+        res[period].total_verified += curr.verified ? 1 : 0;
+        return res;
+      }, {});
+
+      console.log(result)
+      setData(data);
     }
   }, [dataStatus]);
 
-  useEffect(() => {getData()}, [])
+  useEffect(() => {
+    getData();
+    setIsTable(true);
+  }, [])
 
   const getData = async () => {
-  // await dispatch(getAllDataAction({ access_token }));
-}
+    await dispatch(getAllDataAction({ access_token }));
+  }
+
+  const success = (cb: any, message: string) => {
+    console.log({ message })
+    setOpenNotif({
+      message,
+      status: true,
+      severity: 'success',
+    });
+    dispatch(cb);
+    getData();
+    setIsSaving(false);
+
+    setTimeout(() => {
+      setOpenNotif({
+        message: '',
+        status: false,
+        severity: '',
+      });
+    }, 2000)
+  };
+
+  const failed = (message: string) => {
+    setIsSaving(false);
+    setOpenNotif({
+      message,
+      status: true,
+      severity: 'error',
+    });
+  };
+
   return (
     <>
-      <TimekeepingUploader open={openUploader} setOpen={setOpenUploader} />
-      <Card sx={{ mt: 5, p: 2 }}>
-        <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-left justify-left mb-2">
+      <Snackbar
+        autoHideDuration={2000}
+        open={openNotif.status}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+      >
+        <Alert severity={openNotif.severity}>{openNotif.message}</Alert>
+      </Snackbar>
+      <TimekeepingUploader open={openUploader} setOpen={setOpenUploader} setIsSaving={setIsSaving} isSaving={isSaving}  />
+      <Card className="phone:mt-0 desktop:mt-5 desktop:p-2 laptop:mt-5 laptop:p-2">
+        <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
+          <div className="flex-1 desktop:text-left laptop:text-left">
+            <Typography variant="h5">Timekeeping</Typography>
+          </div>
           <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
             <Button
               onClick={() => setOpenUploader(true)}
@@ -73,7 +145,7 @@ const Timekeeping: React.FC<Props> = () => {
               Upload Timekeeping
             </Button>
           </div>
-        </section>
+        </section>  
         <DataGrid
           autoHeight
           getRowHeight={() => "auto"}

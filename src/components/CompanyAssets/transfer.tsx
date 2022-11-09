@@ -23,7 +23,7 @@ import { AppCtx } from 'App';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   data as _getCompanyAssetsData, dataStatus as _getCompanyAssetsDataStatus,
-  updateAction as updateCompanyAsset,
+  updateAction as updateCompanyAsset
 } from 'slices/companyAssets';
 import {
   enumsData,
@@ -31,47 +31,60 @@ import {
 } from 'slices/enums/enumsSlice'
 import {
   createAction as createEmployeeAsset,
-  updateAction
+  newDataStatus as createEmployeeAssetStatus,
+  updateAction,
+  // updateAction
 } from 'slices/assets';
 import ConfirmDelete from 'components/Other/confirm.delete';
 import { getEmployeeItems as _getEmployeeItems } from 'slices';
-import { EmployeeDBI } from 'slices/interfaces/employeeI';
+import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
 import { ASSET_CONDITIONS } from 'constants/Values';
 import { AssetInitialState, AssetModel } from 'components/MyProfile/Assets/assets.table';
-import { CompanyAssetModel } from '.';
+import { CompanyAssetInitialState, CompanyAssetModel } from '.';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 var moment = require('moment-business-days');
 type Props = {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean;
+    setOpenTransfer: React.Dispatch<React.SetStateAction<boolean>>;
+    openTransfer: boolean;
     access_token: string;
-    assetData: AssetModel;
+    assetData: CompanyAssetModel;
     failed: any;
 };
 
-const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Props) => {
-  const dispatch = useDispatch();
-  const [isAssigned, setIsAssigned] = useState<boolean>(false);
-  const [assignedAsset, setAssignedAsset] = useState<AssetModel>(AssetInitialState);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
-  const getEmployeeItems = useSelector(_getEmployeeItems);
-  
-  useEffect(() => {
-    const employees = [...getEmployeeItems];
-    setEmployees(employees.sort((a:any, b:any) => a.lastName.localeCompare(b.lastName)))
-  }, [getEmployeeItems])
+const AssetTransfer = ({ setOpenTransfer, openTransfer, access_token, assetData, failed }: Props) => {
+    const dispatch = useDispatch();
+    const [assignedAsset, setAssignedAsset] = useState<AssetModel>(AssetInitialState);
+    const [returnedAsset, setReturnedAsset] = useState<AssetModel>(AssetInitialState);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
+    const enums = useSelector(enumsData)
+    const getEmployeeItems = useSelector(_getEmployeeItems);
 
+    useEffect(() => {
+      const employees = [...getEmployeeItems];
+      setEmployees(employees.sort((a:any, b:any) => a.lastName.localeCompare(b.lastName)))
+    }, [getEmployeeItems])
+  
   useEffect(() => { 
-    if (assetData.companyAssetId) {
-      setAssignedAsset(assetData)
+    if (assetData.id) {
+      setAssignedAsset({
+        ...assignedAsset,
+        companyAssetId: assetData.id,
+        conditionAssigned: assetData.status
+      })
+      setReturnedAsset({
+        ...returnedAsset,
+        companyAssetId: assetData.id,
+        conditionReturned: assetData.status,
+        id: assetData.assignedTo.id
+      })
     }
   }, [assetData])
 
   const handleSave = async () => {
     const validateFields = async () => {
-        const dialog: any = document.getElementById("asset-assignment-dialog");
+        const dialog: any = document.getElementById("asset-transfer-dialog");
         const required = dialog.querySelectorAll("[required]");
         let invalidCtr = 0;
 
@@ -83,43 +96,77 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
           return failed(INCOMPLETE_FORM_MESSAGE);
         }
         return true;
+    }
+    
+    const returnAsset = async () => { 
+      const { companyAssetDetails, id, timestamp, ...rest } = returnedAsset;
+      await dispatch(
+        updateAction({
+          params: {
+              id: returnedAsset.id,
+              conditionReturned: returnedAsset.conditionReturned,
+              dateReturned: returnedAsset.dateReturned,
+              remarks: returnedAsset.remarks
+          },
+          access_token,
+      })
+      );
+      //check if condition of asset is not the same, then update company assets
+      if (returnedAsset.conditionReturned !== assetData.status) {
+          await dispatch(
+              updateCompanyAsset({
+                  params: {
+                      id: returnedAsset.companyAssetId,
+                      status: returnedAsset.conditionReturned
+                  },
+                  access_token,
+              })
+          );
       }
+    }
+
+    const assignAsset = async () => {
+      const { companyAssetDetails, id, timestamp, ...rest } = assignedAsset;
+      await dispatch(
+        createEmployeeAsset({
+            body: { ...rest },
+            access_token,
+        })
+      );
+    }
+
       //check inputs...
     if (await validateFields()) {
       setIsSaving(true);
       try {
-        const { companyAssetDetails, id, timestamp, ...rest } = assignedAsset;
-        await dispatch(
-          createEmployeeAsset({
-            body: { ...rest },
-            access_token,
-          })
-        );
+        await returnAsset();
+        await assignAsset();
       } catch (error: any) {
         console.log(error);
       }
+      setOpenTransfer(false);
     }
   };
-  console.log({assetData}, "xxxxxxxxxxxxxxxxxxxxxxxxx", {assignedAsset})
+    console.log({assignedAsset}, {assetData}, {returnedAsset})
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} id="asset-assignment-dialog">
+    <Dialog open={openTransfer} onClose={() => setOpenTransfer(false)} id="asset-transfer-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
-          <LaptopChromebookTwoTone /> Asset Assignment
+          <LaptopChromebookTwoTone /> Asset Transfer
         </p>
 
         <GridWrapper colSize='2'>  
           <div className='col-span-2'>
             <FormControl variant='standard' size='small' fullWidth required>
-              <InputLabel id='assigned-to'>Assign To</InputLabel>
+              <InputLabel id='transfer-to'>Transfer To</InputLabel>
               <Select
-                label='Assigned To'
-                labelId='assigned-to'
+                label='Transfer To'
+                labelId='transfer-to'
                 onChange={(e: any) => {
                   setAssignedAsset({ ...assignedAsset, employeeNo: e.target.value });
                 }}
               >
-                {employees.map((employee:EmployeeDBI) => {
+                {employees.filter((x:EmployeeI) => x.employeeNo !== assetData.assignedTo?.employeeNo).map((employee:EmployeeDBI) => {
                   return (
                     <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
                       {employee.lastName}, {employee.firstName} ({employee.employeeNo})
@@ -131,13 +178,17 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='Date Assigned'
+                <DatePicker
+                label='Date Transfered'
                 onChange={(value) => {
                   setAssignedAsset({
                     ...assignedAsset,
                     dateAssigned: value,
                   });
+                  setReturnedAsset({
+                    ...returnedAsset,
+                    dateReturned: value
+                  })
                 }}
                 value={assignedAsset.dateAssigned || null}
                 renderInput={(params) => (
@@ -157,8 +208,12 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
                     ...assignedAsset,
                     conditionAssigned: e.target.value,
                   });
+                  setReturnedAsset({
+                    ...returnedAsset,
+                    conditionReturned: e.target.value,
+                  });
                 }}
-                defaultValue={assignedAsset.conditionAssigned}
+                defaultValue={assetData.status}
               >
                 {ASSET_CONDITIONS.map((o) => {
                   return (
@@ -183,14 +238,13 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
                     remarks: e.target.value,
                   });
               }}
-              defaultValue={assignedAsset.remarks}
             />
           </div>
         </GridWrapper>
 
         <div className='grid grid-cols-7'>
           <button
-            disabled={isSaving}
+            disabled={!assignedAsset.employeeNo || isSaving}
             onClick={handleSave}
             className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
           >
@@ -199,7 +253,7 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
           </button>
           <button
             className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-            onClick={() => setOpen(false)}
+            onClick={() => setOpenTransfer(false)}
           >
             Cancel
           </button>
@@ -210,4 +264,4 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
   )
 }
 
-export default AssetAssignment;
+export default AssetTransfer;

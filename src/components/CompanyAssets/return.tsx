@@ -38,7 +38,7 @@ import { getEmployeeItems as _getEmployeeItems } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { ASSET_CONDITIONS } from 'constants/Values';
 import { AssetInitialState, AssetModel } from 'components/MyProfile/Assets/assets.table';
-import { CompanyAssetModel } from '.';
+import { CompanyAssetInitialState, CompanyAssetModel } from '.';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 
 var moment = require('moment-business-days');
@@ -50,18 +50,13 @@ type Props = {
     failed: any;
 };
 
-const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Props) => {
+const AssetReturn = ({ setOpen, open, access_token, assetData, failed }: Props) => {
   const dispatch = useDispatch();
   const [isAssigned, setIsAssigned] = useState<boolean>(false);
   const [assignedAsset, setAssignedAsset] = useState<AssetModel>(AssetInitialState);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
   const getEmployeeItems = useSelector(_getEmployeeItems);
   
-  useEffect(() => {
-    const employees = [...getEmployeeItems];
-    setEmployees(employees.sort((a:any, b:any) => a.lastName.localeCompare(b.lastName)))
-  }, [getEmployeeItems])
 
   useEffect(() => { 
     if (assetData.companyAssetId) {
@@ -88,88 +83,84 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
     if (await validateFields()) {
       setIsSaving(true);
       try {
-        const { companyAssetDetails, id, timestamp, ...rest } = assignedAsset;
         await dispatch(
-          createEmployeeAsset({
-            body: { ...rest },
-            access_token,
-          })
-        );
+            updateAction({
+                params: {
+                    id: assignedAsset.id,
+                    conditionReturned: assignedAsset.conditionReturned,
+                    dateReturned: assignedAsset.dateReturned,
+                    remarks: assignedAsset.remarks
+                },
+                access_token,
+            })
+            );
+            //check if condition of asset is not the same, then update company assets
+            if (assignedAsset.conditionReturned !== assetData.conditionReturned) {
+                await dispatch(
+                    updateCompanyAsset({
+                        params: {
+                            id: assetData.companyAssetId,
+                            status: assignedAsset.conditionReturned
+                        },
+                        access_token,
+                    })
+                );
+            }
       } catch (error: any) {
         console.log(error);
       }
     }
   };
-  console.log({assetData}, "xxxxxxxxxxxxxxxxxxxxxxxxx", {assignedAsset})
+  console.log({assignedAsset}, {assetData})
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="asset-assignment-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
         <p className='text-md font-bold '>
-          <LaptopChromebookTwoTone /> Asset Assignment
+          <LaptopChromebookTwoTone /> Asset Return
         </p>
 
         <GridWrapper colSize='2'>  
-          <div className='col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth required>
-              <InputLabel id='assigned-to'>Assign To</InputLabel>
-              <Select
-                label='Assigned To'
-                labelId='assigned-to'
-                onChange={(e: any) => {
-                  setAssignedAsset({ ...assignedAsset, employeeNo: e.target.value });
-                }}
-              >
-                {employees.map((employee:EmployeeDBI) => {
-                  return (
-                    <MenuItem key={employee.employeeNo} value={employee.employeeNo}>
-                      {employee.lastName}, {employee.firstName} ({employee.employeeNo})
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='Date Assigned'
-                onChange={(value) => {
-                  setAssignedAsset({
-                    ...assignedAsset,
-                    dateAssigned: value,
-                  });
-                }}
-                value={assignedAsset.dateAssigned || null}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth required variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <FormControl variant='standard' size='small' fullWidth>
-              <InputLabel id='condition'>Condition</InputLabel>
-              <Select
-                label='Condition'
-                labelId='condition'
-                onChange={(e: any) => {
-                  setAssignedAsset({
-                    ...assignedAsset,
-                    conditionAssigned: e.target.value,
-                  });
-                }}
-                defaultValue={assignedAsset.conditionAssigned}
-              >
-                {ASSET_CONDITIONS.map((o) => {
-                  return (
-                    <MenuItem key={o} value={o}>
-                      {o}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </div>
+            <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  label='Date Returned'
+                  onChange={(value) => {
+                    setAssignedAsset({
+                      ...assignedAsset,
+                      dateReturned: value,
+                    });
+                  }}
+                  value={assignedAsset.dateReturned || null}
+                  renderInput={(params) => (
+                    <TextField {...params} fullWidth required variant='standard' />
+                  )}
+                />
+              </LocalizationProvider>
+            </div>
+            <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+              <FormControl variant='standard' size='small' fullWidth>
+                <InputLabel id='condition'>Condition</InputLabel>
+                <Select
+                  label='Condition'
+                  labelId='condition'
+                  onChange={(e: any) => {
+                    setAssignedAsset({
+                      ...assignedAsset,
+                      conditionReturned: e.target.value,
+                    });
+                  }}
+                  defaultValue={assignedAsset.conditionReturned}
+                >
+                  {ASSET_CONDITIONS.map((o) => {
+                    return (
+                      <MenuItem key={o} value={o}>
+                        {o}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </div>
           <div className='col-span-2'>
             <TextField
               fullWidth
@@ -210,4 +201,4 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
   )
 }
 
-export default AssetAssignment;
+export default AssetReturn;

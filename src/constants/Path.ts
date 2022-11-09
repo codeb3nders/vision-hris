@@ -45,7 +45,7 @@ export const Path = {
       Employees: '/people/employees',
       Workers: '/people/workers',
       Departments: '/people/departments',
-      Approvers: '/people/approvers',
+      Approvers: '/people/team-leaders',
       Org: '/people/org-chart',
     },
     Attendance: '/timekeeping',

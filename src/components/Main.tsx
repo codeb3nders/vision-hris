@@ -16,6 +16,7 @@ import ErrorPage from "./Other/error.page";
 import CompanyAssets from "./CompanyAssets";
 import Timekeeping from "./Timekeeping";
 import TimekeepingDetails from "./Timekeeping/details"
+import TeamLeaders from "./TeamLeaders";
 const { Employee, HR } = Path;
 
 type MainCtxI = {
@@ -69,7 +70,7 @@ const Main: React.FC<Props> = ({ role }) => {
         <Router>
           <Navbar />
           <section
-            className={`tablet:px-8 phone:px-4 max-w-7xl desktop:max-w-7xl laptop:max-w-7xl sm:max-w-full mx-auto ${
+            className={`tablet:px-8 max-w-7xl desktop:max-w-7xl laptop:max-w-7xl sm:max-w-full mx-auto ${
               isTable ? "desktop:max-w-full laptop:max-w-full" : ""
             }`}
           >
@@ -80,11 +81,6 @@ const Main: React.FC<Props> = ({ role }) => {
                 exact
                 path={Path.Dashboard}
                 component={Dashboard}
-              />
-              <PrivateRoute
-                is_allowed={isAllowed("employees_db")}
-                path={HR.People.Employees}
-                component={EmployeeDatabase}
               />
               <PrivateRoute
                 is_allowed={isAllowed("employees_db")}
@@ -111,6 +107,11 @@ const Main: React.FC<Props> = ({ role }) => {
                 is_allowed={isAllowed("timekeeping")}
                 path={`${Path.HR.Attendance}/details`}
                 component={TimekeepingDetails}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed("team-leaders")}
+                path={Path.HR.People.Approvers}
+                component={TeamLeaders}
               />
 
               <Route path={Employee.Profile} component={ProfileMain} />

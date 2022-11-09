@@ -24,7 +24,7 @@ import {
   getEmployeeItems as _getEmployeeItems,
   getEmployeeError as _getEmployeeError,
 } from "slices";
-import { EmployeeI } from "slices/interfaces/employeeI";
+import { EmployeeDBI, EmployeeI } from "slices/interfaces/employeeI";
 import { MainCtx } from "components/Main";
 import { AppCtx } from "App";
 import { getAvatar } from "utils/functions";
@@ -34,25 +34,43 @@ import Search from "../HRDashboard/search";
 type Props = {};
 
 const EmployeeDirectory: React.FC<Props> = () => {
+  const dispatch = useDispatch();
   const getEmployeeItems = useSelector(_getEmployeeItems);
+  const getEmployeeStatus = useSelector(_getEmployeeStatus);
   const [employees, setEmployees] = useState<EmployeeI[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const [loading, setIsLoading] = useState<boolean>(true);
+  const [tempEmployees, setTempEmployees] = useState<EmployeeDBI[]>([]);
+  const { access_token } = useContext(AppCtx);
 
   useEffect(() => {
-    setEmployees(
-      getEmployeeItems.map((r: any) => {
-        const mi = r.middleName ? r.middleName.charAt(0) : "";
-        const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
-        return { ...r, id: r.employeeNo, full_name };
-      })
-    );
+    if (access_token) {
+      dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
+    }
+  }, [access_token]);
+
+  useEffect(() => {
+    const employees = getEmployeeItems.map((r: any) => {
+      const mi = r.middleName ? r.middleName.charAt(0) : "";
+      const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+      return { ...r, id: r.employeeNo, full_name };
+    });
+    setEmployees(employees);
+    setTempEmployees(employees);
+    setIsLoading(false);
   }, [getEmployeeItems]);
+
+  useEffect(() => {
+    if (searchText.length <= 0) {
+      setEmployees(tempEmployees);
+    }
+  }, [searchText]);
 
   return (
     <>
       <Card sx={{ mt: 5, p: 2 }}>
         <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-left justify-left mb-2">
-          {/* <Search setSearchText={setSearchText} /> */}
+          <Search setSearchText={setSearchText} searchText={searchText} setEmployees={setEmployees} setIsLoading={setIsLoading} />
         </section>
         <DataGrid
           autoHeight
@@ -64,7 +82,7 @@ const EmployeeDirectory: React.FC<Props> = () => {
           pageSize={30}
           rowsPerPageOptions={[30]}
           checkboxSelection={false}
-          loading={employees?.length <= 0}
+          loading={loading}
           getRowId={(row) => row.employeeNo}
         />
       </Card>

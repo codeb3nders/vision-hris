@@ -1,51 +1,62 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { SearchTwoTone } from "@mui/icons-material";
 import { FormControl, OutlinedInput } from "@mui/material";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { searchEmployeeEndpoint } from 'apis/employees';
+import { EmployeeDBI } from "slices/interfaces/employeeI";
+import { AppCtx } from "App";
 
 type Props = {
   setSearchText: any;
-  handleSearch: any;
+  searchText: string;
+  setEmployees: any;
+  setIsLoading: any;
 };
 
-const Search = ({ setSearchText, handleSearch }: Props) => {
-  const [searchValue, setSearchValue] = useState<string>("");
+const Search = ({ setSearchText, searchText, setEmployees, setIsLoading }: Props) => {
   const searchRef: any = useRef(null);
+  const { access_token } = useContext(AppCtx);
 
-  useEffect(() => {
-    setSearchText && setSearchText(searchValue);
-  }, [searchValue]);
-
-  // useEffect(() => {
-  //   if (show) {
-  //     const searchBox: any = document.querySelector("#employee-search");
-  //     searchBox.focus();
-  //   }
-  // }, [show]);
+  const handleSearch = async (e: any) => {
+    e.preventDefault();
+    if (e.key === 'Enter') {
+      setIsLoading(true);
+      console.log({ searchText });
+      try {
+        const res = await searchEmployeeEndpoint({
+          name: searchText.toUpperCase(),
+          access_token,
+        });
+        console.log({res})
+        if (res.data.length > 0) {
+          const employees = res.data.map((r: EmployeeDBI) => {
+            const mi = r.middleName ? r.middleName.charAt(0) : '';
+            const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+            return { ...r, id: r.employeeNo, full_name };
+          });
+          setEmployees(employees);
+        } else {
+          setEmployees([]);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.log('handleSearch error:', error);
+      }
+    }
+  };
 
   return (
     <section className="flex-1 w-full desktop:max-w-[400px] laptop:max-w-[400px] tablet:max-w-full phone:max-w-full relative">
-      {/* <SearchTwoTone
-        className={`absolute left-[14px] top-[50%] translate-y-[-50%] cursor-pointer z-10 ${
-          show ? 'opacity-0' : 'opacity-100'
-        }`}
-        onClick={() => setShow(true)}
-      /> */}
       <FormControl
         fullWidth
         size="small"
-        // className={`transition-all duration-200 ${
-        //   show ? 'opacity-100' : 'opacity-0'
-        // }`}
-        // disabled={!show}
-        // onBlur={searchValue ? () => {} : () => setShow(false)}
       >
         <OutlinedInput
           autoFocus
           placeholder="Search by Employee Name"
           ref={searchRef}
           id="employee-search"
-          onChange={(e: any) => setSearchValue(e.target.value)}
+          onChange={(e: any) => setSearchText(e.target.value)}
           endAdornment={<SearchTwoTone />}
           onKeyUp={handleSearch}
         />

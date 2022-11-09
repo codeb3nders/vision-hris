@@ -12,12 +12,12 @@ export const createEndpoint = async (url:string, body: any, config = {}) => {
 };
 
 export const updateEndpoint = async (url:string, data: any, config?: any) => {
-  const employeeNo = data.id;
+  const id = data.id;
   let tmp_body: any = data;
   delete tmp_body.id;
   const body = tmp_body;
   try {
-    return await axios.patch(`${url}${employeeNo}`, body, {
+    return await axios.patch(`${url}${id}`, body, {
       ...config,
     });
   } catch (error: any) {

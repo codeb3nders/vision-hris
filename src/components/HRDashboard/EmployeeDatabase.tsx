@@ -29,7 +29,6 @@ import { useLocation } from 'react-router-dom';
 import { MainCtx } from 'components/Main';
 import { AppCtx } from 'App';
 import Search from './search';
-import { searchEmployeeEndpoint } from 'apis/employees';
 import EmployeeUploader from './EmployeeUploader/employee.uploader';
 import { LoadingButton } from '@mui/lab';
 import { URL_USER_CREDENTIALS } from 'constants/EndpointPath';
@@ -74,10 +73,18 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const [userCredentials, setUserCredentials] = useState<any[]>([]);
   const [credentialsCreated, setCredentialsCreated] = useState<boolean>(false);
 
-  useEffect(() => { getUserCredentials()}, [])
-
+  useEffect(() => { getUserCredentials() }, [])
+  console.log({getEmployeeStatus})
   useEffect(() => { 
     if (getEmployeeStatus === "succeeded") {
+      const employees = getEmployeeItems.map((r: EmployeeDBI) => {
+        const mi = r.middleName ? r.middleName.charAt(0) : '';
+        const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+        const withUserCredentials = userCredentials.filter((x: any) => x.employeeNo === r.employeeNo).length > 0;
+        return { ...r, id: r.employeeNo, full_name, withUserCredentials };
+      });
+      setEmployees(employees);
+      setTempEmployees(employees);
       setIsLoading(false);
     }
   }, [getEmployeeStatus])
@@ -96,18 +103,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
     }
   }, [access_token, refresh]);
 
-  useEffect(() => {
-    const employees = getEmployeeItems.map((r: EmployeeDBI) => {
-      const mi = r.middleName ? r.middleName.charAt(0) : '';
-      const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
-      const withUserCredentials = userCredentials.filter((x: any) => x.employeeNo === r.employeeNo).length > 0;
-      return { ...r, id: r.employeeNo, full_name, withUserCredentials };
-    });
-
-    setEmployees(employees);
-    setTempEmployees(employees);
-  }, [getEmployeeItems]);
-console.log({loading})
   const getUserCredentials = async () => {
     const config = {
       headers: { Authorization: `Bearer ${access_token}` },
@@ -201,7 +196,7 @@ console.log({sendAccessList})
       renderCell: (cell: any) => cell.row.position?.name,
       sortComparator: (v1, v2) => v1?.localeCompare(v2),
       valueGetter: (params) => {
-        return params.row.position?.name;
+        return <Tooltip title={params.row.position?.name}>{params.row.position?.name}</Tooltip>
       },
     },
     {
@@ -303,32 +298,6 @@ console.log({sendAccessList})
     }
   };
 
-  const handleSearch = async (e: any) => {
-    e.preventDefault();
-    if (e.key === 'Enter') {
-      console.log({ searchText });
-      try {
-        const res = await searchEmployeeEndpoint({
-          name: searchText.toUpperCase(),
-          access_token,
-        });
-
-        if (res.data.length > 0) {
-          const employees = res.data.map((r: EmployeeDBI) => {
-            const mi = r.middleName ? r.middleName.charAt(0) : '';
-            const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
-            return { ...r, id: r.employeeNo, full_name };
-          });
-          setEmployees(employees);
-        } else {
-          setEmployees([]);
-        }
-      } catch (error) {
-        console.log('handleSearch error:', error);
-      }
-    }
-  };
-
   return (
     <EmployeeCtx.Provider value={{ setRefresh }}>
       <NewEmployeeProfile open={open} setOpen={setOpen} setViewDetails={setViewDetails} />
@@ -337,7 +306,7 @@ console.log({sendAccessList})
         setViewDetails={setViewDetails}
       />
       }
-      <Card sx={{ mt: 5, p: 2 }}>
+      <Card className="phone:mt-0 desktop:mt-5 desktop:p-2 laptop:mt-5 laptop:p-2">
         <Snackbar
           open={credentialsCreated}
           autoHideDuration={6000}
@@ -347,7 +316,7 @@ console.log({sendAccessList})
           className="z-10"
         />
         <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
-          <Search setSearchText={setSearchText} handleSearch={handleSearch} />
+          <Search setSearchText={setSearchText} searchText={searchText} setEmployees={setEmployees} setIsLoading={setIsLoading} />
 
           <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
             <LoadingButton

@@ -59,7 +59,7 @@ const UserAccessGroup = (props: Props) => {
 
   useEffect(() => {
     const employees = getEmployeeItems
-      .filter((x: EmployeeDBI) => x.rank.name.toLocaleLowerCase() === "rank and file")
+      .filter((x: EmployeeDBI) => x.rank.name.toLocaleLowerCase() !== "rank and file")
       .map((r: EmployeeDBI) => {
         const mi = r.middleName ? r.middleName.charAt(0) : '';
         const full_name = `${r.lastName}, ${r.firstName} ${mi}`;

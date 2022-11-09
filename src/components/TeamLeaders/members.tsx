@@ -38,22 +38,23 @@ import { getEmployeeItems as _getEmployeeItems } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { ASSET_CONDITIONS } from 'constants/Values';
 import { AssetInitialState, AssetModel } from 'components/MyProfile/Assets/assets.table';
-import { CompanyAssetModel } from '.';
+// import { CompanyAssetModel } from '.';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
+import { TeamLeaderInitialState, TeamLeaderModel } from '.';
 
 var moment = require('moment-business-days');
 type Props = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean;
     access_token: string;
-    assetData: AssetModel;
+    data: TeamLeaderModel;
     failed: any;
 };
 
-const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Props) => {
+const AssetAssignment = ({ setOpen, open, access_token, data, failed }: Props) => {
   const dispatch = useDispatch();
   const [isAssigned, setIsAssigned] = useState<boolean>(false);
-  const [assignedAsset, setAssignedAsset] = useState<AssetModel>(AssetInitialState);
+  const [assignedAsset, setAssignedAsset] = useState<TeamLeaderModel>(TeamLeaderInitialState);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
   const getEmployeeItems = useSelector(_getEmployeeItems);
@@ -63,11 +64,11 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
     setEmployees(employees.sort((a:any, b:any) => a.lastName.localeCompare(b.lastName)))
   }, [getEmployeeItems])
 
-  useEffect(() => { 
-    if (assetData.companyAssetId) {
-      setAssignedAsset(assetData)
-    }
-  }, [assetData])
+  // useEffect(() => { 
+  //   if (assetData.companyAssetId) {
+  //     setAssignedAsset(assetData)
+  //   }
+  // }, [assetData])
 
   const handleSave = async () => {
     const validateFields = async () => {
@@ -88,19 +89,19 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
     if (await validateFields()) {
       setIsSaving(true);
       try {
-        const { companyAssetDetails, id, timestamp, ...rest } = assignedAsset;
-        await dispatch(
-          createEmployeeAsset({
-            body: { ...rest },
-            access_token,
-          })
-        );
+        // const { companyAssetDetails, id, timestamp, ...rest } = assignedAsset;
+        // await dispatch(
+        //   createEmployeeAsset({
+        //     body: { ...rest },
+        //     access_token,
+        //   })
+        // );
       } catch (error: any) {
         console.log(error);
       }
     }
   };
-  console.log({assetData}, "xxxxxxxxxxxxxxxxxxxxxxxxx", {assignedAsset})
+
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="asset-assignment-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
@@ -130,7 +131,7 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
             </FormControl>
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
+            {/* <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label='Date Assigned'
                 onChange={(value) => {
@@ -144,7 +145,7 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
                   <TextField {...params} fullWidth required variant='standard' />
                 )}
               />
-            </LocalizationProvider>
+            </LocalizationProvider> */}
           </div>
           <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
             <FormControl variant='standard' size='small' fullWidth>
@@ -153,12 +154,12 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
                 label='Condition'
                 labelId='condition'
                 onChange={(e: any) => {
-                  setAssignedAsset({
-                    ...assignedAsset,
-                    conditionAssigned: e.target.value,
-                  });
+                  // setAssignedAsset({
+                  //   ...assignedAsset,
+                  //   conditionAssigned: e.target.value,
+                  // });
                 }}
-                defaultValue={assignedAsset.conditionAssigned}
+                // defaultValue={assignedAsset.conditionAssigned}
               >
                 {ASSET_CONDITIONS.map((o) => {
                   return (

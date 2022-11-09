@@ -123,9 +123,9 @@ export const assetsSlice = createSlice({
       return {
         ...initialCreateState,
         ...initialUpdateState,
-        ...initialGetState,
+        // ...initialGetState,
         ...initialDeleteState,
-        ...initialGetByEmployeeState
+        // ...initialGetByEmployeeState
       };
     }
   },

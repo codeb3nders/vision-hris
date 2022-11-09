@@ -32,12 +32,13 @@ export function generateArrayOfYears(lessYears:number) {
   return years
 }
 
-export function generateCompanyEmail(fName, lName, rank) {
+export function generateCompanyEmail(fName, lName, rank, isRehire=false) {
   const firstName = fName.split(' ');
+  const ctr = isRehire ? 1 : "";
   if (rank.toLowerCase() === 'rank and file') {
-    return `${firstName[0][0]}${lName}.vcdcph@gmail.com`.toLowerCase();
+    return `${firstName[0][0]}${lName}${ctr}.vcdcph@gmail.com`.toLowerCase();
   } else {
-    return `${firstName[0]}.${lName}@vcdcph.com`.toLowerCase();
+    return `${firstName[0]}.${lName}${ctr}@vcdcph.com`.toLowerCase();
   }
 }
 
