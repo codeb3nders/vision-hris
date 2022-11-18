@@ -2,6 +2,7 @@
 import { Add, AttachMoneyTwoTone, Delete, SaveTwoTone } from '@mui/icons-material';
 import { Dialog, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
@@ -16,7 +17,8 @@ const initialData = {
 }
 
 const AllowanceDetails = (props: Props) => {
-  const { setUpdatedDetails, isNew, enums, getIcon, employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { setUpdatedDetails, enums, getIcon, employeeDetails, setEmployeeDetails } = useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [allowances, setAllowances] = useState<any[]>([]);
   const [withUpdate, setWithUpdate] = useState<boolean>(false);

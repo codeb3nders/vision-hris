@@ -84,7 +84,7 @@ const Navbar = () => {
                 <div className="tablet:flex-shrink-0 flex items-center justify-center">
                   <Link to="/">
                     <img
-                      className="phone:block laptop:hidden h-10 w-auto"
+                      className="phone:block laptop:hidden phone:h-14 w-auto"
                       src={VISION_LOGO_WHITE}
                       alt="VisionProperties Dev. Corp."
                     />

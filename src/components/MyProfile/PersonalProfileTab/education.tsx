@@ -11,6 +11,7 @@ import CollapseWrapper from './collapse.wrapper';
 import { EducationI, EmployeeI } from 'slices/interfaces/employeeI';
 import * as func from 'utils/functions'
 import { initialState } from '../employee.initialstate';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {};
 
@@ -19,8 +20,9 @@ const Education = (props: Props) => {
     setEmployeeDetails,
     employeeDetails,
     setUpdatedDetails,
-    isNew, getIcon
+    getIcon
   } = useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [educationData, setEducationData] = useState<any[]>([]);
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
   const yearSelect = func.generateArrayOfYears(60);

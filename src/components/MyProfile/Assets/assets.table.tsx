@@ -48,6 +48,7 @@ import {
 import ConfirmDelete from 'components/Other/confirm.delete';
 import { styled, lighten, darken } from '@mui/system';
 import { ASSET_CONDITIONS } from 'constants/Values';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 // import { getByEmployeeNoAction, getEmployeeAssetsData, getEmployeeAssetsStatus } from 'slices/assets/getSlice';
 // import { deleteAssetAction, getAssetDeleteStatus } from 'slices/assets/deleteSlice';
@@ -96,7 +97,8 @@ const GroupItems = styled('ul')({
 });
 
 const AssetsTable = (props: Props) => {
-  const { setUpdatedDetails, isNew, employeeDetails } = useContext(ProfileCtx);
+  const { setUpdatedDetails, employeeDetails } = useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [rows, setRows] = useState<AssetModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch();

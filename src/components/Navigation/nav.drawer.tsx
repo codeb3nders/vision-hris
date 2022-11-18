@@ -3,14 +3,16 @@ import {
   Box,
   Collapse,
   Drawer,
+  IconButton,
   List,
   ListItemButton,
   ListItemText,
 } from '@mui/material';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { ExpandLess, ExpandMore, MenuOpen } from '@mui/icons-material';
 import { VISION_LOGO_WHITE } from 'assets';
 import { Link } from 'react-router-dom';
 import { doNothing } from '@mui/x-date-pickers/internals/utils/utils';
+import { ChevronLeftIcon } from '@heroicons/react/outline';
 
 type Props = {
   open: boolean;
@@ -27,8 +29,13 @@ const NavDrawer = ({ open, setOpen, navigation }: Props) => {
       className='backdrop-blur-sm'
     >
       <Box sx={{ width: 320 }} role='presentation'>
-        <div className='bg-v-red p-4 flex items-center justify-center'>
-          <img src={VISION_LOGO_WHITE} alt='' className='h-8' />
+        <div className='bg-v-red flex items-center justify-center'>
+          <img src={VISION_LOGO_WHITE} alt='' className='h-14' />
+          <div className='cursor-pointer absolute right-[10px] z-10 flex'>
+            <IconButton onClick={() => setOpen(false)} className="text-white">
+              <MenuOpen />
+            </IconButton>
+          </div>
         </div>
         <List>
           {navigation.map((item: any) => {
@@ -39,7 +46,7 @@ const NavDrawer = ({ open, setOpen, navigation }: Props) => {
             ) : (
               <Link to={item.href} key={item.href}>
                 <ListItemButton
-                  className='text-sm'
+                  className='text-sm phone:text-lg'
                   onClick={() => setOpen(false)}
                   key={item.name}
                 >
@@ -60,11 +67,11 @@ const Menus = ({ item, setOpen }) => {
     <>
       <ListItemButton
         onClick={() => setOpenMenus(!openMenus)}
-        className='text-sm'
       >
         <ListItemText
           primary={item.name}
-          primaryTypographyProps={{ sx: { fontSize: '0.875rem' } }}
+          className='text-sm phone:text-lg'
+          primaryTypographyProps={{ className: 'text-sm phone:text-lg' }}
         />
 
         {openMenus ? <ExpandLess /> : <ExpandMore />}
@@ -77,7 +84,7 @@ const Menus = ({ item, setOpen }) => {
               <Link to={menu.href} key={i}>
                 <ListItemButton
                   sx={{ pl: 4 }}
-                  className='text-sm'
+                  className='text-sm phone:text-lg'
                   onClick={() => setOpen(false)}
                 >
                   {menu.label}

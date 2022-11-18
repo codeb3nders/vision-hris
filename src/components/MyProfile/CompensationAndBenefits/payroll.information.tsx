@@ -6,6 +6,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { useContext, useEffect, useState } from 'react';
 import { EmployeeI } from 'slices/interfaces/employeeI';
@@ -15,8 +16,9 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const PayrollInformation = (props: Props) => {
-  const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails, getIcon, enums } =
+  const { setEmployeeDetails, employeeDetails, setUpdatedDetails, getIcon, enums } =
     useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [payrollGroup, setPayrollGroup] = useState<any[]>([])
   const [paymentMethod, setPaymentMethod] = useState<any[]>([])
   

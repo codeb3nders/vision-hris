@@ -19,6 +19,7 @@ import {
   GridRowParams,
   MuiEvent,
 } from '@mui/x-data-grid';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import AddButton from 'CustomComponents/AddButton';
 import { useEffect, useState, useCallback, useContext, useMemo } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
@@ -27,7 +28,8 @@ import { ProfileCtx } from '../profile.main';
 type Props = {};
 
 const EmployeeBenefits = (props: Props) => {
-  const {setEmployeeDetails, employeeDetails, setUpdatedDetails, updatedDetails, getIcon, isNew} = useContext(ProfileCtx)
+  const {setEmployeeDetails, employeeDetails, setUpdatedDetails, updatedDetails, getIcon} = useContext(ProfileCtx)
+  const { isNew } = useContext(EmployeeCtx);
   const [benefits, setBenefits] = useState<any[]>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [withUpdate, setWithUpdate] = useState<boolean>(false);

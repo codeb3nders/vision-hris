@@ -11,9 +11,10 @@ type Props = {
   searchText: string;
   setEmployees: any;
   setIsLoading: any;
+  isLoading?: boolean;
 };
 
-const Search = ({ setSearchText, searchText, setEmployees, setIsLoading }: Props) => {
+const Search = ({ setSearchText, searchText, setEmployees, setIsLoading, isLoading }: Props) => {
   const searchRef: any = useRef(null);
   const { access_token } = useContext(AppCtx);
 
@@ -46,22 +47,21 @@ const Search = ({ setSearchText, searchText, setEmployees, setIsLoading }: Props
   };
 
   return (
-    <section className="flex-1 w-full desktop:max-w-[400px] laptop:max-w-[400px] tablet:max-w-full phone:max-w-full relative">
       <FormControl
         fullWidth
         size="small"
       >
-        <OutlinedInput
-          autoFocus
-          placeholder="Search by Employee Name"
-          ref={searchRef}
-          id="employee-search"
-          onChange={(e: any) => setSearchText(e.target.value)}
-          endAdornment={<SearchTwoTone />}
-          onKeyUp={handleSearch}
+      <OutlinedInput
+        disabled={isLoading}
+        autoFocus
+        placeholder="Search by Employee Name"
+        ref={searchRef}
+        id="employee-search"
+        onChange={(e: any) => setSearchText(e.target.value)}
+        endAdornment={<SearchTwoTone />}
+        onKeyUp={handleSearch}
         />
       </FormControl>
-    </section>
   );
 };
 

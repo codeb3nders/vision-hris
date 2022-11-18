@@ -1,5 +1,6 @@
 import { TabPanel } from '@mui/lab';
 import { Divider } from '@mui/material';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, lazy, Suspense } from 'react';
 import ChecklistTable from './201Checklist/checklist.table';
@@ -52,14 +53,16 @@ type Props = {
 };
 
 const ProfileTabContent = ({ className }: Props) => {
-  const { isNew, isView, handleUpdateEmployee, updatedDetails, index } = useContext(ProfileCtx);
+  const { isView, handleUpdateEmployee, updatedDetails, index } = useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const employeesTabs = ["1", "3"]
+
   return (
     <CustomCard
       id='tab-content'
       className={`desktop:p-6 laptop:p-6 phone:p-0 !pt-0 w-full ${className}`}
     >
-      <ProfileTabs className='phone:visible laptop:hidden desktop:hidden' />
+      <ProfileTabs className='phone:visible laptop:hidden desktop:hidden'/>
 
       {employeesTabs.indexOf(index) >= 0 && !isNew &&
         <div className='mb-2 flex flex-row justify-end'>
@@ -73,11 +76,11 @@ const ProfileTabContent = ({ className }: Props) => {
         </div>
       }
       <div
-        className={
-          isNew // || isView
-            ? 'overflow-y-auto desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
-            : ''
-        }
+        // className={
+        //   isNew // || isView
+        //     ? 'overflow-y-auto desktop:max-h-[450px] laptop:max-h-[450px] tablet:max-h-[450px] phone:max-h-[300px] desktop:min-h-[450px] laptop:min-h-[450px] tablet:min-h-[450px] phone:min-h-[300px]'
+        //     : ''
+        // }
       >
         <TabPanel value='1' className='p-0 grid' id='Personal'>
           <Suspense fallback={<div>Loading...</div>}>
@@ -124,7 +127,6 @@ const ProfileTabContent = ({ className }: Props) => {
           <Suspense fallback={<div>Loading...</div>}>
             <AllowanceDetails />
           </Suspense>
-          {/* <PayrollAccountDetails /> */}
           <Suspense fallback={<div>Loading...</div>}>
             <PayrollDetails />
           </Suspense>

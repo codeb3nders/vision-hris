@@ -1,21 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { createEndpoint, deleteEndpoint, getByEmployeeEndpoint, getByParamsEndpoint, updateEndpoint } from 'apis';
-import { URL_AUDIT_LOGS } from 'constants/EndpointPath';
+import { URL_USER_LOGS } from 'constants/EndpointPath';
 
 const initialCreateState: any = {
   createItem: null,
   createStatus: 'idle',
   createError: null,
-};
-
-const initialUpdateState: any = {
-  updateStatus: 'idle',
-  updateError: null,
-};
-
-const initialDeleteState: any = {
-  deleteStatus: 'idle',
-  deleteError: null,
 };
 
 const initialGetState: any = {
@@ -30,7 +20,7 @@ const initialGetByEmployeeState: any = {
   getByEmployeeError: null,
 };
 
-const name = "audit_logs";
+const name = "user-logs";
 
 export const createAction: any = createAsyncThunk(
   `${name}/create`,
@@ -39,7 +29,7 @@ export const createAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      return await createEndpoint(URL_AUDIT_LOGS, data.body, config);
+      return await createEndpoint(URL_USER_LOGS, data.body, config);
     } catch (err: any) {
       console.error(`${name}/create`, err);
       return err;
@@ -54,7 +44,7 @@ export const getAllDataAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await getByParamsEndpoint(URL_AUDIT_LOGS, config, data.params);
+      const response = await getByParamsEndpoint(URL_USER_LOGS, config, data.params);
       return [...response.data];
     } catch (err: any) {
       console.error(`${name}/get`, err);
@@ -70,7 +60,7 @@ export const getByEmployeeNoAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await getByEmployeeEndpoint(URL_AUDIT_LOGS, config, data.employeeNo);
+      const response = await getByEmployeeEndpoint(URL_USER_LOGS, config, data.employeeNo);
       return response.data;
     } catch (err: any) {
       console.error(`${name}/getByEmployeeNo`, err);
@@ -79,52 +69,18 @@ export const getByEmployeeNoAction: any = createAsyncThunk(
   }
 );
 
-export const updateAction: any = createAsyncThunk(
-  `${name}/update`,
-  async (data: { params: any; access_token: string }) => {
-      try {
-          const config = {
-              headers: { Authorization: `Bearer ${data.access_token}` },
-          };
-          return await updateEndpoint(URL_AUDIT_LOGS, data.params, config);
-      } catch (err: any) {
-          console.error(`${name}/update`, err);
-          return err;
-      }
-  }
-);
-
-export const deleteAction: any = createAsyncThunk(
-  `${name}/delete`,
-  async (data: { id: string; access_token: string }) => {
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${data.access_token}` },
-      };
-      return await deleteEndpoint(URL_AUDIT_LOGS, data.id, config);
-    } catch (err: any) {
-      console.error(`${name}/delete`, err);
-      return err;
-    }
-  }
-);
-
 export const auditLogsSlice = createSlice({
   name,
   initialState: {
     ...initialCreateState,
-    ...initialUpdateState,
     ...initialGetState,
-    ...initialDeleteState,
     ...initialGetByEmployeeState
   },
   reducers: {
     reset: () => {
       return {
         ...initialCreateState,
-        ...initialUpdateState,
         ...initialGetState,
-        ...initialDeleteState,
         ...initialGetByEmployeeState
       };
     }
@@ -171,39 +127,6 @@ export const auditLogsSlice = createSlice({
         state.getByEmployeeStatus = 'failed';
         state.getByEmployeeError = action.error.message;
       })
-    .addCase(updateAction.pending, (state) => {
-        state.updateStatus = 'loading';
-      })
-      .addCase(updateAction.fulfilled, (state, action) => {
-        console.log({ action });
-        if (action.payload.response) {
-            const { status, data } = action.payload.response;
-            state.updateStatus = 'failed';
-            state.updateError = data.error;
-        } else {
-            state.updateStatus = 'succeeded';
-        }
-      })
-      .addCase(updateAction.rejected, (state, action) => {
-        state.updateStatus = 'failed';
-        state.updateError = action.error.message;
-      })
-    .addCase(deleteAction.pending, (state) => {
-        state.deleteStatus = 'loading';
-      })
-      .addCase(deleteAction.fulfilled, (state, action) => {
-        if (action.payload.response) {
-            const { status, data } = action.payload.response;
-            state.deleteStatus = 'failed';
-            state.deleteError = data.error;
-        } else {
-            state.deleteStatus = 'succeeded';
-        }
-      })
-      .addCase(deleteAction.rejected, (state, action) => {
-        state.deleteStatus = 'failed';
-        state.deleteError = action.error.message;
-      })
   },
 });
 
@@ -218,13 +141,6 @@ export const dataError = (state: any) => state[name].getError;
 export const employeeData = (state: any) => state[name].getByEmployeeItems;
 export const employeeDataStatus = (state: any) => state[name].getByEmployeeStatus;
 export const employeeDataError = (state: any) => state[name].getByEmployeeError;
-
-export const updateStatus = (state: any) => state[name].updateStatus;
-export const updateError = (state: any) => state[name].updateError;
-
-export const deleteStatus = (state: any) => state[name].deleteStatus;
-export const deleteError = (state: any) => state[name].deleteError;
-
 
 export const { reset } = auditLogsSlice.actions;
 

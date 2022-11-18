@@ -16,6 +16,7 @@ import GridWrapper from 'CustomComponents/GridWrapper';
 import React, { lazy, Suspense, useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 const Address = lazy(() => import('./address'));
 
 type Props = {};
@@ -26,10 +27,9 @@ const Personal = (props: Props) => {
     employeeDetails,
     isOwner,
     enums,
-    isView,
-    isNew,
     setUpdatedDetails, updatedDetails, getIcon
   } = useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [otherReligion, setOtherReligion] = useState<boolean>(false);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
   const [philData, setPhilData] = useState<any>(null);
@@ -37,17 +37,14 @@ const Personal = (props: Props) => {
   const [civilStatus, setCivilStatus] = useState<any[]>([]);
   const [religion, setReligion] = useState<any[]>([]);
   const [genders, setGenders] = useState<any[]>([]);
-
+console.log({isNew}, "nnnnnnnnnnn")
   useEffect(() => {
     setCitizenship(enums.citizenship);
     setCivilStatus(enums.civil_status);
     setReligion(enums.religions);
     setGenders(enums.gender);
-    console.log({ employeeDetails }, "vvvvvvvvvvvvvvvvvvvvvvv")
   }, [enums]);
-    console.log(employeeDetails.gender?.code, "employeeDetails.gender.code")
 
-  console.log({ employeeDetails }, { updatedDetails })
   useEffect(() => {
     console.log({ sameAddress })
     if (sameAddress) {

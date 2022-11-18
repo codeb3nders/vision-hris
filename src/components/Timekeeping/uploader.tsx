@@ -88,39 +88,48 @@ const TimekeepingUploader = ({ open, setOpen, setIsSaving, isSaving }: Props) =>
                 }
                 
             });
-        let employeesTKdata: any = [], employeeName;
+      let employeesTKdata: any = [], employeeName, details:any[] = [];
         for (var i = 0; i < tempLines.length; i++){
-            const employeeNameTmp = tempLines[i][0].split(".) ");
-            if (employeeNameTmp.length === 2) {
-                employeeName = employeeNameTmp[1]
-            } else {
-                employeesTKdata.push({
-                    employeeName,
-                    date: tempLines[i][0],
-                    day: tempLines[i][1],
-                    holidayType: tempLines[i][2],
-                    shift: tempLines[i][3],
-                    in1: tempLines[i][4],
-                    out1: tempLines[i][5],
-                    in2: tempLines[i][6],
-                    out2: tempLines[i][7],
-                    regHours: tempLines[i][8],
-                    lateMins: tempLines[i][9],
-                    utMins: tempLines[i][10],
-                    absentHrs: tempLines[i][11],
-                    otHrs: tempLines[i][12],
-                    ndiffHrs: tempLines[i][13],
-                    ndiffOTHrs: tempLines[i][14],
-                    remarks: tempLines[i][15]
-                })
+          const employeeNameTmp = tempLines[i][0].split(".) ");
+          if (employeeNameTmp.length === 2) {
+            details = [];
+            employeeName = employeeNameTmp[1]
+            employeesTKdata.push({
+              ...params,
+              employeeName
+            });
+          } else {
+            details.push({
+              date: tempLines[i][0],
+              day: tempLines[i][1],
+              holidayType: tempLines[i][2],
+              shift: tempLines[i][3],
+              in1: tempLines[i][4],
+              out1: tempLines[i][5],
+              in2: tempLines[i][6],
+              out2: tempLines[i][7],
+              regHours: tempLines[i][8],
+              lateMins: tempLines[i][9],
+              utMins: tempLines[i][10],
+              absentHrs: tempLines[i][11],
+              otHrs: tempLines[i][12],
+              ndiffHrs: tempLines[i][13],
+              ndiffOTHrs: tempLines[i][14],
+              remarks: tempLines[i][15]
+            })
+            const index = employeesTKdata.findIndex((o: any) => o.employeeName === employeeName);
+            if (index >= 0) {
+              employeesTKdata[index].details = details;
             }
+          }
         }
         if (employeesTKdata.length > 0) {
             setProcessing(false);
         }
         setData(employeesTKdata);
-        console.log({tempLines})
-        console.log({ employeesTKdata })
+        // console.log({tempLines})
+      console.log({ employeesTKdata })
+      debugger;
 
     }
 

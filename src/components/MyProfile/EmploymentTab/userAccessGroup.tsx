@@ -27,13 +27,15 @@ import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { AppCtx, consoler } from 'App';
 import { UserGroupIcon } from '@heroicons/react/outline';
 import { updateUserCredentialsEndpoint, UserCredentialsI } from 'apis/userAccess';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {};
 
 const UserAccessGroup = (props: Props) => {
   const dispatch = useDispatch();
   const { access_token } = useContext(AppCtx);
-  const { employeeDetails, setIndex, setEmployeeDetails, isNew } = useContext(ProfileCtx);
+  const { employeeDetails, setEmployeeDetails, setIndex } = useContext(ProfileCtx);
+  const {isNew} = useContext(EmployeeCtx)
   const getEmployeeItems = useSelector(_getEmployeeItems);
   const [isApprover, setIsApprover] = useState<boolean>(false);
   const [nonRankAndFileEmployees, setNonRankAndFileEmployees] = useState<any[]>([]);

@@ -36,6 +36,7 @@ import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
 import { AppCtx, consoler } from 'App';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import { generateCompanyEmail, getContractEndDate, getProbationaryEndDate } from 'utils/functions';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {};
 
@@ -51,13 +52,15 @@ type JobInfoI = {
 
 const JobInfo = (props: Props) => {
   const {
-    isNew,
+    // isNew,
+    setIndex,
     employeeDetails,
     setEmployeeDetails,
     enums,
     isView,
-    setUpdatedDetails, failed, setIndex
+    setUpdatedDetails, failed
   } = useContext(ProfileCtx);
+  const {isNew} = useContext(EmployeeCtx)
   const { access_token } = useContext(AppCtx)
   const dispatch = useDispatch();
   const getEmployeeItems = useSelector(_getEmployeeItems);

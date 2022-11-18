@@ -22,6 +22,7 @@ import { RELATION } from 'constants/Values';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import AddButton from 'CustomComponents/AddButton';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {};
 
@@ -40,8 +41,9 @@ const initialData = {
 }
 
 const Contacts = (props: Props) => {
-  const { isNew, setUpdatedDetails, employeeDetails, setEmployeeDetails, getIcon, failed, resetNotif } =
+  const { setUpdatedDetails, employeeDetails, setEmployeeDetails, getIcon, failed, resetNotif } =
     useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [rows, setRows] = useState<ContactsI[]>([]);
   const [newContact, setNewContact] = useState<any>(initialData);
   const [open, setOpen] = useState<boolean>(false);

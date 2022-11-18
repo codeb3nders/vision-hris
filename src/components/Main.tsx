@@ -17,6 +17,8 @@ import CompanyAssets from "./CompanyAssets";
 import Timekeeping from "./Timekeeping";
 import TimekeepingDetails from "./Timekeeping/details"
 import TeamLeaders from "./TeamLeaders";
+import LeaveManagement from "./EmployeeDashboard/Management/LeaveManagement";
+import OTManangement from "./EmployeeDashboard/Management/OTManangement";
 const { Employee, HR } = Path;
 
 type MainCtxI = {
@@ -113,8 +115,23 @@ const Main: React.FC<Props> = ({ role }) => {
                 path={Path.HR.People.Approvers}
                 component={TeamLeaders}
               />
+              <PrivateRoute
+                is_allowed={isAllowed("leave-requests")}
+                path={HR.Requests.Leave}
+                component={LeaveManagement}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed("ot-requests")}
+                path={HR.Requests.OT}
+                component={OTManangement}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed("employees-profile")}
+                path={HR.People.EmployeeProfile}
+                component={ProfileMain}
+              />
 
-              <Route path={Employee.Profile} component={ProfileMain} />
+              <Route path={Employee.Profile} exact component={ProfileMain} />
 
               <Route component={ErrorPage} path="/noaccess/:page" />
               <Route component={ErrorPage} path="*" />

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { TabList } from '@mui/lab';
-import { Tab, Box } from '@mui/material';
+import { Tab, Box, Tabs } from '@mui/material';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import React, { useContext, useEffect, useState } from 'react';
 import { ProfileCtx } from './profile.main';
 
@@ -9,7 +10,8 @@ type Props = {
 };
 
 const ProfileTabs = ({ className }: Props) => {
-  const { index, setIndex, isNew } = useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
+  const { index, setIndex } = useContext(ProfileCtx);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
     <Box
       className={`${className} phone:mb-4 tablet:mb-4 laptop:mb-0 desktop:mb-0`}
     >
-      <TabList
+      <Tabs
         value={index}
         onChange={(event: React.SyntheticEvent, newValue: string) =>
           setIndex(newValue)
@@ -60,10 +62,9 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
         className={`tab-list [&>div>.MuiTabs-indicator]:!bg-v-red ${
           isMobile ? 'border-b border-gray-200' : ''
         }`}
-        scrollButtons={true}
-        // scrollButtons={isMobile}
-        // variant={'scrollable'}
-        variant={isMobile ? 'scrollable' : 'fullWidth'}
+        variant="scrollable"
+        scrollButtons
+        allowScrollButtonsMobile
       >
         <Tab
           className={`p-1 px-0 tablet:text-[0.55rem] phone:text-[0.55rem] laptop:text-[.65rem] desktop:text-[.65rem] flex-1 ${
@@ -95,7 +96,7 @@ const HRTabs = ({ className, index, setIndex, isMobile }) => {
           key='compensation-tab'
           itemID='compensation-tab'
         />
-      </TabList>
+      </Tabs>
     </Box>
   );
 };

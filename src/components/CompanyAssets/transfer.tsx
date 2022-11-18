@@ -77,7 +77,7 @@ const AssetTransfer = ({ setOpenTransfer, openTransfer, access_token, assetData,
         ...returnedAsset,
         companyAssetId: assetData.id,
         conditionReturned: assetData.status,
-        id: assetData.assignedTo.id
+        id: assetData.assignedTo?.id
       })
     }
   }, [assetData])

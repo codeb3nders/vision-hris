@@ -36,16 +36,24 @@ import { getByParamsEndpoint } from 'apis';
 import { getAvatar } from 'utils/functions';
 import { VISION_RED } from 'constants/Colors';
 import { createCredentialsEndpoint } from 'apis/userAccess';
+import { initialState } from 'components/MyProfile/employee.initialstate';
 
 type Props = {};
 
-export const EmployeeCtx = createContext<any>({});
+export const EmployeeCtx = createContext<any>({
+  // index: '1',
+  // setIndex: () => { },
+  isNew: false,
+  setIsNew: () => { },
+});
 
 const EmployeeDatabase: React.FC<Props> = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
   const { access_token } = useContext(AppCtx);
+  // const [index, setIndex] = useState<string>('1');
+  const [isNew, setIsNew] = useState<boolean>(false);
 
   // Employees
   const getEmployeeItems = useSelector(_getEmployeeItems);
@@ -53,10 +61,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
 
   const { setIsTable } = useContext(MainCtx);
   const [viewDetails, setViewDetails] = useState<{
-    employeeNo: string;
+    employeeDetails: EmployeeDBI;
     status: boolean;
   }>({
-    employeeNo: '',
+    employeeDetails: initialState,
     status: false,
   });
   const [loading, setIsLoading] = useState<boolean>(true);
@@ -74,6 +82,12 @@ const EmployeeDatabase: React.FC<Props> = () => {
   const [credentialsCreated, setCredentialsCreated] = useState<boolean>(false);
 
   useEffect(() => { getUserCredentials() }, [])
+
+  useEffect(() => { 
+    if (!open) {
+      setIsNew(false);
+    }
+  }, [open])
   console.log({getEmployeeStatus})
   useEffect(() => { 
     if (getEmployeeStatus === "succeeded") {
@@ -86,6 +100,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       setEmployees(employees);
       setTempEmployees(employees);
       setIsLoading(false);
+      setRefresh(false);
     }
   }, [getEmployeeStatus])
 
@@ -98,6 +113,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [location]);
 
   useEffect(() => {
+    console.log({refresh})
     if (access_token && refresh) {
       dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
     }
@@ -173,8 +189,8 @@ console.log({sendAccessList})
             style={{ cursor: 'pointer' }}
             onClick={() =>
               setViewDetails({
-                employeeNo: cell.row.employeeNo,
-                status: true,
+                employeeDetails: cell.row,
+                status: true
               })
             }
           >
@@ -299,8 +315,8 @@ console.log({sendAccessList})
   };
 
   return (
-    <EmployeeCtx.Provider value={{ setRefresh }}>
-      <NewEmployeeProfile open={open} setOpen={setOpen} setViewDetails={setViewDetails} />
+    <EmployeeCtx.Provider value={{ setRefresh, isNew }}>
+      <NewEmployeeProfile open={open} setOpen={setOpen} setViewDetails={setViewDetails} viewDetails={viewDetails} />
       { viewDetails.status && <ViewEmployeeProfile
         viewDetails={viewDetails}
         setViewDetails={setViewDetails}
@@ -316,8 +332,9 @@ console.log({sendAccessList})
           className="z-10"
         />
         <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
-          <Search setSearchText={setSearchText} searchText={searchText} setEmployees={setEmployees} setIsLoading={setIsLoading} />
-
+          <div className='flex-1 w-full desktop:max-w-[400px] laptop:max-w-[400px] tablet:max-w-full phone:max-w-full relative'>
+            <Search setSearchText={setSearchText} searchText={searchText} setEmployees={setEmployees} setIsLoading={setIsLoading} isLoading={loading} />
+          </div>
           <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
             <LoadingButton
               onClick={sendCredentials}
@@ -347,7 +364,10 @@ console.log({sendAccessList})
 
             <Button
               startIcon={<AddCircleOutlineTwoTone />}
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true);
+                setIsNew(true);
+              }}
               id="add-new-employee-btn"
             >
               Add New Employee
@@ -361,6 +381,7 @@ console.log({sendAccessList})
         <DataGrid
           components={{ Toolbar: GridToolbar }}
           autoHeight
+          className='data-grid'
           density="standard"
           disableSelectionOnClick
           rows={employees}

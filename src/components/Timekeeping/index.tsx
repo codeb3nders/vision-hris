@@ -54,21 +54,23 @@ const Timekeeping: React.FC<Props> = () => {
   const newDataError = useSelector(_newDataError);
   
   useEffect(() => {
-    if (newDataStatus !== "idle") {
-      if (newDataStatus === "succeeded") {
+    switch (newDataStatus) {
+      case "succeeded":
         success(reset(), "Timekeeping file was successfully processed.");
         setOpenUploader(false);
-      } else {
-        failed(newDataError)
-      }
+        break;
+      case "failed":
+        failed(newDataError);
+        break;
+      default:
     }
   }, [newDataStatus])
-
+console.log({newDataStatus}, {dataStatus})
   useEffect(() => {
     if (dataStatus !== "idle") {
       var result:TimekeepingLogI[] = [];
       timekeepingData.reduce(function (res:any, curr: TimekeepingI) {
-        const period:string = `${curr.periodStartDate} - ${curr.periodEndDate}`;
+        const period: string = `${moment(curr.periodStartDate).format("L")} - ${moment(curr.periodEndDate).format("L")}`;
         if (!res[period]) {
           res[period] = { period, total_record: 0, dateUploaded: moment(curr.timestamp).format("lll"), total_verified: 0 };
           result.push(res[period]);
@@ -79,7 +81,7 @@ const Timekeeping: React.FC<Props> = () => {
       }, {});
 
       console.log(result)
-      setData(data);
+      setData(result);
     }
   }, [dataStatus]);
 
@@ -93,7 +95,6 @@ const Timekeeping: React.FC<Props> = () => {
   }
 
   const success = (cb: any, message: string) => {
-    console.log({ message })
     setOpenNotif({
       message,
       status: true,
@@ -147,14 +148,15 @@ const Timekeeping: React.FC<Props> = () => {
           </div>
         </section>  
         <DataGrid
+          className="data-grid"
           autoHeight
-          getRowHeight={() => "auto"}
-          // density="compact"
+          // getRowHeight={() => "auto"}
+          density="compact"
           disableSelectionOnClick
           rows={data}
           columns={columns()}
-          pageSize={30}
-          rowsPerPageOptions={[30]}
+          pageSize={10}
+          rowsPerPageOptions={[10]}
           checkboxSelection={false}
           getRowId={(row) => row.period}
         />
@@ -176,10 +178,13 @@ const columns = () => [
     flex: 1,
   },
   {
-    field: "timestamp",
+    field: "dateUploaded",
     headerName: "Date/Time Uploaded",
     flex: 1,
-    renderCell: (cell) => cell.value && moment(cell.value).format("ll"),
+    // renderCell: (cell) => {
+    //   console.log(cell.value, "xxxxxxxxxx")
+    //   return new Date(cell.value*1000);
+    // },
     sortable: false,
   },
   {

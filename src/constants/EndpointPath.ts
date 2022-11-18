@@ -16,4 +16,4 @@ export const URL_VALIDATE_CODE = `${env.BASE_URL}/user-credentials/validate-code
 export const URL_CHANGE_PASSWORD = `${env.BASE_URL}/user-credentials/change-password/`;
 export const URL_COMPANY_ASSETS = `${env.BASE_URL}/asset/company/`;
 export const URL_TIMEKEEPING = `${env.BASE_URL}/time-keeping/`;
-export const URL_AUDIT_LOGS = `${env.BASE_URL}/audit-logs/`;
+export const URL_USER_LOGS = `${env.BASE_URL}/audit-logs/`;

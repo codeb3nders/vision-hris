@@ -6,6 +6,7 @@ import {
 } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import AddButton from 'CustomComponents/AddButton';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { lazy, useContext, useEffect, useState, memo, useMemo } from 'react';
@@ -25,8 +26,9 @@ export type FamilyI = {
 };
 
 const FamilyBackground = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails, getIcon, updatedDetails } =
+  const { employeeDetails, setEmployeeDetails, setUpdatedDetails, getIcon, updatedDetails } =
     useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [family, setFamily] = useState<FamilyI[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [withUpdate, setWithUpdate] = useState<boolean>(false);

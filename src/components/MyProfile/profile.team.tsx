@@ -14,12 +14,13 @@ import { useSelector } from 'react-redux';
 import { getAvatar } from 'utils/functions';
 import { ProfileCtx } from './profile.main';
 import CollapseWrapper from './PersonalProfileTab/collapse.wrapper';
+import { EmployeeDBI } from 'slices/interfaces/employeeI';
 
 type Props = {
   className?: string;
   setViewDetails?: React.Dispatch<
     React.SetStateAction<{
-      employeeNo: string;
+      employeeDetails: EmployeeDBI;
       status: boolean;
     }>
   >;
@@ -59,7 +60,7 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
             isHRLogin &&
               setViewDetails &&
               setViewDetails({
-                employeeNo: o.employeeNo,
+                employeeDetails: o,
                 status: true,
               });
           }}
@@ -90,7 +91,7 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
             isHRLogin &&
               setViewDetails &&
               setViewDetails({
-                employeeNo: employeeDetails.reportsTo.employeeNo,
+                employeeDetails: employeeDetails.reportsTo,
                 status: true,
               });
           }}
@@ -116,7 +117,6 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
           panelTitle='Teammates'
           titleClassName='text-xs font-bold text-gray-500 mt-2 uppercase'
           titleWrapperClassName='!pl-0'
-          open
         >
           {getMyTeamMates()}
         </CollapseWrapper>

@@ -268,6 +268,7 @@ const CompanyAssets = (props: Props) => {
           </div>
         </section>
         <DataGrid
+          className='data-grid'
           autoHeight
           disableSelectionOnClick
           rows={rows}

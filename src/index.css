@@ -46,7 +46,7 @@ code {
   }
 
   .data-grid .MuiDataGrid-row > * {
-    @apply border-0 first:text-white dark:text-white;
+    @apply border-0 ;
   }
 
   .data-grid .MuiDataGrid-row.Mui-selected {

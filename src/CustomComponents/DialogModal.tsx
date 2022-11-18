@@ -59,7 +59,7 @@ const DialogModal: React.FC<Props> = ({
                 </Dialog.Title>
 
                 <Dialog.Description className='max-h-[500px] overflow-auto pr-2'>
-                  <div className='mt-2 flex w-full flex-col'>{children}</div>
+                  <div className='mt-0 flex w-full flex-col'>{children}</div>
                 </Dialog.Description>
 
                 <Dialog.Description className='pt-2 text-right'>

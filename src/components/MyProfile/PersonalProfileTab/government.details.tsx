@@ -12,6 +12,7 @@ import CollapseWrapper from './collapse.wrapper';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {};
 
@@ -20,9 +21,9 @@ const GovernmentDetails = (props: Props) => {
     employeeDetails,
     setEmployeeDetails,
     isOwner,
-    isNew,
     setUpdatedDetails, getIcon
   } = useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
 
   const handleTaxExemption = () => {

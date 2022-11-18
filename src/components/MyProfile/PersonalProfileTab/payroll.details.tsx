@@ -1,5 +1,6 @@
 import { AccountBalanceWalletTwoTone } from '@mui/icons-material';
 import { TextField } from '@mui/material';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import React, { useContext } from 'react';
 import { ProfileCtx } from '../profile.main';
@@ -8,8 +9,9 @@ import CollapseWrapper from './collapse.wrapper';
 type Props = {};
 
 const PayrollDetails = (props: Props) => {
-  const { employeeDetails, setEmployeeDetails, isNew, setUpdatedDetails, getIcon } =
+  const { employeeDetails, setEmployeeDetails, setUpdatedDetails, getIcon } =
     useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
 
   return (
     <CollapseWrapper

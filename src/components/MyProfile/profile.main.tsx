@@ -51,27 +51,32 @@ import useRequiredChecker from 'hooks/useRequiredChecker';
 import { EMPLOYMENT_HISTORY_TYPE, JOB_HISTORY_TYPE } from 'constants/Values';
 import { SvgIconComponent } from '@mui/icons-material';
 import moment from 'moment';
+import ProfileTabs from './profile.tabs';
+import ProfileDetails from './profile.details';
+import { useParams } from 'react-router-dom';
+import { getContractEndDate, getProbationaryEndDate } from 'utils/functions';
 
-const ProfileDetails = lazy(() => import('./profile.details'));
+// const ProfileDetails = lazy(() => import('./profile.details'));
 const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
 
 type Props = {
-  isNew?: boolean;
+  isModal?: boolean;
   isView?: boolean;
   employeeNo?: string;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setViewDetails?: React.Dispatch<
     React.SetStateAction<{
-      employeeNo: string;
+      employeeDetails: EmployeeDBI;
       status: boolean;
     }>
   >;
+  viewDetails: any;
 };
 
 export type ProfileModel = {
   index: string;
   setIndex: React.Dispatch<React.SetStateAction<string>>;
-  isNew?: boolean;
+  isModal?: boolean;
   isView?: boolean;
   employeeDetails: EmployeeDBI;
   setEmployeeDetails: React.Dispatch<React.SetStateAction<EmployeeI>>;
@@ -97,7 +102,7 @@ export type ProfileModel = {
 export const ProfileCtx = createContext<ProfileModel>({
   index: '1',
   setIndex: () => { },
-  isNew: false,
+  isModal: false,
   isView: false,
   employeeDetails: initialState,
   setEmployeeDetails: () => { },
@@ -173,16 +178,18 @@ const enumsInitialState = {
 };
 
 const ProfileMain = ({
-  isNew,
+  isModal,
   isView,
   employeeNo,
   setOpen,
   setViewDetails,
+  viewDetails
 }: Props) => {
   const dispatch = useDispatch();
 
   const [updatedDetails, setUpdatedDetails] = useState<any>(null);
   const [index, setIndex] = useState<string>('1');
+  const {isNew} = useContext(EmployeeCtx);
   const { isLoggedIn, userData, access_token, userGroup } = useContext(AppCtx);
   const { setRefresh } = useContext(EmployeeCtx);
   const [employeeDetails, setEmployeeDetails] =
@@ -203,10 +210,6 @@ const ProfileMain = ({
     [employeeDetails]
   );
 
-  const setEmployeeDetailsCallback = useCallback(
-    (data: EmployeeI) => setEmployeeDetails(data),
-    []
-  );
   const [displayPhotos, setDisplayPhotos] = useState<any[]>([]);
   const [openNotif, setOpenNotif] = useState<{
     message: string;
@@ -235,11 +238,13 @@ const ProfileMain = ({
   // Employee History
   const employeeHistoryData = useSelector(_getEmployeeHistoryData);
 
-  useEffect(() => {
-    if (isNew && employeeDetails.firstName && employeeDetails.birthDate && moment(employeeDetails.birthDate).isValid()) {
-      checkForDuplicate();
-    }
-  }, [employeeDetails.firstName, employeeDetails.birthDate])
+  const params:any = useParams();
+
+  // useEffect(() => {
+  //   if (isNew && employeeDetails.firstName && employeeDetails.birthDate && moment(employeeDetails.birthDate).isValid()) {
+  //     checkForDuplicate();
+  //   }
+  // }, [employeeDetails.firstName, employeeDetails.birthDate])
 
   /** Employees: NEW */
   useEffect(() => {
@@ -255,7 +260,6 @@ const ProfileMain = ({
   }, [newEmployeeStatus]);
 
   useEffect(() => {
-    console.log({ employeeHistoryData });
     handleHistory();
   }, [employeeHistoryData]);
 
@@ -268,6 +272,7 @@ const ProfileMain = ({
         success(resetUpdate(), "employeeUpdatedStatus");
         const updatedDetailsTmp = updatedDetails;
         clearUpdatedDetails();
+        setRefresh(true);
         setEmployeeDetails((prev: EmployeeI) => {
           return {
             ...prev,
@@ -279,36 +284,40 @@ const ProfileMain = ({
   }, [employeeUpdatedStatus]);
 
   useEffect(() => {
-    if (access_token && employeeNo) {
+    if (access_token && (employeeNo || params?.employeeNo)) {
+      const employeeNumber = employeeNo || params?.employeeNo
       dispatch(
         _getOneEmployeeAction({
           access_token,
-          params: { employeeNo },
+          params: { employeeNo: employeeNumber },
         })
       );
+    } else {
+      if (!isNew) {
+        setEmployeeDetails(userData)
+        setIsOwner(true);
+      }
     }
   }, [access_token, employeeNo]);
-  console.log({ updatedDetails }, { employeeDetails })
+
   useEffect(() => {
     handleGetDisplayPhoto();
     setIndex(index);
     if (isNew) {
       setEmployeeDetails(initialState);
     } else {
-      if (employeeData) {
-        getEmployeeHistory();
-      } else {
-        setIsOwner(true);
+      const employeeNo = employeeData?.employeeNo || params?.employeeNo || employeeDetails.employeeNo;
+      if (employeeNo) {
+        getEmployeeHistory(employeeNo);
       }
     }
-  }, [employeeData, isLoggedIn, isNew, isView]);
+  }, [employeeData, isLoggedIn, isNew, isView, isOwner]);
 
-  const getEmployeeHistory = async () => {
-    console.log({ employeeData });
+  const getEmployeeHistory = async (employeeNo) => {
     dispatch(
       _getEmployeeHistoryAction({
         access_token,
-        employeeNo: employeeData.employeeNo,
+        employeeNo
       })
     );
   };
@@ -331,17 +340,28 @@ const ProfileMain = ({
         default:
       }
     });
-    setEmployeeDetails(() => {
+    if (isOwner) {
+      setEmployeeDetails(() => {
       return {
         ...initialState,
-        ...employeeData,
+        ...userData,
         employment_history: employmentHistory,
         job_history: jobHistory,
       };
     });
+    } else {
+      setEmployeeDetails(() => {
+        return {
+          ...initialState,
+          ...employeeData,
+          employment_history: employmentHistory,
+          job_history: jobHistory,
+        };
+      });
+    }
     setEducationalBgData(employeeData?.educationalBackground || [])
   };
-
+console.log({isOwner})
   const success = (cb: any, test: string) => {
     console.log({ test })
     setLoading({ status: false, action: '' });
@@ -383,7 +403,7 @@ const ProfileMain = ({
       severity: '',
     });
   }
-console.log({enumsData})
+
   useEffect(() => {
     var positions: any = [],
       departments: any = [],
@@ -533,8 +553,15 @@ console.log({enumsData})
     setLoading({ status: true, action: 'Saving' });
     try {
       consoler(employeeDetails, 'blue', 'saveEmployee');
-      const { employment_history, job_history, ...rest} = employeeDetails;
-      await dispatch(createEmployee({ body: rest, access_token }));
+      const { employment_history, job_history, ...rest } = employeeDetails;
+      let endOfProbationary:any = null, contractEndDate:any = null;
+      if (rest.endOfProbationary) {
+        endOfProbationary = moment(getProbationaryEndDate(rest.dateHired)).valueOf();
+      }
+      if (rest.contractEndDate) {
+        contractEndDate = moment(getContractEndDate(rest.dateHired)).valueOf();
+      }
+      await dispatch(createEmployee({ body: {...rest, endOfProbationary, contractEndDate}, access_token }));
     } catch (error: any) {
       setLoading({ status: false, action: '' });
       console.log(error);
@@ -606,20 +633,20 @@ console.log({enumsData})
     return icon;
   };
 
-  const checkForDuplicate = async () => {
-    await dispatch(checkEmployeeExists({
-      access_token, params: {
-        firstName: employeeDetails.firstName,
-        birthDate: moment(employeeDetails.birthDate).format("YYYY-MM-DD")
-      }
-    }))
-  }
+  // const checkForDuplicate = async () => {
+  //   await dispatch(checkEmployeeExists({
+  //     access_token, params: {
+  //       firstName: employeeDetails.firstName,
+  //       birthDate: moment(employeeDetails.birthDate).format("YYYY-MM-DD")
+  //     }
+  //   }))
+  // }
 
   return (
     <ProfileCtx.Provider
       value={{
         index,
-        isNew,
+        isModal,
         employeeDetails,
         isView,
         displayPhoto,
@@ -657,12 +684,15 @@ console.log({enumsData})
 
       <TabContext value={index}>
         <section
-          className={`mt-4 grid gap-4 pb-0 w-full mb-10 px-4 ${isNew ? '!pb-0' : ''
+          className={`mt-0 grid gap-4 pb-0 w-full mb-10 px-4 ${isNew ? '!pb-0' : ''
             }`}
         >
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProfileDetails setViewDetails={setViewDetails} setOpen={setOpen} />
-          </Suspense>
+          {!isModal && employeeDetails && !isNew &&
+            <ProfileDetails employeeDetails={employeeDetails} />
+          }
+          {/* <section className='laptop:col-span-12 desktop:col-span-12 tablet:col-span-12 phone:col-span-12 phone:text-xs flex flex-col justify-end phone:text-center tablet:text-left laptop:text-left desktop:text-left'> */}
+            <ProfileTabs className='phone:hidden laptop:block desktop:block tablet:hidden ' />
+          {/* </section> */}
           <section className='grid grid-cols-12 w-full gap-4'>
             {!isNew && (
               <article className='laptop:col-span-3 desktop:col-span-3 phone:col-span-12 grid gap-4 self-start'>

@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {
   data: any;
@@ -17,8 +18,9 @@ type Props = {
 };
 
 const Address = ({ data, isPermanent }: Props) => {
-  const { setEmployeeDetails, employeeDetails, isNew, setUpdatedDetails, updatedDetails } =
+  const { setEmployeeDetails, employeeDetails, setUpdatedDetails, updatedDetails } =
     useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
 
   const [regionList, setRegionList] = useState<any[]>([]);
   const [provinceList, setProvinceList] = useState<any>({});
@@ -48,9 +50,9 @@ const Address = ({ data, isPermanent }: Props) => {
 
   useEffect(() => {
     if (regionFile.length > 0 && employeeDetails) {
-      const region = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].region,
-        province = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].province,
-        municipality = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`].municipality;
+      const region = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.region,
+        province = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.province,
+        municipality = employeeDetails[`${isPermanent ? 'permanentAddress' : 'presentAddress'}`]?.municipality;
 
       let provinceList: any[] = [], municipalityList: any[] = [], barangayList: any[] = [];
       const regionIdx = regionFile.findIndex((o: any) => o.region_name === region);

@@ -10,13 +10,19 @@ import {
   Avatar,
   Chip,
   Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Grid,
+  Paper,
 } from "@mui/material";
 import {
-  AddCircleOutlineTwoTone,
   EmailTwoTone,
+  GroupTwoTone,
   LocationOnTwoTone,
   PhoneTwoTone,
-  UploadTwoTone,
 } from "@mui/icons-material";
 import {
   getAllEmployeesAction as _getEmployeesAction,
@@ -25,13 +31,22 @@ import {
   getEmployeeError as _getEmployeeError,
 } from "slices";
 import { EmployeeDBI, EmployeeI } from "slices/interfaces/employeeI";
-import { MainCtx } from "components/Main";
+import { styled } from '@mui/material/styles';
 import { AppCtx } from "App";
 import { getAvatar } from "utils/functions";
 import { VISION_RED } from "constants/Colors";
 import Search from "../HRDashboard/search";
+import CustomCard from "CustomComponents/CustomCard";
 
 type Props = {};
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const EmployeeDirectory: React.FC<Props> = () => {
   const dispatch = useDispatch();
@@ -39,53 +54,130 @@ const EmployeeDirectory: React.FC<Props> = () => {
   const getEmployeeStatus = useSelector(_getEmployeeStatus);
   const [employees, setEmployees] = useState<EmployeeI[]>([]);
   const [searchText, setSearchText] = useState<string>("");
-  const [loading, setIsLoading] = useState<boolean>(true);
-  const [tempEmployees, setTempEmployees] = useState<EmployeeDBI[]>([]);
-  const { access_token } = useContext(AppCtx);
+  const [loading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (access_token) {
-      dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
-    }
-  }, [access_token]);
-
-  useEffect(() => {
-    const employees = getEmployeeItems.map((r: any) => {
-      const mi = r.middleName ? r.middleName.charAt(0) : "";
-      const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
-      return { ...r, id: r.employeeNo, full_name };
-    });
-    setEmployees(employees);
-    setTempEmployees(employees);
-    setIsLoading(false);
-  }, [getEmployeeItems]);
-
+  console.log({loading})
   useEffect(() => {
     if (searchText.length <= 0) {
-      setEmployees(tempEmployees);
+      // setEmployees(tempEmployees);
     }
   }, [searchText]);
 
   return (
     <>
-      <Card sx={{ mt: 5, p: 2 }}>
-        <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-left justify-left mb-2">
-          <Search setSearchText={setSearchText} searchText={searchText} setEmployees={setEmployees} setIsLoading={setIsLoading} />
-        </section>
-        <DataGrid
-          autoHeight
-          getRowHeight={() => "auto"}
-          // density="compact"
-          disableSelectionOnClick
-          rows={employees || []}
-          columns={columns()}
-          pageSize={30}
-          rowsPerPageOptions={[30]}
-          checkboxSelection={false}
-          loading={loading}
-          getRowId={(row) => row.employeeNo}
-        />
-      </Card>
+      {/* <Card sx={{ mt: 5, p: 2 }}> */}
+      <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center my-5">
+          <div className='flex-1 w-full desktop:max-w-[600px] laptop:max-w-[600px] tablet:max-w-full phone:max-w-full relative'>
+            <Search setSearchText={setSearchText} searchText={searchText} setEmployees={setEmployees} setIsLoading={setIsLoading} isLoading={loading} />
+          </div>
+      </section>
+      <Grid container justifyContent="center" spacing={{ xs: 1, md: 2 }} columns={{ xs: 12, sm: 6, md: 12 }}>
+      {employees.map((e: EmployeeI) => {
+        return <Grid item xs sm={3} md={3}>
+          <Item>
+            <div className="flex justify-center">
+              <span>
+                <Avatar
+                  src={getAvatar(e.gender.code)}
+                  className="w-[56px] h-[56px]"
+                  />
+              </span>
+              <div>
+                <Typography variant="subtitle1" color={VISION_RED}>
+                  {" "}
+                  {e.lastName}, {e.firstName}
+                </Typography>
+                <Typography variant="caption" display={"block"}>
+                  {" "}
+                  {e.position.name}
+                </Typography>
+              </div>
+            </div>
+            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+              <ListItem alignItems="flex-start">
+                <ListItemIcon sx={{minWidth: 25, marginTop: 0}}>
+                  <PhoneTwoTone fontSize="small" color="primary"/>
+                </ListItemIcon>
+                <ListItemText className="my-0"
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: 'inline' }}
+                        component="span"
+                        variant="caption"
+                        color="text.primary"
+                      >
+                        {e.companyContactNumber}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+              </ListItem>
+              <Divider variant="middle" />
+              <ListItem alignItems="flex-start">
+                <ListItemIcon sx={{minWidth: 25, marginTop: 0}}>
+                  <EmailTwoTone fontSize="small" color="primary" />
+                </ListItemIcon>
+                <ListItemText className="my-0"
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: 'inline', overflowWrap: "break-word" }}
+                        component="span"
+                        variant="caption"
+                        color="text.primary"
+                      >
+                        {e.companyEmail}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+              </ListItem>
+              <Divider variant="middle" />
+              <ListItem alignItems="flex-start">
+                <ListItemIcon sx={{minWidth: 25, marginTop: 0}}>
+                  <GroupTwoTone fontSize="small" color="primary" />
+                </ListItemIcon>
+                <ListItemText className="my-0"
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: 'inline' }}
+                        component="span"
+                        variant="caption"
+                        color="text.primary"
+                      >
+                        {e.department.name}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+              </ListItem>
+              <Divider variant="middle" />
+              <ListItem alignItems="flex-start">
+                <ListItemIcon sx={{minWidth: 25, marginTop: 0}}>
+                  <LocationOnTwoTone fontSize="small" color="primary" />
+                </ListItemIcon>
+                <ListItemText className="my-0"
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: 'inline' }}
+                        component="span"
+                        variant="caption"
+                        color="text.primary"
+                      >
+                        {e.location.map((o: any) => o.name).join(", ")}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+              </ListItem>
+            </List>
+          </Item>
+        </Grid>
+      })}
+      </Grid>
     </>
   );
 };

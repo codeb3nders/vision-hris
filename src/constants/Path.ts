@@ -43,6 +43,7 @@ export const Path = {
     People: {
       Directory: '/people/directory',
       Employees: '/people/employees',
+      EmployeeProfile: '/profile/:employeeNo',
       Workers: '/people/workers',
       Departments: '/people/departments',
       Approvers: '/people/team-leaders',

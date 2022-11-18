@@ -354,7 +354,7 @@ const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
         justifyContent='center'
         className='pt-8'
       >
-        <Grid item className='grow'>
+        {/* <Grid item className='grow'>
           <Breadcrumbs
             aria-label='breadcrumb'
             sx={{ my: 2, justifyContent: 'center', display: 'flex' }}
@@ -380,7 +380,8 @@ const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
               <Typography color='text.primary'>New Application</Typography>
             )}
           </Breadcrumbs>
-        </Grid>
+        </Grid> */}
+
         {!isApprover && !newForm && (
           <div style={{ marginBottom: 16, textAlign: 'right' }}>
             <RouterLink
@@ -419,21 +420,23 @@ const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
           <CustomCard className='p-0 max-w-[1100px] w-full'>
             {/* <Card sx={{ width: '100%', p: 2 }}> */}
 
-            <div style={{ height: 400, width: '100%' }}>
+            {/* <div style={{ height: 400, width: '100%' }}> */}
               <DataGrid
                 className='data-grid'
+                autoHeight
                 disableSelectionOnClick
                 rows={isOT ? otRows : leaveRows}
                 columns={isOT ? otColumns : leaveColumns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                checkboxSelection
+                pageSize={30}
+                rowsPerPageOptions={[30]}
+                checkboxSelection={false}
+                density="compact"
                 loading={leaveRows.length <= 0 || otRows.length <= 0}
                 onCellDoubleClick={(params, event, details) =>
                   console.log({ params, event, details })
                 }
               />
-            </div>
+            {/* </div> */}
           </CustomCard>
         </div>
       )}

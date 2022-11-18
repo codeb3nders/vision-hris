@@ -36,6 +36,7 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import moment from 'moment';
 import ConfirmDelete from 'components/Other/confirm.delete';
 import { Tooltip } from '@mui/material';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {};
 
@@ -50,7 +51,8 @@ type ChecklistModel = {
 
 const ChecklistTable = (props: Props) => {
   const dispatch = useDispatch();
-  const { isNew, setUpdatedDetails, enums } = useContext(ProfileCtx);
+  const { setUpdatedDetails, enums } = useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [rows, setRows] = useState<ChecklistModel[]>([]);
   const [documents, setDocuments] = useState<any[]>([])
   const [selectedDocuments, setSelectedDocuments] = useState<any[]>([]);

@@ -19,13 +19,15 @@ import {
 } from 'slices';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import { EMPLOYMENT_HISTORY_TYPE } from 'constants/Values';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {};
 
 const EmployementStatus = (props: Props) => {
   const dispatch = useDispatch();
   const { access_token } = useContext(AppCtx);
-  const { isNew, employeeDetails, enums, failed, setIndex } = useContext(ProfileCtx);
+  const { employeeDetails, enums, failed, setIndex } = useContext(ProfileCtx);
+  const {isNew} = useContext(EmployeeCtx)
   const [infos, setInfos] = useState<any[]>([]);
   const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
   const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);

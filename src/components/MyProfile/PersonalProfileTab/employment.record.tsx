@@ -12,6 +12,7 @@ import { ProfileCtx } from '../profile.main';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 import AddButton from 'CustomComponents/AddButton';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
+import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 
 type Props = {};
 const initialData = {
@@ -23,8 +24,9 @@ const initialData = {
       }
 
 const EmploymentRecord = (props: Props) => {
-  const { setEmployeeDetails, isNew, setUpdatedDetails, getIcon, employeeDetails, updatedDetails } =
+  const { setEmployeeDetails, setUpdatedDetails, getIcon, employeeDetails, updatedDetails } =
     useContext(ProfileCtx);
+  const { isNew } = useContext(EmployeeCtx);
   const [records, setRecords] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [withUpdate, setWithUpdate] = useState<boolean>(false);
