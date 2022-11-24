@@ -83,14 +83,15 @@ const TimekeepingUploader = ({ open, setOpen, setIsSaving, isSaving }: Props) =>
     const handleDataCleanse = async () => {
         let tempLines:any = [];
             tempData.filter((x: any) => x.length > 0).map((x: any, i: number) => {
-                if (x[0] !== "Visionproperties Development Corporation" && x[0] !== "Daily Time Record Report Detailed" && x[0] !== "Date" && x[0] !== undefined) {
+                if (x[0] !== "Visionproperties Development Corporation" && x[0] !== "Daily Time Record Report Detailed" && x[0] !== "Date" && x[8] !== "Hours") {
                 tempLines.push(x)
                 }
                 
             });
-      let employeesTKdata: any = [], employeeName, details:any[] = [];
+      console.log({tempLines})
+      let employeesTKdata: any = [], employeeName, details:any[] = [], totalRegHrs:any, totalLateMins:any, totalUtMins:any, totalAbsentHrs:any, totalOTHrs:any, totalNdiffHrs: any, totalNdiffOTHrs:any;
         for (var i = 0; i < tempLines.length; i++){
-          const employeeNameTmp = tempLines[i][0].split(".) ");
+          const employeeNameTmp = tempLines[i][0] ? tempLines[i][0].split(".) ") : 0;
           if (employeeNameTmp.length === 2) {
             details = [];
             employeeName = employeeNameTmp[1]
@@ -99,27 +100,44 @@ const TimekeepingUploader = ({ open, setOpen, setIsSaving, isSaving }: Props) =>
               employeeName
             });
           } else {
-            details.push({
-              date: tempLines[i][0],
-              day: tempLines[i][1],
-              holidayType: tempLines[i][2],
-              shift: tempLines[i][3],
-              in1: tempLines[i][4],
-              out1: tempLines[i][5],
-              in2: tempLines[i][6],
-              out2: tempLines[i][7],
-              regHours: tempLines[i][8],
-              lateMins: tempLines[i][9],
-              utMins: tempLines[i][10],
-              absentHrs: tempLines[i][11],
-              otHrs: tempLines[i][12],
-              ndiffHrs: tempLines[i][13],
-              ndiffOTHrs: tempLines[i][14],
-              remarks: tempLines[i][15]
-            })
+            if (tempLines[i][0] === undefined || tempLines[i][0] === "") {
+              totalRegHrs = tempLines[i][8] || "";
+              totalLateMins = tempLines[i][9] || "";
+              totalUtMins = tempLines[i][10] || "";
+              totalAbsentHrs = tempLines[i][11] || "";
+              totalOTHrs = tempLines[i][12] || "";
+              totalNdiffHrs = tempLines[i][13] || "";
+              totalNdiffOTHrs = tempLines[i][14] || "";
+            } else {
+              details.push({
+                date: tempLines[i][0],
+                day: tempLines[i][1],
+                holidayType: tempLines[i][2],
+                shift: tempLines[i][3],
+                in1: tempLines[i][4],
+                out1: tempLines[i][5],
+                in2: tempLines[i][6],
+                out2: tempLines[i][7],
+                regHours: tempLines[i][8],
+                lateMins: tempLines[i][9],
+                utMins: tempLines[i][10],
+                absentHrs: tempLines[i][11],
+                otHrs: tempLines[i][12],
+                ndiffHrs: tempLines[i][13],
+                ndiffOTHrs: tempLines[i][14],
+                remarks: tempLines[i][15]
+              })
+            }
             const index = employeesTKdata.findIndex((o: any) => o.employeeName === employeeName);
             if (index >= 0) {
               employeesTKdata[index].details = details;
+              employeesTKdata[index].totalRegHrs = totalRegHrs;
+              employeesTKdata[index].totalLateMins = totalLateMins;
+              employeesTKdata[index].totalUtMins = totalUtMins;
+              employeesTKdata[index].totalAbsentHrs = totalAbsentHrs;
+              employeesTKdata[index].totalOTHrs = totalOTHrs;
+              employeesTKdata[index].totalNdiffHrs = totalNdiffHrs;
+              employeesTKdata[index].totalNdiffOTHrs = totalNdiffOTHrs;
             }
           }
         }
@@ -129,7 +147,7 @@ const TimekeepingUploader = ({ open, setOpen, setIsSaving, isSaving }: Props) =>
         setData(employeesTKdata);
         // console.log({tempLines})
       console.log({ employeesTKdata })
-      debugger;
+      // debugger;
 
     }
 

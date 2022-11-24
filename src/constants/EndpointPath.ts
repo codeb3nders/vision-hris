@@ -17,3 +17,4 @@ export const URL_CHANGE_PASSWORD = `${env.BASE_URL}/user-credentials/change-pass
 export const URL_COMPANY_ASSETS = `${env.BASE_URL}/asset/company/`;
 export const URL_TIMEKEEPING = `${env.BASE_URL}/time-keeping/`;
 export const URL_USER_LOGS = `${env.BASE_URL}/audit-logs/`;
+export const URL_TEAM_LEADERS = `${env.BASE_URL}/team-leaders/`;

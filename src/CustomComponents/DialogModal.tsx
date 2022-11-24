@@ -7,6 +7,7 @@ type Props = {
   className?: string;
   actions?: any;
   open: boolean;
+  id?: string;
 };
 
 const DialogModal: React.FC<Props> = ({
@@ -14,7 +15,7 @@ const DialogModal: React.FC<Props> = ({
   children,
   className,
   actions,
-  open,
+  open, id = "dialog"
 }) => {
   console.log({ open });
 
@@ -59,7 +60,7 @@ const DialogModal: React.FC<Props> = ({
                 </Dialog.Title>
 
                 <Dialog.Description className='max-h-[500px] overflow-auto pr-2'>
-                  <div className='mt-0 flex w-full flex-col'>{children}</div>
+                  <div className='mt-0 flex w-full flex-col' id={id}>{children}</div>
                 </Dialog.Description>
 
                 <Dialog.Description className='pt-2 text-right'>

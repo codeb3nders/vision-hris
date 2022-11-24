@@ -33,7 +33,7 @@ const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
     details: {},
     status: false,
   });
-
+console.log({isApprover})
   // const statusCell = (cell) =>
   //   isHRLogin || isApprover ? (
   //     <Chip
@@ -392,7 +392,7 @@ const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
                 startIcon={<AddCircleOutlineTwoTone />}
                 // onClick={() => setNewForm(true)}
               >
-                New {isOT ? 'OT' : 'Leave'} Application
+                File {isOT ? 'OT' : 'Leave'}
               </Button>
             </RouterLink>
           </div>

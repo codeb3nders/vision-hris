@@ -13,22 +13,5 @@ export interface TimekeepingI {
     verificationDueDate: Date;
     employeeName: string;
     employeeNo?: string;
-    date: Date;
-    day: string;
-    holidayType?: string;
-    shift: string;
-    in1?: string;
-    out1?: string;
-    in2?: string;
-    out2?: string;
-    regHours?: string;
-    lateMins?: string;
-    utMins?: string;
-    absentHrs?: string;
-    otHrs?: string;
-    ndiffHrs?: string;
-    ndiffOTHrs?: string;
-    remarks?: string;
-    verified?: boolean;
-    dateVerified?: Date;
+    details: any[]
 }

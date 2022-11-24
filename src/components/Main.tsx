@@ -19,6 +19,8 @@ import TimekeepingDetails from "./Timekeeping/details"
 import TeamLeaders from "./TeamLeaders";
 import LeaveManagement from "./EmployeeDashboard/Management/LeaveManagement";
 import OTManangement from "./EmployeeDashboard/Management/OTManangement";
+import OTForm from "./EmployeeDashboard/Forms/OTForm";
+import LeaveForm from "./EmployeeDashboard/Forms/LeaveForm";
 const { Employee, HR } = Path;
 
 type MainCtxI = {
@@ -132,6 +134,28 @@ const Main: React.FC<Props> = ({ role }) => {
               />
 
               <Route path={Employee.Profile} exact component={ProfileMain} />
+              <PrivateRoute
+                is_allowed={isAllowed("ess-leave-requests")}
+                path={Employee.ESS.Leave}
+                component={LeaveManagement}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed("ess-ot-requests")}
+                path={Employee.ESS.OT}
+                component={OTManangement}
+              />
+              <PrivateRoute
+                exact
+                is_allowed={isAllowed("ess-new-leave-request")}
+                path={Employee.ESS.LeaveNew}
+                component={LeaveForm}
+              />
+              <PrivateRoute
+                exact
+                is_allowed={isAllowed("ess-new-ot-request")}
+                path={Employee.ESS.OTNew}
+                component={OTForm}
+              />
 
               <Route component={ErrorPage} path="/noaccess/:page" />
               <Route component={ErrorPage} path="*" />

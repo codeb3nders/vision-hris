@@ -6,20 +6,10 @@ import {
   Autocomplete,
   Badge,
   BadgeProps,
-  Button,
   Card,
   Checkbox,
-  Dialog,
-  Divider,
-  FormControl,
   FormControlLabel,
-  Grid,
   IconButton,
-  InputLabel,
-  ListItem,
-  ListItemText,
-  MenuItem,
-  Select,
   Snackbar,
   TextField,
   Tooltip,
@@ -29,15 +19,11 @@ import {
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import {
-  AssignmentReturn,
   Close,
-  Delete,
   Edit,
   Groups,
-  LaptopChromebookTwoTone,
   SaveTwoTone,
   SupervisorAccount,
-  TransferWithinAStation,
 } from '@mui/icons-material';
 import { styled, useTheme } from '@mui/material/styles';
 import AddButton from 'CustomComponents/AddButton';
@@ -48,25 +34,13 @@ import {
   createAction,
   deleteAction,
   getAllDataAction,
-  data as _getCompanyAssetsData, dataStatus as _getCompanyAssetsDataStatus,
-  deleteStatus as getAssetDeleteStatus,
-  updateStatus as getAssetUpdateStatus,
-  newDataStatus as getNewAssetStatus,
+  data as _getData, dataStatus as _getDataStatus,
+  deleteStatus as _getDeleteStatus,
+  updateStatus as _getUpdateStatus,
+  newDataStatus as _getNewStatus,
   updateAction,
-  reset as companyAssetsReset
-} from 'slices/companyAssets';
-import {
-  enumsData,
-  enumsData as getEnumsData, status as getEnumsDataStatus
-} from 'slices/enums/enumsSlice'
-import {
-  createAction as createEmployeeAsset,
-  newDataStatus as createEmployeeAssetStatus,
-  updateStatus as updateEmployeeAssetStatus,
-  updateError as updateEmployeeAssetError,
-  newDataError as createEmployeeAssetError,
-  reset
-} from 'slices/assets';
+  reset as _getReset
+} from 'slices/teamLeader';
 import {
   getEmployeeItems as _getEmployeeItems,
   getAllEmployeesAction as _getEmployeesAction,
@@ -74,8 +48,6 @@ import {
 } from 'slices/employees/getEmployeesSlice';
 import ConfirmDelete from 'components/Other/confirm.delete';
 import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
-import { ASSET_CONDITIONS } from 'constants/Values';
-import { AssetInitialState, AssetModel } from 'components/MyProfile/Assets/assets.table';
 import TeamMembers from './members';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import { MainCtx } from 'components/Main';
@@ -148,16 +120,15 @@ const sampleData: TeamLeaderModel[] = [
 ]
 
 const TeamLeaders = (props: Props) => {
-  const [rows, setRows] = useState<TeamLeaderModel[]>(sampleData);
+  const [rows, setRows] = useState<TeamLeaderModel[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [openMembers, setOpenMembers] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const enumsData = useSelector(getEnumsData);
-  const assetsData = useSelector(_getCompanyAssetsData);
-  const assetsDataStatus = useSelector(_getCompanyAssetsDataStatus);
-  const updateAssetStatus = useSelector(getAssetUpdateStatus);
-  const deleteAssetStatus = useSelector(getAssetDeleteStatus);
-  const newAssetStatus = useSelector(getNewAssetStatus);
+  const data = useSelector(_getData);
+  const dataStatus = useSelector(_getDataStatus);
+  const updateStatus = useSelector(_getUpdateStatus);
+  const deleteStatus = useSelector(_getDeleteStatus);
+  const newStatus = useSelector(_getNewStatus);
   const { access_token } = useContext(AppCtx);
   const [TLdata, setTLdata] = useState<TeamLeaderModel>(TeamLeaderInitialState);
   const [confirmDelete, setConfirmDelete] = useState<{
@@ -165,7 +136,6 @@ const TeamLeaders = (props: Props) => {
     status: boolean;
   }>({ row: null, status: false });
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [openTransfer, setOpenTransfer] = useState<boolean>(false);
   const [openNotif, setOpenNotif] = useState<{
     message: string;
     status: boolean;
@@ -175,10 +145,6 @@ const TeamLeaders = (props: Props) => {
   const [members, setMembers] = useState<EmployeeDBI[]>([])
   const [TLinfo, setTLinfo] = useState<TeamLeaderModel>(TeamLeaderInitialState);
 
-  const assignAssetStatus = useSelector(createEmployeeAssetStatus);
-  const assignReturnStatus = useSelector(updateEmployeeAssetStatus);
-  const assignAssetError = useSelector(getNewAssetStatus);
-  const assignReturnError = useSelector(updateEmployeeAssetError);
   const { setIsTable } = useContext(MainCtx);
   const isUpdate = TLdata.id !== "";
 
@@ -187,9 +153,14 @@ const TeamLeaders = (props: Props) => {
   const getEmployeeStatus = useSelector(_getEmployeeStatus);
 
   useEffect(() => {
+    setIsTable(true);
+  }, []);
+
+  useEffect(() => {
     if (access_token) {
-      dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
+      dispatch(_getEmployeesAction({ access_token }));
     }
+    getData();
   }, [access_token]);
 
   useEffect(() => { 
@@ -203,65 +174,48 @@ const TeamLeaders = (props: Props) => {
   }, [getEmployeeStatus])
 
   useEffect(() => {
-    getData();
-    setIsTable(true);
-  }, [])
-
-  // useEffect(() => {
-  //   if (assetsDataStatus !== 'idle') {
-  //     setRows(assetsData)
-  //   }
-  // }, [assetsDataStatus])
-console.log({rows}, {employees})
-  useEffect(() => { 
-    if (employees.length > 0) {
-      setRows((prev: TeamLeaderModel[]) => {
-        return prev.map((o: TeamLeaderModel) => {
-          const employeeInfo = employees.find((e: EmployeeI) => e.employeeNo === o.employeeNo);
-          const employeeCnt = employees.filter((e: EmployeeI) => e.reportsTo?.employeeNo === o.employeeNo && e.department.name === o.department && e.location.findIndex((c:any)=> c.name.toLowerCase() === o.location?.toLowerCase()) >= 0).length;
+    if (dataStatus === 'succeeded' && employees.length > 0) {
+      setRows(() => {
+        return data.map((o: TeamLeaderModel) => {
+          const employeeInfo: any = employees.find((e: EmployeeI) => e.employeeNo === o.employeeNo);
+          console.log({employeeInfo})
+          const members = employees.filter((e: EmployeeI) => {
+            console.log({o}, {e})
+            return e.reportsTo?.employeeNo === o.employeeNo && e.department.name.toLowerCase() === employeeInfo?.department.name.toLowerCase() && JSON.stringify(e.location).toLocaleLowerCase() === JSON.stringify(employeeInfo?.location).toLocaleLowerCase()
+          });
+          console.log({employees})
+          const employeeCnt = members.length;
           return {
             ...o,
             fullName: employeeInfo ? `${employeeInfo.firstName} ${employeeInfo.lastName}` : "",
             department: employeeInfo ? employeeInfo.department.name : "",
             location: employeeInfo ? employeeInfo.location.map((l:any) => l.name).join(", ") : "",
             position: employeeInfo ? employeeInfo.position.name : "",
-            isActive: employeeInfo && employeeInfo.isActive ? "YES" : "NO",
+            isActive: employeeInfo && employeeInfo.employmentStatus.name,
             employeeCnt: employeeCnt
           }
         })
       });
     }
-  }, [employees])
-
+  }, [dataStatus, employees])
 
   useEffect(() => {
-    if (newAssetStatus === "succeeded" || deleteAssetStatus === 'succeeded' || updateAssetStatus === "succeeded") {
-      const message = newAssetStatus === "succeeded" ? "New company asset was successfully registered." : (
-        deleteAssetStatus === 'succeeded' ? "Record was successfully deleted." :
-          updateAssetStatus === "succeeded" ? "Company asset was successfully updated." : ""
+    if (newStatus === "succeeded" || deleteStatus === 'succeeded' || updateStatus === "succeeded") {
+      const message = newStatus === "succeeded" ? "New team leader was successfully registered." : (
+        deleteStatus === 'succeeded' ? "Record was successfully deleted." :
+          updateStatus === "succeeded" ? "Team Leader was successfully updated." : ""
       )
-      console.log('xxxxxxxxxxxxxxxxxxx')
-      success(companyAssetsReset(), message)
+      success(_getReset(), message)
     }
-  }, [newAssetStatus, deleteAssetStatus, updateAssetStatus])
+  }, [newStatus, deleteStatus, updateStatus])
+      console.log({rows})
 
   useEffect(() => {
     !open && setTLdata(TeamLeaderInitialState);
   }, [open]);
 
-  useEffect(() => {
-    if (assignAssetStatus !== "idle") {
-      if (assignAssetStatus === "succeeded") {
-        success(reset(), "Asset was successfully assigned.");
-        setOpenMembers(false);
-      } else {
-        failed(assignAssetError)
-      }
-    }
-  }, [assignAssetStatus])
-
   const getData = async () => {
-    // await dispatch(getAllDataAction({ access_token }));
+    await dispatch(getAllDataAction({ access_token }));
   }
 
   const handleDelete = async (row: TeamLeaderModel) => {
@@ -325,7 +279,7 @@ console.log({rows}, {employees})
         setOpen={setConfirmDelete}
         handleDelete={handleDelete}
       />
-      <TLDialog setOpen={setOpen} open={open} access_token={access_token} data={TLdata} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} failed={failed} />
+      <TLDialog setOpen={setOpen} open={open} access_token={access_token} data={TLdata} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} failed={failed} allData={rows} />
       {openMembers && <TeamMembers setOpen={setOpenMembers} open={openMembers} access_token={access_token} data={members} failed={failed} teamLeader={TLinfo} />}
       
       <Card className="phone:mt-0 desktop:mt-5 desktop:p-2 laptop:mt-5 laptop:p-2">
@@ -361,13 +315,11 @@ console.log({rows}, {employees})
   );
 };
 
-const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIsSaving, failed }) => {
+const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIsSaving, failed, allData }) => {
   const [newData, setNewData] = useState<any>(TeamLeaderInitialState);
   const dispatch = useDispatch();
   const getEmployeeItems = useSelector(_getEmployeeItems);
-  const [assetTypes, setAssetTypes] = useState<any[]>([]);
   const [TLData, setTLData] = useState<any>(TeamLeaderInitialState);
-  const enums = useSelector(enumsData)
   const [nonRankAndFileEmployees, setNonRankAndFileEmployees] = useState<any[]>([]);
 
   const theme = useTheme();
@@ -383,10 +335,6 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
       })
     setNonRankAndFileEmployees(employees.sort((a:any, b:any) => a.label.localeCompare(b.label)));
   }, [getEmployeeItems]);
-
-  useEffect(() => { 
-    setAssetTypes(enums.filter((x:any) => x.type.toLocaleLowerCase() === "assettype"))
-  }, [enums])
 
   useEffect(() => {
     setTLData(data);
@@ -412,9 +360,14 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
           return failed(INCOMPLETE_FORM_MESSAGE);
         }
         return true;
-      }
+    }
+    
+    // const noConflict = async () => {
+    //   //check if an active team leader does not conflict
+    //   allData.filter((x:TeamLeaderModel) => x.department?.toLocaleLowerCase() === TLData.department.toLocaleLowerCase() && JSON.stringify(x.location).toLocaleLowerCase() === )
+    // }
       //check inputs...
-    if (await validateFields()) {
+    if (await validateFields() ) {
       setIsSaving(true);
       try {
         if (isUpdate) {
@@ -423,16 +376,22 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
             updateAction({
               params: {
                 id: TLData.id,
-                ...rest
+                startDate: TLData.startDate,
+                endDate: TLData.endDate,
+                isDelegated: TLData.isDelegated
               },
               access_token,
             })
           );
         } else {
-          const { id, ...rest } = newData;
           await dispatch(
             createAction({
-              body: { ...rest },
+              body: { 
+                employeeNo: TLData.employeeNo,
+                startDate: TLData.startDate,
+                endDate: TLData.endDate,
+                isDelegated: TLData.isDelegated,
+              },
               access_token,
             })
           );
@@ -444,10 +403,11 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
       setNewData(TeamLeaderInitialState);
     }
   };
-console.log({TLData})
+console.log({TLData}, {newData})
   return (
     <DialogModal
-       className='w-[500px]'
+      id="team-leader-dialog"
+        className='w-[500px]'
         title={
           <div className='flex items-center content-left'>
             {/* <p className='text-md font-bold '> */}
@@ -557,7 +517,7 @@ console.log({TLData})
           Employees under the same department as above will automatically be updated
         </div>
       </div>
-      </DialogModal>
+    </DialogModal>
   );
 };
 
@@ -589,7 +549,7 @@ const columns: any = (handleEdit:any, handleView:any) => [
   },
   {
     field: 'isActive',
-    headerName: 'Is Active',
+    headerName: 'Status',
     width: 50
   },
   {

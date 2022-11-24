@@ -22,6 +22,10 @@ export const ROLE_ACCESS = {
     ],
     employee: [
         'dashboard',
-        'employee_directory'
+        'employee_directory',
+        'ess-leave-requests',
+        'ess-new-leave-request',
+        'ess-ot-requests',
+        'ess-new-ot-request'
     ]
 };

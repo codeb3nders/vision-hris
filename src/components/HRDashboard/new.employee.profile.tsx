@@ -37,23 +37,8 @@ const NewEmployeeProfile = ({ open, setOpen, setViewDetails, viewDetails }: Prop
           </div>
         }
         open={open}
-        // actions={
-        //   <button
-        //     // disabled={!validated}
-        //     className='px-4 py-2 bg-green-500 text-white w-full absolute bottom-0 left-0 z-10 disabled:bg-gray-300 disabled:cursor-not-allowed'
-        //     onClick={saveEmployee}
-        //   >
-        //     Save Employee Profile
-        //   </button>
-        // }
       >
-    {/* <Dialog
-      open={open}
-      onClose={() => setOpen(false)}
-      className='mx-auto [&>.MuiDialog-container>.MuiPaper-root]:!max-w-[1200px] [&>.MuiDialog-container>.MuiPaper-root]:max-h-[800px] [&>.MuiDialog-container>.MuiPaper-root]:w-full overflow-y-auto'
-    > */}
       <ProfileMain setOpen={setOpen} setViewDetails={setViewDetails} viewDetails={viewDetails} />
-      {/* </Dialog> */}
     </DialogModal>
   );
 };
