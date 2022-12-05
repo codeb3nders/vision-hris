@@ -27,6 +27,7 @@ import {
   clearAuthData,
 } from 'slices/userAccess/authSlice';
 import { SliderCtx } from './components/Auth/slider';
+import { AppCtx } from 'App';
 
 function Copyright(props) {
   return (
@@ -68,19 +69,24 @@ export default function Login() {
     status: false,
     message: '',
   });
+  const { createLog } = useContext(AppCtx);
 
   useEffect(() => {
     if (status === 'succeeded') {
-      console.log({ auth });
       if (access_token && userData) {
-        console.log({ userData });
-        // setUserData(userData);
         if (!userData.isActive) {
           setError({
             status: true,
             message: `Sorry, your account is inactive.`,
           });
         } else {
+          createLog({
+            employeeNo: loginData.username,
+            portal: "LOGIN",
+            module: "Authentication",
+            event: "Login",
+            details: userData
+          })
           setError({ status: false, message: '' });
           getEnums();
           dispatch(setIsLoggedIn(true));
@@ -97,6 +103,13 @@ export default function Login() {
 
   useEffect(() => {
     if (error.status) {
+      createLog({
+        employeeNo: loginData.username,
+        portal: "LOGIN",
+        module: "Authentication",
+        event: "Login",
+        details: {username: loginData.username, error: error.message}
+      })
       dispatch(clearAuthData());
     }
   }, [error]);

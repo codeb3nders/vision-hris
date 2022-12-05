@@ -26,10 +26,6 @@ import {
   updateAction as updateCompanyAsset
 } from 'slices/companyAssets';
 import {
-  enumsData,
-  enumsData as getEnumsData, status as getEnumsDataStatus
-} from 'slices/enums/enumsSlice'
-import {
   createAction as createEmployeeAsset,
   newDataStatus as createEmployeeAssetStatus,
   updateAction,
@@ -58,7 +54,6 @@ const AssetTransfer = ({ setOpenTransfer, openTransfer, access_token, assetData,
     const [returnedAsset, setReturnedAsset] = useState<AssetModel>(AssetInitialState);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [employees, setEmployees] = useState<EmployeeDBI[]>([]);
-    const enums = useSelector(enumsData)
     const getEmployeeItems = useSelector(_getEmployeeItems);
 
     useEffect(() => {

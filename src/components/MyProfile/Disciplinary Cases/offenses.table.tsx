@@ -114,22 +114,6 @@ const OffensesTable = (props: Props) => {
     setOpen(true);
   }
 
-  const CustomToolbar = () => {
-    return (
-      <div className='flex flex-row justify-end p-2'>
-        <AddButton setOpen={setOpen} text='Add Record' />
-        {/* <button
-          onClick={() => setShowAll(!showAll)}
-          className={`px-2 py-1 text-sky-400 hover:text-sky-500 transition-all duration-200 rounded-sm`}
-        >
-          <span className='uppercase'>
-            {showAll ? 'Hide Other' : 'Show All'} Columns
-          </span>
-        </button> */}
-      </div>
-    );
-  };
-
   return (
     <div>
       <ConfirmDelete
@@ -152,7 +136,7 @@ const OffensesTable = (props: Props) => {
       />
       <div style={{ width: '100%' }}>
         <div style={{marginBottom: 10}}>
-          <AddButton setOpen={setOpen} text='Add Record' />
+          <AddButton text='Add Record' cb={() => setOpen(true)} />
         </div>
         <DataGrid
           autoHeight

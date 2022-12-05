@@ -1,20 +1,23 @@
 import { Add } from '@mui/icons-material';
+import { Chip } from '@mui/material';
 import React from 'react';
 
 type Props = {
-  setOpen: any;
   text: string;
+  cb: any;
 };
 
-const AddButton = ({ setOpen, text }: Props) => {
+const AddButton = ({ text, cb }: Props) => {
   return (
     <div className='flex justify-end'>
-      <button
-        className='px-2 py-1 border border-sky-500 text-sky-500 rounded-md hover:bg-sky-200 transition ease-in-out mt-2'
-        onClick={() => setOpen(true)}
+      <button className='group pr-0 pl-2 rounded-sm ease-in-out duration-200'
+        onClick={()=>cb()}
       >
-        <Add fontSize='small' /> {text}
-      </button>
+          <Chip
+            label={text}
+            className='hover:bg-v-red hover:text-white cursor-pointer'
+          />
+    </button>
     </div>
   );
 };

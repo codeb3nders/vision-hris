@@ -102,7 +102,7 @@ const FamilyBackground = (props: Props) => {
           />
         </div>
       </GridWrapper>
-      <AddButton text='Add Family Member' setOpen={setOpen} />
+      <AddButton text='Add Family Member' cb={() => setOpen(true)} />
     </CollapseWrapper>
   );
 };

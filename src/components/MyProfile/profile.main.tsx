@@ -36,7 +36,7 @@ import {
 } from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  enumsData as getEnumsData, status as getEnumsDataStatus,
+  getListOfValues,
   getOneEmployeeAction as _getOneEmployeeAction,
   getEmployeeStatusOne as _getOneEmployeeStatus,
   getEmployeeDetails as _getOneEmployeeDetails,
@@ -225,7 +225,25 @@ const ProfileMain = ({
     data: [], status: false
   })
 
-  const enumsData = useSelector(getEnumsData);
+  const {positions,
+      departments,
+      ranks,
+      civil_status,
+      citizenship,
+      religions,
+      employment_status,
+      locations,
+      assets,
+      file201,
+      allowance_types,
+      employment_types,
+      gender,
+      payroll_group,
+      payment_method,
+      violations,
+      offenseLevel,
+      offenseStages,
+      violationCategories} = useSelector(getListOfValues);
   const newEmployeeStatus = useSelector(getEmployeeCreateStatus);
   const newEmployeeData = useSelector(getEmployeeCreatedItem);
   const newEmployeeError = useSelector(getEmployeeCreateError);
@@ -404,110 +422,110 @@ console.log({isOwner})
     });
   }
 
-  useEffect(() => {
-    var positions: any = [],
-      departments: any = [],
-      ranks: any = [],
-      civil_status: any = [],
-      citizenship: any = [],
-      religions: any = [],
-      employment_status: any = [],
-      locations: any = [],
-      assets: any = [],
-      file201: any = [],
-      allowance_types: any = [],
-      employment_types: any = [],
-      gender: any = [],
-      payroll_group: any = [],
-      payment_method: any = [],
-      violations: any = [],
-      offenseLevel: any = [],
-      offenseStages: any = [],
-      violationCategories: any = [];
+  // useEffect(() => {
+  //   var positions: any = [],
+  //     departments: any = [],
+  //     ranks: any = [],
+  //     civil_status: any = [],
+  //     citizenship: any = [],
+  //     religions: any = [],
+  //     employment_status: any = [],
+  //     locations: any = [],
+  //     assets: any = [],
+  //     file201: any = [],
+  //     allowance_types: any = [],
+  //     employment_types: any = [],
+  //     gender: any = [],
+  //     payroll_group: any = [],
+  //     payment_method: any = [],
+  //     violations: any = [],
+  //     offenseLevel: any = [],
+  //     offenseStages: any = [],
+  //     violationCategories: any = [];
 
-    enumsData.forEach((o: any) => {
-      switch (o.type.toLowerCase()) {
-        case 'position':
-          positions.push(o);
-          break;
-        case 'civilstatus':
-          civil_status.push(o);
-          break;
-        case 'gender':
-          gender.push(o);
-          break;
-        case 'citizenship':
-          citizenship.push(o);
-          break;
-        case 'religion':
-          religions.push(o);
-          break;
-        case 'employmentstatus':
-          employment_status.push(o);
-          break;
-        case 'location':
-          locations.push(o);
-          break;
-        case 'department':
-          departments.push(o);
-          break;
-        case 'rank':
-          ranks.push(o);
-          break;
-        case 'assettype':
-          assets.push(o);
-          break;
-        case 'documenttype':
-          file201.push(o);
-          break;
-        case 'allowancetype':
-          allowance_types.push(o);
-          break;
-        case 'employmenttype':
-          employment_types.push(o);
-          break;
-        case 'payrollgroup':
-          payroll_group.push(o);
-          break;
-        case 'paymentmethod':
-          payment_method.push(o);
-          break;
-        case 'violations':
-          violations.push(o);
-          break;
-        case 'offenselevel':
-          offenseLevel.push(o);
-          break;
-        case 'offensestage':
-          offenseStages.push(o);
-          break;
-        case 'violationcategory':
-          violationCategories.push(o);
-          break;
-      }
-    });
-    setEnums({
-      positions,
-      gender,
-      departments,
-      ranks,
-      civil_status,
-      citizenship,
-      religions,
-      employment_status,
-      locations,
-      assets,
-      file201,
-      allowance_types,
-      employment_types,
-      payroll_group,
-      payment_method,
-      violations,
-      offenseLevel,
-      offenseStages,
-      violationCategories
-    });
-  }, [enumsData]);
+  //   enumsData.forEach((o: any) => {
+  //     switch (o.type.toLowerCase()) {
+  //       case 'position':
+  //         positions.push(o);
+  //         break;
+  //       case 'civilstatus':
+  //         civil_status.push(o);
+  //         break;
+  //       case 'gender':
+  //         gender.push(o);
+  //         break;
+  //       case 'citizenship':
+  //         citizenship.push(o);
+  //         break;
+  //       case 'religion':
+  //         religions.push(o);
+  //         break;
+  //       case 'employmentstatus':
+  //         employment_status.push(o);
+  //         break;
+  //       case 'location':
+  //         locations.push(o);
+  //         break;
+  //       case 'department':
+  //         departments.push(o);
+  //         break;
+  //       case 'rank':
+  //         ranks.push(o);
+  //         break;
+  //       case 'assettype':
+  //         assets.push(o);
+  //         break;
+  //       case 'documenttype':
+  //         file201.push(o);
+  //         break;
+  //       case 'allowancetype':
+  //         allowance_types.push(o);
+  //         break;
+  //       case 'employmenttype':
+  //         employment_types.push(o);
+  //         break;
+  //       case 'payrollgroup':
+  //         payroll_group.push(o);
+  //         break;
+  //       case 'paymentmethod':
+  //         payment_method.push(o);
+  //         break;
+  //       case 'violations':
+  //         violations.push(o);
+  //         break;
+  //       case 'offenselevel':
+  //         offenseLevel.push(o);
+  //         break;
+  //       case 'offensestage':
+  //         offenseStages.push(o);
+  //         break;
+  //       case 'violationcategory':
+  //         violationCategories.push(o);
+  //         break;
+  //     }
+  //   });
+  //   setEnums({
+  //     positions,
+  //     gender,
+  //     departments,
+  //     ranks,
+  //     civil_status,
+  //     citizenship,
+  //     religions,
+  //     employment_status,
+  //     locations,
+  //     assets,
+  //     file201,
+  //     allowance_types,
+  //     employment_types,
+  //     payroll_group,
+  //     payment_method,
+  //     violations,
+  //     offenseLevel,
+  //     offenseStages,
+  //     violationCategories
+  //   });
+  // }, [enumsData]);
 
   // useEffect(() => {
   //   handleCompanyEmail();

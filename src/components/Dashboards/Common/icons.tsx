@@ -9,6 +9,11 @@ import {
   MedicalServicesTwoTone,
   PaidTwoTone,
   TimeToLeaveTwoTone,
+  CakeTwoTone,
+  CelebrationTwoTone,
+  WorkOffTwoTone,
+  PregnantWomanTwoTone,
+  BabyChangingStationTwoTone,
 } from '@mui/icons-material';
 
 const OTIcon = (props?: any) => <MoreTimeTwoTone color='action' {...props} />;
@@ -35,6 +40,11 @@ const EmergencyIcon = (props?: any) => (
   <MedicalServicesTwoTone color='error' {...props} />
 );
 const ServiceIcon = (props?: any) => <PaidTwoTone color='success' {...props} />;
+const BirthdayIcon = (props?: any) => <CakeTwoTone color='success' {...props} />;
+const CelebrationIcon = (props?: any) => <CelebrationTwoTone color='success' {...props} />;
+const CompensatoryIcon = (props?: any) => <WorkOffTwoTone color='success' {...props} />;
+const MaternityIcon = (props?: any) => <PregnantWomanTwoTone color='success' {...props} />;
+const PaternityIcon = (props?: any) => <BabyChangingStationTwoTone color='success' {...props} />;
 
 export {
   OTIcon,
@@ -47,4 +57,9 @@ export {
   PaidIcon,
   EmergencyIcon,
   ServiceIcon,
+  BirthdayIcon,
+  CelebrationIcon,
+  CompensatoryIcon,
+  MaternityIcon,
+  PaternityIcon
 };

@@ -1,58 +1,87 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { EventNote, Publish } from '@mui/icons-material';
 import {
-  Card,
-  Checkbox,
   FormControl,
-  FormControlLabel,
-  Grid,
   InputLabel,
   MenuItem,
   Select,
   TextField,
-  Typography,
+  Grid,
+  Chip
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DateTimePicker from '@mui/lab/DateTimePicker';
-import DatePicker from '@mui/lab/DatePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LoadingButton from '@mui/lab/LoadingButton';
-
-import { Box } from '@mui/system';
-import { LeaveTypes } from '../../../constants/LeaveTypes';
-import CustomCard from '../../../CustomComponents/CustomCard';
-import LeaveModal from './LeaveModal';
+import React, { useContext, useEffect, useState } from 'react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+// import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import { useParams, useLocation } from 'react-router-dom';
+import dayjs, { Dayjs } from 'dayjs';
+import { AppCtx, moment } from 'App';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllDataAction, dataStatus, data } from 'slices/teamLeader';
+import GridWrapper from 'CustomComponents/GridWrapper';
+import { MobileDateTimePicker } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LeaveDetailsModel } from 'components/MyProfile/Leaves';
+
 
 type Props = {
   setNewForm?: any;
   setOpenSnack?: any;
-  setSelectedLeaveType?: any;
-  isOT?: any;
+  leaveType: string;
+  leaveDetails: LeaveDetailsModel;
+  setLeaveDetails: any;
 };
 
 const LeaveForm: React.FC<Props> = ({
   setNewForm,
   setOpenSnack,
-  setSelectedLeaveType,
-  isOT,
+  leaveType,
+  leaveDetails,
+  setLeaveDetails
 }) => {
+  const dispatch = useDispatch();
   const params = useParams();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [confirmed, setConfirmed] = useState<boolean>(false);
-  const [leaveType, setLeaveType] = useState<string>('');
+  const [approvers, setApprovers] = useState<any[]>([])
+  const { access_token } = useContext(AppCtx);
+  const TLDataStatus = useSelector(dataStatus);
+  const TLData = useSelector(data);
 
+  useEffect(() => {
+    if (TLDataStatus !== 'idle') {
+      setApprovers(TLData)
+    }
+  }, [TLDataStatus])
+  
+console.log({leaveType})
   useEffect(() => {
     console.log({ params, location: location?.search?.split('=')[1] });
   }, [params, location]);
 
+  useEffect(() => { 
+    if (access_token) {
+      getTeamLeaders();
+    }
+  }, [access_token])
+
   useEffect(() => {
-    console.log({ leaveType });
-    setSelectedLeaveType && setSelectedLeaveType(leaveType);
-  }, [leaveType]);
+    let lastDay: any = null, returnToWork: any = null;
+    const noOfDays = leaveDetails.noOfDays, dateFrom = leaveDetails.dateFrom;
+    if (noOfDays && dateFrom) {
+      lastDay = noOfDays > 1 ? moment(dateFrom).businessAdd(noOfDays-1, 'day') : moment(dateFrom);
+      returnToWork = moment(lastDay).businessAdd(1, 'day');
+    }
+    setLeaveDetails({
+      ...leaveDetails,
+      dateTo: lastDay,
+      dateOfReturnToWork: returnToWork
+    })
+  }, [leaveDetails.noOfDays, leaveDetails.dateFrom])
 
   useEffect(() => {
     console.log({ loading });
@@ -64,268 +93,222 @@ const LeaveForm: React.FC<Props> = ({
       }, 2000);
   }, [loading]);
 
+  const getTeamLeaders = async() => {
+    await dispatch(getAllDataAction({ access_token }));
+  }
+
   const handleChange = () => {};
 
-  const CLForm = (
-    <>
-      <Grid item xs={12} md={6}>
-        <TextField
-          label='Approved OT Hours to Offset (CL)'
-          variant='standard'
-          fullWidth
-          disabled={loading}
-        />
-      </Grid>
-      <Grid item xs={12} md={3}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
-            label='Date to Offset (CL) - From'
-            onChange={handleChange}
-            disabled={loading}
-            value={new Date()}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth required variant='standard' />
-            )}
-          />
-        </LocalizationProvider>
-      </Grid>
-      <Grid item xs={12} md={3}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
-            value={new Date()}
-            disabled={loading}
-            label='Date to Offset (CL) - From'
-            onChange={handleChange}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth required variant='standard' />
-            )}
-          />
-        </LocalizationProvider>
-      </Grid>
-    </>
-  );
+  // const CLForm = (
+  //   <>
+  //     <Grid item xs={12} md={6}>
+  //       <TextField
+  //         label='Approved OT Hours to Offset (CL)'
+  //         variant='standard'
+  //         fullWidth
+  //         disabled={loading}
+  //       />
+  //     </Grid>
+  //     <Grid item xs={12} md={3}>
+  //       <LocalizationProvider dateAdapter={AdapterDateFns}>
+  //         <DatePicker
+  //           label='Date to Offset (CL) - From'
+  //           onChange={handleChange}
+  //           disabled={loading}
+  //           value={new Date()}
+  //           renderInput={(params) => (
+  //             <TextField {...params} fullWidth required variant='standard' />
+  //           )}
+  //         />
+  //       </LocalizationProvider>
+  //     </Grid>
+  //     <Grid item xs={12} md={3}>
+  //       <LocalizationProvider dateAdapter={AdapterDateFns}>
+  //         <DatePicker
+  //           value={new Date()}
+  //           disabled={loading}
+  //           label='Date to Offset (CL) - From'
+  //           onChange={handleChange}
+  //           renderInput={(params) => (
+  //             <TextField {...params} fullWidth required variant='standard' />
+  //           )}
+  //         />
+  //       </LocalizationProvider>
+  //     </Grid>
+  //   </>
+  // );
 
-  const OBForm = (
-    <>
-      <Grid item xs={12} md={6}>
-        <TextField
-          required
-          label='Itinerary (FROM)'
-          variant='standard'
-          fullWidth
-          disabled={loading}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          required
-          label='Itinerary (TO)'
-          variant='standard'
-          fullWidth
-          disabled={loading}
-        />
-      </Grid>
-      <Grid item xs={12} md={12}>
-        <TextField
-          required
-          label='Purpose'
-          variant='standard'
-          fullWidth
-          disabled={loading}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DateTimePicker
-            value={new Date()}
-            label='Date & Time of Departure'
-            onChange={handleChange}
-            disabled={loading}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth required variant='standard' />
-            )}
-          />
-        </LocalizationProvider>
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DateTimePicker
-            value={new Date()}
-            label='Date & Time of Arrival'
-            onChange={handleChange}
-            disabled={loading}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth required variant='standard' />
-            )}
-          />
-        </LocalizationProvider>
-      </Grid>
-    </>
-  );
+  // const OBForm = (
+  //   <>
+  //     <Grid item xs={12} md={6}>
+  //       <TextField
+  //         required
+  //         label='Itinerary (FROM)'
+  //         variant='standard'
+  //         fullWidth
+  //         disabled={loading}
+  //       />
+  //     </Grid>
+  //     <Grid item xs={12} md={6}>
+  //       <TextField
+  //         required
+  //         label='Itinerary (TO)'
+  //         variant='standard'
+  //         fullWidth
+  //         disabled={loading}
+  //       />
+  //     </Grid>
+  //     <Grid item xs={12} md={12}>
+  //       <TextField
+  //         required
+  //         label='Purpose'
+  //         variant='standard'
+  //         fullWidth
+  //         disabled={loading}
+  //       />
+  //     </Grid>
+  //     <Grid item xs={12} md={6}>
+  //       <LocalizationProvider dateAdapter={AdapterDateFns}>
+  //         <DateTimePicker
+  //           value={new Date()}
+  //           label='Date & Time of Departure'
+  //           onChange={handleChange}
+  //           disabled={loading}
+  //           renderInput={(params) => (
+  //             <TextField {...params} fullWidth required variant='standard' />
+  //           )}
+  //         />
+  //       </LocalizationProvider>
+  //     </Grid>
+  //     <Grid item xs={12} md={6}>
+  //       <LocalizationProvider dateAdapter={AdapterDateFns}>
+  //         <DateTimePicker
+  //           value={new Date()}
+  //           label='Date & Time of Arrival'
+  //           onChange={handleChange}
+  //           disabled={loading}
+  //           renderInput={(params) => (
+  //             <TextField {...params} fullWidth required variant='standard' />
+  //           )}
+  //         />
+  //       </LocalizationProvider>
+  //     </Grid>
+  //   </>
+  // );
 
   const maxWidth = 780;
   return (
     <>
-      <CustomCard className='max-w-[800px] mx-auto'>
-        <Card
-          sx={{ textAlign: 'left', maxWidth, width: '100%', boxShadow: 'none' }}
-        >
-          <LeaveModal isOpen={isOpen} setIsOpen={setIsOpen} />
-          <Typography
-            variant='h6'
-            className='flex items-center mb-4 text-sky-500'
-            color='primary'
-          >
-            <EventNote className='mr-2 text-sky-500' /> Leave Application
-            Details
-          </Typography>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={12}>
-              <FormControl
-                fullWidth
-                variant='standard'
-                required
-                disabled={loading}
-              >
-                <InputLabel id='leave_applied'>Leave applied for:</InputLabel>
-                <Select
-                  fullWidth
-                  labelId='leave_applied'
-                  label='Leave applied for:'
-                  required
-                  value={location?.search?.split('=')[1] || leaveType}
-                  onChange={(e) => setLeaveType(e.target.value)}
-                >
-                  {LeaveTypes.map((lt) => (
-                    <MenuItem key={lt.id} value={lt.id}>
-                      {lt.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            {leaveType === 'cl' && CLForm}
-            {leaveType === 'ob' && OBForm}
-
-            <Grid item xs={12} md={6}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DateTimePicker
-                  value={new Date()}
-                  disabled={loading}
-                  label='Date & Time of Leave (First Day)'
-                  onChange={handleChange}
-                  className='text-sm'
-                  renderInput={(params) => (
-                    <TextField
-                      className='text-sm'
-                      {...params}
-                      fullWidth
-                      required
-                      variant='standard'
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DateTimePicker
-                  className='text-sm'
-                  value={new Date()}
-                  disabled={loading}
-                  label='Date & Time of Leave (Last Day)'
-                  onChange={handleChange}
-                  renderInput={(params) => (
-                    <TextField
-                      className='text-sm'
-                      {...params}
-                      fullWidth
-                      required
-                      variant='standard'
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DateTimePicker
-                  className='text-sm'
-                  value={new Date()}
-                  disabled={loading}
-                  label='Date of Return to Work'
-                  onChange={handleChange}
-                  renderInput={(params) => (
-                    <TextField
-                      className='text-sm'
-                      {...params}
-                      fullWidth
-                      required
-                      variant='standard'
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <TextField
-                label='No. of Leave Days'
-                fullWidth
-                required
-                variant='standard'
-                type='number'
-                defaultValue={1}
-                disabled={loading}
-                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                className='text-sm'
-              />
-            </Grid>
-
-            <Grid item xs={12} md={12}>
-              <TextField
-                fullWidth
-                multiline
+      <GridWrapper colSize='2' className='grid grid-cols-8 gap-4'>
+        <div className='col-span-6'>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <MobileDateTimePicker
+              label="Date of Leave (First Day)"
+              value={leaveDetails.dateFrom}
+              onChange={(newValue) => {
+                setLeaveDetails({
+                  ...leaveDetails,
+                  dateFrom: newValue
+                })
+              }}
+              renderInput={(params) => <TextField {...params} variant="standard" size="small" className='w-full' />}
+            />
+          </LocalizationProvider>
+        </div>
+        <div className='col-span-2'>
+          <TextField
+            size='small'
+            value={leaveDetails.noOfDays}
+            label='No. of Days'
+            disabled={!(leaveDetails.dateFrom)}
+            variant='standard'
+            InputProps={{ inputProps: { min: 1 } }}
+            type={"number"}
+            onChange={(e) => {
+              setLeaveDetails({
+                ...leaveDetails,
+                noOfDays: e.target.value,
+              })
+            }}
+          />
+        </div>
+        <div className='col-span-4'>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <MobileDateTimePicker
+              label="Date of Leave (Last Day)"
+              disabled={!(leaveDetails.dateFrom && leaveDetails.noOfDays)}
+              value={leaveDetails.dateTo}
+              onChange={(newValue) => {
+                setLeaveDetails({
+                  ...leaveDetails,
+                  dateTo: newValue
+                })
+              }}
+              renderInput={(params) => <TextField {...params} variant="standard" size="small" className='w-full' />}
+            />
+          </LocalizationProvider>
+        </div>
+        <div className='col-span-4'>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MobileDatePicker
+              label="Date of Return to Work"
+              value={leaveDetails.dateOfReturnToWork}
+              disabled
+              onChange={(newValue) => {
+                setLeaveDetails({
+                  ...leaveDetails,
+                  dateOfReturnToWork: newValue
+                })
+              }}
+              renderInput={(params) => <TextField {...params} variant="standard" size="small" className='w-full' />}
+            />
+          </LocalizationProvider>
+        </div>
+        <div className='col-span-8'>
+          <TextField
+            fullWidth
+            value={leaveDetails.reasonOfLeave}
+            multiline
+            onChange={(e:any) => {
+              setLeaveDetails({
+                    ...leaveDetails,
+                    reasonOfLeave: e.target.value
+                  })
+            }}
+            rows={3}
                 label='Please State the Reason for the Filed Leave '
                 required
                 disabled={loading}
                 variant='standard'
                 className='text-sm'
               />
-            </Grid>
-
-            <Grid item xs={12} md={12}>
-              <Box
-                className={`${
-                  confirmed ? 'bg-sky-200' : 'bg-slate-200'
-                } px-4 py-2 rounded-sm ease-in-out`}
+        </div>
+        <div className='col-span-8'>
+<FormControl variant='standard' size='small' fullWidth required>
+              <InputLabel id='approver'>Approver</InputLabel>
+              <Select
+                label='Approver'
+              labelId='approver'
+              value={leaveDetails.approver}
+                onChange={(e: any) => {
+                  setLeaveDetails({
+                    ...leaveDetails,
+                    approver: e.target.value
+                  })
+                }}
               >
-                <FormControlLabel
-                  disabled={loading}
-                  onChange={() => setConfirmed(!confirmed)}
-                  control={<Checkbox required className='text-sm' />}
-                  label='Click if all information is true and correct.'
-                />
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={12} sx={{ textAlign: 'right' }}>
-              <LoadingButton
-                className='bg-sky-500 hover:bg-sky-600 text-md ease-in-out'
-                loading={loading}
-                loadingPosition='start'
-                startIcon={<Publish />}
-                variant='contained'
-                disabled={!confirmed}
-                onClick={() => setLoading(true)}
-                disableElevation
-              >
-                Submit Leave Application
-              </LoadingButton>
-            </Grid>
-          </Grid>
-        </Card>
-      </CustomCard>
+                {approvers.map((tl) => {
+                  return (
+                    <MenuItem key={tl.employeeNo} value={tl.employeeNo}>
+                      {tl.employeeNo}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+        </div>
+        
+        </GridWrapper>
     </>
   );
 };

@@ -21,7 +21,7 @@ import {
 } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import { useDispatch } from 'react-redux';
-import { AppCtx } from 'App';
+import { AppCtx, moment } from 'App';
 import { EXCEL } from 'assets';
 import * as XLSX from 'xlsx';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -30,13 +30,6 @@ import GridWrapper from 'CustomComponents/GridWrapper';
 import { Moment } from 'moment';
 import holidays from '../../constants/holidays';
 import { createAction } from 'slices/timekeeping';
-
-var moment = require('moment-business-days');
- 
-moment.updateLocale('us', {
-   holidays: [holidays[2022], holidays[2023]],
-   holidayFormat: 'MM-DD-YYYY'
-});
 
 type Props = {
   open: boolean;

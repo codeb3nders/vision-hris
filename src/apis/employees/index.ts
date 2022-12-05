@@ -13,12 +13,10 @@ export const createEmployeeEndpoint = async (body: EmployeeI, config = {}) => {
 };
 
 export const updateEmployeeEndpoint = async (data: any, config: any) => {
-  const employeeNo = data.employeeNo;
-  let tmp_body: any = data;
-  delete tmp_body.employeeNo;
-  const body = tmp_body;
+  const body = data;
+  console.log({body}, "updateEmployeeEndpoint")
   try {
-    return await axios.patch(`${URL_EMPLOYEES}${employeeNo}`, body, {
+    return await axios.patch(`${URL_EMPLOYEES}update`, body, {
       ...config,
     });
   } catch (error: any) {

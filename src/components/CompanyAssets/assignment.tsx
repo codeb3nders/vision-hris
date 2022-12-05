@@ -26,12 +26,7 @@ import {
   updateAction as updateCompanyAsset,
 } from 'slices/companyAssets';
 import {
-  enumsData,
-  enumsData as getEnumsData, status as getEnumsDataStatus
-} from 'slices/enums/enumsSlice'
-import {
-  createAction as createEmployeeAsset,
-  updateAction
+  createAction as createEmployeeAsset
 } from 'slices/assets';
 import ConfirmDelete from 'components/Other/confirm.delete';
 import { getEmployeeItems as _getEmployeeItems } from 'slices';

@@ -24,6 +24,7 @@ import employeeDocsSlice from "slices/employee201files";
 import companyAssetsSlice from "slices/companyAssets";
 import timekeepingSlice from "slices/timekeeping";
 import teamLeadersSlice from "slices/teamLeader";
+import leaveRequestsSlice from "slices/leaveRequests";
 
 const rootPersistConfig = {
   key: 'root',
@@ -31,7 +32,7 @@ const rootPersistConfig = {
   storage,
   blacklist: ['employeesWithLeave', 'userAccess',
     'newEmployee', 'filteredEmployees', 'updatedEmployee', 'employeeHistory',
-    'disciplinaryCases', 'assets' ,'learningAndDevelopment', 'employeeDocuments', 'timekeepingSlice', 'teamLeaders'
+    'disciplinaryCases', 'assets' ,'learningAndDevelopment', 'employeeDocuments', 'timekeepingSlice', 'teamLeaders', 'leaveRequests'
   ]
 }
 
@@ -51,7 +52,8 @@ const appReducer = combineReducers({
   employeeDocuments: employeeDocsSlice,
   companyAssets: companyAssetsSlice,
   timekeeping: timekeepingSlice,
-  teamLeaders: teamLeadersSlice
+  teamLeaders: teamLeadersSlice,
+  leaveRequests: leaveRequestsSlice
 })
 
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);

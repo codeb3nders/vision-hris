@@ -93,7 +93,7 @@ const Certificates = (props: Props) => {
           getRowHeight={() => 'auto'}
         />
       </div>
-      <AddButton text='Add License/Certificate' setOpen={setOpen} />
+      <AddButton text='Add License/Certificate' cb={() => setOpen(true)} />
     </CollapseWrapper>
   );
 };

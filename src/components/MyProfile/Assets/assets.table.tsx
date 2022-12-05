@@ -178,7 +178,7 @@ const AssetsTable = (props: Props) => {
       <AssetDialog setOpen={setOpen} open={open} setRows={setRows} employeeNo={employeeDetails.employeeNo} access_token={access_token} assetData={assetData} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} isReturn={isReturn} />
       <div style={{ width: '100%' }}>
         <div style={{marginBottom: 10}}>
-          <AddButton setOpen={setOpen} text='Add Record' />
+          <AddButton text='Add Record' cb={() => setOpen(true)} />
         </div>
         <DataGrid
           autoHeight

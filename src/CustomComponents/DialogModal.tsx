@@ -23,7 +23,7 @@ const DialogModal: React.FC<Props> = ({
     <Transition appear show={open} as={Fragment}>
       <Dialog
         as='div'
-        className={`relative z-50`}
+        className={`relative z-50 max-w-md mx-auto overflow-hidden md:max-w-2xl`}
         // open={open}
         onClose={() => {}}
       >
@@ -53,13 +53,13 @@ const DialogModal: React.FC<Props> = ({
               leaveTo='opacity-0 scale-95'
             >
               <Dialog.Panel
-                className={`min-w-[500px] transform overflow-auto rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-slate-900 dark:text-white ${className}`}
+                className={`transform overflow-auto rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-slate-900 dark:text-white ${className}`}
               >
                 <Dialog.Title className='text-lg font-medium leading-6 text-sky-500'>
                   {title}
                 </Dialog.Title>
 
-                <Dialog.Description className='max-h-[500px] overflow-auto pr-2'>
+                <Dialog.Description className='max-h-[500px]'>
                   <div className='mt-0 flex w-full flex-col' id={id}>{children}</div>
                 </Dialog.Description>
 

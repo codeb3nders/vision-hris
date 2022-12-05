@@ -1,17 +1,12 @@
-import {
-  ClearTwoTone,
-  EditTwoTone,
-  UpcomingTwoTone,
-} from '@mui/icons-material';
+import { HistoryTwoTone } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import { DataGrid, gridClasses, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 
 type Props = {
   data: any[];
-  isHRview?: boolean;
 };
 
 const columns: GridColDef[] = [
@@ -36,45 +31,26 @@ const columns: GridColDef[] = [
     align: 'center'
   },
   {
-    field: 'returnDate',
-    headerName: 'Return Date',
-    width: 200
+    field: 'reasonOfLeave',
+    headerName: 'Reason of Leave',
+    width: 400
   },
   {
     field: 'status',
     headerName: 'Status'
   },
   {
-    field: 'reasonOfLeave',
-    headerName: 'Reason of Leave',
+    field: 'leaveReasonOfDisapproval',
+    headerName: 'Comments',
     width: 400
-  },
-  {
-    field: '',
-    headerName: 'Actions',
-    width: 200,
-    renderCell: (params: any) => {
-      return (
-        <div className='flex flex-row gap-2 text-xs justify-center w-full'>
-          <button className='bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 flex items-center justify-center transition duration-150 ease-in-out rounded-sm'>
-            <ClearTwoTone className='text-sm' /> Cancel
-          </button>
-          <button className='bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 flex items-center justify-center transition duration-150 ease-in-out rounded-sm'>
-            <EditTwoTone className='text-sm' /> Update
-          </button>
-        </div>
-      );
-    },
   },
 ];
 
-const UpcomingLeaves = ({data}: Props) => {
-console.log({data}, "dddddddddd")
+const DisapprovedCancelled = ({data}: Props) => {
   return (
     <CollapseWrapper
-      panelTitle='Upcoming/Ongoing Leaves'
-      icon={UpcomingTwoTone}
-      open
+      panelTitle='Disapproved/Cancelled'
+      icon={HistoryTwoTone}
       contentClassName='p-0'
     >
       <DataGrid
@@ -110,4 +86,4 @@ console.log({data}, "dddddddddd")
   );
 };
 
-export default UpcomingLeaves;
+export default DisapprovedCancelled;

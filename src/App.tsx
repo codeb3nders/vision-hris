@@ -6,6 +6,18 @@ import { useSelector } from 'react-redux';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { initialState } from 'components/MyProfile/employee.initialstate';
 import Slider from './components/Auth/slider';
+import holidays from 'constants/holidays';
+import { URL_USER_LOGS } from 'constants/EndpointPath';
+import { createEndpoint } from 'apis';
+import axios from 'axios';
+
+export var moment = require('moment-business-days');
+ 
+moment.updateLocale('us', {
+  holidays: [holidays[2022], holidays[2023]],
+  holidayFormat: 'MM-DD-YYYY',
+  workingWeekdays: [1, 2, 3, 4, 5, 6]
+});
 
 type AppModel = {
   access_token: string;
@@ -16,6 +28,7 @@ type AppModel = {
   isHRLogin: boolean;
   setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
   currentPage: string;
+  createLog: any;
 };
 
 export const AppCtx = createContext<AppModel>({
@@ -27,6 +40,7 @@ export const AppCtx = createContext<AppModel>({
   isHRLogin: false,
   setCurrentPage: () => {},
   currentPage: 'login',
+  createLog: () => { }
 });
 
 type Props = {};
@@ -57,12 +71,34 @@ const App: React.FC<Props> = () => {
     }
   }, [userData]);
 
+  const createLog = async (data) => {
+    console.log("createLogcreateLogcreateLog")
+    const getMyIP = async() => { 
+      try {
+        const res = await axios.get('https://ipapi.co/json/')
+        return res.data.IPv4;
+      } catch (error) {
+        console.error({error})
+      }
+    }
+    const getMyBrowser = () => {
+      return navigator.userAgent.toString();
+    }
+
+    const config = {
+      headers: { Authorization: `Bearer ${access_token}` },
+    };
+    const body = {
+      employeeNo: userData?.employeeNo,
+      user_agent: getMyBrowser(),
+      ...data
+    }
+    return await createEndpoint(URL_USER_LOGS, body, config);
+  }
+
   return (
     <div className={`App h-[100vh]`} style={{ background: '#fafbff' }}>
       <ThemeProvider theme={theme}>
-        {!isLoggedIn ? (
-          <Slider />
-        ) : (
           <AppCtx.Provider
             value={{
               access_token,
@@ -73,11 +109,11 @@ const App: React.FC<Props> = () => {
               isHRLogin,
               setCurrentPage,
               currentPage,
+              createLog
             }}
-          >
-            <Main role={userGroup} />
+        >
+          {!isLoggedIn ? <Slider /> : <Main role={userGroup} />}
           </AppCtx.Provider>
-        )}
       </ThemeProvider>
     </div>
   );

@@ -252,7 +252,7 @@ const Contacts = (props: Props) => {
           />
         </div>
 
-        <AddButton text='Add Emergency Contact' setOpen={setOpen} />
+        <AddButton text='Add Emergency Contact' cb={() => setOpen(true)} />
       </div>
     </CollapseWrapper>
   );

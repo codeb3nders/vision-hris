@@ -1,34 +1,11 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createEndpoint, deleteEndpoint, getByParamsEndpoint, updateEndpoint, getByEmployeeEndpoint } from 'apis';
-import { URL_ENUMS } from "constants/EndpointPath";
-
-const listOfValues = {
-  leaveTypes: [],
-  positions: [],
-  departments: [],
-  ranks: [],
-  civil_status: [],
-  citizenship: [],
-  religions: [],
-  employment_status: [],
-  locations: [],
-  assets: [],
-  file201: [],
-  allowance_types: [],
-  employment_types: [],
-  gender: [],
-  payroll_group: [],
-  payment_method: [],
-  violations: [],
-  offenseLevel: [],
-  offenseStages: [],
-  violationCategories: []
-}
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createEndpoint, deleteEndpoint, getByEmployeeEndpoint, getByParamsEndpoint, updateEndpoint } from 'apis';
+import { URL_LEAVE_REQUESTS as URL } from 'constants/EndpointPath';
 
 const initialCreateState: any = {
   createItem: null,
   createStatus: 'idle',
-  createError: null
+  createError: null,
 };
 
 const initialUpdateState: any = {
@@ -42,9 +19,9 @@ const initialDeleteState: any = {
 };
 
 const initialGetState: any = {
-  enumsData: [],
-  status: 'idle',
-  error: null,
+  getItems: [],
+  getStatus: 'idle',
+  getError: null,
 };
 
 const initialGetByEmployeeState: any = {
@@ -53,7 +30,7 @@ const initialGetByEmployeeState: any = {
   getByEmployeeError: null,
 };
 
-const name = "enums";
+const name = "leaveRequests";
 
 export const createAction: any = createAsyncThunk(
   `${name}/create`,
@@ -62,7 +39,7 @@ export const createAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      return await createEndpoint(URL_ENUMS, data.body, config);
+      return await createEndpoint(URL, data.body, config);
     } catch (err: any) {
       console.error(`${name}/create`, err);
       return err;
@@ -72,16 +49,31 @@ export const createAction: any = createAsyncThunk(
 
 export const getAllDataAction: any = createAsyncThunk(
   `${name}/get`,
-    async (data: { access_token: string, params?: any }) => {
-      console.log(data.params, "vvvvvvvvvvvvvvv")
+  async (data: { access_token: string, params?: any }) => {
     try {
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await getByParamsEndpoint(URL_ENUMS, config, data.params);
+      const response = await getByParamsEndpoint(URL, config, data.params);
       return [...response.data];
     } catch (err: any) {
       console.error(`${name}/get`, err);
+      return err.message;
+    }
+  }
+);
+
+export const getByEmployeeNoAction: any = createAsyncThunk(
+  `${name}/getByEmployeeNo`,
+  async (data: { access_token: string, employeeNo: string }) => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${data.access_token}` },
+      };
+      const response = await getByEmployeeEndpoint(URL, config, data.employeeNo);
+      return response.data;
+    } catch (err: any) {
+      console.error(`${name}/getByEmployeeNo`, err);
       return err.message;
     }
   }
@@ -94,7 +86,7 @@ export const updateAction: any = createAsyncThunk(
           const config = {
               headers: { Authorization: `Bearer ${data.access_token}` },
           };
-          return await updateEndpoint(URL_ENUMS, data.params, config);
+          return await updateEndpoint(URL, data.params, config);
       } catch (err: any) {
           console.error(`${name}/update`, err);
           return err;
@@ -109,7 +101,7 @@ export const deleteAction: any = createAsyncThunk(
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      return await deleteEndpoint(URL_ENUMS, data.id, config);
+      return await deleteEndpoint(URL, data.id, config);
     } catch (err: any) {
       console.error(`${name}/delete`, err);
       return err;
@@ -117,15 +109,14 @@ export const deleteAction: any = createAsyncThunk(
   }
 );
 
-export const enumsSlice = createSlice({
+export const leaveRequestsSlice = createSlice({
   name,
   initialState: {
     ...initialCreateState,
     ...initialUpdateState,
     ...initialGetState,
     ...initialDeleteState,
-    ...initialGetByEmployeeState,
-    listOfValues
+    ...initialGetByEmployeeState
   },
   reducers: {
     reset: () => {
@@ -159,82 +150,26 @@ export const enumsSlice = createSlice({
         state.createError = action.error.message;
       })
     .addCase(getAllDataAction.pending, (state) => {
-        state.status = 'loading';
+        state.getStatus = 'loading';
       })
       .addCase(getAllDataAction.fulfilled, (state, action) => {
-        const data = action.payload;
-        state.status = "succeeded";
-        // state.enumsData = action.payload;
-
-        data.forEach((o: any) => {
-          switch (o.type.toLowerCase()) {
-            case 'position':
-              state.listOfValues.positions.push(o);
-              break;
-            case 'civilstatus':
-              state.listOfValues.civil_status.push(o);
-              break;
-            case 'gender':
-              state.listOfValues.gender.push(o);
-              break;
-            case 'citizenship':
-              state.listOfValues.citizenship.push(o);
-              break;
-            case 'religion':
-              state.listOfValues.religions.push(o);
-              break;
-            case 'employmentstatus':
-              state.listOfValues.employment_status.push(o);
-              break;
-            case 'location':
-              state.listOfValues.locations.push(o);
-              break;
-            case 'department':
-              state.listOfValues.departments.push(o);
-              break;
-            case 'rank':
-              state.listOfValues.ranks.push(o);
-              break;
-            case 'assettype':
-              state.listOfValues.assets.push(o);
-              break;
-            case 'documenttype':
-              state.listOfValues.file201.push(o);
-              break;
-            case 'allowancetype':
-              state.listOfValues.allowance_types.push(o);
-              break;
-            case 'employmenttype':
-              state.listOfValues.employment_types.push(o);
-              break;
-            case 'payrollgroup':
-              state.listOfValues.payroll_group.push(o);
-              break;
-            case 'paymentmethod':
-              state.listOfValues.payment_method.push(o);
-              break;
-            case 'violations':
-              state.listOfValues.violations.push(o);
-              break;
-            case 'offenselevel':
-              state.listOfValues.offenseLevel.push(o);
-              break;
-            case 'offensestage':
-              state.listOfValues.offenseStages.push(o);
-              break;
-            case 'violationcategory':
-              state.listOfValues.violationCategories.push(o);
-              break;
-            case 'leavetype':
-              state.listOfValues.leaveTypes.push(o);
-              break;
-          }
-        })
-
+        state.getStatus = "succeeded";
+        state.getItems = action.payload;
       })
       .addCase(getAllDataAction.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        state.getStatus = 'failed';
+        state.getError = action.error.message;
+      })
+    .addCase(getByEmployeeNoAction.pending, (state) => {
+        state.getByEmployeeStatus = 'loading';
+      })
+      .addCase(getByEmployeeNoAction.fulfilled, (state, action) => {
+        state.getByEmployeeStatus = "succeeded";
+        state.getByEmployeeItems = action.payload;
+      })
+      .addCase(getByEmployeeNoAction.rejected, (state, action) => {
+        state.getByEmployeeStatus = 'failed';
+        state.getByEmployeeError = action.error.message;
       })
     .addCase(updateAction.pending, (state) => {
         state.updateStatus = 'loading';
@@ -276,13 +211,13 @@ export const newData = (state: any) => state[name].createItem;
 export const newDataStatus = (state: any) => state[name].createStatus;
 export const newDataError = (state: any) => state[name].createError;
 
-// export const enumsData = (state: any) => state[name].enumsData;
-export const status = (state: any) => state[name].status;
-export const error = (state: any) => state[name].error;
+export const data = (state: any) => state[name].getItems || [];
+export const dataStatus = (state: any) => state[name].getStatus;
+export const dataError = (state: any) => state[name].getError;
 
-export const data = (state: any) => state[name].getByEmployeeItems;
-export const dataStatus = (state: any) => state[name].getByEmployeeStatus;
-export const dataError = (state: any) => state[name].getByEmployeeError;
+export const employeeData = (state: any) => state[name].getByEmployeeItems;
+export const employeeDataStatus = (state: any) => state[name].getByEmployeeStatus;
+export const employeeDataError = (state: any) => state[name].getByEmployeeError;
 
 export const updateStatus = (state: any) => state[name].updateStatus;
 export const updateError = (state: any) => state[name].updateError;
@@ -291,8 +226,6 @@ export const deleteStatus = (state: any) => state[name].deleteStatus;
 export const deleteError = (state: any) => state[name].deleteError;
 
 
-export const { reset } = enumsSlice.actions;
+export const { reset } = leaveRequestsSlice.actions;
 
-export const getListOfValues = (state: any) => state[name].listOfValues;
-
-export default enumsSlice.reducer;
+export default leaveRequestsSlice.reducer;

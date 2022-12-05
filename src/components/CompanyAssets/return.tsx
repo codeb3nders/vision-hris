@@ -26,10 +26,6 @@ import {
   updateAction as updateCompanyAsset,
 } from 'slices/companyAssets';
 import {
-  enumsData,
-  enumsData as getEnumsData, status as getEnumsDataStatus
-} from 'slices/enums/enumsSlice'
-import {
   createAction as createEmployeeAsset,
   updateAction
 } from 'slices/assets';

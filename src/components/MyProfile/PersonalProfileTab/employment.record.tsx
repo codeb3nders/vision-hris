@@ -98,7 +98,7 @@ const EmploymentRecord = (props: Props) => {
           getRowHeight={() => 'auto'}
         />
       </div>
-      <AddButton text='Add Employment Record' setOpen={setOpen} />
+      <AddButton text='Add Employment Record' cb={() => setOpen(true)} />
     </CollapseWrapper>
   );
 };

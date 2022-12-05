@@ -7,6 +7,7 @@ import ChecklistTable from './201Checklist/checklist.table';
 import AssetsTable from './Assets/assets.table';
 import DisciplinaryCases from './Disciplinary Cases/offenses.table';
 import EmployementStatus from './EmploymentTab/employement.status';
+import Leaves from './Leaves';
 import History from './Leaves/history';
 import LeaveBalances from './Leaves/leave.balances';
 import UpcomingLeaves from './Leaves/upcoming.leaves';
@@ -53,7 +54,7 @@ type Props = {
 };
 
 const ProfileTabContent = ({ className }: Props) => {
-  const { isView, handleUpdateEmployee, updatedDetails, index } = useContext(ProfileCtx);
+  const { isView, handleUpdateEmployee, updatedDetails, index, employeeDetails } = useContext(ProfileCtx);
   const { isNew } = useContext(EmployeeCtx);
   const employeesTabs = ["1", "3"]
 
@@ -151,10 +152,7 @@ const ProfileTabContent = ({ className }: Props) => {
 
         <TabPanel value='7' className='p-0 grid' id='Leaves'>
           <LeaveBalances />
-          <Divider />
-          <UpcomingLeaves />
-          <Divider />
-          <History />
+          <Leaves employeeNo={employeeDetails.employeeNo} isHRview />
         </TabPanel>
         <TabPanel value='8' className='p-0 grid' id='OfficialBusiness'>
           Official Business

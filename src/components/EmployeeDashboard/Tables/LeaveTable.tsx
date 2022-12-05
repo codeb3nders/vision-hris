@@ -1,39 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import {
-  Breadcrumbs,
-  Link,
-  Typography,
   Chip,
   Button,
   Grid,
   Snackbar,
   Alert,
   Slide,
-  SnackbarCloseReason,
 } from '@mui/material';
 import ViewDetailsModal from './ViewDetailsModal';
 import { AddCircleOutlineTwoTone } from '@mui/icons-material';
 import LeaveForm from '../Forms/LeaveForm';
-import { LeaveTypes } from '../../../constants/LeaveTypes';
 import OTForm from '../Forms/OTForm';
 import CustomCard from '../../../CustomComponents/CustomCard';
 import { Link as RouterLink } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
+import {
+  getListOfValues
+} from "slices"
 type Props = {
   isApprover?: boolean;
   isOT?: boolean;
 };
 
 const LeaveTable: React.FC<Props> = ({ isApprover, isOT }) => {
-  const [selectedLeaveType, setSelectedLeaveType] = useState(null);
+  const [selectedLeaveType, setSelectedLeaveType] = useState("");
   const [openSnack, setOpenSnack] = useState(false);
   const [newForm, setNewForm] = useState(false);
   const [viewDetails, setViewDetails] = useState({
     details: {},
     status: false,
   });
-console.log({isApprover})
+  // const [LeaveTypes, setLeaveTypes] = useState<any[]>([]);
+  const {leaveTypes} = useSelector(getListOfValues);
+
+  // useEffect(() => {
+  //   setLeaveTypes(enumsData.filter((x:any) => x.type.toLocaleLowerCase() === "leavetype"))
+  // }, [enumsData])
   // const statusCell = (cell) =>
   //   isHRLogin || isApprover ? (
   //     <Chip
@@ -343,7 +346,7 @@ console.log({isApprover})
           severity='success'
           sx={{ width: '100%' }}
         >
-          {LeaveTypes.filter((lt) => lt.id === selectedLeaveType)[0]?.label}{' '}
+          {leaveTypes.filter((lt) => lt.id === selectedLeaveType)[0]?.label}{' '}
           {isOT ? 'OT' : 'Leave'} Application submitted successfully.
         </Alert>
       </Snackbar>
@@ -389,10 +392,11 @@ console.log({isApprover})
               className='no-underline text-inherit'
             >
               <Button
+                className="text-xs hover:bg-v-red hover:text-white cursor-pointer"
                 startIcon={<AddCircleOutlineTwoTone />}
                 // onClick={() => setNewForm(true)}
               >
-                File {isOT ? 'OT' : 'Leave'}
+                Apply for {isOT ? 'OT' : 'Leave'}
               </Button>
             </RouterLink>
           </div>
@@ -401,19 +405,20 @@ console.log({isApprover})
 
       {newForm ? (
         <Grid container justifyContent='center'>
-          {isOT ? (
+          {/* {isOT ? ( */}
             <OTForm
               setNewForm={setNewForm}
               setSelectedLeaveType={setSelectedLeaveType}
               setOpenSnack={setOpenSnack}
             />
-          ) : (
+          {/* ) : (
             <LeaveForm
-              setNewForm={setNewForm}
-              setSelectedLeaveType={setSelectedLeaveType}
+                setNewForm={setNewForm}
+                leaveType={selectedLeaveType}
+              // setSelectedLeaveType={setSelectedLeaveType}
               setOpenSnack={setOpenSnack}
             />
-          )}
+          )} */}
         </Grid>
       ) : (
         <div className='w-full flex justify-center'>

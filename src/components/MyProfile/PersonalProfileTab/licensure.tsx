@@ -83,7 +83,7 @@ const Licensure = (props: Props) => {
           getRowHeight={() => 'auto'}
         />
       </div>
-      <AddButton text='Add Licensure Examinations' setOpen={setOpen} />
+      <AddButton text='Add Licensure Examinations' cb={() => setOpen(true)} />
     </CollapseWrapper>
   );
 };

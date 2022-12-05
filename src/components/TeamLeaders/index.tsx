@@ -288,7 +288,7 @@ const TeamLeaders = (props: Props) => {
             <Typography variant="h5">Team Leaders</Typography>
           </div>
           <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
-            <AddButton setOpen={setOpen} text='Add Record' />
+            <AddButton text='Add Record' cb={() => setOpen(true)} />
           </div>
         </section>
         <DataGrid

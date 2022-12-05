@@ -1,45 +1,39 @@
 import { HistoryTwoTone } from '@mui/icons-material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Tooltip } from '@mui/material';
+import { DataGrid, gridClasses, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
 import React, { useState } from 'react';
 import CollapseWrapper from './../PersonalProfileTab/collapse.wrapper';
 
-type Props = {};
+type Props = {
+  data: any[];
+};
 
 const columns: GridColDef[] = [
   {
-    field: 'date',
-    headerName: 'Date',
-    width: 90,
-    renderCell: (params: any) => {
-      console.log({ params });
-
-      return params.value;
-    },
-  },
-  {
-    field: 'leave_type',
-    headerName: 'Leave Type',
-    width: 90,
-    renderCell: (params: any) => {
-      return params.value;
-    },
-  },
-  {
-    field: 'details',
-    headerName: 'Details',
-    width: 250,
-    renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
-    },
-  },
-  {
-    field: 'used',
-    headerName: 'Used',
+    field: 'leaveTypeDetails',
     width: 50,
+    headerName: '',
     renderCell: (params: any) => {
-      return params.value;
+      return <Tooltip title={params.row.leaveTypeDetails.name} >
+        {params.row.leaveTypeDetails.icon}
+      </Tooltip>;
     },
+  },
+  {
+    field: 'startDate',
+    headerName: 'Start Date',
+    width: 200
+  },
+  {
+    field: 'noOfDays',
+    headerName: 'No. Of Days',
+    align: 'center'
+  },
+  {
+    field: 'reasonOfLeave',
+    headerName: 'Reason of Leave',
+    width: 400
   },
   {
     field: 'balance',
@@ -48,20 +42,10 @@ const columns: GridColDef[] = [
     renderCell: (params: any) => {
       return params.value;
     },
-  },
-  {
-    field: 'comments',
-    headerName: 'Comments',
-    width: 90,
-    renderCell: (params: any) => {
-      return <div className='text-xs p-1'>{params.value}</div>;
-    },
-  },
+  }
 ];
 
-const History = (props: Props) => {
-  const [rows, setRows] = useState<any>([]);
-
+const History = ({data}: Props) => {
   return (
     <CollapseWrapper
       panelTitle='History'
@@ -71,13 +55,31 @@ const History = (props: Props) => {
       <DataGrid
         autoHeight
         disableSelectionOnClick
-        rows={rows}
+        sx={{
+          [`& .${gridClasses.cell}`]: {
+            py: 1,
+            wordBreak: "break-word"
+          },
+        }}
+        hideFooter={true}
+        getRowHeight={() => 'auto'}
+        getRowId={(data) => data.id}
+        initialState={{
+          columns: {
+            columnVisibilityModel: {
+              // Hide columns status and traderName, the other columns will remain visible
+              status: false,
+              // startDate: false,
+            },
+          },
+        }}
+        className="data-grid border-0"
+        density='compact'
+        rows={data}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
-        checkboxSelection
-        getRowHeight={() => 'auto'}
-        className='border-0 '
+        checkboxSelection={false}
       />
     </CollapseWrapper>
   );

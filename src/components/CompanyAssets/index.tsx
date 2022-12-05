@@ -40,8 +40,7 @@ import {
   reset as companyAssetsReset
 } from 'slices/companyAssets';
 import {
-  enumsData,
-  enumsData as getEnumsData, status as getEnumsDataStatus
+  getListOfValues
 } from 'slices/enums/enumsSlice'
 import {
   createAction as createEmployeeAsset,
@@ -89,7 +88,6 @@ const CompanyAssets = (props: Props) => {
   const [openAssignment, setOpenAssignment] = useState<boolean>(false);
   const [openReturn, setOpenReturn] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const enumsData = useSelector(getEnumsData);
   const assetsData = useSelector(_getCompanyAssetsData);
   const assetsDataStatus = useSelector(_getCompanyAssetsDataStatus);
   const updateAssetStatus = useSelector(getAssetUpdateStatus);
@@ -264,7 +262,7 @@ const CompanyAssets = (props: Props) => {
             <Typography variant="h5">Company Assets</Typography>
           </div>
           <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
-            <AddButton setOpen={setOpen} text='Add Record' />
+            <AddButton text='Add Record' cb={() => setOpen(true)} />
           </div>
         </section>
         <DataGrid
@@ -297,11 +295,11 @@ const AssetDialog = ({ open, setOpen, access_token, assetData: data, isUpdate, i
   const [assetData, setAssetData] = useState<any>(CompanyAssetInitialState);
   const [isAssigned, setIsAssigned] = useState<boolean>(false);
   const [assignedAsset, setAssignedAsset] = useState<AssetModel>(AssetInitialState);
-  const enums = useSelector(enumsData)
-
+  const {assets} = useSelector(getListOfValues)
+console.log({assets}, "assetsassetsassets")
   useEffect(() => { 
-    setAssetTypes(enums.filter((x:any) => x.type.toLocaleLowerCase() === "assettype"))
-  }, [enums])
+    setAssetTypes(assets)
+  }, [assets])
 
   useEffect(() => {
     setAssetData(data);

@@ -63,7 +63,7 @@ const IconNumbers = ({
         </div>
         <div className='col-span-1 text-2xl flex flex-row w-full'>
           <span
-            className={`text-xs mt-2 min-w-[100px] flex-1 flex justify-start items-end self-stretch h-[45px] desktop:text-xs laptop:text-xs tablet:text-sm phone:text-sm ${titleClassName}`}
+            className={`mt-2 min-w-[100px] flex-1 flex justify-start items-end self-stretch h-[45px] text-sm ${titleClassName}`}
           >
             {title}
           </span>
