@@ -242,14 +242,17 @@ const NewEmployee: React.FC<Props> = ({ open, setOpen, id }) => {
     <DialogModal
       className='max-w-[850px]'
       open={open}
-      title={
-        <Typography variant='h6' className='text-sky-500 flex items-center'>
-          <Info className='mr-2 text-sky-500' /> New Employee
-          <IconButton sx={{ ml: 'auto' }} onClick={handleClose}>
-            <Close />
-          </IconButton>
-        </Typography>
-      }
+      title='New Employee'
+      titleIcon={<Info className='mr-2 text-sky-500' />}
+      onClose={handleClose}
+      // title={
+      //   <Typography variant='h6' className='text-sky-500 flex items-center'>
+      //     <Info className='mr-2 text-sky-500' /> New Employee
+      //     <IconButton sx={{ ml: 'auto' }} onClick={handleClose}>
+      //       <Close />
+      //     </IconButton>
+      //   </Typography>
+      // }
       actions={
         <Button startIcon={<SaveTwoTone />} onClick={handleClose}>
           Save Employee

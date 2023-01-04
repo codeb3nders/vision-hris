@@ -18,7 +18,10 @@ export const ROLE_ACCESS = {
     ],
     approver: [
         'dashboard',
-        'employee_directory'
+        'employee_directory',
+        'manage-leave-requests',
+        'manage-ot-requests',
+        'manage-ob-requests',
     ],
     employee: [
         'dashboard',
@@ -26,6 +29,8 @@ export const ROLE_ACCESS = {
         'ess-leave-requests',
         'ess-new-leave-request',
         'ess-ot-requests',
-        'ess-new-ot-request'
+        'ess-new-ot-request',
+        'ess-ob-requests',
+        'ess-new-ob-request'
     ]
 };

@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import {
   AddCircleOutlineTwoTone,
+  CalendarMonthTwoTone,
   Close,
   EmailTwoTone,
   LocationOnTwoTone,
@@ -223,26 +224,33 @@ const Timekeeping: React.FC<Props> = () => {
 const DetailsModal = ({ open, setOpen }) => {
   const { data, total_verified, isOpen } = open;
   return <DialogModal
-        className="w-screen"
-        title={
-          <div className='flex items-start content-left'>
-            <Typography variant="subtitle1" gutterBottom>
+        titleIcon={<CalendarMonthTwoTone className='mr-2 text-sky-500' />}
+        title={<Typography variant="subtitle1" gutterBottom>
             Period: <Chip label={`${moment(data[0].periodStartDate).format("L")} - ${moment(data[0].periodEndDate).format("L")}`} />
-            </Typography>
-            {/* {total_verified === 0 && <section className="mb-2">
-              <Alert severity="warning">Please verify timekeeping on or before <strong>{ moment(data[0].verificationDueDate).format("L")}</strong> </Alert>
-            </section>
-            } */}
-            <IconButton
-              sx={{ ml: 'auto' }}
-              onClick={() => setOpen({
+            </Typography>}
+        onClose={()=>setOpen({
                 isOpen: false, data: []
-              })}
-            >
-              <Close />
-            </IconButton>
-          </div>
-        }
+              })}  
+        className="w-screen"
+        // title={
+        //   <div className='flex items-start content-left'>
+        //     <Typography variant="subtitle1" gutterBottom>
+        //     Period: <Chip label={`${moment(data[0].periodStartDate).format("L")} - ${moment(data[0].periodEndDate).format("L")}`} />
+        //     </Typography>
+        //     {/* {total_verified === 0 && <section className="mb-2">
+        //       <Alert severity="warning">Please verify timekeeping on or before <strong>{ moment(data[0].verificationDueDate).format("L")}</strong> </Alert>
+        //     </section>
+        //     } */}
+        //     <IconButton
+        //       sx={{ ml: 'auto' }}
+        //       onClick={() => setOpen({
+        //         isOpen: false, data: []
+        //       })}
+        //     >
+        //       <Close />
+        //     </IconButton>
+        //   </div>
+        // }
         open={isOpen}
       >
       <TimekeepingDetails data={data} />

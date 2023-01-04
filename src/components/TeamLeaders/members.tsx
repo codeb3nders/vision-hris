@@ -86,18 +86,21 @@ const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: 
   ]
   return (
     <DialogModal
-        className="w-[1000px]"
-        title={
-          <div className='flex items-start content-left'>
-            {headerInfo}
-            <IconButton
-              sx={{ ml: 'auto' }}
-              onClick={() => setOpen(false)}
-            >
-              <Close />
-            </IconButton>
-          </div>
-        }
+      className="w-[1000px]"
+      // titleIcon={<EventNote className='mr-2 text-sky-500' />}
+      title={headerInfo}
+      onClose={()=>setOpen(false)}  
+        // title={
+        //   <div className='flex items-start content-left'>
+        //     {headerInfo}
+        //     <IconButton
+        //       sx={{ ml: 'auto' }}
+        //       onClick={() => setOpen(false)}
+        //     >
+        //       <Close />
+        //     </IconButton>
+        //   </div>
+        // }
         open={open}
         actions={
           <button

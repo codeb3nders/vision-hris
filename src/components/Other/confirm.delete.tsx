@@ -12,10 +12,10 @@ type Props = {
   open: { row: any; status: boolean };
   setOpen: React.Dispatch<React.SetStateAction<{ row: any; status: boolean }>>;
   handleDelete: any;
+  isCancel?: boolean;
 };
 
-const ConfirmDelete = ({ handleDelete, open, setOpen }: Props) => {
-  console.log({ open });
+const ConfirmDelete = ({ handleDelete, open, setOpen, isCancel }: Props) => {
 
   return (
     <Dialog
@@ -24,19 +24,19 @@ const ConfirmDelete = ({ handleDelete, open, setOpen }: Props) => {
       id='confirm-delete-dialog'
     >
       <DialogTitle id='alert-dialog-title' className='text-[1rem]'>
-        Delete Confirmation
+        Confirmation
       </DialogTitle>
       <DialogContent>
         <DialogContentText id='alert-dialog-description'>
-          Are you sure you want to delete?
+          {`Are you sure you want to ${isCancel ? 'cancel' : 'delete'}?`}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setOpen({ row: null, status: false })}>
-          Cancel
+          NO
         </Button>
         <Button onClick={() => handleDelete(open?.row)} autoFocus>
-          Delete
+          YES
         </Button>
       </DialogActions>
     </Dialog>

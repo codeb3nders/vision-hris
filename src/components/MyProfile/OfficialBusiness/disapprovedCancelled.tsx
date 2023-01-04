@@ -1,4 +1,4 @@
-import { EventBusyTwoTone } from '@mui/icons-material';
+import { EventBusyTwoTone} from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import { DataGrid, gridClasses, GridColDef } from '@mui/x-data-grid';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';

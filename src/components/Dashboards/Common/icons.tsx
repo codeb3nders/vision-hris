@@ -14,6 +14,7 @@ import {
   WorkOffTwoTone,
   PregnantWomanTwoTone,
   BabyChangingStationTwoTone,
+  HomeWorkTwoTone,
 } from '@mui/icons-material';
 
 const OTIcon = (props?: any) => <MoreTimeTwoTone color='action' {...props} />;
@@ -28,7 +29,7 @@ const VacationIcon = (props?: any) => (
   <BeachAccessTwoTone color='success' {...props} />
 );
 const HomeIcon = (props?: any) => (
-  <CottageTwoTone color='secondary' {...props} />
+  <HomeWorkTwoTone color='secondary' {...props} />
 );
 const UnpaidIcon = (props?: any) => (
   <MoneyOffTwoTone color='warning' {...props} />
@@ -45,6 +46,7 @@ const CelebrationIcon = (props?: any) => <CelebrationTwoTone color='success' {..
 const CompensatoryIcon = (props?: any) => <WorkOffTwoTone color='success' {...props} />;
 const MaternityIcon = (props?: any) => <PregnantWomanTwoTone color='success' {...props} />;
 const PaternityIcon = (props?: any) => <BabyChangingStationTwoTone color='success' {...props} />;
+const OBIcon = (props?: any) => <BusinessCenterTwoTone color='success' {...props} />;
 
 export {
   OTIcon,
@@ -61,5 +63,6 @@ export {
   CelebrationIcon,
   CompensatoryIcon,
   MaternityIcon,
-  PaternityIcon
+  PaternityIcon,
+  OBIcon
 };

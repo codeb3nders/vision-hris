@@ -203,7 +203,7 @@ const ProfileMain = ({
   });
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [enums, setEnums] = useState<EnumsI>(enumsInitialState);
-  const { validated } = useRequiredChecker({ employeeDetails });
+  const { validated } = useRequiredChecker({ data: employeeDetails });
 
   const memoizedEmployeeDetails = useMemo(
     () => employeeDetails,

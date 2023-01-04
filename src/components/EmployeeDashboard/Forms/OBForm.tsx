@@ -3,7 +3,6 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -11,28 +10,30 @@ import {
 } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useParams, useLocation } from 'react-router-dom';
 import { AppCtx, moment } from 'App';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllDataAction, dataStatus, data } from 'slices/teamLeader';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { TimePicker, DatePicker } from '@mui/x-date-pickers';
+import { MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { OTDetailsModel } from 'components/MyProfile/Overtime';
+import ItineraryForm from './ItineraryForm';
+import { OBDetailsModel } from 'components/MyProfile/OfficialBusiness';
 import { DateValidationError } from '@mui/x-date-pickers/internals';
 import { POST_FILING_MESSAGE } from 'constants/errors';
-import { TimeValidationError } from '@mui/x-date-pickers/internals/hooks/validation/useTimeValidation';
 
 
 type Props = {
   setNewForm?: any;
   setOpenSnack?: any;
-  details: OTDetailsModel;
+  details: OBDetailsModel;
   setDetails: any;
   setWithError: any;
 };
 
-const OTForm: React.FC<Props> = ({
+const OBForm: React.FC<Props> = ({
   setNewForm,
   setOpenSnack,
   details,
@@ -45,20 +46,11 @@ const OTForm: React.FC<Props> = ({
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [confirmed, setConfirmed] = useState<boolean>(false);
-  const [isPostOT, setIsPostOT] = useState<boolean>(false);
   const [approvers, setApprovers] = useState<any[]>([])
+  const [isPostOB, setIsPostOB] = useState<boolean>(false);
   const { access_token } = useContext(AppCtx);
   const TLDataStatus = useSelector(dataStatus);
   const TLData = useSelector(data);
-
-  useEffect(() => { 
-    console.log(moment(details.date).isSame(moment().startOf("day")), "isSame", moment(details.date), moment())
-    if (details.date && details.timeFrom && details.timeTo && details.approver) {
-      setWithError(false);
-    } else {
-      setWithError(true);
-    }
-  }, [details])
 
   useEffect(() => {
     if (TLDataStatus !== 'idle') {
@@ -71,6 +63,19 @@ const OTForm: React.FC<Props> = ({
       getTeamLeaders();
     }
   }, [access_token])
+
+  useEffect(() => {
+    let lastDay: any = null, returnToWork: any = null;
+    const noOfDays = details.noOfDays, dateFrom = details.dateFrom;
+    if (noOfDays && dateFrom) {
+      lastDay = noOfDays > 1 ? moment(dateFrom).businessAdd(noOfDays-1, 'day') : moment(dateFrom);
+      returnToWork = moment(lastDay).businessAdd(1, 'day');
+    }
+    setDetails({
+      ...details,
+      dateTo: lastDay,
+    })
+  }, [details.noOfDays, details.dateFrom])
 
   useEffect(() => {
     console.log({ loading });
@@ -88,116 +93,98 @@ const OTForm: React.FC<Props> = ({
 
   const handleChange = () => { };
 
-  return <GridWrapper colSize='7' className='grid gap-2'>
+  return <GridWrapper colSize='2' className='grid grid-cols-8 gap-4'>
     <div className='col-span-3'>
       <LocalizationProvider dateAdapter={AdapterMoment}>
         <DatePicker
-          label="Date"
+          label="Start Date"
           minDate={new Date()}
           onError={(message: DateValidationError) => {
             console.log({message})
             if (message) {
-              setIsPostOT(true)
+              setIsPostOB(true)
               setWithError(true)
             } else {
-              setIsPostOT(false)
+              setIsPostOB(false)
               setWithError(false)
             }
           }}
-          value={details.date}
+          value={details.dateFrom}
           onChange={(newValue) => {
             setDetails({
               ...details,
-              date: newValue
+              dateFrom: newValue
             })
             setWithError(false)
           }}
-          renderInput={(params) => <TextField {...params} required error={isPostOT}
-              helperText={isPostOT && POST_FILING_MESSAGE} variant="standard" size="small" className='w-full' />}
+          renderInput={(params) => <TextField {...params} required error={isPostOB}
+              helperText={isPostOB && POST_FILING_MESSAGE} variant="standard" size="small" className='w-full' />}
         />
       </LocalizationProvider>
     </div>
     <div className='col-span-2'>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <TimePicker
-          minTime={moment(details.date).isSame(moment().startOf("day")) ? moment().set({"hour": moment().format("HH"), "minute" : moment().format("mm")}) : null}
-          label="Time From"
-          disabled={!details.date}
-          onError={(message: TimeValidationError) => {
-            console.log({message}, "timeval")
-            if (message) {
-              setIsPostOT(true)
-              setWithError(true)
-            } else {
-              setIsPostOT(false)
-              setWithError(false)
-            }
-          }}
-          value={details.timeFrom}
-          inputFormat="hh:mm A"
-          onChange={(newValue) => {
-            setDetails({
-              ...details,
-              timeFrom: newValue
-            })
-          }}
-          renderInput={(params) => <TextField {...params} required error={isPostOT}
-              helperText={isPostOT && POST_FILING_MESSAGE} variant="standard" size="small" className='w-full' />}
-        />
-      </LocalizationProvider>
+      <TextField
+        size='small'
+        value={details.noOfDays}
+        label='No. of Days'
+        disabled={!(details.dateFrom)}
+        variant='standard'
+        InputProps={{ inputProps: { min: 1 } }}
+        type={"number"}
+        onChange={(e) => {
+          setDetails({
+            ...details,
+            noOfDays: e.target.value,
+          })
+        }}
+      />
     </div>
-    <div className='col-span-2'>
+    <div className='col-span-3'>
       <LocalizationProvider dateAdapter={AdapterMoment}>
-        <TimePicker
-          label="Time To"
-          minTime={moment(details.date).isSame(moment().startOf("day")) ? moment().set({"hour": moment(details.timeFrom).add(2, "hours").format("HH")}) : null}
-          disabled={!details.timeFrom}
-          value={details.timeTo}
-          inputFormat="hh:mm A"
+        <DatePicker
+          label="End Date"
+          disabled={!(details.dateFrom && details.noOfDays)}
+          value={details.dateTo}
           onChange={(newValue) => {
             setDetails({
               ...details,
-              timeTo: newValue
+              dateTo: newValue
             })
           }}
-          renderInput={(params) => <TextField {...params} required variant="standard" size="small" className='w-full' />}
+          renderInput={(params) => <TextField {...params} variant="standard" size="small" className='w-full' />}
         />
       </LocalizationProvider>
     </div>
 
-    <div className='col-span-7'>
-      <FormControlLabel control={<Checkbox onChange={(e: any) => setDetails({ ...details, earlyOT: e.target.checked ? 'Y' : 'N' })} />} label="Early OT" />
-      <FormHelperText>Check if your OT will start BEFORE your regular shift. Example: 5am - 6:30am etc.</FormHelperText>
+    <div className='col-span-8'>
+      <FormControlLabel control={<Checkbox onChange={(e:any) => setDetails({...details, isWorkFromHome: e.target.checked})} />} label="Work From Home" />
     </div>
 
-    <div className='col-span-7'>
-      <FormControlLabel control={<Checkbox onChange={(e: any) => setDetails({ ...details, lessBreak: e.target.checked ? 'Y' : 'N' })} />} label="Less Break" />
-    </div>
-
-    <div className='col-span-7'>
-      <FormControlLabel control={<Checkbox onChange={(e: any) => setDetails({ ...details, plus1day: e.target.checked ? 'Y' : 'N' })} />} label="Actual Date is plus 1 day" />
-    </div>
-
-    <div className='col-span-7'>
+    <div className='col-span-8'>
       <TextField
         fullWidth
-        value={details.reason}
+        value={details.purpose}
         multiline
         onChange={(e:any) => {
           setDetails({
             ...details,
-            reason: e.target.value
+            purpose: e.target.value
           })
         }}
         maxRows={3}
-        label="Reason"
+        label={details.isWorkFromHome ? 'Reason' : 'Purpose'}
         required
         disabled={loading}
         variant='standard'
         className='text-sm'
       />
     </div>
-    <div className='col-span-7'>
+    {!details.isWorkFromHome &&
+      <div className='col-span-8'>
+        <ItineraryForm data={details} setDetails={setDetails} />
+      </div>
+    }
+    <div className='col-span-8'>
       <FormControl variant='standard' size='small' fullWidth required>
           <InputLabel id='approver'>Approver</InputLabel>
           <Select
@@ -224,4 +211,4 @@ const OTForm: React.FC<Props> = ({
   </GridWrapper>
 };
 
-export default OTForm;
+export default OBForm;

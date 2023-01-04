@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Typography } from '@mui/material';
 import DialogModal from 'CustomComponents/DialogModal';
+import { EventNote } from '@mui/icons-material';
 
 const OTModal = () => {
   const [open, setOpen] = useState<boolean>(true);
@@ -8,6 +9,8 @@ const OTModal = () => {
     <DialogModal
       className='phone:max-w-[300px] tablet:max-w-[500px] min-w-[310px]'
       title='Overtime/Working Day Off Request Form'
+      titleIcon={<EventNote className='mr-2 text-sky-500' />}
+      onClose={()=>setOpen(false)}
       open={open}
       actions={
         <div className='mt-4'>

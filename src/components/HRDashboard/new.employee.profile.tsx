@@ -25,6 +25,7 @@ const NewEmployeeProfile = ({ open, setOpen, setViewDetails, viewDetails }: Prop
   return (
     <DialogModal
         className="w-screen"
+        onClose={()=> setOpen(false)}
         title={
           <div className='flex items-start content-left'>
             <ProfileDetails employeeDetails={viewDetails.employeeDetails} />

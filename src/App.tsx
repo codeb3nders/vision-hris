@@ -2,7 +2,7 @@ import './App.css';
 import React, { useEffect, createContext, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
 import Main from './components/Main';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { initialState } from 'components/MyProfile/employee.initialstate';
 import Slider from './components/Auth/slider';
@@ -10,6 +10,9 @@ import holidays from 'constants/holidays';
 import { URL_USER_LOGS } from 'constants/EndpointPath';
 import { createEndpoint } from 'apis';
 import axios from 'axios';
+import { HR_ADMIN, MANAGER, SYSAD } from 'constants/Values';
+import { setTeamMembers } from 'slices/userAccess/authSlice';
+import { getAllEmployeesAction, getEmployeeStatus, getEmployeeItems} from 'slices/employees/getEmployeesSlice';
 
 export var moment = require('moment-business-days');
  
@@ -24,8 +27,9 @@ type AppModel = {
   isLoggedIn: boolean;
   userData: EmployeeDBI;
   userGroup: string;
-  setIsHRLogin: React.Dispatch<React.SetStateAction<boolean>>;
   isHRLogin: boolean;
+  isManagerLogin: boolean;
+  isSysAdLogin: boolean;
   setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
   currentPage: string;
   createLog: any;
@@ -36,8 +40,9 @@ export const AppCtx = createContext<AppModel>({
   isLoggedIn: false,
   userData: { ...initialState, full_name: '' },
   userGroup: '',
-  setIsHRLogin: () => {},
   isHRLogin: false,
+  isManagerLogin: false,
+  isSysAdLogin: false,
   setCurrentPage: () => {},
   currentPage: 'login',
   createLog: () => { }
@@ -50,15 +55,21 @@ export const consoler = (data: any, bgColor: string, title: string) => {
 };
 
 const App: React.FC<Props> = () => {
+  const dispatch = useDispatch();
   const { auth } = useSelector((state: any) => state);
   const { isLoggedIn, userData, access_token, userGroup } = auth;
   const [isHRLogin, setIsHRLogin] = useState(false);
+  const [isManagerLogin, setIsManagerLogin] = useState(false);
+  const [isSysAdLogin, setIsSysAdLogin] = useState(false);
   const [currentPage, setCurrentPage] = useState('login');
-  const [mode] = useState(true);
+  const mode = 'light'; //dark
+
+  const employeeStatus = useSelector(getEmployeeStatus);
+  const teamMembers = useSelector(getEmployeeItems);
 
   const theme = createTheme({
     palette: {
-      mode: mode ? 'light' : 'dark',
+      mode
     },
     typography: {
       fontFamily: ['Lato'].join(','),
@@ -66,8 +77,39 @@ const App: React.FC<Props> = () => {
   });
 
   useEffect(() => {
-    if (userData && userData.userGroup.code === 'HR ADMIN') {
-      setIsHRLogin(true);
+    if (isManagerLogin && employeeStatus !== 'idle') {
+      dispatch(setTeamMembers(teamMembers))
+    }
+  }, [employeeStatus])
+
+  const getTeamMembers = async() => {
+    await dispatch(getAllEmployeesAction({
+      access_token,
+      params: {
+        isActive: true,
+        reportsTo: userData.employeeNo
+      }
+    }))
+  }
+
+  useEffect(() => {
+    if (userData) {
+      switch (userData.userGroup.code) {
+        case HR_ADMIN:
+          setIsHRLogin(true);
+          break;
+        case MANAGER:
+          getTeamMembers();
+          setIsManagerLogin(true);
+          break;
+        case SYSAD:
+          setIsSysAdLogin(true);
+          break;
+        default:
+          setIsHRLogin(false);
+          setIsManagerLogin(false);
+          setIsSysAdLogin(false);
+      }
     }
   }, [userData]);
 
@@ -105,8 +147,9 @@ const App: React.FC<Props> = () => {
               isLoggedIn,
               userData,
               userGroup,
-              setIsHRLogin,
               isHRLogin,
+              isSysAdLogin,
+              isManagerLogin,
               setCurrentPage,
               currentPage,
               createLog

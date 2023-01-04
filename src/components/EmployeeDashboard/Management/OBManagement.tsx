@@ -7,60 +7,44 @@ import { useDispatch, useSelector } from 'react-redux';
 import {authStore} from 'slices/userAccess/authSlice';
 
 import {
-  createAction as createOT, data as OTRequestsData, dataStatus as OTDataStatus
+  createAction as createOB, data as OBRequestsData, dataStatus as OBDataStatus
 }
-  from 'slices/otRequests';
+from 'slices/obRequests';
 import { PENDING } from 'constants/Values';
-import OT, { OTDetailsInitialState, OTDetailsModel } from 'components/MyProfile/Overtime';
+import OB, { OBDetailsInitialState, OBDetailsModel } from 'components/MyProfile/OfficialBusiness';
 import AddButton from 'CustomComponents/AddButton';
-import OTForm from '../Forms/OTForm';
-import { moment } from "App";
+import OBForm from '../Forms/OBForm';
 import useRequiredChecker from 'hooks/useRequiredChecker';
 
 const approverModes = ["approver", "hr admin"];
 
-const OTManagement = () => {
+const OBManagement = () => {
   const dispatch = useDispatch();
   const { userGroup } = useSelector(authStore)
   const { access_token } = useContext(AppCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [withError, setWithError] = useState<boolean>(true);
-  const [details, setDetails] = useState<OTDetailsModel>(OTDetailsInitialState)
+  const [details, setDetails] = useState<OBDetailsModel>(OBDetailsInitialState)
 
-  const data = useSelector(OTRequestsData);
-  const getDataStatus = useSelector(OTDataStatus);
+  const data = useSelector(OBRequestsData);
+  const getDataStatus = useSelector(OBDataStatus);
   const { userData } = useContext(AppCtx);
 
   useEffect(() => {
     if (!open) {
       setDetails({
-        ...OTDetailsInitialState,
-        employeeNo: userData.employeeNo,
-        status: PENDING
+        ...OBDetailsInitialState,
+        employeeNo: userData.employeeNo
       })
     }
   }, [open])
 
   const handleSubmit = async () => {
-    const { id, timeFrom, timeTo, ...otData } = details;
-    let timeToTmp = timeTo;
-    if (details.plus1day === "Y") {
-      timeToTmp = moment(timeTo).add(1, "day")
-    }
-    if (details.lessBreak === "Y") {
-      timeToTmp = moment(timeToTmp).subtract(1, "hour")
-    }
-    var duration = moment.duration(moment(timeToTmp).diff(moment(timeFrom)));
-    console.log({duration}, moment(timeToTmp), moment(timeFrom))
-    const totalOThrs = parseInt(duration.asHours());
-    // console.log({ totalOThrs }); return;
+    const { id, noOfDays,  ...obData } = details;
     await dispatch(
-      createOT({
+      createOB({
         body: {
-          ...otData,
-          timeFrom: moment(timeFrom).format("hh:mm A"),
-          timeTo: moment(timeTo).format("hh:mm A"),
-          totalOThrs
+          ...obData
         },
         access_token,
       })
@@ -70,22 +54,22 @@ const OTManagement = () => {
 
   const isApprover = approverModes.indexOf(userGroup.toLocaleLowerCase()) >= 0;
   return <div className='mt-5'>
-    <div className='flex justify-start'><AddButton text='File an OT' cb={() => setOpen(true)} /></div>
+    <div className='flex justify-start'><AddButton text='File an Official Business' cb={() => setOpen(true)} /></div>
     {open && <NewApplicationModal open={open} setOpen={setOpen} details={details} setDetails={setDetails} handleSubmit={handleSubmit} withError={withError} setWithError={setWithError} />}
-    <OT employeeNo={userData.employeeNo} isApprover />
+    <OB employeeNo={userData.employeeNo} isApprover />
     </div>  
 };
 
 const NewApplicationModal = ({ open, setOpen, details, setDetails, handleSubmit, withError, setWithError }) => {
   const { validated } = useRequiredChecker({
     data: details,
-    module: "otForm"
+    module: "obForm"
   });
 console.log({validated}, {withError})
   return <DialogModal
       className='laptop:w-[500px] desktop:w-[500px] '
       titleIcon={<EventNote className='mr-2 text-sky-500' />}
-      title={`Overtime Application Form`}
+      title={`Official Business Form`}
       onClose={()=>setOpen(false)}
       open={open}
       actions={
@@ -113,8 +97,8 @@ console.log({validated}, {withError})
         </div>
       }
     >
-      <OTForm details={details} setDetails={setDetails} setWithError={setWithError} />
+      <OBForm details={details} setDetails={setDetails} setWithError={setWithError} />
     </DialogModal>
 }
 
-export default OTManagement;
+export default OBManagement;

@@ -406,42 +406,32 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
 console.log({TLData}, {newData})
   return (
     <DialogModal
+      titleIcon={<SupervisorAccount className='mr-2 text-sky-500' />}
+      open={open}
+      onClose={()=>setOpen(false)}
       id="team-leader-dialog"
-        className='w-[500px]'
-        title={
-          <div className='flex items-center content-left'>
-            {/* <p className='text-md font-bold '> */}
-              <SupervisorAccount /> {isUpdate ? 'Update' : 'Add'}{' '} Team Leader
-            {/* </p> */}
-            <IconButton
-              sx={{ ml: 'auto' }}
+      className='w-[500px]'
+      title={`${isUpdate ? 'Update' : 'Add'} Team Leader`}
+      actions={
+        <div className='mt-4'>
+          <div className='grid grid-cols-7'>
+            <button
+              disabled={isSaving}
+              onClick={handleSave}
+              className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
+            >
+              <SaveTwoTone fontSize='small' className='mr-2' />
+              Save
+            </button>
+            <button
+              className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
               onClick={() => setOpen(false)}
             >
-              <Close />
-            </IconButton>
+            Cancel
+            </button>
           </div>
-        }
-        open={open}
-        actions={
-          <div className='mt-4'>
-            <div className='grid grid-cols-7'>
-              <button
-                disabled={isSaving}
-                onClick={handleSave}
-                className='col-span-5 px-2 py-1 text-xs bg-green-500 text-white rounded-sm w-full flex items-center justify-center hover:bg-green-400 transition duration-150 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed'
-              >
-                <SaveTwoTone fontSize='small' className='mr-2' />
-                Save
-              </button>
-              <button
-                className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
-                onClick={() => setOpen(false)}
-              >
-              Cancel
-              </button>
-            </div>
-          </div>
-        }
+        </div>
+      }
       >
       <div className='px-6 flex flex-col gap-4 min-h-[50vh]'>
         <GridWrapper colSize='1'>

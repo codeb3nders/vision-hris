@@ -12,6 +12,10 @@ export const EmployeeNavigation = [
         href: Employee.ESS.Leave,
       },
       {
+        label: 'Official Business Applications',
+        href: Employee.ESS.OB,
+      },
+      {
         label: 'OT Applications',
         href: Employee.ESS.OT,
       },
@@ -19,6 +23,14 @@ export const EmployeeNavigation = [
         label: 'Workers OT Applications',
         href: Employee.ESS.WorkersOT,
       },
+    ],
+  },
+  {
+    name: 'People',
+    menus: [
+      { label: 'Directory', href: Employee.People.Directory },
+      { label: 'Departments', href: Employee.People.Departments },
+      { label: 'Org. Chart', href: Employee.People.Org },
     ],
   },
   { name: 'Timekeeping', href: Employee.Attendance },
@@ -31,12 +43,16 @@ export const ManagerNavigation = [
     name: 'Employee Requests',
     menus: [
       {
-        label: 'OT Applications',
-        href: Manager.Requests.OT,
-      },
-      {
         label: 'Leave Applications',
         href: Manager.Requests.Leave,
+      },
+      {
+        label: 'Official Business Applications',
+        href: Manager.Requests.OB,
+      },
+      {
+        label: 'OT Applications',
+        href: Manager.Requests.OT,
       },
       {
         label: `Workers' OT Applications`,
@@ -63,6 +79,10 @@ export const HRNavigation = [
       {
         label: 'Leave Applications',
         href: HR.Requests.Leave,
+      },
+      {
+        label: 'Official Business Applications',
+        href: HR.Requests.OB,
       },
       {
         label: 'OT Applications',
@@ -99,6 +119,10 @@ export const AdminNavigation = [
       {
         label: 'Leave Applications',
         href: Admin.Requests.Leave,
+      },
+      {
+        label: 'Official Business Applications',
+        href: Admin.Requests.OB,
       },
       {
         label: 'OT Applications',

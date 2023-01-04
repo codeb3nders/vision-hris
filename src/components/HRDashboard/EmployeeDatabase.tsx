@@ -88,7 +88,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       setIsNew(false);
     }
   }, [open])
-  console.log({getEmployeeStatus})
+
   useEffect(() => { 
     if (getEmployeeStatus === "succeeded") {
       const employees = getEmployeeItems.map((r: EmployeeDBI) => {
@@ -97,6 +97,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
         const withUserCredentials = userCredentials.filter((x: any) => x.employeeNo === r.employeeNo).length > 0;
         return { ...r, id: r.employeeNo, full_name, withUserCredentials };
       });
+      console.log({employees})
       setEmployees(employees);
       setTempEmployees(employees);
       setIsLoading(false);
@@ -288,11 +289,10 @@ console.log({sendAccessList})
       field: 'withUserCredentials',
       headerName: 'With Access',
       renderCell: (params) => {
-        return params.value ? <Checkbox
-          checked={params.value}
-          disabled={params.value}
-        /> :
-          <Checkbox
+        console.log({params})
+        return <Checkbox
+          checked={params.row.withUserCredentials}
+          disabled={params.row.withUserCredentials}
           onChange={(e: any) => handleSendAccess(e.target.checked, {employeeNo: params.row.employeeNo, accessGroup: params.row.userGroup.code})}
         />
       }
@@ -333,7 +333,7 @@ console.log({sendAccessList})
         />
         <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
           <div className='flex-1 w-full desktop:max-w-[400px] laptop:max-w-[400px] tablet:max-w-full phone:max-w-full relative'>
-            <Search setSearchText={setSearchText} searchText={searchText} setEmployees={setEmployees} setIsLoading={setIsLoading} isLoading={loading} />
+            <Search setSearchText={setSearchText} searchText={searchText} setEmployees={setEmployees} setIsLoading={setIsLoading} isLoading={loading} userCredentials={userCredentials} />
           </div>
           <div className="flex-1 mb-[16px] desktop:text-right laptop:text-right tablet:text-left phone:text-left">
             <LoadingButton

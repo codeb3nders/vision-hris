@@ -19,9 +19,10 @@ import TimekeepingDetails from "./Timekeeping/details"
 import TeamLeaders from "./TeamLeaders";
 import LeaveManagement from "./EmployeeDashboard/Management/LeaveManagement";
 import OTManangement from "./EmployeeDashboard/Management/OTManangement";
-import OTForm from "./EmployeeDashboard/Forms/OTForm";
+import OBManangement from "./EmployeeDashboard/Management/OBManagement";
+import OTForm from "./EmployeeDashboard/Forms/OTForm - OLD";
 import LeaveForm from "./EmployeeDashboard/Forms/LeaveForm";
-const { Employee, HR } = Path;
+const { Employee, HR, Manager } = Path;
 
 type MainCtxI = {
   isTable: boolean;
@@ -140,6 +141,11 @@ const Main: React.FC<Props> = ({ role }) => {
                 component={LeaveManagement}
               />
               <PrivateRoute
+                is_allowed={isAllowed("ess-ob-requests")}
+                path={Employee.ESS.OB}
+                component={OBManangement}
+              />
+              <PrivateRoute
                 is_allowed={isAllowed("ess-ot-requests")}
                 path={Employee.ESS.OT}
                 component={OTManangement}
@@ -155,6 +161,22 @@ const Main: React.FC<Props> = ({ role }) => {
                 is_allowed={isAllowed("ess-new-ot-request")}
                 path={Employee.ESS.OTNew}
                 component={OTForm}
+              />
+
+              <PrivateRoute
+                is_allowed={isAllowed("manage-leave-requests")}
+                path={Manager.Requests.Leave}
+                component={LeaveManagement}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed("manage-ob-requests")}
+                path={Manager.Requests.OB}
+                component={OBManangement}
+              />
+              <PrivateRoute
+                is_allowed={isAllowed("manage-ot-requests")}
+                path={Manager.Requests.OT}
+                component={OTManangement}
               />
 
               <Route component={ErrorPage} path="/noaccess/:page" />

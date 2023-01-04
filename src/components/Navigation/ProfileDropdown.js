@@ -19,6 +19,7 @@ import {
 } from "@mui/icons-material";
 import { getAvatar } from "utils/functions";
 import { Avatar } from "@mui/material";
+import { EMPLOYEE, HR_ADMIN, MANAGER, SYSAD } from "constants/Values";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -27,7 +28,7 @@ function classNames(...classes) {
 const ProfileDropdown = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { userData, userGroup, isHRLogin } = useContext(AppCtx);
+  const { userData, userGroup, isHRLogin, isManagerLogin, isSysAdLogin } = useContext(AppCtx);
   const [changePassword, setChangePassword] = useState(false);
 
   const handleLogout = () => {
@@ -51,17 +52,27 @@ const ProfileDropdown = () => {
   );
 
   const switchToEmployee = async () => {
-    await dispatch(setUserGroup("EMPLOYEE"));
+    await dispatch(setUserGroup(EMPLOYEE));
     history.push(Path.Dashboard);
   };
 
   const switchToHR = async () => {
-    await dispatch(setUserGroup("HR ADMIN"));
+    await dispatch(setUserGroup(HR_ADMIN));
     history.push(Path.Dashboard);
   };
 
+  const switchToManager = async () => {
+    await dispatch(setUserGroup(MANAGER));
+    history.push(Path.Dashboard);
+  };
+
+  const switchToSysAd = async () => {
+    await dispatch(setUserGroup(SYSAD));
+    history.push(Path.Dashboard);
+  };
+      console.log({isManagerLogin})
   const getSwitchLink = (active) => {
-    if (isHRLogin && userGroup === "EMPLOYEE") {
+    if (isHRLogin && userGroup === EMPLOYEE) {
       return (
         <Link
           component={"button"}
@@ -74,7 +85,45 @@ const ProfileDropdown = () => {
           <div className="flex flex-row gap-2 items-center">
             <ToggleOff fontSize="small" className="dropdown-icon" />
             <span className="text-left dropdown-text">
-              <small className="block">Switch to</small> HR ADMIN PORTAL
+              <small className="block">Switch to</small> { HR_ADMIN} PORTAL
+            </span>
+          </div>
+        </Link>
+      );
+    }
+    if (isManagerLogin && userGroup === EMPLOYEE) {
+      return (
+        <Link
+          component={"button"}
+          onClick={switchToManager}
+          className={classNames(
+            active ? "bg-gray-100" : "",
+            "block p-4 py-3 text-sm text-gray-700 w-full group"
+          )}
+        >
+          <div className="flex flex-row gap-2 items-center">
+            <ToggleOff fontSize="small" className="dropdown-icon" />
+            <span className="text-left dropdown-text">
+              <small className="block">Switch to</small> {MANAGER} PORTAL
+            </span>
+          </div>
+        </Link>
+      );
+    }
+    if (isSysAdLogin && userGroup === EMPLOYEE) {
+      return (
+        <Link
+          component={"button"}
+          onClick={switchToSysAd}
+          className={classNames(
+            active ? "bg-gray-100" : "",
+            "block p-4 py-3 text-sm text-gray-700 w-full group"
+          )}
+        >
+          <div className="flex flex-row gap-2 items-center">
+            <ToggleOff fontSize="small" className="dropdown-icon" />
+            <span className="text-left dropdown-text">
+              <small className="block">Switch to</small> {SYSAD} PORTAL
             </span>
           </div>
         </Link>
@@ -124,7 +173,7 @@ const ProfileDropdown = () => {
             <div className="w-full p-2 bg-slate-100 text-xs text-center">
               {userData.firstName} {userData.lastName}
             </div>
-            {isHRLogin && (
+            {userData.userGroup.code !== EMPLOYEE && (
               <Menu.Item>
                 {({ active }) => <div>{getSwitchLink(active)}</div>}
               </Menu.Item>

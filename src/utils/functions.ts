@@ -55,3 +55,11 @@ export function getContractEndDate(dateHired) {
             .add(6, 'months')
             .endOf('day')
 }
+
+export function upsert(array, element, index) {
+  const i = array.findIndex(_element => _element[index] === element[index]);
+  if (i > -1) array[i] = element;
+  else array.push(element);
+console.log({array})
+  return array;
+}

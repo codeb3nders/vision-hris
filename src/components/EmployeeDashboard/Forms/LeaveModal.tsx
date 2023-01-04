@@ -14,6 +14,7 @@ const LeaveModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     <DialogModal
       className='tablet:max-w-[500px] phone:max-w-[300px] min-w-[310px] '
       title='Leave & Official Business Application Form'
+      onClose={()=> setIsDialogOpen(false)}
       open={isDialogOpen}
       actions={
         <div className='mt-4'>

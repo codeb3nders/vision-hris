@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
+import { IconButton, Typography } from '@mui/material';
+import { Close } from '@mui/icons-material';
 
 type Props = {
   title: any;
@@ -8,6 +10,8 @@ type Props = {
   actions?: any;
   open: boolean;
   id?: string;
+  titleIcon?: any;
+  onClose: any;
 };
 
 const DialogModal: React.FC<Props> = ({
@@ -15,16 +19,16 @@ const DialogModal: React.FC<Props> = ({
   children,
   className,
   actions,
-  open, id = "dialog"
+  open, id = "dialog", titleIcon, onClose
 }) => {
   console.log({ open });
 
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog
-        as='div'
+        as='form'
+        id={id}
         className={`relative z-50 max-w-md mx-auto overflow-hidden md:max-w-2xl`}
-        // open={open}
         onClose={() => {}}
       >
         <Transition.Child
@@ -56,7 +60,23 @@ const DialogModal: React.FC<Props> = ({
                 className={`transform overflow-auto rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-slate-900 dark:text-white ${className}`}
               >
                 <Dialog.Title className='text-lg font-medium leading-6 text-sky-500'>
-                  {title}
+                  <div className='flex items-center content-left'>
+                    {
+                      titleIcon ? <Typography
+                      variant='h6'
+                      className='flex items-center mb-4 text-sky-500'
+                      color='primary'
+                      >
+                        {titleIcon} {title}
+                      </Typography> : title
+                    }
+                  <IconButton
+                    sx={{ ml: 'auto' }}
+                    onClick={onClose}
+                  >
+                    <Close />
+                  </IconButton>
+                </div>
                 </Dialog.Title>
 
                 <Dialog.Description className='max-h-[500px]'>

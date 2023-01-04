@@ -1,30 +1,28 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { EventNote, Publish } from '@mui/icons-material';
 import {
+  Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   TextField,
-  Grid,
-  Chip
 } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-// import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useParams, useLocation } from 'react-router-dom';
-import dayjs, { Dayjs } from 'dayjs';
 import { AppCtx, moment } from 'App';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllDataAction, dataStatus, data } from 'slices/teamLeader';
 import GridWrapper from 'CustomComponents/GridWrapper';
-import { MobileDateTimePicker } from '@mui/x-date-pickers';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { LeaveDetailsModel } from 'components/MyProfile/Leaves';
-
+import { LeaveDetailsModel } from 'components/EmployeeDashboard/Management/LeaveManagement';
+import { ALLOWED_POST_FILING } from 'constants/Values';
+import { DateTimeValidationError } from '@mui/x-date-pickers/internals/hooks/validation/useDateTimeValidation';
+import { INVALID_NO_OF_DAYS, POST_FILING_MESSAGE } from 'constants/errors';
 
 type Props = {
   setNewForm?: any;
@@ -32,6 +30,7 @@ type Props = {
   leaveType: string;
   leaveDetails: LeaveDetailsModel;
   setLeaveDetails: any;
+  setWithError: any;
 };
 
 const LeaveForm: React.FC<Props> = ({
@@ -39,15 +38,16 @@ const LeaveForm: React.FC<Props> = ({
   setOpenSnack,
   leaveType,
   leaveDetails,
-  setLeaveDetails
+  setLeaveDetails,
+  setWithError
 }) => {
   const dispatch = useDispatch();
   const params = useParams();
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
-  const [confirmed, setConfirmed] = useState<boolean>(false);
   const [approvers, setApprovers] = useState<any[]>([])
+  const [invalidNoOfDays, setInvalidNoOfDays] = useState<boolean>(false)
+  const [isPostFiling, setIsPostFiling] = useState<boolean>(false);
   const { access_token } = useContext(AppCtx);
   const TLDataStatus = useSelector(dataStatus);
   const TLData = useSelector(data);
@@ -71,9 +71,14 @@ console.log({leaveType})
 
   useEffect(() => {
     let lastDay: any = null, returnToWork: any = null;
-    const noOfDays = leaveDetails.noOfDays, dateFrom = leaveDetails.dateFrom;
-    if (noOfDays && dateFrom) {
-      lastDay = noOfDays > 1 ? moment(dateFrom).businessAdd(noOfDays-1, 'day') : moment(dateFrom);
+    const noOfDays:number | null = leaveDetails.noOfDays, dateFrom = leaveDetails.dateFrom;
+    if (noOfDays && noOfDays > 0 && dateFrom) {
+      lastDay = moment(dateFrom);
+      if (noOfDays > 1) {
+        lastDay = moment(dateFrom).businessAdd(noOfDays - 1, 'day')
+      } else if (noOfDays < 1) {
+        lastDay = moment(dateFrom).businessAdd(noOfDays - 1, 'day')
+      }
       returnToWork = moment(lastDay).businessAdd(1, 'day');
     }
     setLeaveDetails({
@@ -97,220 +102,149 @@ console.log({leaveType})
     await dispatch(getAllDataAction({ access_token }));
   }
 
-  const handleChange = () => {};
-
-  // const CLForm = (
-  //   <>
-  //     <Grid item xs={12} md={6}>
-  //       <TextField
-  //         label='Approved OT Hours to Offset (CL)'
-  //         variant='standard'
-  //         fullWidth
-  //         disabled={loading}
-  //       />
-  //     </Grid>
-  //     <Grid item xs={12} md={3}>
-  //       <LocalizationProvider dateAdapter={AdapterDateFns}>
-  //         <DatePicker
-  //           label='Date to Offset (CL) - From'
-  //           onChange={handleChange}
-  //           disabled={loading}
-  //           value={new Date()}
-  //           renderInput={(params) => (
-  //             <TextField {...params} fullWidth required variant='standard' />
-  //           )}
-  //         />
-  //       </LocalizationProvider>
-  //     </Grid>
-  //     <Grid item xs={12} md={3}>
-  //       <LocalizationProvider dateAdapter={AdapterDateFns}>
-  //         <DatePicker
-  //           value={new Date()}
-  //           disabled={loading}
-  //           label='Date to Offset (CL) - From'
-  //           onChange={handleChange}
-  //           renderInput={(params) => (
-  //             <TextField {...params} fullWidth required variant='standard' />
-  //           )}
-  //         />
-  //       </LocalizationProvider>
-  //     </Grid>
-  //   </>
-  // );
-
-  // const OBForm = (
-  //   <>
-  //     <Grid item xs={12} md={6}>
-  //       <TextField
-  //         required
-  //         label='Itinerary (FROM)'
-  //         variant='standard'
-  //         fullWidth
-  //         disabled={loading}
-  //       />
-  //     </Grid>
-  //     <Grid item xs={12} md={6}>
-  //       <TextField
-  //         required
-  //         label='Itinerary (TO)'
-  //         variant='standard'
-  //         fullWidth
-  //         disabled={loading}
-  //       />
-  //     </Grid>
-  //     <Grid item xs={12} md={12}>
-  //       <TextField
-  //         required
-  //         label='Purpose'
-  //         variant='standard'
-  //         fullWidth
-  //         disabled={loading}
-  //       />
-  //     </Grid>
-  //     <Grid item xs={12} md={6}>
-  //       <LocalizationProvider dateAdapter={AdapterDateFns}>
-  //         <DateTimePicker
-  //           value={new Date()}
-  //           label='Date & Time of Departure'
-  //           onChange={handleChange}
-  //           disabled={loading}
-  //           renderInput={(params) => (
-  //             <TextField {...params} fullWidth required variant='standard' />
-  //           )}
-  //         />
-  //       </LocalizationProvider>
-  //     </Grid>
-  //     <Grid item xs={12} md={6}>
-  //       <LocalizationProvider dateAdapter={AdapterDateFns}>
-  //         <DateTimePicker
-  //           value={new Date()}
-  //           label='Date & Time of Arrival'
-  //           onChange={handleChange}
-  //           disabled={loading}
-  //           renderInput={(params) => (
-  //             <TextField {...params} fullWidth required variant='standard' />
-  //           )}
-  //         />
-  //       </LocalizationProvider>
-  //     </Grid>
-  //   </>
-  // );
-
-  const maxWidth = 780;
-  return (
-    <>
-      <GridWrapper colSize='2' className='grid grid-cols-8 gap-4'>
-        <div className='col-span-6'>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <MobileDateTimePicker
-              label="Date of Leave (First Day)"
-              value={leaveDetails.dateFrom}
-              onChange={(newValue) => {
-                setLeaveDetails({
-                  ...leaveDetails,
-                  dateFrom: newValue
-                })
-              }}
-              renderInput={(params) => <TextField {...params} variant="standard" size="small" className='w-full' />}
-            />
-          </LocalizationProvider>
-        </div>
-        <div className='col-span-2'>
-          <TextField
-            size='small'
-            value={leaveDetails.noOfDays}
-            label='No. of Days'
-            disabled={!(leaveDetails.dateFrom)}
+  return <GridWrapper colSize='2' className='grid grid-cols-8 gap-4'>
+    {leaveType === "CL" && /* TODO: table of approved OT with checkbox */
+      <div className='col-span-8'>
+        <TextField
+          label='Approved OT Hours to Offset (CL)'
+          variant='standard'
+          className='w-[50%]'
+          disabled={loading}
+        />
+      </div>
+    }
+    <div className='col-span-6'>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <DateTimePicker
+          label="Date of Leave (First Day)"
+          value={leaveDetails.dateFrom}
+          minDateTime={ALLOWED_POST_FILING.indexOf(leaveDetails.leaveType) < 0 ? moment() : null}
+          onError={(message: DateTimeValidationError) => {
+            console.log({message})
+            if (message) {
+              setIsPostFiling(true)
+              setWithError(true)
+            } else {
+              setIsPostFiling(false)
+              setWithError(false)
+            }
+          }}
+          onChange={(newValue) => {
+            setLeaveDetails({
+              ...leaveDetails,
+              dateFrom: newValue
+            })
+            setWithError(false)
+          }}
+          renderInput={(params) => <TextField {...params} variant="standard" required error={isPostFiling}
+              helperText={isPostFiling && POST_FILING_MESSAGE} size="small" className='w-full' />}
+        />
+      </LocalizationProvider>
+    </div>
+    <div className='col-span-2'>
+      <TextField
+        size='small'
+        value={leaveDetails.noOfDays}
+        required
+        label='No. of Days'
+        disabled={!(leaveDetails.dateFrom)}
+        variant='standard'
+        InputProps={{ inputProps: { min: 1 } }}
+        type={"number"}
+        error={invalidNoOfDays}
+        helperText={invalidNoOfDays && INVALID_NO_OF_DAYS}
+        onChange={(e) => {
+          setLeaveDetails({
+            ...leaveDetails,
+            noOfDays: e.target.value,
+          })
+          setWithError(false);
+          setInvalidNoOfDays(false);
+          const pattern = new RegExp(/^[0-9]\d*(\.5)?$/)
+          if (e.target.value && parseInt(e.target.value) > 0 && !pattern.test(e.target.value)) {
+            setWithError(true);
+            setInvalidNoOfDays(true);
+          }
+        }}
+      />
+    </div>
+    <div className='col-span-4'>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <DateTimePicker
+          label="Date of Leave (Last Day)"
+          disabled={!(leaveDetails.dateFrom && leaveDetails.noOfDays)}
+          value={leaveDetails.dateTo}
+          minDateTime={leaveDetails.dateFrom}
+          onChange={(newValue) => {
+            setLeaveDetails({
+              ...leaveDetails,
+              dateTo: newValue
+            })
+          }}
+          renderInput={(params) => <TextField {...params} variant="standard" required size="small" className='w-full' />}
+        />
+      </LocalizationProvider>
+    </div>
+    <div className='col-span-4'>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          label="Date of Return to Work"
+          value={leaveDetails.dateOfReturnToWork}
+          disabled
+          onChange={(newValue) => {
+            setLeaveDetails({
+              ...leaveDetails,
+              dateOfReturnToWork: newValue
+            })
+          }}
+          renderInput={(params) => <TextField {...params} variant="standard" size="small" className='w-full' />}
+        />
+      </LocalizationProvider>
+    </div>
+    <div className='col-span-8'>
+      <TextField
+        fullWidth
+        value={leaveDetails.reasonOfLeave}
+        multiline
+        onChange={(e:any) => {
+          setLeaveDetails({
+                ...leaveDetails,
+                reasonOfLeave: e.target.value
+              })
+        }}
+        maxRows={3}
+            label='Please State the Reason for the Filed Leave '
+            required
+            disabled={loading}
             variant='standard'
-            InputProps={{ inputProps: { min: 1 } }}
-            type={"number"}
-            onChange={(e) => {
+            className='text-sm'
+          />
+    </div>
+    <div className='col-span-8'>
+      <FormControl variant='standard' size='small' fullWidth required>
+          <InputLabel id='approver'>Approver</InputLabel>
+          <Select
+            label='Approver'
+          labelId='approver'
+          value={leaveDetails.approver}
+            onChange={(e: any) => {
               setLeaveDetails({
                 ...leaveDetails,
-                noOfDays: e.target.value,
+                approver: e.target.value
               })
             }}
-          />
-        </div>
-        <div className='col-span-4'>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <MobileDateTimePicker
-              label="Date of Leave (Last Day)"
-              disabled={!(leaveDetails.dateFrom && leaveDetails.noOfDays)}
-              value={leaveDetails.dateTo}
-              onChange={(newValue) => {
-                setLeaveDetails({
-                  ...leaveDetails,
-                  dateTo: newValue
-                })
-              }}
-              renderInput={(params) => <TextField {...params} variant="standard" size="small" className='w-full' />}
-            />
-          </LocalizationProvider>
-        </div>
-        <div className='col-span-4'>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileDatePicker
-              label="Date of Return to Work"
-              value={leaveDetails.dateOfReturnToWork}
-              disabled
-              onChange={(newValue) => {
-                setLeaveDetails({
-                  ...leaveDetails,
-                  dateOfReturnToWork: newValue
-                })
-              }}
-              renderInput={(params) => <TextField {...params} variant="standard" size="small" className='w-full' />}
-            />
-          </LocalizationProvider>
-        </div>
-        <div className='col-span-8'>
-          <TextField
-            fullWidth
-            value={leaveDetails.reasonOfLeave}
-            multiline
-            onChange={(e:any) => {
-              setLeaveDetails({
-                    ...leaveDetails,
-                    reasonOfLeave: e.target.value
-                  })
-            }}
-            rows={3}
-                label='Please State the Reason for the Filed Leave '
-                required
-                disabled={loading}
-                variant='standard'
-                className='text-sm'
-              />
-        </div>
-        <div className='col-span-8'>
-<FormControl variant='standard' size='small' fullWidth required>
-              <InputLabel id='approver'>Approver</InputLabel>
-              <Select
-                label='Approver'
-              labelId='approver'
-              value={leaveDetails.approver}
-                onChange={(e: any) => {
-                  setLeaveDetails({
-                    ...leaveDetails,
-                    approver: e.target.value
-                  })
-                }}
-              >
-                {approvers.map((tl) => {
-                  return (
-                    <MenuItem key={tl.employeeNo} value={tl.employeeNo}>
-                      {tl.employeeNo}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-        </div>
-        
-        </GridWrapper>
-    </>
-  );
+          >
+            {approvers.map((tl) => {
+              return (
+                <MenuItem key={tl.employeeNo} value={tl.employeeNo}>
+                  {tl.employeeDetails.firstName} {tl.employeeDetails.lastName}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+    </div>
+  </GridWrapper>
 };
 
 export default LeaveForm;

@@ -12,9 +12,10 @@ type Props = {
   setEmployees: any;
   setIsLoading: any;
   isLoading?: boolean;
+  userCredentials?: any[];
 };
 
-const Search = ({ setSearchText, searchText, setEmployees, setIsLoading, isLoading }: Props) => {
+const Search = ({ setSearchText, searchText, setEmployees, setIsLoading, isLoading, userCredentials }: Props) => {
   const searchRef: any = useRef(null);
   const { access_token } = useContext(AppCtx);
 
@@ -33,6 +34,10 @@ const Search = ({ setSearchText, searchText, setEmployees, setIsLoading, isLoadi
           const employees = res.data.map((r: EmployeeDBI) => {
             const mi = r.middleName ? r.middleName.charAt(0) : '';
             const full_name = `${r.lastName}, ${r.firstName} ${mi}`;
+            if (userCredentials) {
+              const withUserCredentials = userCredentials.filter((x: any) => x.employeeNo === r.employeeNo).length > 0;
+              return { ...r, id: r.employeeNo, full_name, withUserCredentials };
+            }
             return { ...r, id: r.employeeNo, full_name };
           });
           setEmployees(employees);

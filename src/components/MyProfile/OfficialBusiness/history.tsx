@@ -1,6 +1,8 @@
-import { EventBusyTwoTone } from '@mui/icons-material';
+import { HistoryTwoTone } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import { DataGrid, gridClasses, GridColDef } from '@mui/x-data-grid';
+import moment from 'moment';
+import React, { useState } from 'react';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 
 type Props = {
@@ -34,21 +36,20 @@ const columns: GridColDef[] = [
     width: 400
   },
   {
-    field: 'status',
-    headerName: 'Status'
-  },
-  {
-    field: 'leaveReasonOfDisapproval',
-    headerName: 'Comments',
-    width: 400
-  },
+    field: 'balance',
+    headerName: 'Balance',
+    width: 70,
+    renderCell: (params: any) => {
+      return params.value;
+    },
+  }
 ];
 
-const DisapprovedCancelled = ({data}: Props) => {
+const History = ({data}: Props) => {
   return (
     <CollapseWrapper
-      panelTitle='Disapproved/Cancelled'
-      icon={EventBusyTwoTone}
+      panelTitle='History'
+      icon={HistoryTwoTone}
       contentClassName='p-0'
     >
       <DataGrid
@@ -84,4 +85,4 @@ const DisapprovedCancelled = ({data}: Props) => {
   );
 };
 
-export default DisapprovedCancelled;
+export default History;

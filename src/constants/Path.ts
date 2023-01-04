@@ -8,13 +8,15 @@ export const Path = {
       LeaveNew: '/ess/leave-applications/new',
       LeaveType: '/ess/leave-applications/new?type=:type',
       OT: '/ess/ot-applications',
+      OB: '/ess/ob-applications',
       OTNew: '/ess/ot-applications/new',
       WorkersOT: '/ess/workers-ot-applications',
     },
     Attendance: '/timekeeping',
     People: {
       Directory: '/people/directory',
-      Team: '/people/my-team',
+      Departments: '/people/departments',
+      Org: '/people/org-chart',
     },
     Announcements: '/announcements',
     Profile: '/profile',
@@ -23,6 +25,7 @@ export const Path = {
     Dashboard: '/',
     Requests: {
       OT: '/manage/ot-applications',
+      OB: '/manage/ob-applications',
       Leave: '/manage/leave-applications',
       WorkersOT: '/manage/workers-ot-applications',
     },
@@ -37,6 +40,7 @@ export const Path = {
     Dashboard: '/',
     Requests: {
       OT: '/requests/ot-applications',
+      OB: '/requests/ob-applications',
       Leave: '/requests/leave-applications',
       WorkersOT: '/requests/workers-ot-applications',
     },
@@ -56,6 +60,7 @@ export const Path = {
   Admin: {
     Dashboard: '/',
     Requests: {
+      OB: '/requests/ob-applications',
       OT: '/requests/ot-applications',
       Leave: '/requests/leave-applications',
       WorkersOT: '/requests/workers-ot-applications',

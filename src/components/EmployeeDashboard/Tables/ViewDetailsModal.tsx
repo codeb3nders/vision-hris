@@ -130,22 +130,13 @@ const ViewDetailsModal: React.FC<Props> = ({
     <>
       <DialogModal
         className={`${isEmployeeDetails ? 'max-w-[850px]' : 'max-w-[500px]'}`}
-        title={
-          <div className='flex items-center content-left'>
-            <Info sx={{ mr: 1 }} />{' '}
-            {isOT
+        titleIcon={<Info className='mr-2 text-sky-500' />}
+        onClose={()=>setViewDetails({ details: {}, status: false })}
+        title={`${isOT
               ? 'OT Application'
               : isEmployeeDetails
               ? 'Employee'
-              : 'Leave Application'}{' '}
-            Details
-            <IconButton
-              sx={{ ml: 'auto' }}
-              onClick={() => setViewDetails({ details: {}, status: false })}
-            >
-              <Close />
-            </IconButton>
-          </div>
+            : 'Leave Application'} Details`
         }
         open={viewDetails.status}
         actions={

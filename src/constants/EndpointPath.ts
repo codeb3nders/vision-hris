@@ -19,3 +19,5 @@ export const URL_TIMEKEEPING = `${env.BASE_URL}/time-keeping/`;
 export const URL_USER_LOGS = `${env.BASE_URL}/user-logs/`;
 export const URL_TEAM_LEADERS = `${env.BASE_URL}/team-leaders/`;
 export const URL_LEAVE_REQUESTS = `${env.BASE_URL}/leave/`;
+export const URL_OB_REQUESTS = `${env.BASE_URL}/ob/`;
+export const URL_OT_REQUESTS = `${env.BASE_URL}/overtime/`;

@@ -11,7 +11,8 @@ const initialState: any = {
     userGroup: "",
     status: 'idle',
     error: null,
-    isLoggedIn: false
+    isLoggedIn: false,
+    teamMembers: []
 };
 
 export const authAction: any = createAsyncThunk(
@@ -38,6 +39,9 @@ export const authSlice = createSlice({
         },
         clearAuthData: () => {
             storage.removeItem('persist:root')
+        },
+        setTeamMembers: (state, action) => {
+            return { ...state, teamMembers: action.payload };
         }
     },
     extraReducers: (builder) => {
@@ -60,7 +64,7 @@ export const authSlice = createSlice({
     },
 });
 
-export const authStore = (state: any) => state.userAccess;
-export const { setIsLoggedIn, clearAuthData, setUserGroup } = authSlice.actions;
+export const authStore = (state: any) => state.auth;
+export const { setIsLoggedIn, clearAuthData, setUserGroup, setTeamMembers } = authSlice.actions;
 
 export default authSlice.reducer;

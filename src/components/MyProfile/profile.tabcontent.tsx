@@ -1,5 +1,6 @@
 import { TabPanel } from '@mui/lab';
 import { Divider } from '@mui/material';
+import LeaveManagement from 'components/EmployeeDashboard/Management/LeaveManagement';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
 import CustomCard from 'CustomComponents/CustomCard';
 import React, { useContext, lazy, Suspense } from 'react';
@@ -10,7 +11,9 @@ import EmployementStatus from './EmploymentTab/employement.status';
 import Leaves from './Leaves';
 import History from './Leaves/history';
 import LeaveBalances from './Leaves/leave.balances';
-import UpcomingLeaves from './Leaves/upcoming.leaves';
+import UpcomingLeaves from './Leaves/pending.leaves';
+import OB from './OfficialBusiness';
+import OT from './Overtime';
 import { ProfileCtx } from './profile.main';
 
 const ProfileTabs = lazy(() => import('./profile.tabs'));
@@ -151,14 +154,13 @@ const ProfileTabContent = ({ className }: Props) => {
         </TabPanel>
 
         <TabPanel value='7' className='p-0 grid' id='Leaves'>
-          <LeaveBalances />
-          <Leaves employeeNo={employeeDetails.employeeNo} isHRview />
+          <LeaveManagement />
         </TabPanel>
         <TabPanel value='8' className='p-0 grid' id='OfficialBusiness'>
-          Official Business
+          <OB employeeNo={employeeDetails.employeeNo} isHRview />
         </TabPanel>
         <TabPanel value='9' className='p-0 grid' id='Overtime'>
-          Overtime
+          <OT employeeNo={employeeDetails.employeeNo} isHRview  />
         </TabPanel>
         <TabPanel value='10' className='p-0 grid' id='DisciplinaryCases'>
           <DisciplinaryCases />
