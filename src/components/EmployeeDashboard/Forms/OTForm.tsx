@@ -52,7 +52,7 @@ const OTForm: React.FC<Props> = ({
   const TLData = useSelector(data);
 
   useEffect(() => { 
-    console.log(moment(details.date).isSame(moment().startOf("day")), "isSame", moment(details.date), moment())
+    // console.log(moment(details.date).isSame(moment().startOf("day")), "isSame", moment(details.date), moment())
     if (details.date && details.timeFrom && details.timeTo && details.approver) {
       setWithError(false);
     } else {
@@ -73,7 +73,7 @@ const OTForm: React.FC<Props> = ({
   }, [access_token])
 
   useEffect(() => {
-    console.log({ loading });
+    // console.log({ loading });
     loading &&
       setTimeout(() => {
         setLoading(false);
@@ -95,7 +95,7 @@ const OTForm: React.FC<Props> = ({
           label="Date"
           minDate={new Date()}
           onError={(message: DateValidationError) => {
-            console.log({message})
+            // console.log({message})
             if (message) {
               setIsPostOT(true)
               setWithError(true)
@@ -124,7 +124,7 @@ const OTForm: React.FC<Props> = ({
           label="Time From"
           disabled={!details.date}
           onError={(message: TimeValidationError) => {
-            console.log({message}, "timeval")
+            // console.log({message}, "timeval")
             if (message) {
               setIsPostOT(true)
               setWithError(true)

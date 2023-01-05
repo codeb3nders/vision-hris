@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 type Props = {
   data: any;
@@ -15,26 +15,52 @@ const useRequiredChecker = ({ data, module }: Props) => {
   }, [data]);
 
   const requiredChecker = () => {
-    console.log({ data })
-    let required:any[] = [], emptyCtr = 0;
+    // console.log({ data })
+    let required: any[] = [],
+      emptyCtr = 0;
     switch (module) {
       // @ts-ignore
       case "leaveForm":
-        required = ["employeeNo", "leaveType", "dateFrom", "dateTo", "noOfDays", "dateOfReturnToWork", "reasonOfLeave", "status", "approver"]
+        required = [
+          "employeeNo",
+          "leaveType",
+          "dateFrom",
+          "dateTo",
+          "noOfDays",
+          "dateOfReturnToWork",
+          "reasonOfLeave",
+          "status",
+          "approver",
+        ];
       // @ts-ignore
       case "otForm":
-        required = ["employeeNo", "date", "timeFrom", "timeTo", "reason", "status", "approver"]
+        required = [
+          "employeeNo",
+          "date",
+          "timeFrom",
+          "timeTo",
+          "reason",
+          "status",
+          "approver",
+        ];
       case "obForm":
-        required = ["employeeNo", "dateFrom", "dateTo", "purpose", "status", "approver"]
-        Object.keys(data).map(col => {
-          console.log({col}, data[col])
+        required = [
+          "employeeNo",
+          "dateFrom",
+          "dateTo",
+          "purpose",
+          "status",
+          "approver",
+        ];
+        Object.keys(data).map((col) => {
+          // console.log({col}, data[col])
           if (required.indexOf(col) >= 0 && !data[col]) {
             emptyCtr++;
           }
-        })
-        console.log({emptyCtr})
+        });
+        // console.log({emptyCtr})
         return emptyCtr === 0;
-      default://new employee
+      default: //new employee
         const {
           lastName,
           firstName,

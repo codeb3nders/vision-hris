@@ -133,7 +133,7 @@ const CompanyAssets = (props: Props) => {
         deleteAssetStatus === 'succeeded' ? "Record was successfully deleted." :
           updateAssetStatus === "succeeded" ? "Company asset was successfully updated." : ""
       )
-      console.log('xxxxxxxxxxxxxxxxxxx')
+      // console.log('xxxxxxxxxxxxxxxxxxx')
       success(companyAssetsReset(), message)
     }
   }, [newAssetStatus, deleteAssetStatus, updateAssetStatus])
@@ -194,7 +194,7 @@ const CompanyAssets = (props: Props) => {
   }
 
   const handleReturn = async (row: CompanyAssetModel) => {
-    console.log({row})
+    // console.log({row})
     setAssignedAssetData({
       ...assignedAssetData,
       companyAssetId: row.id,
@@ -296,7 +296,7 @@ const AssetDialog = ({ open, setOpen, access_token, assetData: data, isUpdate, i
   const [isAssigned, setIsAssigned] = useState<boolean>(false);
   const [assignedAsset, setAssignedAsset] = useState<AssetModel>(AssetInitialState);
   const {assets} = useSelector(getListOfValues)
-console.log({assets}, "assetsassetsassets")
+// console.log({assets}, "assetsassetsassets")
   useEffect(() => { 
     setAssetTypes(assets)
   }, [assets])
@@ -316,7 +316,7 @@ console.log({assets}, "assetsassetsassets")
       setNewAsset(CompanyAssetInitialState)
     }
   }, [open]);
-console.log({isUpdate})
+// console.log({isUpdate})
   const handleSave = async () => {
     const validateFields = async () => {
         const dialog: any = document.getElementById("company-assets-dialog");
@@ -366,13 +366,13 @@ console.log({isUpdate})
           );
         }
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
       }
       setOpen(false);
       setNewAsset(CompanyAssetInitialState);
     }
   };
-console.log({assignedAsset})
+// console.log({assignedAsset})
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="company-assets-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>

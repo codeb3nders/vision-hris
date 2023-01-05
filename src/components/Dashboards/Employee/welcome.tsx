@@ -22,11 +22,11 @@ const Welcome: React.FC<Props> = ({ className, profile, announcements }) => {
   const swipeRef: any = useRef(null);
 
   useEffect(() => {
-    console.log({ index });
+    // console.log({ index });
   }, [index]);
 
   const handleIndex = (direction: string) => {
-    console.log({ swipre_ref: swipeRef.current });
+    // console.log({ swipre_ref: swipeRef.current });
 
     switch (direction) {
       case 'left':
@@ -35,7 +35,7 @@ const Welcome: React.FC<Props> = ({ className, profile, announcements }) => {
         }
         break;
       case 'right':
-        console.log(swipeRef?.current?.props.children.length);
+        // console.log(swipeRef?.current?.props.children.length);
 
         if (index < swipeRef?.current?.props.children.length - 1) {
           setIndex(index + 1);

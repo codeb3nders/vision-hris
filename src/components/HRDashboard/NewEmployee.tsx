@@ -46,7 +46,7 @@ type Props = {
 const NewEmployee: React.FC<Props> = ({ open, setOpen, id }) => {
   const [user, setUser] = useState();
 
-  console.log({ open });
+  // console.log({ open });
 
   const handleDateChange = () => { };
 

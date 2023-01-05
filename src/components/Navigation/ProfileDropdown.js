@@ -70,7 +70,7 @@ const ProfileDropdown = () => {
     await dispatch(setUserGroup(SYSAD));
     history.push(Path.Dashboard);
   };
-      console.log({isManagerLogin})
+      // console.log({isManagerLogin})
   const getSwitchLink = (active) => {
     if (isHRLogin && userGroup === EMPLOYEE) {
       return (

@@ -44,7 +44,7 @@ const ViewDetailsModal: React.FC<Props> = ({
     viewDetails.status && setDetails(viewDetails.details.row);
   }, [viewDetails]);
 
-  console.log({ viewDetails });
+  // console.log({ viewDetails });
 
   const handleList = () => {
     const details: any[] = [];
@@ -56,11 +56,11 @@ const ViewDetailsModal: React.FC<Props> = ({
         if (Object.hasOwnProperty.call(v, key)) {
           const element = v[key];
 
-          // console.log({ v, key, element });
+          // // console.log({ v, key, element });
 
           const title = TITLES.filter((t) => t.key === key)[0];
 
-          console.log({ title, key });
+          // console.log({ title, key });
 
           if (key === 'id' || (element === 'Pending' && isApprover)) {
             details.push(null);
@@ -118,13 +118,13 @@ const ViewDetailsModal: React.FC<Props> = ({
         }
       }
 
-      console.log({ details });
+      // console.log({ details });
     }
 
     return details.filter((d) => d !== null);
   };
 
-  console.log({ viewDetails });
+  // console.log({ viewDetails });
 
   return (
     <>

@@ -78,7 +78,7 @@ const OBForm: React.FC<Props> = ({
   }, [details.noOfDays, details.dateFrom])
 
   useEffect(() => {
-    console.log({ loading });
+    // console.log({ loading });
     loading &&
       setTimeout(() => {
         setLoading(false);
@@ -100,7 +100,7 @@ const OBForm: React.FC<Props> = ({
           label="Start Date"
           minDate={new Date()}
           onError={(message: DateValidationError) => {
-            console.log({message})
+            // console.log({message})
             if (message) {
               setIsPostOB(true)
               setWithError(true)

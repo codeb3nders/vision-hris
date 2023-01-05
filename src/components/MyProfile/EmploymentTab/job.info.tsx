@@ -145,7 +145,7 @@ const JobInfo = (props: Props) => {
   }
 
   const getEmployeeName = (employeeNo: string) => {
-    console.log({employeeNo}, {getEmployeeItems})
+    // console.log({employeeNo}, {getEmployeeItems})
     const data: any = getEmployeeItems.find((x: any) => x.employeeNo === employeeNo);
     return data ? `${data.firstName} ${data.lastName}` : employeeNo;
   }
@@ -262,7 +262,7 @@ const JobInfo = (props: Props) => {
           );
           setIndex("2")
         } catch (error: any) {
-          console.log(error);
+          // console.log(error);
         }
       };
 

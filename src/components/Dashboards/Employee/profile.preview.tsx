@@ -11,7 +11,7 @@ type Props = {
 
 const ProfilePreview: React.FC<Props> = () => {
   const { userData } = useContext(AppCtx);
-  console.log({ userData });
+  // console.log({ userData });
   return (
     <div className='pl-6'>
       <section className='flex flex-row space-x-2 items-center mb-1 relative z-10 '>

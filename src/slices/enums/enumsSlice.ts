@@ -1,5 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createEndpoint, deleteEndpoint, getByParamsEndpoint, updateEndpoint, getByEmployeeEndpoint } from 'apis';
+import {
+  createEndpoint,
+  deleteEndpoint,
+  getByParamsEndpoint,
+  updateEndpoint,
+  getByEmployeeEndpoint,
+} from "apis";
 import { URL_ENUMS } from "constants/EndpointPath";
 
 const listOfValues = {
@@ -22,34 +28,34 @@ const listOfValues = {
   violations: [],
   offenseLevel: [],
   offenseStages: [],
-  violationCategories: []
-}
+  violationCategories: [],
+};
 
 const initialCreateState: any = {
   createItem: null,
-  createStatus: 'idle',
-  createError: null
+  createStatus: "idle",
+  createError: null,
 };
 
 const initialUpdateState: any = {
-  updateStatus: 'idle',
+  updateStatus: "idle",
   updateError: null,
 };
 
 const initialDeleteState: any = {
-  deleteStatus: 'idle',
+  deleteStatus: "idle",
   deleteError: null,
 };
 
 const initialGetState: any = {
   enumsData: [],
-  status: 'idle',
+  status: "idle",
   error: null,
 };
 
 const initialGetByEmployeeState: any = {
   getByEmployeeItems: [],
-  getByEmployeeStatus: 'idle',
+  getByEmployeeStatus: "idle",
   getByEmployeeError: null,
 };
 
@@ -72,13 +78,17 @@ export const createAction: any = createAsyncThunk(
 
 export const getAllDataAction: any = createAsyncThunk(
   `${name}/get`,
-    async (data: { access_token: string, params?: any }) => {
-      console.log(data.params, "vvvvvvvvvvvvvvv")
+  async (data: { access_token: string; params?: any }) => {
+    // console.log(data.params, "vvvvvvvvvvvvvvv")
     try {
       const config = {
         headers: { Authorization: `Bearer ${data.access_token}` },
       };
-      const response = await getByParamsEndpoint(URL_ENUMS, config, data.params);
+      const response = await getByParamsEndpoint(
+        URL_ENUMS,
+        config,
+        data.params
+      );
       return [...response.data];
     } catch (err: any) {
       console.error(`${name}/get`, err);
@@ -90,15 +100,15 @@ export const getAllDataAction: any = createAsyncThunk(
 export const updateAction: any = createAsyncThunk(
   `${name}/update`,
   async (data: { params: any; access_token: string }) => {
-      try {
-          const config = {
-              headers: { Authorization: `Bearer ${data.access_token}` },
-          };
-          return await updateEndpoint(URL_ENUMS, data.params, config);
-      } catch (err: any) {
-          console.error(`${name}/update`, err);
-          return err;
-      }
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${data.access_token}` },
+      };
+      return await updateEndpoint(URL_ENUMS, data.params, config);
+    } catch (err: any) {
+      console.error(`${name}/update`, err);
+      return err;
+    }
   }
 );
 
@@ -125,7 +135,7 @@ export const enumsSlice = createSlice({
     ...initialGetState,
     ...initialDeleteState,
     ...initialGetByEmployeeState,
-    listOfValues
+    listOfValues,
   },
   reducers: {
     reset: () => {
@@ -134,32 +144,32 @@ export const enumsSlice = createSlice({
         ...initialUpdateState,
         ...initialGetState,
         ...initialDeleteState,
-        ...initialGetByEmployeeState
+        ...initialGetByEmployeeState,
       };
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(createAction.pending, (state) => {
-        state.createStatus = 'loading';
+        state.createStatus = "loading";
       })
       .addCase(createAction.fulfilled, (state, action) => {
-        console.log({ action });
+        // console.log({ action });
         if (action.payload.response) {
           const { status, data } = action.payload.response;
-          state.createStatus = 'failed';
+          state.createStatus = "failed";
           state.createError = data.error;
         } else {
-          state.createStatus = 'succeeded';
+          state.createStatus = "succeeded";
           state.createdItem = action.payload.data;
         }
       })
       .addCase(createAction.rejected, (state, action) => {
-        state.createStatus = 'failed';
+        state.createStatus = "failed";
         state.createError = action.error.message;
       })
-    .addCase(getAllDataAction.pending, (state) => {
-        state.status = 'loading';
+      .addCase(getAllDataAction.pending, (state) => {
+        state.status = "loading";
       })
       .addCase(getAllDataAction.fulfilled, (state, action) => {
         const data = action.payload;
@@ -168,107 +178,106 @@ export const enumsSlice = createSlice({
 
         data.forEach((o: any) => {
           switch (o.type.toLowerCase()) {
-            case 'position':
+            case "position":
               state.listOfValues.positions.push(o);
               break;
-            case 'civilstatus':
+            case "civilstatus":
               state.listOfValues.civil_status.push(o);
               break;
-            case 'gender':
+            case "gender":
               state.listOfValues.gender.push(o);
               break;
-            case 'citizenship':
+            case "citizenship":
               state.listOfValues.citizenship.push(o);
               break;
-            case 'religion':
+            case "religion":
               state.listOfValues.religions.push(o);
               break;
-            case 'employmentstatus':
+            case "employmentstatus":
               state.listOfValues.employment_status.push(o);
               break;
-            case 'location':
+            case "location":
               state.listOfValues.locations.push(o);
               break;
-            case 'department':
+            case "department":
               state.listOfValues.departments.push(o);
               break;
-            case 'rank':
+            case "rank":
               state.listOfValues.ranks.push(o);
               break;
-            case 'assettype':
+            case "assettype":
               state.listOfValues.assets.push(o);
               break;
-            case 'documenttype':
+            case "documenttype":
               state.listOfValues.file201.push(o);
               break;
-            case 'allowancetype':
+            case "allowancetype":
               state.listOfValues.allowance_types.push(o);
               break;
-            case 'employmenttype':
+            case "employmenttype":
               state.listOfValues.employment_types.push(o);
               break;
-            case 'payrollgroup':
+            case "payrollgroup":
               state.listOfValues.payroll_group.push(o);
               break;
-            case 'paymentmethod':
+            case "paymentmethod":
               state.listOfValues.payment_method.push(o);
               break;
-            case 'violations':
+            case "violations":
               state.listOfValues.violations.push(o);
               break;
-            case 'offenselevel':
+            case "offenselevel":
               state.listOfValues.offenseLevel.push(o);
               break;
-            case 'offensestage':
+            case "offensestage":
               state.listOfValues.offenseStages.push(o);
               break;
-            case 'violationcategory':
+            case "violationcategory":
               state.listOfValues.violationCategories.push(o);
               break;
-            case 'leavetype':
+            case "leavetype":
               state.listOfValues.leaveTypes.push(o);
               break;
           }
-        })
-
+        });
       })
       .addCase(getAllDataAction.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.error.message;
       })
-    .addCase(updateAction.pending, (state) => {
-        state.updateStatus = 'loading';
+      .addCase(updateAction.pending, (state) => {
+        state.updateStatus = "loading";
       })
       .addCase(updateAction.fulfilled, (state, action) => {
-        console.log({ action });
+        // console.log({ action });
         if (action.payload.response) {
-            const { status, data } = action.payload.response;
-            state.updateStatus = 'failed';
-            state.updateError = data.error;
+          const { status, data } = action.payload.response;
+          state.updateStatus = "failed";
+          state.updateError = data.error;
         } else {
-            state.updateStatus = 'succeeded';
+          state.updateStatus = "succeeded";
         }
       })
       .addCase(updateAction.rejected, (state, action) => {
-        state.updateStatus = 'failed';
+        state.updateStatus = "failed";
         state.updateError = action.error.message;
       })
-    .addCase(deleteAction.pending, (state) => {
-        state.deleteStatus = 'loading';
+      .addCase(deleteAction.pending, (state) => {
+        state.deleteStatus = "loading";
       })
       .addCase(deleteAction.fulfilled, (state, action) => {
         if (action.payload.response) {
-            const { status, data } = action.payload.response;
-            state.deleteStatus = 'failed';
-            state.deleteError = data.error;
+          const { status, data } = action.payload.response;
+          state.deleteStatus = "failed";
+          state.deleteError = data.error;
         } else {
-            state.deleteStatus = 'succeeded';
+          state.deleteStatus = "succeeded";
         }
       })
       .addCase(deleteAction.rejected, (state, action) => {
-        state.deleteStatus = 'failed';
+        state.deleteStatus = "failed";
         state.deleteError = action.error.message;
-      })
+      });
   },
 });
 
@@ -289,7 +298,6 @@ export const updateError = (state: any) => state[name].updateError;
 
 export const deleteStatus = (state: any) => state[name].deleteStatus;
 export const deleteError = (state: any) => state[name].deleteError;
-
 
 export const { reset } = enumsSlice.actions;
 

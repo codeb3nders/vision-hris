@@ -65,7 +65,7 @@ const NewApplicationModal = ({ open, setOpen, details, setDetails, handleSubmit,
     data: details,
     module: "obForm"
   });
-console.log({validated}, {withError})
+// console.log({validated}, {withError})
   return <DialogModal
       className='laptop:w-[500px] desktop:w-[500px] '
       titleIcon={<EventNote className='mr-2 text-sky-500' />}

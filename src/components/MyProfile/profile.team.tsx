@@ -34,7 +34,7 @@ const ProfileTeam = ({ className, setViewDetails }: Props) => {
 
   useEffect(() => {
     if (employeeDetails && employeeDetails.reportsTo) {
-      console.log({ employeeDetails });
+      // console.log({ employeeDetails });
       setMyTeammates(
         getEmployeeItems
           .filter((x: any) => {

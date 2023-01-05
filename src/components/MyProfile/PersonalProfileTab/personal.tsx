@@ -37,7 +37,7 @@ const Personal = (props: Props) => {
   const [civilStatus, setCivilStatus] = useState<any[]>([]);
   const [religion, setReligion] = useState<any[]>([]);
   const [genders, setGenders] = useState<any[]>([]);
-console.log({isNew}, "nnnnnnnnnnn")
+// console.log({isNew}, "nnnnnnnnnnn")
   useEffect(() => {
     setCitizenship(enums.citizenship);
     setCivilStatus(enums.civil_status);
@@ -46,7 +46,7 @@ console.log({isNew}, "nnnnnnnnnnn")
   }, [enums]);
 
   useEffect(() => {
-    console.log({ sameAddress })
+    // console.log({ sameAddress })
     if (sameAddress) {
       !isNew &&
         setUpdatedDetails((prev: any) => {

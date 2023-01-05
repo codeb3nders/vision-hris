@@ -29,12 +29,14 @@ const items = [
 ]
 
 const TeamCalendar = ({teamMembers, leavesPerTeam}) => {
-console.log({leavesPerTeam}, {teamMembers})
+// console.log({leavesPerTeam}, {teamMembers})
   return <Timeline
     groups={teamMembers}
     items={leavesPerTeam}
-    defaultTimeStart={moment("2023-02-08").startOf("day")}
-    defaultTimeEnd={moment("2023-02-08").startOf("day").add(12, 'hour')}
+    defaultTimeStart={moment().add(-12, 'hour')}
+    defaultTimeEnd={moment().add(12, 'hour')}
+    // defaultTimeStart={moment("2023-02-08").startOf("day")}
+    // defaultTimeEnd={moment("2023-02-08").startOf("day").add(12, 'hour')}
   />
 }
 

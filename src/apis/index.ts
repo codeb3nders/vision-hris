@@ -1,17 +1,17 @@
-import axios from 'axios';
+import axios from "axios";
 
-export const createEndpoint = async (url:string, body: any, config = {}) => {
-    try {
-        return await axios.post(url, body, {
-        ...config,
+export const createEndpoint = async (url: string, body: any, config = {}) => {
+  try {
+    return await axios.post(url, body, {
+      ...config,
     });
-    } catch (error: any) {
-        console.error(`ERROR in createEndpoint: ${url}`, error);
-        return error.message;
-    }
+  } catch (error: any) {
+    console.error(`ERROR in createEndpoint: ${url}`, error);
+    return error.message;
+  }
 };
 
-export const updateEndpoint = async (url:string, data: any, config?: any) => {
+export const updateEndpoint = async (url: string, data: any, config?: any) => {
   const id = data.id;
   let tmp_body: any = data;
   delete tmp_body.id;
@@ -26,21 +26,23 @@ export const updateEndpoint = async (url:string, data: any, config?: any) => {
   }
 };
 
-export const getByParamsEndpoint = async (url:string, 
+export const getByParamsEndpoint = async (
+  url: string,
   config: any,
   params?: any
 ) => {
-    try {
-        const urlParams = params ? new URLSearchParams(params) : {};
-        console.log({params})
-        return await axios.get(url, { ...config, params });
-    } catch (error: any) {
-        console.error(`ERROR in getByParamsEndpoint: ${url}`, error);
-        return error.message;
-    }
+  try {
+    const urlParams = params ? new URLSearchParams(params) : {};
+
+    return await axios.get(url, { ...config, params });
+  } catch (error: any) {
+    console.error(`ERROR in getByParamsEndpoint: ${url}`, error);
+    return error.message;
+  }
 };
 
-export const getByEmployeeEndpoint = async (url:string, 
+export const getByEmployeeEndpoint = async (
+  url: string,
   config: any,
   employeeNo: string
 ) => {
@@ -52,7 +54,7 @@ export const getByEmployeeEndpoint = async (url:string,
   }
 };
 
-export const deleteEndpoint = async (url:string, id: string, config?: any) => {
+export const deleteEndpoint = async (url: string, id: string, config?: any) => {
   try {
     return await axios.delete(`${url}${id}`, {
       ...config,

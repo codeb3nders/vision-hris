@@ -32,7 +32,7 @@ const ChangePassword = ({ show, setShow }: Props) => {
   const [oldPassword, setOldPassword] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
-console.log({oldPassword}, {newPassword})
+// console.log({oldPassword}, {newPassword})
   const handleChangePassword = async () => {
     setLoading(true);
     setIsSuccess(false);
@@ -42,7 +42,7 @@ console.log({oldPassword}, {newPassword})
           headers: { Authorization: `Bearer ${access_token}` },
       };
       const { status, data } = await changePasswordEndpoint(config, { oldPassword, newPassword, employeeNo: userData.employeeNo })
-      console.log({data})
+      // console.log({data})
       if (status === 200) {
         if (data.isValid === false) {
           setError(data.error)
@@ -52,7 +52,7 @@ console.log({oldPassword}, {newPassword})
       }
       setLoading(false);
     } catch (error: any) {
-      console.log(error);
+      // console.log(error);
       setIsSuccess(false);
     }
   };

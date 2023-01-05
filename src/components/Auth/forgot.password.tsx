@@ -24,7 +24,7 @@ const ForgotPassword = (props: Props) => {
     try {
       const { status, data } = await getForgotPasswordEndpoint(employeeNo);
       if (status === 200) {
-        console.log({ data });
+        // console.log({ data });
         if (data.isValid) {
           setIndex(2);
           setExpiresIn(data.expiresInSeconds)
@@ -39,7 +39,7 @@ const ForgotPassword = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log({ index });
+    // console.log({ index });
 
     if (index === 0) {
       setLoading(false);

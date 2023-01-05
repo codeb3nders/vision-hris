@@ -137,12 +137,12 @@ const AssetTransfer = ({ setOpenTransfer, openTransfer, access_token, assetData,
         await returnAsset();
         await assignAsset();
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
       }
       setOpenTransfer(false);
     }
   };
-    console.log({assignedAsset}, {assetData}, {returnedAsset})
+    // console.log({assignedAsset}, {assetData}, {returnedAsset})
   return (
     <Dialog open={openTransfer} onClose={() => setOpenTransfer(false)} id="asset-transfer-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>

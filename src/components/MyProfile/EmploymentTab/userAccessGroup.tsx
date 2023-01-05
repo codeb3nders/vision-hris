@@ -89,7 +89,7 @@ const UserAccessGroup = (props: Props) => {
           headers: { Authorization: `Bearer ${access_token}` },
       };
       const { status, data } = await updateUserCredentialsEndpoint(userCredentials, config);
-      console.log({status}, {data})
+      // console.log({status}, {data})
       // if (status === 200) {
       //   //upsert user credentials
       //   await dispatch(

@@ -30,7 +30,7 @@ const Address = ({ data, isPermanent }: Props) => {
   const [employeeData, setEmployeeData] = useState<any>({})
 
   useEffect(() => {
-    console.log({ data })
+    // console.log({ data })
     if (data) {
       setRegionFile(data)
     }

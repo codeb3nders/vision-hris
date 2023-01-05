@@ -51,9 +51,9 @@ const OTManagement = () => {
       timeToTmp = moment(timeToTmp).subtract(1, "hour")
     }
     var duration = moment.duration(moment(timeToTmp).diff(moment(timeFrom)));
-    console.log({duration}, moment(timeToTmp), moment(timeFrom))
+    // console.log({duration}, moment(timeToTmp), moment(timeFrom))
     const totalOThrs = parseInt(duration.asHours());
-    // console.log({ totalOThrs }); return;
+    // // console.log({ totalOThrs }); return;
     await dispatch(
       createOT({
         body: {
@@ -81,7 +81,7 @@ const NewApplicationModal = ({ open, setOpen, details, setDetails, handleSubmit,
     data: details,
     module: "otForm"
   });
-console.log({validated}, {withError})
+// console.log({validated}, {withError})
   return <DialogModal
       className='laptop:w-[500px] desktop:w-[500px] '
       titleIcon={<EventNote className='mr-2 text-sky-500' />}

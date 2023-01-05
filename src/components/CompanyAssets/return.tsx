@@ -103,11 +103,11 @@ const AssetReturn = ({ setOpen, open, access_token, assetData, failed }: Props) 
                 );
             }
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
       }
     }
   };
-  console.log({assignedAsset}, {assetData})
+  // console.log({assignedAsset}, {assetData})
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="asset-assignment-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>

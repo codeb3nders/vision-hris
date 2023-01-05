@@ -23,13 +23,13 @@ const Search = ({ setSearchText, searchText, setEmployees, setIsLoading, isLoadi
     e.preventDefault();
     if (e.key === 'Enter') {
       setIsLoading(true);
-      console.log({ searchText });
+      // console.log({ searchText });
       try {
         const res = await searchEmployeeEndpoint({
           name: searchText.toUpperCase(),
           access_token,
         });
-        console.log({res})
+        // console.log({res})
         if (res.data.length > 0) {
           const employees = res.data.map((r: EmployeeDBI) => {
             const mi = r.middleName ? r.middleName.charAt(0) : '';
@@ -46,7 +46,7 @@ const Search = ({ setSearchText, searchText, setEmployees, setIsLoading, isLoadi
         }
         setIsLoading(false);
       } catch (error) {
-        console.log('handleSearch error:', error);
+        // console.log('handleSearch error:', error);
       }
     }
   };

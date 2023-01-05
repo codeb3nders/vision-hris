@@ -37,7 +37,7 @@ const PendingLeaves = ({ data }: Props) => {
   }, [openUpdate])
 
   const handleUpdate = async () => {
-    console.log({editLeave})
+    // console.log({editLeave})
     // await dispatch(updateAction({
     //   access_token,
     //   params: {

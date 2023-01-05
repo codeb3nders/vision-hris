@@ -35,7 +35,7 @@ type Props = {
 };
 
 const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: Props) => {
-  console.log({teamLeader}, {data})
+  // console.log({teamLeader}, {data})
   const headerInfo = <div>
     Team Leader: {teamLeader.fullName} <br />
     Department: { teamLeader.department} ({ teamLeader.location})

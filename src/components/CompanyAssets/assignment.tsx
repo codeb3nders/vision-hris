@@ -91,11 +91,11 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
           })
         );
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
       }
     }
   };
-  console.log({assetData}, "xxxxxxxxxxxxxxxxxxxxxxxxx", {assignedAsset})
+  // console.log({assetData}, "xxxxxxxxxxxxxxxxxxxxxxxxx", {assignedAsset})
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="asset-assignment-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>

@@ -266,7 +266,7 @@ const ProfileMain = ({
 
   /** Employees: NEW */
   useEffect(() => {
-    console.log({ newEmployeeData }, { newEmployeeStatus });
+    // console.log({ newEmployeeData }, { newEmployeeStatus });
     if (newEmployeeStatus !== 'idle') {
       if (newEmployeeData && newEmployeeStatus === 'succeeded') {
         // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
@@ -379,9 +379,9 @@ const ProfileMain = ({
     }
     setEducationalBgData(employeeData?.educationalBackground || [])
   };
-console.log({isOwner})
+// console.log({isOwner})
   const success = (cb: any, test: string) => {
-    console.log({ test })
+    // console.log({ test })
     setLoading({ status: false, action: '' });
     setRefresh(true);
     const type = isNew ? 'created' : 'updated';
@@ -582,7 +582,7 @@ console.log({isOwner})
       await dispatch(createEmployee({ body: {...rest, endOfProbationary, contractEndDate}, access_token }));
     } catch (error: any) {
       setLoading({ status: false, action: '' });
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -605,11 +605,11 @@ console.log({isOwner})
   };
 
   useEffect(() => {
-    console.log({ updatedDetails });
+    // console.log({ updatedDetails });
   }, [updatedDetails]);
 
   useEffect(() => {
-    console.log({ educationalBgData });
+    // console.log({ educationalBgData });
   }, [educationalBgData]);
 
   const getIcon = (icon: SvgIconComponent, col: string) => {

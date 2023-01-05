@@ -38,11 +38,11 @@ const NavDrawer = ({ open, setOpen, navigation }: Props) => {
           </div>
         </div>
         <List>
-          {navigation.map((item: any) => {
+          {navigation.map((item: any, i:number) => {
             return item.menus ? (
-              <>
+              <React.Fragment key={i}>
                 <Menus key={item.href} item={item} setOpen={setOpen} />
-              </>
+                </React.Fragment>
             ) : (
               <Link to={item.href} key={item.href}>
                 <ListItemButton

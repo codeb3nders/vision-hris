@@ -21,7 +21,7 @@ const DialogModal: React.FC<Props> = ({
   actions,
   open, id = "dialog", titleIcon, onClose
 }) => {
-  console.log({ open });
+  // console.log({ open });
 
   return (
     <Transition appear show={open} as={Fragment}>

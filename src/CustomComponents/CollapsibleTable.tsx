@@ -18,7 +18,7 @@ type Props = {
 
 function Row(props: { row: any }) {
   const { row } = props;
-  console.log({row})
+  // console.log({row})
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -76,7 +76,7 @@ function Row(props: { row: any }) {
 // ];
 
 const CollapsibleTable = ({ data, withHeader=true }: Props) => {
-  console.log({data}, "ddddddddddddddd")
+  // console.log({data}, "ddddddddddddddd")
   return (
     <TableContainer component={Paper}>
       <Table stickyHeader>

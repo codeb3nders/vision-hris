@@ -56,7 +56,7 @@ const EmployeeDirectory: React.FC<Props> = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [loading, setIsLoading] = useState<boolean>(false);
 
-  console.log({loading})
+  // console.log({loading})
   useEffect(() => {
     if (searchText.length <= 0) {
       // setEmployees(tempEmployees);

@@ -91,7 +91,7 @@ const SpecialTrainings = ({ type }: Props) => {
 
   useEffect(() => {
     if (employeeTrainingsStatus !== 'idle') {
-      console.log({ employeeTrainings });
+      // console.log({ employeeTrainings });
       setTrainings(
         employeeTrainings.filter(
           (x: any) => x.isAttended === (type === 'Attended')
@@ -126,7 +126,7 @@ const SpecialTrainings = ({ type }: Props) => {
   };
 
   const handleDelete = async (row: SpecialTrainingI) => {
-    console.log({row})
+    // console.log({row})
     await dispatch(deleteAction({ id: row.id, access_token }));
     setConfirmDelete({ row: null, status: false });
   };
@@ -218,7 +218,7 @@ const SpecialTrainingsDialog = ({
   useEffect(() => {
     setTrainingData(data);
   }, [data]);
-console.log({trainingData}, {training}, {type})
+// console.log({trainingData}, {training}, {type})
   const handleSave = async () => {
     const validateFields = async () => {
       const dialog: any = document.getElementById('trainings-dialog');
@@ -260,7 +260,7 @@ console.log({trainingData}, {training}, {type})
           );
         }
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
       }
       setOpen(false);
       setTraining(initialData);

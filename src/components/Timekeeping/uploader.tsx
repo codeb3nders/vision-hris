@@ -81,7 +81,7 @@ const TimekeepingUploader = ({ open, setOpen, setIsSaving, isSaving }: Props) =>
                 }
                 
             });
-      console.log({tempLines})
+      // console.log({tempLines})
       let employeesTKdata: any = [], employeeName, details:any[] = [], totalRegHrs:any, totalLateMins:any, totalUtMins:any, totalAbsentHrs:any, totalOTHrs:any, totalNdiffHrs: any, totalNdiffOTHrs:any;
         for (var i = 0; i < tempLines.length; i++){
           const employeeNameTmp = tempLines[i][0] ? tempLines[i][0].split(".) ") : 0;
@@ -138,8 +138,8 @@ const TimekeepingUploader = ({ open, setOpen, setIsSaving, isSaving }: Props) =>
             setProcessing(false);
         }
         setData(employeesTKdata);
-        // console.log({tempLines})
-      console.log({ employeesTKdata })
+        // // console.log({tempLines})
+      // console.log({ employeesTKdata })
       // debugger;
 
     }
@@ -192,7 +192,7 @@ const TimekeepingUploader = ({ open, setOpen, setIsSaving, isSaving }: Props) =>
         })
       );
     } catch (error) {
-      console.log('handleSave error:', error);
+      // console.log('handleSave error:', error);
     }
   };
 

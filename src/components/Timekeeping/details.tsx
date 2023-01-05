@@ -78,7 +78,7 @@ const TimekeepingDetails: React.FC<Props> = ({data}) => {
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-console.log({data})
+// console.log({data})
 
   useEffect(() => { 
     setTableData(data.map((o:any) => {
@@ -128,7 +128,7 @@ console.log({data})
       //     headers: { Authorization: `Bearer ${access_token}` },
       // };
       // const { status, data } = await changePasswordEndpoint(config, { oldPassword, newPassword, employeeNo: userData.employeeNo })
-      // console.log({data})
+      // // console.log({data})
       // if (status === 200) {
       //   if (data.isValid === false) {
       //     setError(data.error)
@@ -138,7 +138,7 @@ console.log({data})
       // }
       // setIsVerifying(false);
     } catch (error: any) {
-      console.log(error);
+      // console.log(error);
       setIsSuccess(false);
     }
   };

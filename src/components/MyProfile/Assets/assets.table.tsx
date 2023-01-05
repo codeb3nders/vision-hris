@@ -284,13 +284,13 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
           );
         }
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
       }
       setOpen(false);
       setNewAsset(AssetInitialState);
     }
   };
-console.log({newAsset}, {assetData}, {assetTypes})
+// console.log({newAsset}, {assetData}, {assetTypes})
   return (
     <Dialog open={open} onClose={() => setOpen(false)} id="assets-dialog">
       <div className='p-6 flex flex-col gap-4 w-[550px]'>
@@ -312,7 +312,7 @@ console.log({newAsset}, {assetData}, {assetTypes})
                   disabled={isReturn || disabled}
                   groupBy={(option:any) => option.type}
                   getOptionLabel={(option: any) => {
-                    console.log({option})
+                    // console.log({option})
                     if (!isUpdate) {
                       return option && option.assetName ? `${option.assetName} - ${option.assetDetails} (${option.assetSerialNumber})` : "";
                     }

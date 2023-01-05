@@ -39,12 +39,12 @@ const OTForm: React.FC<Props> = ({
   const [leaveType, setLeaveType] = useState('');
 
   useEffect(() => {
-    console.log({ leaveType });
+    // console.log({ leaveType });
     setSelectedLeaveType && setSelectedLeaveType(leaveType);
   }, [leaveType]);
 
   useEffect(() => {
-    console.log({ loading });
+    // console.log({ loading });
     loading &&
       setTimeout(() => {
         setLoading(false);

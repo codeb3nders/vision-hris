@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useState } from "react";
+import PropTypes from "prop-types";
 
 const useResize = ({ quality = 1 }) => {
   const max_width = 620;
@@ -7,14 +7,14 @@ const useResize = ({ quality = 1 }) => {
   const [resized, setResized] = useState<string | null>(null);
 
   // useEffect(() => {
-  //   console.log({ file });
+  //   // console.log({ file });
   //   file?.type && processfile();
   // }, [file]);
 
   const processfile = (file) => {
-    console.log('processfile');
+    // console.log('processfile');
     if (!/image/i.test(file?.type)) {
-      alert('File ' + file?.name + ' is not an image.');
+      alert("File " + file?.name + " is not an image.");
       return false;
     }
 
@@ -31,19 +31,19 @@ const useResize = ({ quality = 1 }) => {
       // helper Image object
       var image = new Image();
       image.src = blobURL;
-      console.log({ blobURL });
+      // console.log({ blobURL });
       //preview.appendChild(image); // preview commented out, I am using the canvas instead
       image.onload = function () {
         // have to wait till it's loaded
         var resized = resizeMe(image); // send it to canvas
-        console.log({ resized });
+        // console.log({ resized });
         setResized(resized);
       };
     };
   };
 
   const resizeMe = (img) => {
-    var canvas = document.createElement('canvas');
+    var canvas = document.createElement("canvas");
 
     var width = img.width;
     var height = img.height;
@@ -66,10 +66,10 @@ const useResize = ({ quality = 1 }) => {
     // resize the canvas and draw the image data into it
     canvas.width = width;
     canvas.height = height;
-    var ctx: any = canvas.getContext('2d');
+    var ctx: any = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0, width, height);
 
-    return canvas.toDataURL('image/webp', quality); // get the data from canvas as 70% JPG (can be also PNG, etc.)
+    return canvas.toDataURL("image/webp", quality); // get the data from canvas as 70% JPG (can be also PNG, etc.)
   };
 
   return { resized, processfile, resizeMe };

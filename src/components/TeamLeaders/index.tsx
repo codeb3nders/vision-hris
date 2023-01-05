@@ -178,12 +178,12 @@ const TeamLeaders = (props: Props) => {
       setRows(() => {
         return data.map((o: TeamLeaderModel) => {
           const employeeInfo: any = employees.find((e: EmployeeI) => e.employeeNo === o.employeeNo);
-          console.log({employeeInfo})
+          // console.log({employeeInfo})
           const members = employees.filter((e: EmployeeI) => {
-            console.log({o}, {e})
+            // console.log({o}, {e})
             return e.reportsTo?.employeeNo === o.employeeNo && e.department.name.toLowerCase() === employeeInfo?.department.name.toLowerCase() && JSON.stringify(e.location).toLocaleLowerCase() === JSON.stringify(employeeInfo?.location).toLocaleLowerCase()
           });
-          console.log({employees})
+          // console.log({employees})
           const employeeCnt = members.length;
           return {
             ...o,
@@ -208,7 +208,7 @@ const TeamLeaders = (props: Props) => {
       success(_getReset(), message)
     }
   }, [newStatus, deleteStatus, updateStatus])
-      console.log({rows})
+      // console.log({rows})
 
   useEffect(() => {
     !open && setTLdata(TeamLeaderInitialState);
@@ -257,7 +257,7 @@ const TeamLeaders = (props: Props) => {
   };
   
   const handleView = async (row: TeamLeaderModel) => { 
-    console.log({ row });
+    // console.log({ row });
     setTLinfo(row);
     setMembers(employees.filter((x: EmployeeDBI) => {
       return x.department.name.toLowerCase() === row.department?.toLowerCase() && x.location.findIndex((c:any)=> c.name.toLowerCase() === row.location?.toLowerCase()) >= 0  && row.employeeNo === x.reportsTo?.employeeNo
@@ -397,13 +397,13 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
           );
         }
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
       }
       setOpen(false);
       setNewData(TeamLeaderInitialState);
     }
   };
-console.log({TLData}, {newData})
+// console.log({TLData}, {newData})
   return (
     <DialogModal
       titleIcon={<SupervisorAccount className='mr-2 text-sky-500' />}

@@ -162,7 +162,7 @@ const LeaveManagement = () => {
       setLeaveRequests(upcoming);
       setLeaveHistory(history);
       setCancelledLeaves(disapprovedCancelled);
-      
+      console.log('=======================', data)
       if (isApprover && teamMembers.length > 0) {
         handleTeamCalendar(allLeaves);
       }
@@ -190,7 +190,7 @@ const LeaveManagement = () => {
   }, [open])
 
   const handleTeamCalendar = (data) => {
-    console.log({data})
+    // console.log({data})
     setTeamCalendarData((prev: any) => {
       return {
         ...prev,
@@ -211,7 +211,7 @@ const LeaveManagement = () => {
               // these optional attributes are passed to the root <div /> of each item as <div {...itemProps} />
               'data-custom-attribute': 'Random content',
               'aria-hidden': true,
-              onDoubleClick: () => { console.log('You clicked double!') },
+              onDoubleClick: () => {  console.log('You clicked double!') },
               className: 'weekend',
               style: {
                 background: 'fuchsia'
@@ -224,7 +224,7 @@ const LeaveManagement = () => {
   }
 
   const getLeaveIcon = (type: string) => {
-      console.log(type.toLocaleUpperCase(), "type.toLocaleUpperCase()")
+      // console.log(type.toLocaleUpperCase(), "type.toLocaleUpperCase()")
       switch (type.toLocaleUpperCase()) {
           case "BL":
               return <BirthdayIcon />;
@@ -362,7 +362,7 @@ const SelectAndFileLeave = ({ setSelectedLeaveType }) => {
     setSelectedLeaveType(selected);
     setAnchorEl(null);
   };
-console.log({leaveTypeList})
+// console.log({leaveTypeList})
   return <div>
       <Button
         // variant="contained"
@@ -396,7 +396,7 @@ console.log({leaveTypeList})
 }
 
 const NewApplicationModal = ({ open, setOpen, selectedLeaveType, leaveDetails, setLeaveDetails, handleSubmit, withError, setWithError }) => {
-  console.log({ leaveDetails }, "leaveDetailsleaveDetails")
+  // console.log({ leaveDetails }, "leaveDetailsleaveDetails")
   const { validated } = useRequiredChecker({
     data: leaveDetails,
     module: "leaveForm"

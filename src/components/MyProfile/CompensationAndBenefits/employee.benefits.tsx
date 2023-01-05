@@ -90,7 +90,7 @@ const EmployeeBenefits = (props: Props) => {
       });
     }
   }, [employeeDetails.employeeBenefits]);
-console.log({benefits})
+// console.log({benefits})
   const handleDelete = (id:any) => {
     setBenefits((prev: any) => {
       const filtered = prev.filter((a: any) => {
@@ -157,7 +157,7 @@ console.log({benefits})
 
   const processRowUpdate = (newRow: GridRowModel) => {
     const updatedRow = { ...newRow, isNew: false };
-    console.log({ newRow, updatedRow });
+    // console.log({ newRow, updatedRow });
 
     setBenefits(
       benefits.map((row) => (row.id === newRow.id ? updatedRow : row))

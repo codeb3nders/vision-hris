@@ -47,7 +47,7 @@ const CodeVerification = (props: Props) => {
       setLoop(setInterval(function () {
         if (moment.duration(timeRemaining).seconds() >= 0) {
           duration = moment.duration(duration.asMilliseconds() - interval, 'milliseconds');
-          console.log({ duration })
+          
           setTimeRemaining(duration);
         }
       }, interval));
@@ -57,7 +57,7 @@ const CodeVerification = (props: Props) => {
   useEffect(() => {
     if (expiresIn > 0 && timeRemaining !== null) {
       const remainingSec = moment.duration(timeRemaining).asSeconds();
-      console.log({ remainingSec })
+      // console.log({ remainingSec })
       if (remainingSec === 0) {
         setIsExpired(true);
         stopHandler();
@@ -66,7 +66,7 @@ const CodeVerification = (props: Props) => {
   }, [timeRemaining])
 
   const stopHandler = () => {
-    console.log(moment.duration(timeRemaining).asSeconds(), "xxxxxxxxxxxxxxx")
+    // console.log(moment.duration(timeRemaining).asSeconds(), "xxxxxxxxxxxxxxx")
     setVerificationCode("");
     setNewPassword("");
     setExpiresIn(0);
@@ -76,13 +76,13 @@ const CodeVerification = (props: Props) => {
     });
   }
 
-console.log({timeRemaining}, {expiresIn}, moment.duration(timeRemaining).seconds())
+// console.log({timeRemaining}, {expiresIn}, moment.duration(timeRemaining).seconds())
   const handleVerify = async () => {
     setLoading(true);
     try {
       const { status, data } = await validateCodeEndpoint({employeeNo, code: verificationCode, password: newPassword});
       if (status === 200) {
-        console.log({ data });
+        // console.log({ data });
         if (data !== false) {
           stopHandler();
           setUpdated(true);

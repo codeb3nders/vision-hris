@@ -46,9 +46,9 @@ const ItineraryForm = ({data, setDetails}) => {
   };
 
   const handleUpdate = (value, column, ctr) => { 
-    console.log({itineraryList})
+    // console.log({itineraryList})
     const index = itineraryList.findIndex((o: ItineraryDetailsModel) => o.id === ctr)
-    console.log({index})
+    // console.log({index})
     if (index > -1) {
       itineraryList[index][column] = value
     } else {

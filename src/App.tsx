@@ -51,7 +51,7 @@ export const AppCtx = createContext<AppModel>({
 type Props = {};
 
 export const consoler = (data: any, bgColor: string, title: string) => {
-  console.log(`%c 📝 ${title}:`, `background: ${bgColor}; color: white`, data);
+ console.log(`%c 📝 ${title}:`, `background: ${bgColor}; color: white`, data);
 };
 
 const App: React.FC<Props> = () => {
@@ -114,7 +114,7 @@ const App: React.FC<Props> = () => {
   }, [userData]);
 
   const createLog = async (data) => {
-    console.log("createLogcreateLogcreateLog")
+    
     const getMyIP = async() => { 
       try {
         const res = await axios.get('https://ipapi.co/json/')

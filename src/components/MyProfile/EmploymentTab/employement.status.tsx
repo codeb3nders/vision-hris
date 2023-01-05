@@ -46,7 +46,7 @@ const EmployementStatus = (props: Props) => {
   useEffect(() => {
     getData();
   }, [employeeDetails]);
-console.log({employmentUpdate}, {editEmployment})
+// console.log({employmentUpdate}, {editEmployment})
   const getData = async () => {
     //latest data from employees
     let data: any[] = [], prev_remarks = "";
@@ -67,7 +67,7 @@ console.log({employmentUpdate}, {editEmployment})
           index: i,
         };
         prev_remarks = o[i]?.remarks || "";
-        console.log({history_data})
+        // console.log({history_data})
         data.push(history_data);
       }
     }
@@ -176,7 +176,7 @@ console.log({employmentUpdate}, {editEmployment})
           );
           setIndex("2")
         } catch (error: any) {
-          console.log(error);
+          // console.log(error);
         }
       };
 
@@ -197,7 +197,7 @@ console.log({employmentUpdate}, {editEmployment})
         } else if (employmentType.toLowerCase() == "project" && !contractEndDate) {
           invalidCtr++;
         }
-        console.log({ invalidCtr })
+        // console.log({ invalidCtr })
         if (invalidCtr > 0) {
           return failed(INCOMPLETE_FORM_MESSAGE);
         }

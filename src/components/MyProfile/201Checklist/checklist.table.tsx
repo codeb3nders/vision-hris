@@ -126,7 +126,7 @@ const ChecklistTable = (props: Props) => {
   };
 
   const handleEditClick = (id: GridRowId) => () => {
-    console.log({id}, "xxxxxxxxxxxxxxxxx")
+    // console.log({id}, "xxxxxxxxxxxxxxxxx")
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
@@ -153,7 +153,7 @@ const ChecklistTable = (props: Props) => {
       return null;
     });
 
-    console.log({ updated });
+    // console.log({ updated });
   }, [selectedDocuments]);
 
   useEffect(() => {
@@ -187,9 +187,9 @@ const ChecklistTable = (props: Props) => {
 
   const processRowUpdate = (newRow: GridRowModel) => {
     const updatedRow:any = { ...newRow, isNew: false };
-    console.log({ newRow, updatedRow });
+    // console.log({ newRow, updatedRow });
     const handleSave = async () => {
-      console.log(updatedRow.documentType, "updatedRow.documentTypeupdatedRow.documentType")
+      // console.log(updatedRow.documentType, "updatedRow.documentTypeupdatedRow.documentType")
       try {
         if (updatedRow.documentType) {
           const { documentCode, documentDescription, employeeNo, isNew, ...rest} = updatedRow;
@@ -221,7 +221,7 @@ const ChecklistTable = (props: Props) => {
           );
         }
       } catch (error: any) {
-        console.log(error);
+        // console.log(error);
       }
     };
     

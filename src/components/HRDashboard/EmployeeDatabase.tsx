@@ -97,7 +97,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
         const withUserCredentials = userCredentials.filter((x: any) => x.employeeNo === r.employeeNo).length > 0;
         return { ...r, id: r.employeeNo, full_name, withUserCredentials };
       });
-      console.log({employees})
+      // console.log({employees})
       setEmployees(employees);
       setTempEmployees(employees);
       setIsLoading(false);
@@ -114,7 +114,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [location]);
 
   useEffect(() => {
-    console.log({refresh})
+    // console.log({refresh})
     if (access_token && refresh) {
       dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
     }
@@ -144,14 +144,14 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [viewDetails]);
 
   const handleSendAccess = async (isChecked:boolean, data:any) => {
-    console.log(data, "vvv")
+    // console.log(data, "vvv")
     if (isChecked) {
       setSendAccessList([...sendAccessList, data])
     } else {
       setSendAccessList(sendAccessList.filter((x:any) => x.employeeNo !== data.employeeNo))
     }
   }
-console.log({sendAccessList})
+// console.log({sendAccessList})
   const columns = (setViewDetails: any) => [
     {
       field: 'userGroup',
@@ -289,7 +289,7 @@ console.log({sendAccessList})
       field: 'withUserCredentials',
       headerName: 'With Access',
       renderCell: (params) => {
-        console.log({params})
+        // console.log({params})
         return <Checkbox
           checked={params.row.withUserCredentials}
           disabled={params.row.withUserCredentials}
@@ -298,7 +298,7 @@ console.log({sendAccessList})
       }
     },
   ];
-  console.log({ viewDetails })
+  // console.log({ viewDetails })
   const sendCredentials = async () => {
     setSending(true);
     if (sendAccessList.length > 0) {

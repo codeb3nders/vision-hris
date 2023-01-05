@@ -68,7 +68,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
 
   /** Employees: NEW */
   useEffect(() => {
-    console.log({ newEmployeeData }, { newEmployeeStatus });
+    // console.log({ newEmployeeData }, { newEmployeeStatus });
     if (newEmployeeStatus !== 'idle') {
       if (newEmployeeData && newEmployeeStatus === 'succeeded') {
         // handleSaveDisplayPhoto(newEmployeeData.payload.employeeNo);
@@ -138,7 +138,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
       const file_obj = parsedData
         .map((data: any) => {
           return columns?.reduce((prevVal: any, curVal: any, idx: number) => {
-            // console.log({ data, curVal });
+            // // console.log({ data, curVal });
             tableCols.push({
               field: altered_columns[idx],
               headerName: curVal,
@@ -156,7 +156,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
         })
         .filter((data: any) => data.lastName && data.firstName);
 
-      // console.log(file_obj);
+      // // console.log(file_obj);
       setData(file_obj);
       setTableColumns(tableCols)
 
@@ -173,7 +173,7 @@ const EmployeeUploader = ({ open, setOpen }: Props) => {
     };
     reader.readAsText(file);
   };
-console.log({data})
+// console.log({data})
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -196,10 +196,10 @@ console.log({data})
           );
         })
       );
-console.log({test})
+// console.log({test})
 
     } catch (error) {
-      console.log('handleSave error:', error);
+      // console.log('handleSave error:', error);
     }
   };
 
