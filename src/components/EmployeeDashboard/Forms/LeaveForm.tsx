@@ -58,7 +58,7 @@ const LeaveForm: React.FC<Props> = ({
     }
   }, [TLDataStatus])
   
-console.log({leaveType})
+
   useEffect(() => {
     console.log({ params, location: location?.search?.split('=')[1] });
   }, [params, location]);

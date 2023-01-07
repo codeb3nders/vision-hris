@@ -126,7 +126,6 @@ const ChecklistTable = (props: Props) => {
   };
 
   const handleEditClick = (id: GridRowId) => () => {
-    // console.log({id}, "xxxxxxxxxxxxxxxxx")
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
@@ -221,7 +220,7 @@ const ChecklistTable = (props: Props) => {
           );
         }
       } catch (error: any) {
-        // console.log(error);
+        console.log(error);
       }
     };
     

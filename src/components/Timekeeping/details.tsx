@@ -138,7 +138,7 @@ const TimekeepingDetails: React.FC<Props> = ({data}) => {
       // }
       // setIsVerifying(false);
     } catch (error: any) {
-      // console.log(error);
+      console.log(error);
       setIsSuccess(false);
     }
   };

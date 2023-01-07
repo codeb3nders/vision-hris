@@ -91,7 +91,7 @@ const AssetAssignment = ({ setOpen, open, access_token, assetData, failed }: Pro
           })
         );
       } catch (error: any) {
-        // console.log(error);
+        console.log(error);
       }
     }
   };

@@ -262,7 +262,7 @@ const JobInfo = (props: Props) => {
           );
           setIndex("2")
         } catch (error: any) {
-          // console.log(error);
+          console.log(error);
         }
       };
 

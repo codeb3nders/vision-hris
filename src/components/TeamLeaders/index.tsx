@@ -397,7 +397,7 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
           );
         }
       } catch (error: any) {
-        // console.log(error);
+        console.log(error);
       }
       setOpen(false);
       setNewData(TeamLeaderInitialState);

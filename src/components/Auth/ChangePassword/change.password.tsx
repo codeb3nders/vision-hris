@@ -52,7 +52,7 @@ const ChangePassword = ({ show, setShow }: Props) => {
       }
       setLoading(false);
     } catch (error: any) {
-      // console.log(error);
+      console.log(error);
       setIsSuccess(false);
     }
   };

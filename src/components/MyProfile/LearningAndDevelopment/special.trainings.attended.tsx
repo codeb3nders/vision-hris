@@ -260,7 +260,7 @@ const SpecialTrainingsDialog = ({
           );
         }
       } catch (error: any) {
-        // console.log(error);
+        console.log(error);
       }
       setOpen(false);
       setTraining(initialData);

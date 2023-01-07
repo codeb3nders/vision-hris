@@ -176,7 +176,7 @@ const EmployementStatus = (props: Props) => {
           );
           setIndex("2")
         } catch (error: any) {
-          // console.log(error);
+          console.error(error);
         }
       };
 

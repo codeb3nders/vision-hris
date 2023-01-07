@@ -313,7 +313,7 @@ const OffenseDialog = ({ open, setOpen, failed, employeeNo, access_token, resetN
           await dispatch(createAction({ body: {...data, employeeNo}, access_token }));
         }
       } catch (error: any) {
-        // console.log(error);
+        console.error(error);
       }
       setOpen(false);
       setOffense(initialState);

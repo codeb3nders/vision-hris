@@ -582,7 +582,7 @@ const ProfileMain = ({
       await dispatch(createEmployee({ body: {...rest, endOfProbationary, contractEndDate}, access_token }));
     } catch (error: any) {
       setLoading({ status: false, action: '' });
-      // console.log(error);
+      console.log(error);
     }
   };
 

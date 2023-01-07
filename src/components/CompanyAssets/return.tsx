@@ -103,7 +103,7 @@ const AssetReturn = ({ setOpen, open, access_token, assetData, failed }: Props) 
                 );
             }
       } catch (error: any) {
-        // console.log(error);
+        console.log(error);
       }
     }
   };

@@ -137,7 +137,7 @@ const AssetTransfer = ({ setOpenTransfer, openTransfer, access_token, assetData,
         await returnAsset();
         await assignAsset();
       } catch (error: any) {
-        // console.log(error);
+        console.log(error);
       }
       setOpenTransfer(false);
     }

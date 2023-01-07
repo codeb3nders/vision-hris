@@ -284,7 +284,7 @@ const AssetDialog = ({ open, setOpen, setRows, employeeNo, access_token, assetDa
           );
         }
       } catch (error: any) {
-        // console.log(error);
+        console.log(error);
       }
       setOpen(false);
       setNewAsset(AssetInitialState);

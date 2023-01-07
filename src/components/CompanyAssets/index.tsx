@@ -366,7 +366,7 @@ const AssetDialog = ({ open, setOpen, access_token, assetData: data, isUpdate, i
           );
         }
       } catch (error: any) {
-        // console.log(error);
+        console.log(error);
       }
       setOpen(false);
       setNewAsset(CompanyAssetInitialState);
