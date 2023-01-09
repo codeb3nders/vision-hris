@@ -6,17 +6,23 @@ import {
 import { EmployeeI } from "slices/interfaces/employeeI";
 import { URL_EMPLOYEE_SEARCH } from "./../../constants/EndpointPath";
 
+var querystring = require('querystring');
+
 export const createEmployeeEndpoint = async (body: EmployeeI, config = {}) => {
   return await axios.post(URL_EMPLOYEES, body, {
     ...config,
   });
 };
 
-export const updateEmployeeEndpoint = async (data: any, config: any) => {
+export const updateEmployeeEndpoint = async (data: any, config: any, params:any = null) => {
   const body = data;
-  // console.log({body}, "updateEmployeeEndpoint")
+  console.log({ body }, "updateEmployeeEndpoint")
+  let url = `${URL_EMPLOYEES}update`;
+  if (params) {
+    url += "/" + querystring.stringify(params)
+  }
   try {
-    return await axios.patch(`${URL_EMPLOYEES}update`, body, {
+    return await axios.patch(url, body, {
       ...config,
     });
   } catch (error: any) {

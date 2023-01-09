@@ -46,6 +46,7 @@ import {
   getAllEmployeesAction as _getEmployeesAction,
   getEmployeeStatus as _getEmployeeStatus
 } from 'slices/employees/getEmployeesSlice';
+import {updateEmployee} from 'slices'
 import ConfirmDelete from 'components/Other/confirm.delete';
 import { EmployeeDBI, EmployeeI } from 'slices/interfaces/employeeI';
 import TeamMembers from './members';
@@ -53,6 +54,7 @@ import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import { MainCtx } from 'components/Main';
 import moment, { Moment } from 'moment';
 import DialogModal from 'CustomComponents/DialogModal';
+import { MANAGER, EMPLOYEE, VHO } from 'constants/Values';
 
 type Props = {};
 
@@ -61,14 +63,14 @@ export type TeamLeaderModel = {
   employeeNo: string;
   isDelegated: boolean;
   startDate: Moment | Date;
-  endDate: Moment | Date;
   remarks?: string;
   fullName?: string;
   department?: string;
   location?: string;
   position?: string;
-  isActive?: string;
+  isActive: boolean;
   employeeCnt?: number;
+  employeeDetails?: any;
 };
 
 export const TeamLeaderInitialState = {
@@ -76,13 +78,12 @@ export const TeamLeaderInitialState = {
   employeeNo: "",
   isDelegated: false,
   startDate: new Date(),
-  endDate: moment(new Date()).add(5, 'days'),
   remarks: "",
   fullName: "",
   department: "",
   location: "",
   position: "",
-  isActive: "YES",
+  isActive: true,
   employeeCnt: 0
 };
 
@@ -94,30 +95,6 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     padding: '0 4px',
   },
 }));
-
-const sampleData: TeamLeaderModel[] = [
-  {
-    id: "0",
-    employeeNo: "0743",
-    isDelegated: false,
-    startDate: moment("12-09-2019"),
-    endDate: moment(new Date()).add(5, 'years')
-  },
-  {
-    id: "1",
-    employeeNo: "1213",
-    isDelegated: false,
-    startDate: moment("05-08-2022"),
-    endDate: moment(new Date()).add(5, 'years')
-  },
-  {
-    id: "2",
-    employeeNo: "0007",
-    isDelegated: false,
-    startDate: moment("09-15-2013"),
-    endDate: moment(new Date()).add(5, 'years')
-  }
-]
 
 const TeamLeaders = (props: Props) => {
   const [rows, setRows] = useState<TeamLeaderModel[]>([]);
@@ -347,6 +324,28 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
   }, [open]);
 
   const handleSave = async () => {
+    const updateEmployees = async(reportsTo) => {
+      if (TLData.location.includes(VHO)) {
+        await dispatch(
+          updateEmployee({
+            where: { department: TLData.employeeDetails.department },
+            params: {reportsTo },
+            access_token,
+          })
+        );
+      } else {
+        await dispatch(
+          updateEmployee({
+            where: {
+              department: TLData.employeeDetails.department,
+              location: TLData.employeeDetails.department
+            },
+            params: {reportsTo },
+            access_token,
+          })
+        );
+      }
+    }
     const validateFields = async () => {
         const dialog: any = document.getElementById("team-leader-dialog");
         const required = dialog.querySelectorAll("[required]");
@@ -369,6 +368,12 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
       //check inputs...
     if (await validateFields() ) {
       setIsSaving(true);
+      let userGroup = EMPLOYEE;
+      let reportsTo = "";
+      if (!TLData.isDelegated && TLData.isActive) {
+        userGroup = MANAGER;
+        reportsTo = TLData.employeeNo;
+      }
       try {
         if (isUpdate) {
           const {id, timestamp, lastModifiedDate, ...rest } = TLData;
@@ -377,24 +382,42 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
               params: {
                 id: TLData.id,
                 startDate: TLData.startDate,
-                endDate: TLData.endDate,
+                isActive: TLData.isActive,
                 isDelegated: TLData.isDelegated
               },
               access_token,
             })
           );
+          //update employee userGroup
+          await dispatch(
+            updateEmployee({
+              params: { userGroup },
+              access_token,
+            })
+          );
+          //update employees with same department and/or location
+          updateEmployees(reportsTo);
         } else {
           await dispatch(
             createAction({
               body: { 
                 employeeNo: TLData.employeeNo,
                 startDate: TLData.startDate,
-                endDate: TLData.endDate,
+                isActive: TLData.isActive,
                 isDelegated: TLData.isDelegated,
               },
               access_token,
             })
           );
+          //update employee userGroup
+          await dispatch(
+            updateEmployee({
+              params: { userGroup: MANAGER },
+              access_token,
+            })
+          );
+          //update employees with same department and/or location
+          updateEmployees(reportsTo);
         }
       } catch (error: any) {
         console.log(error);
@@ -403,7 +426,73 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
       setNewData(TeamLeaderInitialState);
     }
   };
-// console.log({TLData}, {newData})
+  
+  const TLForm = <div className='px-6 flex flex-col gap-4 min-h-[50vh]'>
+    <GridWrapper colSize='1'>
+      <div className='col-span-1'>
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={nonRankAndFileEmployees}
+          sx={{ width: "100%" }}
+          renderInput={(params) => <TextField {...params} label="Select Employee" variant="standard" />}
+          onChange={(e: any, newValue: any) => {
+            setTLData({ ...TLData, employeeNo: newValue.id, fullName: newValue.label, department: newValue.department, position: newValue.position, location: newValue.location.map((o:any) => o.name).join(", ") });
+          }}
+          disabled={isUpdate}
+          defaultValue={TLData.fullName}
+      />
+      </div>
+      {TLData.employeeNo && <>
+        <div className='col-span-1'>
+          <Typography variant="subtitle1" className="text-[11px] text-sky-500">Department</Typography>
+          <Typography variant="body2">{TLData.department}</Typography>
+          </div>
+          <div className='col-span-1'>
+          <Typography variant="subtitle1" className="text-[11px] text-sky-500">Location/s</Typography>
+          <Typography variant="body2">{TLData.location}</Typography>
+        </div>
+      </>
+      }
+    </GridWrapper>
+    <GridWrapper colSize='2'>
+      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <DatePicker
+            label='Effective Date'
+            onChange={(value) => {
+              setTLData({
+                ...TLData,
+                startDate: value
+              })
+            }}
+            value={TLData.startDate || null}
+            renderInput={(params) => (
+              <TextField {...params} fullWidth required variant='standard' />
+            )}
+          />
+        </LocalizationProvider>
+      </div>
+    </GridWrapper>
+    <GridWrapper colSize='2'>
+      <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
+        <FormControlLabel control={<Checkbox defaultChecked onChange={(e:any) => setTLData({
+                ...TLData,
+                isActive: e.target.checked
+              })} />} label="Is Active" />
+      </div>
+      <div>
+        <FormControlLabel control={<Checkbox onChange={(e:any) => setTLData({
+                ...TLData,
+                isDelegated: e.target.checked
+              })} />} label="Is Delegated" />
+      </div>
+    </GridWrapper>
+    <div className='col-span-1 italic text-xs text-justify'>
+      Employees under the same department as above will automatically be updated
+    </div>
+  </div>
+  
   return (
     <DialogModal
       titleIcon={<SupervisorAccount className='mr-2 text-sky-500' />}
@@ -424,6 +513,7 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
               Save
             </button>
             <button
+              type='button'
               className='col-span-2 px-2 py-1 text-slate-400 hover:text-slate-800'
               onClick={() => setOpen(false)}
             >
@@ -433,80 +523,7 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
         </div>
       }
       >
-      <div className='px-6 flex flex-col gap-4 min-h-[50vh]'>
-        <GridWrapper colSize='1'>
-          <div className='col-span-1'>
-            <Autocomplete
-              disablePortal
-              id="combo-box-demo"
-              options={nonRankAndFileEmployees}
-              sx={{ width: "100%" }}
-              renderInput={(params) => <TextField {...params} label="Select Employee" variant="standard" />}
-              onChange={(e: any, newValue: any) => {
-                setTLData({ ...TLData, employeeNo: newValue.id, fullName: newValue.label, department: newValue.department, position: newValue.position, location: newValue.location.map((o:any) => o.name).join(", ") });
-              }}
-              disabled={isUpdate}
-              defaultValue={TLData.fullName}
-          />
-          </div>
-          {TLData.employeeNo && <>
-            <div className='col-span-1'>
-              <Typography variant="subtitle1" className="text-[11px] text-sky-500">Department</Typography>
-              <Typography variant="body2">{TLData.department}</Typography>
-              </div>
-              <div className='col-span-1'>
-              <Typography variant="subtitle1" className="text-[11px] text-sky-500">Location/s</Typography>
-              <Typography variant="body2">{TLData.location}</Typography>
-            </div>
-          </>
-          }
-        </GridWrapper>
-        <GridWrapper colSize='2'>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='Start Date'
-                onChange={(value) => {
-                  setTLData({
-                    ...TLData,
-                    startDate: value
-                  })
-                }}
-                value={TLData.startDate || null}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth required variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div className='desktop:col-span-1 laptop:col-span-1 tablet:col-span-1 phone:col-span-2'>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label='End Date'
-                onChange={(value) => {
-                  setTLData({
-                    ...TLData,
-                    endDate: value
-                  })
-                }}
-                value={TLData.endDate || null}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth required variant='standard' />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-        </GridWrapper>
-        <div className='col-span-1'>
-          <FormControlLabel control={<Checkbox onChange={(e:any) => setTLData({
-                  ...TLData,
-                  isDelegated: e.target.checked
-                })} />} label="Is Delegated" />
-        </div>
-        <div className='col-span-1 italic text-xs text-justify'>
-          Employees under the same department as above will automatically be updated
-        </div>
-      </div>
+      {TLForm}
     </DialogModal>
   );
 };
@@ -545,12 +562,6 @@ const columns: any = (handleEdit:any, handleView:any) => [
   {
     field: 'startDate',
     headerName: 'Start Date',
-    width: 120,
-    renderCell: (params:any)=>moment(params.value).format("L")
-  },
-  {
-    field: 'endDate',
-    headerName: 'End Date',
     width: 120,
     renderCell: (params:any)=>moment(params.value).format("L")
   },

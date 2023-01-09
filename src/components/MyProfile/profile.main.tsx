@@ -23,17 +23,6 @@ import { compensationBenefitsCols, initialState, payrollInfoCols, personalCols }
 import ProfileOther from './profile.other';
 import ProfileTeam from './profile.team';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
-import {
-  createEmployee,
-  getEmployeeCreatedItem,
-  getEmployeeCreateError,
-  getEmployeeCreateStatus,
-  getEmployeeUpdateError,
-  resetCreate,
-  resetUpdate,
-  updateEmployee,
-  checkEmployeeExists,
-} from './../../slices';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getListOfValues,
@@ -46,6 +35,13 @@ import {
   getEmployeeHistoryData as _getEmployeeHistoryData,
   getEmployeeHistoryStatus as _getEmployeeHistoryStatus,
   getEmployeeHistoryError as _getEmployeeHistoryError,
+  createEmployee,
+  getEmployeeCreatedItem,
+  getEmployeeCreateError,
+  getEmployeeCreateStatus,
+  resetCreate,
+  resetUpdate,
+  updateEmployee,
 } from 'slices';
 import useRequiredChecker from 'hooks/useRequiredChecker';
 import { EMPLOYMENT_HISTORY_TYPE, JOB_HISTORY_TYPE } from 'constants/Values';
@@ -422,7 +418,7 @@ const ProfileMain = ({
     });
   }
 
-  // useEffect(() => {
+  useEffect(() => {
   //   var positions: any = [],
   //     departments: any = [],
   //     ranks: any = [],
@@ -504,28 +500,46 @@ const ProfileMain = ({
   //         break;
   //     }
   //   });
-  //   setEnums({
-  //     positions,
-  //     gender,
-  //     departments,
-  //     ranks,
-  //     civil_status,
-  //     citizenship,
-  //     religions,
-  //     employment_status,
-  //     locations,
-  //     assets,
-  //     file201,
-  //     allowance_types,
-  //     employment_types,
-  //     payroll_group,
-  //     payment_method,
-  //     violations,
-  //     offenseLevel,
-  //     offenseStages,
-  //     violationCategories
-  //   });
-  // }, [enumsData]);
+    setEnums({
+      positions,
+      gender,
+      departments,
+      ranks,
+      civil_status,
+      citizenship,
+      religions,
+      employment_status,
+      locations,
+      assets,
+      file201,
+      allowance_types,
+      employment_types,
+      payroll_group,
+      payment_method,
+      violations,
+      offenseLevel,
+      offenseStages,
+      violationCategories
+    });
+  }, [positions,
+      gender,
+      departments,
+      ranks,
+      civil_status,
+      citizenship,
+      religions,
+      employment_status,
+      locations,
+      assets,
+      file201,
+      allowance_types,
+      employment_types,
+      payroll_group,
+      payment_method,
+      violations,
+      offenseLevel,
+      offenseStages,
+      violationCategories]);
 
   // useEffect(() => {
   //   handleCompanyEmail();

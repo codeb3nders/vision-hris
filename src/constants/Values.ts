@@ -5,6 +5,8 @@ export const MANAGER = 'APPROVER';
 export const EMPLOYEE = 'EMPLOYEE';
 /** USER ACCESS: END */
 
+export const VHO = "VHO";
+
 /** EMPLOYEE PROFILE CONFIGS */
 export const RELATION = ['PARENTS', 'SIBLINGS', 'SPOUSE', 'CHILDREN'];
 export const USER_GROUP = [HR_ADMIN, SYSAD, MANAGER, EMPLOYEE];

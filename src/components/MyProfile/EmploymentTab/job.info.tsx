@@ -37,6 +37,8 @@ import { AppCtx, consoler } from 'App';
 import { INCOMPLETE_FORM_MESSAGE } from 'constants/errors';
 import { generateCompanyEmail, getContractEndDate, getProbationaryEndDate } from 'utils/functions';
 import { EmployeeCtx } from 'components/HRDashboard/EmployeeDatabase';
+import { dataStatus as _getTLDataStatus, data as _getTLData } from 'slices/teamLeader';
+import { TeamLeaderModel } from 'components/TeamLeaders';
 
 type Props = {};
 
@@ -68,11 +70,30 @@ const JobInfo = (props: Props) => {
   const [departments, setDepartments] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
   const [positions, setPositions] = useState<any[]>([]);
+  const [teamLeaders, setTeamLeaders] = useState<any[]>([]);
   const [ranks, setRanks] = useState<any[]>([]);
   const [editJob, setEditJob] = useState<any>(null);
   const [jobUpdate, setJobUpdate] = useState<any>(null);
   const [employmentStatus, setEmploymentStatus] = useState<any[]>([]);
   const [employmentTypes, setEmploymentTypes] = useState<any[]>([]);
+
+  // Team Leaders
+  const TLdataStatus = useSelector(_getTLDataStatus);
+  const TLdata = useSelector(_getTLData);
+
+  useEffect(() => { 
+    if (TLdataStatus === 'succeeded') {
+      setTeamLeaders(TLdata
+        .map((o: TeamLeaderModel) => {
+            return {
+              fullName: o.employeeDetails ? `${o.employeeDetails.firstName} ${o.employeeDetails.lastName}` : "",
+              department_code: o.employeeDetails ? o.employeeDetails.department : "",
+              employeeNo: o.employeeNo
+            }
+      }));
+    }
+  }, [TLdataStatus])
+      console.log({teamLeaders})
 
   useEffect(() => {
     setDepartments(enums.departments);
@@ -94,6 +115,7 @@ const JobInfo = (props: Props) => {
     employmentTypes,
     isView,
     setUpdatedDetails,
+    teamLeaders
   };
 
   useEffect(() => {
@@ -225,7 +247,7 @@ const JobInfo = (props: Props) => {
                 department: params.row.department.code,
                 rank: params.row.rank.code,
                 position: params.row.position.code,
-                reportsTo: params.row.reportsTo.employeeNo,
+                reportsTo: params.row.reportsTo?.employeeNo,
               })}
               startIcon={<EditTwoTone />}
             >
@@ -292,6 +314,7 @@ const JobInfo = (props: Props) => {
       await validateFields();
       await update();
     }
+    console.log({jobUpdate}, {editJob})
     return <Dialog open={editJob !== null} id="dialog-job" onClose={() => setEditJob(null)}>
       <div className='p-6 flex flex-col gap-4 w-[350px]'>
         <p className='text-md font-bold '>
@@ -418,13 +441,13 @@ const JobInfo = (props: Props) => {
               }))
             }}
           >
-            {getEmployeeItems
-              ?.filter(
+            {teamLeaders
+              .filter(
                 (x: any) =>
-                  x.department.code === (jobUpdate?.department || editJob.department.code)
+                  x.department_code === (jobUpdate?.department || editJob.department)
                 && employeeDetails.employeeNo !== x.employeeNo
             ).sort((a: any, b: any) => {
-                return a.firstName?.localeCompare(b.firstName)
+                return a.fullName?.localeCompare(b.fullName)
               })
               .map((employee) => {
                 return (
@@ -434,7 +457,7 @@ const JobInfo = (props: Props) => {
                     value={employee.employeeNo}
                     data-obj={employee}
                   >
-                    {employee.firstName} {employee.lastName}
+                    {employee.fullName}
                   </MenuItem>
                 );
               })}
@@ -530,7 +553,7 @@ const JobInfoFields = ({
   employmentStatus,
   employmentTypes,
   isView,
-  setUpdatedDetails,
+  setUpdatedDetails, teamLeaders
 }) => {
   const getEmployeeItems = useSelector(_getEmployeeItems);
   const [isProjectEmployee, setIsProjectEmployee] = useState<boolean>(false);
@@ -716,11 +739,11 @@ const JobInfoFields = ({
                   }));
               }}
             >
-              {getEmployeeItems
-                ?.filter(
-                  (x: any) => x.department?.code === employeeDetails.department && employeeDetails.employeeNo !== x.employeeNo
+              {teamLeaders
+                .filter(
+                  (x: any) => x.department_code === employeeDetails.department && employeeDetails.employeeNo !== x.employeeNo
               )
-                .sort((a:any, b:any) => a.firstName.localeCompare(b.firstName))
+                .sort((a:any, b:any) => a.fullName.localeCompare(b.fullName))
                 .map((employee) => {
                   return (
                     <MenuItem
@@ -728,7 +751,7 @@ const JobInfoFields = ({
                       key={employee.employeeNo}
                       value={employee.employeeNo}
                     >
-                      {employee.firstName} {employee.lastName}
+                      {employee.fullName}
                     </MenuItem>
                   );
                 })}

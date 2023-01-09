@@ -9,18 +9,18 @@ const initialState: any = {
 };
 
 export const updateEmployee: any = createAsyncThunk(
-  "employees/updateEmployee",
-  async (data: { params: EmployeeI; access_token: string }) => {
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${data.access_token}` },
-      };
-      return await updateEmployeeEndpoint(data.params, config);
-    } catch (err: any) {
-      console.error("ERROR in createEmployee", err);
-      return err;
+    'employees/updateEmployee',
+    async (data: { params: EmployeeI; access_token: string, where?: any }) => {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${data.access_token}` },
+            };
+            return await updateEmployeeEndpoint(data.params, config, data.where);
+        } catch (err: any) {
+            console.error('ERROR in createEmployee', err);
+            return err;
+        }
     }
-  }
 );
 
 export const updateEmployeesSlice = createSlice({

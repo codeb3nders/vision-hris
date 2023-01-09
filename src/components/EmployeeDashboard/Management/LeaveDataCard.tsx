@@ -59,7 +59,7 @@ const LeaveDataCard = ({ d, handleCancel, handleUpdate }: Props) => {
             <GridMoreVertIcon onClick={(e:any) => setAnchorEl(e.currentTarget)}  />
           </IconButton>}
       title={d.startDate}
-      subheader={isApprover && d.employeeDetails.firstName}
+      subheader={isApprover && `${d.employeeDetails.lastName}, ${d.employeeDetails.firstName[0]}.`}
     />
     <Menu
       id="simple-menu"
