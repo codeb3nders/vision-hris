@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createEmployeeEndpoint, updateEmployeeEndpoint } from 'apis/employees';
+import { createEmployeeEndpoint } from 'apis/employees';
 import { EmployeeI } from 'slices/interfaces/employeeI';
 
 const initialState: any = {

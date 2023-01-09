@@ -37,6 +37,7 @@ import { getAvatar } from 'utils/functions';
 import { VISION_RED } from 'constants/Colors';
 import { createCredentialsEndpoint } from 'apis/userAccess';
 import { initialState } from 'components/MyProfile/employee.initialstate';
+import { getAllDataAction } from 'slices/teamLeader';
 
 type Props = {};
 
@@ -114,11 +115,21 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [location]);
 
   useEffect(() => {
-    console.log({refresh})
-    if (access_token && refresh) {
-      dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
+    if (access_token) {
+      getEmployees();
+      getAllTeamLeaders();
     }
-  }, [access_token, refresh]);
+  }, [access_token])
+
+  useEffect(() => {
+    if (refresh) {
+      getEmployees();
+    }
+  }, [refresh]);
+
+  const getEmployees = async() => {
+    await dispatch(_getEmployeesAction({ access_token, params: { isActive: true } }));
+  }
 
   const getUserCredentials = async () => {
     const config = {
@@ -142,6 +153,10 @@ const EmployeeDatabase: React.FC<Props> = () => {
       dispatch(clearHistoryData());
     }
   }, [viewDetails]);
+
+  const getAllTeamLeaders = async () => {
+    await dispatch(getAllDataAction({ access_token }));
+  }
 
   const handleSendAccess = async (isChecked:boolean, data:any) => {
     console.log(data, "vvv")
