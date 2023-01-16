@@ -1,11 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridRowParams, GridToolbar, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
 import { useContext, useEffect, useState } from 'react';
 import {
+  Alert,
   Button,
   IconButton,
+  Snackbar,
 } from '@mui/material';
 import {
+  CheckBox,
   Close,
   LaptopChromebookTwoTone,
   SaveTwoTone,
@@ -14,7 +17,7 @@ import {
   data as _getCompanyAssetsData, dataStatus as _getCompanyAssetsDataStatus,
   updateAction as updateCompanyAsset,
 } from 'slices/companyAssets';
-import { getEmployeeItems as _getEmployeeItems } from 'slices';
+import { getAllEmployeesAction, getEmployeeItems as _getEmployeeItems } from 'slices';
 import { EmployeeDBI } from 'slices/interfaces/employeeI';
 import { ASSET_CONDITIONS } from 'constants/Values';
 import { AssetInitialState, AssetModel } from 'components/MyProfile/Assets/assets.table';
@@ -24,6 +27,8 @@ import DialogModal from 'CustomComponents/DialogModal';
 import { TeamLeaderModel } from '.';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { updateEmployeeEndpoint } from 'apis/employees';
 
 type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,7 +40,14 @@ type Props = {
 };
 
 const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: Props) => {
-  // console.log({teamLeader}, {data})
+  const dispatch = useDispatch();
+  const [selectedEmployees, setSelectedEmployees] = useState<any[]>([]);
+  const [openNotif, setOpenNotif] = useState<{
+    message: string;
+    status: boolean;
+    severity: any;
+  }>({ message: '', status: false, severity: '' });
+
   const headerInfo = <div>
     Team Leader: {teamLeader.fullName} <br />
     Department: { teamLeader.department} ({ teamLeader.location})
@@ -84,6 +96,59 @@ const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: 
       },
     },
   ]
+  console.log({selectedEmployees})
+  function CustomToolbar() {
+    const ToggleRowSelection = () => {
+      const updateEmployees = async () => {
+        if (selectedEmployees.length > 0) {
+          const config = {
+              headers: { Authorization: `Bearer ${access_token}` },
+          };
+            // return await updateEmployeeEndpoint(data.params, config, data.where);
+          const params = { reportsTo: teamLeader.employeeNo }
+          Promise.all(
+            selectedEmployees.map(async (o: any) => {
+              return await updateEmployeeEndpoint(params, config, { employeeNo: o })
+            })
+          ).then((values: any) => {
+            console.log({ values });
+            setOpenNotif({
+              message: "Employees have been updated.",
+              status: true,
+              severity: 'success',
+            });
+            dispatch(getAllEmployeesAction({ access_token }));
+
+            setTimeout(() => {
+              setOpenNotif({
+                message: '',
+                status: false,
+                severity: '',
+              });
+            }, 2000)
+            setSelectedEmployees([]);
+          })
+        }
+      // await dispatch(
+      //   updateEmployee({
+      //     where: { department: TLData.department.code },
+      //     params: {reportsTo },
+      //     access_token,
+      //   })
+      // );
+    }
+      return <Button size='small' startIcon={<CheckBox />} onClick={updateEmployees}>Update Employees</Button>
+    }
+    return (
+      <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        <GridToolbarFilterButton />
+        <GridToolbarExport />
+        <ToggleRowSelection />
+      </GridToolbarContainer>
+    );
+    }
+    
   return (
     <DialogModal
       className="w-[1000px]"
@@ -110,9 +175,16 @@ const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: 
           Cancel
           </button>
         }
+    >
+      <Snackbar
+        autoHideDuration={2000}
+        open={openNotif.status}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
       >
+        <Alert severity={openNotif.severity}>{openNotif.message}</Alert>
+      </Snackbar>
       <DataGrid
-          components={{ Toolbar: GridToolbar }}
+          components={{ Toolbar: CustomToolbar }}
           autoHeight
           className='data-grid'
           density="compact"
@@ -121,7 +193,12 @@ const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: 
           columns={columns}
           pageSize={30}
           rowsPerPageOptions={[30]}
-          checkboxSelection={false}
+          isRowSelectable={(params: GridRowParams) => params.row.employeeNo != teamLeader.employeeNo}
+          checkboxSelection
+          onSelectionModelChange={(newSelectionModel) => {
+            setSelectedEmployees(newSelectionModel)
+          }}
+          selectionModel={selectedEmployees}
           getRowId={(row: any) => row.employeeNo}
         />
     </DialogModal>

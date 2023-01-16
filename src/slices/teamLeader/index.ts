@@ -152,7 +152,7 @@ export const teamLeadersSlice = createSlice({
           state.createError = data.error;
         } else {
           state.createStatus = "succeeded";
-          state.createdItem = action.payload.data;
+          state.createItem = action.payload.data;
         }
       })
       .addCase(createAction.rejected, (state, action) => {

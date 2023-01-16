@@ -1,15 +1,10 @@
-import {
-  BusinessCenter,
-} from '@mui/icons-material';
-import { LoadingButton } from '@mui/lab';
-import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
-import { GridColDef } from '@mui/x-data-grid';
+import { Grid } from '@mui/material';
 import { AppCtx } from 'App';
 import { OTIcon } from 'components/Dashboards/Common/icons';
 import OTDataCard from 'components/EmployeeDashboard/Management/OTDataCard';
-import { useContext, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { OTDetailsInitialState, OTDetailsModel } from '../Overtime';
+import { OTDetailsModel } from 'components/EmployeeDashboard/Management/OTManangement';
+import { useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import CollapseWrapper from '../PersonalProfileTab/collapse.wrapper';
 
 type Props = {

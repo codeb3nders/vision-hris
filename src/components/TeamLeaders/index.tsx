@@ -38,6 +38,7 @@ import {
   deleteStatus as _getDeleteStatus,
   updateStatus as _getUpdateStatus,
   newDataStatus as _getNewStatus,
+  newData as _getNewData,
   updateAction,
   reset as _getReset
 } from 'slices/teamLeader';
@@ -106,6 +107,7 @@ const TeamLeaders = (props: Props) => {
   const updateStatus = useSelector(_getUpdateStatus);
   const deleteStatus = useSelector(_getDeleteStatus);
   const newStatus = useSelector(_getNewStatus);
+  const newData = useSelector(_getNewData);
   const { access_token } = useContext(AppCtx);
   const [TLdata, setTLdata] = useState<TeamLeaderModel>(TeamLeaderInitialState);
   const [confirmDelete, setConfirmDelete] = useState<{
@@ -154,45 +156,56 @@ const TeamLeaders = (props: Props) => {
     if (dataStatus === 'succeeded' && employees.length > 0) {
       setRows(() => {
         return data.map((o: TeamLeaderModel) => {
-          const employeeInfo: any = employees.find((e: EmployeeI) => e.employeeNo === o.employeeNo);
-          // console.log({employeeInfo})
-          const members = employees.filter((e: EmployeeI) => {
-            // console.log({o}, {e})
-            return e.reportsTo?.employeeNo === o.employeeNo && e.department.name.toLowerCase() === employeeInfo?.department.name.toLowerCase() && JSON.stringify(e.location).toLocaleLowerCase() === JSON.stringify(employeeInfo?.location).toLocaleLowerCase()
-          });
-          // console.log({employees})
-          const employeeCnt = members.length;
-          return {
-            ...o,
-            fullName: employeeInfo ? `${employeeInfo.firstName} ${employeeInfo.lastName}` : "",
-            department: employeeInfo ? employeeInfo.department.name : "",
-            location: employeeInfo ? employeeInfo.location.map((l:any) => l.name).join(", ") : "",
-            position: employeeInfo ? employeeInfo.position.name : "",
-            isActive: employeeInfo && employeeInfo.employmentStatus.name,
-            employeeCnt: employeeCnt
-          }
+          return handleData(o);
         })
       });
     }
   }, [dataStatus, employees])
 
   useEffect(() => {
-    if (newStatus === "succeeded" || deleteStatus === 'succeeded' || updateStatus === "succeeded") {
+    if (deleteStatus === 'succeeded' || updateStatus === "succeeded") {
       const message = newStatus === "succeeded" ? "New team leader was successfully registered." : (
         deleteStatus === 'succeeded' ? "Record was successfully deleted." :
           updateStatus === "succeeded" ? "Team Leader was successfully updated." : ""
       )
       success(_getReset(), message)
     }
-  }, [newStatus, deleteStatus, updateStatus])
-      // console.log({rows})
+  }, [deleteStatus, updateStatus])
 
+  useEffect(() => {
+    if (newStatus === "succeeded") {
+      const message = "New team leader was successfully registered.";
+      success(_getReset(), message)
+      const data = handleData(newData);
+      handleView(data);
+    }
+  }, [newStatus])
+  
   useEffect(() => {
     !open && setTLdata(TeamLeaderInitialState);
   }, [open]);
 
   const getData = async () => {
     await dispatch(getAllDataAction({ access_token }));
+  }
+
+  const handleData = (data) => {
+    const employeeInfo: any = employees.find((e: EmployeeI) => e.employeeNo === data.employeeNo);
+    // console.log({employeeInfo})
+    const members = employees.filter((e: EmployeeI) => {
+      // console.log({o}, {e})
+      return e.reportsTo?.employeeNo === data.employeeNo && e.department.name.toLowerCase() === employeeInfo?.department.name.toLowerCase() && JSON.stringify(e.location).toLocaleLowerCase() === JSON.stringify(employeeInfo?.location).toLocaleLowerCase()
+    });
+    // console.log({employees})
+    const employeeCnt = members.length;
+    return {
+      ...data,
+      fullName: employeeInfo ? `${employeeInfo.firstName} ${employeeInfo.lastName}` : "",
+      department: employeeInfo ? employeeInfo.department.name : "",
+      location: employeeInfo ? employeeInfo.location.map((l:any) => l.name).join(", ") : "",
+      position: employeeInfo ? employeeInfo.position.name : "",
+      employeeCnt: employeeCnt
+    }
   }
 
   const handleDelete = async (row: TeamLeaderModel) => {
@@ -232,12 +245,12 @@ const TeamLeaders = (props: Props) => {
       severity: 'error',
     });
   };
-  
+  console.log({newData})
   const handleView = async (row: TeamLeaderModel) => { 
-    // console.log({ row });
     setTLinfo(row);
     setMembers(employees.filter((x: EmployeeDBI) => {
-      return x.department.name.toLowerCase() === row.department?.toLowerCase() && x.location.findIndex((c:any)=> c.name.toLowerCase() === row.location?.toLowerCase()) >= 0  && row.employeeNo === x.reportsTo?.employeeNo
+      return x.department.name.toLowerCase() === row.department?.toLowerCase() && x.location.findIndex((c: any) => c.name.toLowerCase() === row.location?.toLowerCase()) >= 0
+      //  && row.employeeNo === x.reportsTo?.employeeNo
     }).sort((a:any, b: any) => a.fullName?.localeCompare(b.fullName)))
     setOpenMembers(true);
   }
@@ -308,7 +321,7 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
       .map((r: EmployeeDBI) => {
         const mi = r.middleName ? r.middleName.charAt(0) : '';
         const fullName = `${r.lastName}, ${r.firstName} ${mi}`;
-        return { id: r.employeeNo, label: fullName, department: r.department.name, position: r.position?.name, location: r.location };
+        return { id: r.employeeNo, label: fullName, department: r.department, position: r.position?.name, location: r.location, reportsTo: r.reportsTo };
       })
     setNonRankAndFileEmployees(employees.sort((a:any, b:any) => a.label.localeCompare(b.label)));
   }, [getEmployeeItems]);
@@ -322,30 +335,9 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
       setTLData(TeamLeaderInitialState)
     }
   }, [open]);
-
+console.log({TLData})
   const handleSave = async () => {
-    const updateEmployees = async(reportsTo) => {
-      if (TLData.location.includes(VHO)) {
-        await dispatch(
-          updateEmployee({
-            where: { department: TLData.employeeDetails.department },
-            params: {reportsTo },
-            access_token,
-          })
-        );
-      } else {
-        await dispatch(
-          updateEmployee({
-            where: {
-              department: TLData.employeeDetails.department,
-              location: TLData.employeeDetails.department
-            },
-            params: {reportsTo },
-            access_token,
-          })
-        );
-      }
-    }
+    
     const validateFields = async () => {
         const dialog: any = document.getElementById("team-leader-dialog");
         const required = dialog.querySelectorAll("[required]");
@@ -370,10 +362,12 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
       setIsSaving(true);
       let userGroup = EMPLOYEE;
       let reportsTo = "";
+      const TLreportsTo = TLData.reportsTo;
       if (!TLData.isDelegated && TLData.isActive) {
         userGroup = MANAGER;
         reportsTo = TLData.employeeNo;
       }
+      console.log({TLreportsTo})
       try {
         if (isUpdate) {
           const {id, timestamp, lastModifiedDate, ...rest } = TLData;
@@ -388,15 +382,17 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
               access_token,
             })
           );
+          //update employees with same department and/or location
+          // await updateEmployees(reportsTo);
+
           //update employee userGroup
           await dispatch(
             updateEmployee({
-              params: { userGroup },
+              params: { userGroup, reportsTo: TLreportsTo },
+              where: {employeeNo: TLData.employeeNo},
               access_token,
             })
           );
-          //update employees with same department and/or location
-          updateEmployees(reportsTo);
         } else {
           await dispatch(
             createAction({
@@ -409,15 +405,17 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
               access_token,
             })
           );
-          //update employee userGroup
+          //update employees with same department and/or location
+          // await updateEmployees(reportsTo);
+
+          //update TL employee userGroup and reportsTo
           await dispatch(
             updateEmployee({
-              params: { userGroup: MANAGER },
+              params: { userGroup, reportsTo: TLreportsTo },
+              where: {employeeNo: TLData.employeeNo},
               access_token,
             })
           );
-          //update employees with same department and/or location
-          updateEmployees(reportsTo);
         }
       } catch (error: any) {
         console.log(error);
@@ -437,7 +435,19 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
           sx={{ width: "100%" }}
           renderInput={(params) => <TextField {...params} label="Select Employee" variant="standard" />}
           onChange={(e: any, newValue: any) => {
-            setTLData({ ...TLData, employeeNo: newValue.id, fullName: newValue.label, department: newValue.department, position: newValue.position, location: newValue.location.map((o:any) => o.name).join(", ") });
+            console.log({newValue})
+            setTLData(
+              {
+                ...TLData,
+                employeeNo: newValue.id,
+                fullName: newValue.label,
+                department: newValue.department,
+                position: newValue.position,
+                locationText: newValue.location.map((o: any) => o.name).join(", "),
+                locationCodes: newValue.location.map((o: any) => o.code).join(", "),
+                reportsTo: newValue.reportsTo?.employeeNo || "" 
+              }
+            );
           }}
           disabled={isUpdate}
           defaultValue={TLData.fullName}
@@ -446,11 +456,11 @@ const TLDialog = ({ open, setOpen, access_token, data, isUpdate, isSaving, setIs
       {TLData.employeeNo && <>
         <div className='col-span-1'>
           <Typography variant="subtitle1" className="text-[11px] text-sky-500">Department</Typography>
-          <Typography variant="body2">{TLData.department}</Typography>
+          <Typography variant="body2">{TLData.department.name}</Typography>
           </div>
           <div className='col-span-1'>
           <Typography variant="subtitle1" className="text-[11px] text-sky-500">Location/s</Typography>
-          <Typography variant="body2">{TLData.location}</Typography>
+          <Typography variant="body2">{TLData.locationText}</Typography>
         </div>
       </>
       }
@@ -532,43 +542,43 @@ const columns: any = (handleEdit:any, handleView:any) => [
   {
     field: 'department',
     headerName: 'Department',
-    width: 250
+    flex: 1
   },
   {
     field: 'location',
     headerName: 'Location',
-    width: 200
+    flex: 1
   },
   {
     field: 'fullName',
     headerName: 'Name',
-    width: 200
+    flex: 1
   },
   {
     field: 'position',
     headerName: 'Position',
-    width: 250
+    flex: 1
   },
   {
     field: 'isDelegated',
     headerName: 'Is Delegated',
-    width: 50
+    flex: 1
   },
   {
     field: 'isActive',
     headerName: 'Status',
-    width: 50
+    flex: 1
   },
   {
     field: 'startDate',
     headerName: 'Start Date',
-    width: 120,
+    flex: 1,
     renderCell: (params:any)=>moment(params.value).format("L")
   },
   {
     field: 'actions',
     headerName: 'Actions',
-    width: 100,
+    flex: 1,
     renderCell: (params: any) => {
       return <div>
         <Tooltip title="Edit Details">

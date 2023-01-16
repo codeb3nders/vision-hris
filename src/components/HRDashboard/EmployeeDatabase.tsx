@@ -117,7 +117,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
   useEffect(() => {
     if (access_token) {
       getEmployees();
-      getAllTeamLeaders();
     }
   }, [access_token])
 
@@ -153,10 +152,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
       dispatch(clearHistoryData());
     }
   }, [viewDetails]);
-
-  const getAllTeamLeaders = async () => {
-    await dispatch(getAllDataAction({ access_token }));
-  }
 
   const handleSendAccess = async (isChecked:boolean, data:any) => {
     // console.log(data, "vvv")
@@ -304,10 +299,11 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'withUserCredentials',
       headerName: 'With Access',
       renderCell: (params) => {
-        // console.log({params})
+        console.log({ params })
+        if (params.row.withUserCredentials) {
+          return <Checkbox checked disabled />  
+        }
         return <Checkbox
-          checked={params.row.withUserCredentials}
-          disabled={params.row.withUserCredentials}
           onChange={(e: any) => handleSendAccess(e.target.checked, {employeeNo: params.row.employeeNo, accessGroup: params.row.userGroup.code})}
         />
       }

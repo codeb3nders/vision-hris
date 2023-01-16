@@ -21,6 +21,7 @@ import {
   newDataStatus,
   updateStatus,
   createAction,
+  newData,
 } from "slices/leaveRequests";
 import {
   BirthdayIcon,
@@ -140,6 +141,7 @@ const LeaveManagement = () => {
   const [pendingLeaves, setPendingLeaves] = useState<any[]>([]);
   const getNewDataStatus = useSelector(newDataStatus);
   const getUpdateDataStatus = useSelector(updateStatus);
+  const getNewData = useSelector(newData);
 
   useEffect(() => {
     if (isApprover) {
@@ -157,6 +159,7 @@ const LeaveManagement = () => {
       getUpdateDataStatus === "succeeded"
     ) {
       getData();
+      // notifyApprover();
     }
   }, [getNewDataStatus, getUpdateDataStatus]);
 

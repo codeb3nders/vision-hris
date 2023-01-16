@@ -18,10 +18,10 @@ import { getAllDataAction, dataStatus, data } from 'slices/teamLeader';
 import GridWrapper from 'CustomComponents/GridWrapper';
 import { TimePicker, DatePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { OTDetailsModel } from 'components/MyProfile/Overtime';
 import { DateValidationError } from '@mui/x-date-pickers/internals';
 import { POST_FILING_MESSAGE } from 'constants/errors';
 import { TimeValidationError } from '@mui/x-date-pickers/internals/hooks/validation/useTimeValidation';
+import { OTDetailsModel } from '../Management/OTManangement';
 
 
 type Props = {

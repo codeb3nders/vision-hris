@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createEmployeeEndpoint, updateEmployeeEndpoint } from "apis/employees";
-import { EmployeeI } from "slices/interfaces/employeeI";
-=======
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { createEmployeeEndpoint } from 'apis/employees';
 import { EmployeeI } from 'slices/interfaces/employeeI';
->>>>>>> yani-dev
 
 const initialState: any = {
   employeeCreatedItem: null,

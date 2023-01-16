@@ -19,7 +19,7 @@ export const updateEmployeeEndpoint = async (data: any, config: any, params:any 
   console.log({ body }, "updateEmployeeEndpoint")
   let url = `${URL_EMPLOYEES}update`;
   if (params) {
-    url += "/" + querystring.stringify(params)
+    url += "?" + querystring.stringify(params)
   }
   try {
     return await axios.patch(url, body, {

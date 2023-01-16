@@ -51,6 +51,7 @@ import ProfileTabs from './profile.tabs';
 import ProfileDetails from './profile.details';
 import { useParams } from 'react-router-dom';
 import { getContractEndDate, getProbationaryEndDate } from 'utils/functions';
+import { getAllDataAction } from 'slices/teamLeader';
 
 // const ProfileDetails = lazy(() => import('./profile.details'));
 const ProfileTabContent = lazy(() => import('./profile.tabcontent'));
@@ -276,6 +277,7 @@ const ProfileMain = ({
   useEffect(() => {
     handleHistory();
   }, [employeeHistoryData]);
+console.log({updatedDetails})
 
   /** Employees: UPDATE */
   useEffect(() => {
@@ -306,6 +308,7 @@ const ProfileMain = ({
           params: { employeeNo: employeeNumber },
         })
       );
+      getAllTeamLeaders()
     } else {
       if (!isNew) {
         setEmployeeDetails(userData)
@@ -326,6 +329,10 @@ const ProfileMain = ({
       }
     }
   }, [employeeData, isLoggedIn, isNew, isView, isOwner]);
+
+  const getAllTeamLeaders = async () => {
+    await dispatch(getAllDataAction({ access_token }));
+  }
 
   const getEmployeeHistory = async (employeeNo) => {
     dispatch(
@@ -608,7 +615,8 @@ const ProfileMain = ({
       }
       await dispatch(
         updateEmployee({
-          params: { ...updatedDetails, employeeNo: employeeDetails.employeeNo },
+          params: { ...updatedDetails },
+          where: {employeeNo: employeeDetails.employeeNo},
           access_token,
         })
       );

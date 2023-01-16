@@ -48,13 +48,13 @@ const LeaveForm: React.FC<Props> = ({
   const [approvers, setApprovers] = useState<any[]>([])
   const [invalidNoOfDays, setInvalidNoOfDays] = useState<boolean>(false)
   const [isPostFiling, setIsPostFiling] = useState<boolean>(false);
-  const { access_token } = useContext(AppCtx);
+  const { access_token, userData } = useContext(AppCtx);
   const TLDataStatus = useSelector(dataStatus);
   const TLData = useSelector(data);
 
   useEffect(() => {
     if (TLDataStatus !== 'idle') {
-      setApprovers(TLData)
+      setApprovers(TLData.filter((x=>x.employeeDetails.department.toLocaleLowerCase() === userData.department.code.toLocaleLowerCase())))
     }
   }, [TLDataStatus])
   
@@ -73,13 +73,17 @@ const LeaveForm: React.FC<Props> = ({
     let lastDay: any = null, returnToWork: any = null;
     const noOfDays:number | null = leaveDetails.noOfDays, dateFrom = leaveDetails.dateFrom;
     if (noOfDays && noOfDays > 0 && dateFrom) {
-      lastDay = moment(dateFrom);
+      lastDay = moment(dateFrom).businessAdd(9, 'hours');
+      returnToWork = moment(lastDay).businessAdd(1, 'day');
       if (noOfDays > 1) {
         lastDay = moment(dateFrom).businessAdd(noOfDays - 1, 'day')
+        if (noOfDays % 1 != 0) {
+          lastDay = moment(dateFrom).businessAdd(noOfDays - 1, 'day').businessAdd(4, 'hours')
+        }
       } else if (noOfDays < 1) {
-        lastDay = moment(dateFrom).businessAdd(noOfDays - 1, 'day')
+        lastDay = moment(dateFrom).businessAdd(4, 'hours')
+        returnToWork = moment(dateFrom);
       }
-      returnToWork = moment(lastDay).businessAdd(1, 'day');
     }
     setLeaveDetails({
       ...leaveDetails,
