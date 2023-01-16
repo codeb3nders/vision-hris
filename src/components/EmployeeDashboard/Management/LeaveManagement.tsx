@@ -49,9 +49,9 @@ import { EmployeeI } from "slices/interfaces/employeeI";
 const approverModes = ["approver", "hr admin"];
 
 const color = {
-  PL: "green",
-  SL: "orange",
-  //TODO: add more color per leaveType
+  APPROVED: "green",
+  PENDING: "orange",
+  //TODO: add more color per status
 };
 
 export type LeavesContext = {
