@@ -266,7 +266,7 @@ const LeaveManagement = () => {
               className: "weekend",
               
               style: {
-                background: `${color[o.leaveType]}`,
+                background: `${color[o.status]}`,
               },
             },
           };
