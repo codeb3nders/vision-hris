@@ -37,17 +37,28 @@ type Props = {
   data: EmployeeDBI[];
   failed: any;
   teamLeader: TeamLeaderModel;
+  getData: any;
 };
 
-const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: Props) => {
+const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader, getData }: Props) => {
   const dispatch = useDispatch();
   const [selectedEmployees, setSelectedEmployees] = useState<any[]>([]);
+  const [members, setMembers] = useState<any[]>([]);
   const [openNotif, setOpenNotif] = useState<{
     message: string;
     status: boolean;
     severity: any;
   }>({ message: '', status: false, severity: '' });
 
+  useEffect(() => {
+    setMembers(data.map((o:any) => {
+      return {
+        ...o,
+        isDisabled: o.employeeNo == teamLeader.employeeNo || o.reportsTo?.employeeNo == teamLeader.employeeNo
+      }
+    }))
+  }, [data])
+console.log({selectedEmployees}, {data}, {teamLeader})
   const headerInfo = <div>
     Team Leader: {teamLeader.fullName} <br />
     Department: { teamLeader.department} ({ teamLeader.location})
@@ -95,8 +106,18 @@ const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: 
         return params.row.employmentType?.name;
       },
     },
+    {
+      field: 'reportsTo',
+      headerName: 'Team Leader',
+      flex: 1,
+      renderCell: (cell: any) => <div style={{ textAlign: "center" }}>{cell.row.reportsTo?.employeeName}</div>,
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
+      valueGetter: (params) => {
+        return params.row.reportsTo?.employeeName;
+      },
+    }
   ]
-  console.log({selectedEmployees})
+  console.log({selectedEmployees}, {members})
   function CustomToolbar() {
     const ToggleRowSelection = () => {
       const updateEmployees = async () => {
@@ -111,7 +132,7 @@ const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: 
               return await updateEmployeeEndpoint(params, config, { employeeNo: o })
             })
           ).then((values: any) => {
-            console.log({ values });
+            getData();
             setOpenNotif({
               message: "Employees have been updated.",
               status: true,
@@ -127,6 +148,7 @@ const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: 
               });
             }, 2000)
             setSelectedEmployees([]);
+
           })
         }
       // await dispatch(
@@ -189,16 +211,16 @@ const TeamMembers = ({ setOpen, open, access_token, data, failed, teamLeader }: 
           className='data-grid'
           density="compact"
           disableSelectionOnClick
-          rows={data}
+          rows={members}
           columns={columns}
           pageSize={30}
           rowsPerPageOptions={[30]}
-          isRowSelectable={(params: GridRowParams) => params.row.employeeNo != teamLeader.employeeNo}
+          isRowSelectable={(params: GridRowParams) => !params.row.isDisabled}
           checkboxSelection
           onSelectionModelChange={(newSelectionModel) => {
             setSelectedEmployees(newSelectionModel)
           }}
-          selectionModel={selectedEmployees}
+          selectionModel={[...selectedEmployees]}
           getRowId={(row: any) => row.employeeNo}
         />
     </DialogModal>

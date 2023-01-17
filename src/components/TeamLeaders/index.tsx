@@ -135,9 +135,19 @@ const TeamLeaders = (props: Props) => {
     setIsTable(true);
   }, []);
 
+  useEffect(() => { 
+    if (TLinfo) {
+      const row = TLinfo;
+      setMembers(employees.filter((x: EmployeeDBI) => {
+        return x.department.name.toLowerCase() === row.department?.toLowerCase() && x.location.findIndex((c: any) => c.name.toLowerCase() === row.location?.toLowerCase()) >= 0
+        //  && row.employeeNo === x.reportsTo?.employeeNo
+      }).sort((a: any, b: any) => a.fullName?.localeCompare(b.fullName)))
+    }
+  }, [TLinfo, employees])
+
   useEffect(() => {
     if (access_token) {
-      dispatch(_getEmployeesAction({ access_token }));
+      getAllEmployees();
     }
     getData();
   }, [access_token]);
@@ -184,6 +194,11 @@ const TeamLeaders = (props: Props) => {
   useEffect(() => {
     !open && setTLdata(TeamLeaderInitialState);
   }, [open]);
+
+  const getAllEmployees = async () => {
+    console.log("getAllEmployees")
+    await dispatch(_getEmployeesAction({ access_token }));
+  }
 
   const getData = async () => {
     await dispatch(getAllDataAction({ access_token }));
@@ -248,10 +263,6 @@ const TeamLeaders = (props: Props) => {
   console.log({newData})
   const handleView = async (row: TeamLeaderModel) => { 
     setTLinfo(row);
-    setMembers(employees.filter((x: EmployeeDBI) => {
-      return x.department.name.toLowerCase() === row.department?.toLowerCase() && x.location.findIndex((c: any) => c.name.toLowerCase() === row.location?.toLowerCase()) >= 0
-      //  && row.employeeNo === x.reportsTo?.employeeNo
-    }).sort((a:any, b: any) => a.fullName?.localeCompare(b.fullName)))
     setOpenMembers(true);
   }
 
@@ -270,7 +281,7 @@ const TeamLeaders = (props: Props) => {
         handleDelete={handleDelete}
       />
       <TLDialog setOpen={setOpen} open={open} access_token={access_token} data={TLdata} isUpdate={isUpdate} isSaving={isSaving} setIsSaving={setIsSaving} failed={failed} allData={rows} />
-      {openMembers && <TeamMembers setOpen={setOpenMembers} open={openMembers} access_token={access_token} data={members} failed={failed} teamLeader={TLinfo} />}
+      {openMembers && <TeamMembers setOpen={setOpenMembers} open={openMembers} access_token={access_token} data={members} failed={failed} teamLeader={TLinfo} getData={ getAllEmployees} />}
       
       <Card className="phone:mt-0 desktop:mt-5 desktop:p-2 laptop:mt-5 laptop:p-2">
         <section className="flex desktop:flex-row laptop:flex-row tablet:flex-col phone:flex-col items-center justify-center">
