@@ -98,7 +98,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
         const withUserCredentials = userCredentials.filter((x: any) => x.employeeNo === r.employeeNo).length > 0;
         return { ...r, id: r.employeeNo, full_name, withUserCredentials };
       });
-      // console.log({employees})
       setEmployees(employees);
       setTempEmployees(employees);
       setIsLoading(false);
@@ -154,14 +153,13 @@ const EmployeeDatabase: React.FC<Props> = () => {
   }, [viewDetails]);
 
   const handleSendAccess = async (isChecked:boolean, data:any) => {
-    // console.log(data, "vvv")
     if (isChecked) {
       setSendAccessList([...sendAccessList, data])
     } else {
       setSendAccessList(sendAccessList.filter((x:any) => x.employeeNo !== data.employeeNo))
     }
   }
-// console.log({sendAccessList})
+
   const columns = (setViewDetails: any) => [
     {
       field: 'userGroup',
@@ -299,7 +297,6 @@ const EmployeeDatabase: React.FC<Props> = () => {
       field: 'withUserCredentials',
       headerName: 'With Access',
       renderCell: (params) => {
-        console.log({ params })
         if (params.row.withUserCredentials) {
           return <Checkbox checked disabled />  
         }
@@ -309,7 +306,7 @@ const EmployeeDatabase: React.FC<Props> = () => {
       }
     },
   ];
-  // console.log({ viewDetails })
+
   const sendCredentials = async () => {
     setSending(true);
     if (sendAccessList.length > 0) {

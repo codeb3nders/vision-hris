@@ -384,7 +384,7 @@ console.log({updatedDetails})
   };
 // console.log({isOwner})
   const success = (cb: any, test: string) => {
-    // console.log({ test })
+    console.log({ test })
     setLoading({ status: false, action: '' });
     setRefresh(true);
     const type = isNew ? 'created' : 'updated';

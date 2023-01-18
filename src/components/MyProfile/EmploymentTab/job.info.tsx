@@ -93,7 +93,6 @@ const JobInfo = (props: Props) => {
       }));
     }
   }, [TLdataStatus])
-      console.log({teamLeaders})
 
   useEffect(() => {
     setDepartments(enums.departments);
@@ -167,7 +166,6 @@ const JobInfo = (props: Props) => {
   }
 
   const getEmployeeName = (employeeNo: string) => {
-    // console.log({employeeNo}, {getEmployeeItems})
     const data: any = getEmployeeItems.find((x: any) => x.employeeNo === employeeNo);
     return data ? `${data.firstName} ${data.lastName}` : employeeNo;
   }
@@ -272,7 +270,8 @@ const JobInfo = (props: Props) => {
           consoler(editJob, 'blue', 'updateEmployment');
           await dispatch(updateEmployee(
             {
-              params: { ...editJob, employeeNo: employeeDetails.employeeNo },
+              params: { ...editJob },
+              where: {employeeNo: employeeDetails.employeeNo},
               access_token
             }))
           setEditJob(null);
@@ -334,11 +333,11 @@ const JobInfo = (props: Props) => {
               }));
               setEditJob((prev: any) => ({
                 ...prev,
-                location: [...prev.location, e.target.value],
+                location: e.target.value,
               }));
             }}
           >
-            {locations.map((location) => {
+            {locations.sort((a:any, b:any) => a.name.localeCompare(b.name)).map((location) => {
               return (
                 <MenuItem
                   id={location._id}
@@ -369,7 +368,7 @@ const JobInfo = (props: Props) => {
               }))
             }}
           >
-            {departments.map((department: any, i: number) => {
+            {departments.sort((a:any, b:any) => a.name.localeCompare(b.name)).map((department: any, i: number) => {
               return (
                 <MenuItem key={i} value={department.code} data-obj={department}>{department.name}</MenuItem>
               );
@@ -393,7 +392,7 @@ const JobInfo = (props: Props) => {
               }))
             }}
           >
-            {ranks.map((rank: any, i: number) => {
+            {ranks.sort((a:any, b:any) => parseInt(a.Level) - parseInt(b.Level)).map((rank: any, i: number) => {
               return <MenuItem key={i} value={rank.code} data-obj={rank}>{rank.name}</MenuItem>;
             })}
           </Select>
@@ -674,7 +673,7 @@ const JobInfoFields = ({
                 }));
             }}
           >
-            {departments.map((department) => {
+            {departments.sort((a:any, b:any) => a.name.localeCompare(b.name)).map((department) => {
               return (
                 <MenuItem value={department.code} key={department.code}>{department.name}</MenuItem>
               );
@@ -703,7 +702,7 @@ const JobInfoFields = ({
                 }));
             }}
           >
-            {locations.map((location) => {
+            {locations.sort((a:any, b:any) => a.name.localeCompare(b.name)).map((location) => {
               return (
                 <MenuItem
                   id={location._id}
@@ -778,7 +777,7 @@ const JobInfoFields = ({
                   }));
               }}
             >
-              {ranks.map((rank) => {
+              {ranks.sort((a:any, b:any) => parseInt(a.Level) - parseInt(b.Level)).map((rank) => {
                 return <MenuItem value={rank.code} key={rank.code}>{rank.name}</MenuItem>;
               })}
             </Select>

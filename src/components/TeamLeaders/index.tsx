@@ -186,8 +186,10 @@ const TeamLeaders = (props: Props) => {
     if (newStatus === "succeeded") {
       const message = "New team leader was successfully registered.";
       success(_getReset(), message)
-      const data = handleData(newData);
-      handleView(data);
+      if (!newData.isDelegated) {
+        const data = handleData(newData);
+        handleView(data);
+      }
     }
   }, [newStatus])
   
@@ -206,12 +208,12 @@ const TeamLeaders = (props: Props) => {
 
   const handleData = (data) => {
     const employeeInfo: any = employees.find((e: EmployeeI) => e.employeeNo === data.employeeNo);
-    // console.log({employeeInfo})
+    const tlLocationCodes = employeeInfo.location.map((o: any) => o.code)
     const members = employees.filter((e: EmployeeI) => {
-      // console.log({o}, {e})
-      return e.reportsTo?.employeeNo === data.employeeNo && e.department.name.toLowerCase() === employeeInfo?.department.name.toLowerCase() && JSON.stringify(e.location).toLocaleLowerCase() === JSON.stringify(employeeInfo?.location).toLocaleLowerCase()
+      const locationCodes = e.location.map((o: any) => o.code)
+      console.log(JSON.stringify(locationCodes).toLocaleLowerCase(), JSON.stringify(tlLocationCodes).toLocaleLowerCase(), "xxxxxxxxxxxxxxxxxxx")
+      return e.reportsTo?.employeeNo === data.employeeNo && e.department.name.toLowerCase() === employeeInfo?.department.name.toLowerCase() && JSON.stringify(locationCodes).toLocaleLowerCase() == JSON.stringify(tlLocationCodes).toLocaleLowerCase()
     });
-    // console.log({employees})
     const employeeCnt = members.length;
     return {
       ...data,
