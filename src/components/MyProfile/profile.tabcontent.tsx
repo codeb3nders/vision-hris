@@ -153,7 +153,7 @@ const ProfileTabContent = ({ className }: Props) => {
         </TabPanel>
 
         <TabPanel value='7' className='p-0 grid' id='Leaves'>
-          <LeaveManagement />
+          <LeaveManagement isProfileView/>
         </TabPanel>
         <TabPanel value='8' className='p-0 grid' id='OfficialBusiness'>
           {/* <OB employeeNo={employeeDetails.employeeNo} isHRview /> */}

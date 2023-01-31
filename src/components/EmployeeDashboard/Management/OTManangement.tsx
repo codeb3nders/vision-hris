@@ -155,7 +155,9 @@ const OTManagement = () => {
       setDetails({
         ...OTDetailsInitialState,
         employeeNo: userData.employeeNo,
-        status: PENDING
+        status: PENDING,
+        approver: userData.reportsTo?.employeeNo,
+        approverDetails: userData.reportsTo
       })
     }
   }, [open])
@@ -198,9 +200,9 @@ const OTManagement = () => {
     console.log({getNewData})
     // const approver = getNewData.approver
   }
-
+console.log({details}, {userData})
   const handleSubmit = async () => {
-    const { id, timeFrom, timeTo, ...otData } = details;
+    const { id, timeFrom, timeTo, approverDetails, ...otData } = details;
     let timeToTmp = timeTo;
     if (details.plus1day === "Y") {
       timeToTmp = moment(timeTo).add(1, "day")

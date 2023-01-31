@@ -10,7 +10,7 @@ import React from 'react';
 import TitleWithLink from '../Common/title.with.link';
 import { Path } from './../../../constants/Path';
 import { ArrowRightOutlined } from '@mui/icons-material';
-import { ProfilePhoto } from '../Employee/profile.preview';
+import { ProfilePhoto } from '../Common/profile.preview';
 
 type Props = {};
 

@@ -1,9 +1,10 @@
-import Timeline from "react-calendar-timeline";
+import Timeline, {TimelineHeaders, DateHeader} from "react-calendar-timeline";
 import "react-calendar-timeline/lib/Timeline.css";
-import moment from "moment";
+import moment from 'moment-timezone'
 import { useEffect, useState } from "react";
-
 import InfoLabel from "./info_label";
+
+moment.tz.setDefault("Asia/Manila")
 
 const TeamCalendar = ({ teamMembers, leavesPerTeam }) => {
 
@@ -28,6 +29,7 @@ const TeamCalendar = ({ teamMembers, leavesPerTeam }) => {
   const handleClickOpen = (item) => {
     setSelectedValue(leavesPerTeam[item]);
     setOpen(true);
+    console.log({item})
   };
 
   const handleClose = (value: string) => {
@@ -41,9 +43,19 @@ const TeamCalendar = ({ teamMembers, leavesPerTeam }) => {
         groups={teamMembers}
         items={leavesPerTeam}
         onItemDoubleClick={handleClickOpen}
-        defaultTimeStart={moment().subtract(1, "days")}
-        defaultTimeEnd={moment().add(15, "days")}
-      />
+        defaultTimeStart={moment().subtract(1, "days").startOf("day")}
+        defaultTimeEnd={moment().add(30, "days").startOf("day")}
+        // lineHeight={50}
+      >
+        {/* <TimelineHeaders >
+          <DateHeader unit="primaryHeader" />
+          <DateHeader
+            // unit="hour"
+            // labelFormat="hh:mm"
+            style={{color: '#999999'}}
+          />
+        </TimelineHeaders> */}
+      </Timeline>
       {open && (
         <InfoLabel
           selectedValue={selectedValue}

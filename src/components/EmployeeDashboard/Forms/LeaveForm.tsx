@@ -80,6 +80,7 @@ const LeaveForm: React.FC<Props> = ({
         if (noOfDays % 1 != 0) {
           lastDay = moment(dateFrom).businessAdd(noOfDays - 1, 'day').businessAdd(4, 'hours')
         }
+        returnToWork = moment(lastDay).businessAdd(1, 'day');
       } else if (noOfDays < 1) {
         lastDay = moment(dateFrom).businessAdd(4, 'hours')
         returnToWork = moment(dateFrom);
@@ -91,6 +92,13 @@ const LeaveForm: React.FC<Props> = ({
       dateOfReturnToWork: returnToWork
     })
   }, [leaveDetails.noOfDays, leaveDetails.dateFrom])
+
+  useEffect(() => { 
+    setLeaveDetails({
+      ...leaveDetails,
+      dateOfReturnToWork: moment(leaveDetails.dateTo).businessAdd(1, 'day')
+    })
+  }, [leaveDetails.dateTo])
 
   useEffect(() => {
     console.log({ loading });
@@ -225,7 +233,8 @@ const LeaveForm: React.FC<Props> = ({
           />
     </div>
     <div className='col-span-8'>
-      <FormControl variant='standard' size='small' fullWidth required>
+      Approver: {`${leaveDetails.approverDetails.firstName} ${leaveDetails.approverDetails.lastName}`}
+      {/* <FormControl variant='standard' size='small' fullWidth required>
           <InputLabel id='approver'>Approver</InputLabel>
           <Select
             label='Approver'
@@ -246,7 +255,7 @@ const LeaveForm: React.FC<Props> = ({
               );
             })}
           </Select>
-        </FormControl>
+        </FormControl> */}
     </div>
   </GridWrapper>
 };

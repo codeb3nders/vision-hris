@@ -28,7 +28,7 @@ const DialogModal: React.FC<Props> = ({
       <Dialog
         as='form'
         id={id}
-        className={`relative z-50 max-w-md mx-auto overflow-hidden md:max-w-2xl`}
+        className={`relative z-150 max-w-md mx-auto overflow-hidden md:max-w-2xl`}
         onClose={() => {}}
       >
         <Transition.Child

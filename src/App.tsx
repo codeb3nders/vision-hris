@@ -11,8 +11,9 @@ import { URL_USER_LOGS } from 'constants/EndpointPath';
 import { createEndpoint } from 'apis';
 import axios from 'axios';
 import { HR_ADMIN, MANAGER, SYSAD } from 'constants/Values';
-import { setTeamMembers } from 'slices/userAccess/authSlice';
+import { setTeamMembers, authStore } from 'slices/userAccess/authSlice';
 import { getAllEmployeesAction, getEmployeeStatus, getEmployeeItems} from 'slices/employees/getEmployeesSlice';
+import { getByEmployeeNoAction, employeeData, employeeDataStatus } from 'slices/teamLeader';
 
 export var moment = require('moment-business-days');
  
@@ -30,6 +31,7 @@ type AppModel = {
   isHRLogin: boolean;
   isManagerLogin: boolean;
   isSysAdLogin: boolean;
+  isEmployeeLogin: boolean;
   setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
   currentPage: string;
   createLog: any;
@@ -43,6 +45,7 @@ export const AppCtx = createContext<AppModel>({
   isHRLogin: false,
   isManagerLogin: false,
   isSysAdLogin: false,
+  isEmployeeLogin: true,
   setCurrentPage: () => {},
   currentPage: 'login',
   createLog: () => { }
@@ -57,11 +60,14 @@ export const consoler = (data: any, bgColor: string, title: string) => {
 const App: React.FC<Props> = () => {
   const dispatch = useDispatch();
   const { auth } = useSelector((state: any) => state);
-  const { isLoggedIn, userData, access_token, userGroup } = auth;
+  const { isLoggedIn, userData, access_token, userGroup, isManagerLogin } = auth;
   const [isHRLogin, setIsHRLogin] = useState(false);
-  const [isManagerLogin, setIsManagerLogin] = useState(false);
   const [isSysAdLogin, setIsSysAdLogin] = useState(false);
+  const [isEmployeeLogin, setIsEmployeeLogin] = useState(true);
+  const [isDelegated, setIsDelegatedApprover] = useState(false);
   const [currentPage, setCurrentPage] = useState('login');
+  const teamLeaderGetStatus = useSelector(employeeDataStatus);
+  const teamLeaderInfo = useSelector(employeeData);
   const mode = 'light'; //dark
 
   const employeeStatus = useSelector(getEmployeeStatus);
@@ -75,6 +81,12 @@ const App: React.FC<Props> = () => {
       fontFamily: ['Lato'].join(','),
     },
   });
+
+  useEffect(() => { 
+    if (teamLeaderGetStatus === 'succeeded') {
+      console.log({teamLeaderInfo})
+    }
+  }, [teamLeaderGetStatus])
 
   useEffect(() => {
     if (isManagerLogin && employeeStatus !== 'idle') {
@@ -92,23 +104,39 @@ const App: React.FC<Props> = () => {
     }))
   }
 
+  const getTeamLeaderDetails = async() => {
+    await dispatch(getByEmployeeNoAction({
+      access_token,
+      employeeNo: userData.employeeNo
+    }))
+  }
+ console.log({userData})
   useEffect(() => {
     if (userData) {
       switch (userData.userGroup.code) {
         case HR_ADMIN:
           setIsHRLogin(true);
+          setIsEmployeeLogin(false);
           break;
         case MANAGER:
+         
+          //check if effective date has started
+          getTeamLeaderDetails();
           getTeamMembers();
-          setIsManagerLogin(true);
+          // setIsManagerLogin(true);
+          setIsEmployeeLogin(false);
           break;
         case SYSAD:
           setIsSysAdLogin(true);
+          setIsEmployeeLogin(false);
           break;
         default:
+          //check if employee is a delegated approver
+          
           setIsHRLogin(false);
-          setIsManagerLogin(false);
+          // setIsManagerLogin(false);
           setIsSysAdLogin(false);
+          setIsEmployeeLogin(true);
       }
     }
   }, [userData]);
@@ -150,6 +178,7 @@ const App: React.FC<Props> = () => {
               isHRLogin,
               isSysAdLogin,
               isManagerLogin,
+              isEmployeeLogin,
               setCurrentPage,
               currentPage,
               createLog

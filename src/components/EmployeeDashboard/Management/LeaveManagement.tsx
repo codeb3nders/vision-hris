@@ -13,7 +13,7 @@ import DialogModal from "CustomComponents/DialogModal";
 import { useDispatch, useSelector } from "react-redux";
 import { authStore } from "slices/userAccess/authSlice";
 import LeaveForm from "../Forms/LeaveForm";
-import moment, { Moment } from "moment";
+import moment, { Moment } from 'moment-timezone'
 import {
   getAllDataAction,
   data as requestsData,
@@ -40,13 +40,13 @@ import {
   data as OBRequestsData,
   dataStatus as OBDataStatus,
 } from "slices/obRequests";
-import { PENDING } from "constants/Values";
+import { EMPLOYEE, HR_ADMIN, MANAGER, PENDING } from "constants/Values";
 import Leaves from "components/MyProfile/Leaves";
 import useRequiredChecker from "hooks/useRequiredChecker";
-// import TeamCalendar from "components/ManagerDashboard/TeamCalendar";
 import TeamCalendar from "components/ManagerDashboard/team_calendar/TeamCalendar";
 import { EmployeeI } from "slices/interfaces/employeeI";
 
+moment.tz.setDefault("Asia/Manila")
 const approverModes = ["approver", "hr admin"];
 
 const color = {
@@ -58,13 +58,11 @@ const color = {
 export type LeavesContext = {
   isRefresh: boolean;
   leaveTypes: any[];
-  isApprover: boolean;
 };
 
 export const LeavesCtx = createContext<LeavesContext>({
   isRefresh: true,
   leaveTypes: [],
-  isApprover: false,
 });
 
 const initialTeamCalendarData = {
@@ -107,10 +105,10 @@ export const LeaveDetailsInitialState: LeaveDetailsModel = {
   approver: "",
 };
 
-const LeaveManagement = () => {
+const LeaveManagement = ({isProfileView = false}) => {
   const dispatch = useDispatch();
   const { userGroup } = useSelector(authStore);
-  const { access_token } = useContext(AppCtx);
+  const { access_token, userData, isHRLogin, isManagerLogin, isEmployeeLogin } = useContext(AppCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [selectedLeaveType, setSelectedLeaveType] = useState<{
     code: string;
@@ -132,7 +130,6 @@ const LeaveManagement = () => {
   const { leaveTypes } = useSelector(getListOfValues);
   const data = useSelector(requestsData);
   const getDataStatus = useSelector(dataStatus);
-  const { userData } = useContext(AppCtx);
   const { teamMembers } = useSelector(authStore);
 
   const [leaveRequests, setLeaveRequests] = useState<any[]>([]);
@@ -142,16 +139,16 @@ const LeaveManagement = () => {
   const getNewDataStatus = useSelector(newDataStatus);
   const getUpdateDataStatus = useSelector(updateStatus);
   const getNewData = useSelector(newData);
-
+  
   useEffect(() => {
-    if (isApprover) {
+    if (isManagerLogin) {
       if (teamMembers) {
         getData();
       }
     } else {
       getData();
     }
-  }, [access_token]);
+  }, [access_token, isManagerLogin]);
 
   useEffect(() => {
     if (
@@ -211,7 +208,8 @@ const LeaveManagement = () => {
       setLeaveHistory(history);
       setCancelledLeaves(disapprovedCancelled);
       
-      if (isApprover && teamMembers.length > 0) {
+      if (isManagerLogin && teamMembers.length > 0) {
+        console.log({teamMembers})
         handleTeamCalendar(allLeaves);
       }
     }
@@ -223,6 +221,8 @@ const LeaveManagement = () => {
         ...leaveDetails,
         employeeNo: userData.employeeNo,
         leaveType: selectedLeaveType.code,
+        approver: userData.reportsTo.employeeNo,
+        approverDetails: userData.reportsTo
       });
       setOpen(true);
     }
@@ -239,12 +239,12 @@ const LeaveManagement = () => {
   }, [open]);
 
   const handleTeamCalendar = (data) => {
-    // console.log({data})
+    console.log({teamMembers})
     setTeamCalendarData((prev: any) => {
       return {
         ...prev,
         teamMembers: teamMembers.map((o: EmployeeI) => {
-          return {
+          return o.firstName && {
             id: parseInt(o.employeeNo),
             title: `${o.lastName}, ${o.firstName[0]}.`,
           };
@@ -256,9 +256,8 @@ const LeaveManagement = () => {
             id: i,
             group: parseInt(o.employeeNo),
             title: o.reasonOfLeave,
-            start_time: moment(o.dateFrom).valueOf(),
-            end_time: moment(o.dateOfReturnToWork).valueOf(),
-
+            start_time: moment(o.dateFrom).startOf("day").valueOf(),
+            end_time: moment(o.dateOfReturnToWork).startOf("day").valueOf(),
             itemProps: {
               // these optional attributes are passed to the root <div /> of each item as <div {...itemProps} />
               "data-custom-attribute": "Random content",
@@ -305,7 +304,7 @@ const LeaveManagement = () => {
   const getData = async () => {
     const employeeNo = userData.employeeNo;
     let params: any = { employeeNo };
-    if (isApprover) {
+    if (isManagerLogin) {
       params = {
         approver: employeeNo,
       };
@@ -338,7 +337,7 @@ const LeaveManagement = () => {
         })
       );
     } else {
-      const { id, ...rest } = leaveDetails;
+      const { id, approverDetails, ...rest } = leaveDetails;
       await dispatch(
         createAction({
           body: {
@@ -350,18 +349,15 @@ const LeaveManagement = () => {
     }
     setOpen(false);
   };
-  const isApprover = approverModes.indexOf(userGroup.toLocaleLowerCase()) >= 0;
-
-
+console.log({isHRLogin})
   return (
     <LeavesCtx.Provider
       value={{
         isRefresh,
         leaveTypes,
-        isApprover,
       }}
     >
-      {isApprover ? (
+      {(isManagerLogin || isHRLogin) && teamCalendarData.teamMembers.length > 0 ? (
         <TeamCalendar {...teamCalendarData} />
       ) : (
         <>

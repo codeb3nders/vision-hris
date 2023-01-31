@@ -12,6 +12,7 @@ import { Menu, MenuItem, Tooltip } from '@mui/material';
 import { LeavesCtx } from './LeaveManagement';
 import { GridMoreVertIcon } from '@mui/x-data-grid';
 import { CheckTwoTone, ClearTwoTone } from '@mui/icons-material';
+import { AppCtx } from 'App';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -36,7 +37,7 @@ type Props = {
 
 const LeaveDataCard = ({ d, handleCancel, handleUpdate }: Props) => {
   const [expanded, setExpanded] = useState(false);
-  const { isApprover } = useContext(LeavesCtx);
+  const { isManagerLogin } = useContext(AppCtx);
   const [anchorEl, setAnchorEl] = useState<any>(null);
 
   const handleExpandClick = () => {
@@ -46,7 +47,7 @@ const LeaveDataCard = ({ d, handleCancel, handleUpdate }: Props) => {
   const handleClose = (e) => {
     setAnchorEl(null)
   }
-
+console.log({isManagerLogin})
   return <Card sx={{ width: '100%' }} className="phone: w-full">
     <CardHeader
       sx={{ padding: 1, backgroundColor: "#f0f8ff" }}
@@ -55,11 +56,11 @@ const LeaveDataCard = ({ d, handleCancel, handleUpdate }: Props) => {
           {d.leaveTypeDetails.icon}
         </Tooltip>
       }
-      action={isApprover && <IconButton aria-label="settings">
+      action={isManagerLogin && <IconButton aria-label="settings">
             <GridMoreVertIcon onClick={(e:any) => setAnchorEl(e.currentTarget)}  />
           </IconButton>}
       title={d.startDate}
-      subheader={isApprover && `${d.employeeDetails.lastName}, ${d.employeeDetails.firstName[0]}.`}
+      subheader={isManagerLogin && `${d.employeeDetails.lastName}, ${d.employeeDetails.firstName[0]}.`}
     />
     <Menu
       id="simple-menu"
@@ -85,6 +86,7 @@ const LeaveDataCard = ({ d, handleCancel, handleUpdate }: Props) => {
         </div>
       </div>
     </CardContent>
+    
     <CardActions disableSpacing className='flex flex-row gap-2 text-xs justify-center w-full p-0'>
       {/* <button className='bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 flex items-center justify-center transition duration-150 ease-in-out rounded-sm' onClick={handleCancel}>
           <ClearTwoTone className='text-sm' /> Cancel
@@ -92,12 +94,14 @@ const LeaveDataCard = ({ d, handleCancel, handleUpdate }: Props) => {
       <button className='bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 flex items-center justify-center transition duration-150 ease-in-out rounded-sm' onClick={handleUpdate}>
         <EditTwoTone className='text-sm' /> Update
       </button> */}
-      <button className='bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 flex items-center justify-center transition duration-150 ease-in-out rounded-sm' onClick={handleCancel}>
+      {isManagerLogin && <>
+        <button className='bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 flex items-center justify-center transition duration-150 ease-in-out rounded-sm' onClick={handleCancel}>
           <ClearTwoTone className='text-sm' /> Disapprove
-      </button>
-      <button className='bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 flex items-center justify-center transition duration-150 ease-in-out rounded-sm' onClick={handleUpdate}>
-        <CheckTwoTone className='text-sm' /> Approve
-      </button>
+        </button>
+        <button className='bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 flex items-center justify-center transition duration-150 ease-in-out rounded-sm' onClick={handleUpdate}>
+          <CheckTwoTone className='text-sm' /> Approve
+        </button>
+      </>}
       <ExpandMore
         expand={expanded}
         onClick={handleExpandClick}

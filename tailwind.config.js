@@ -16,6 +16,9 @@ module.exports = {
       gridTemplateColumns: {
         16: 'repeat(16, minmax(0, 1fr))',
       },
+      zIndex: {
+        '150': '150'
+      }
     },
     screens: {
       phone: '320px',

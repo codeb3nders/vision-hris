@@ -198,7 +198,8 @@ const OTForm: React.FC<Props> = ({
       />
     </div>
     <div className='col-span-7'>
-      <FormControl variant='standard' size='small' fullWidth required>
+      Approver: {`${details.approverDetails.firstName} ${details.approverDetails.lastName}`}
+      {/* <FormControl variant='standard' size='small' fullWidth required>
           <InputLabel id='approver'>Approver</InputLabel>
           <Select
             label='Approver'
@@ -219,7 +220,7 @@ const OTForm: React.FC<Props> = ({
               );
             })}
           </Select>
-        </FormControl>
+        </FormControl> */}
     </div>
   </GridWrapper>
 };

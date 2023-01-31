@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import CardWTitle from 'CustomComponents/CardWTitle';
 import React from 'react';
-import { ProfilePhoto } from '../Employee/profile.preview';
+import { ProfilePhoto } from './profile.preview';
 import TitleWithLink from './title.with.link';
 
 type Props = {

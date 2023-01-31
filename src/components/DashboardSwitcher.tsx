@@ -119,23 +119,22 @@ const Dashboard = () => {
   }
 
   const switcher = () => {
+    const values: any = {
+          celebrations
+        }; 
     switch (userGroup.toUpperCase()) {
       case 'EMPLOYEE':
-        const valuesE: any = {
-          celebrations,
-        };
-        return <EmployeeDashboard {...valuesE} />;
+        return <EmployeeDashboard {...values} />;
       case 'APPROVER':
-        return <ManagerMainDashboard />;
+        return <ManagerMainDashboard {...values} />;
       case 'HR ADMIN':
-        const values: any = {
+        const valuesHR: any = {
           activeEmployeesCount,
           countContract,
           countProbation,
           headCount,
-          celebrations,
         };
-        return <HRMainDashboard {...values} />;
+        return <HRMainDashboard {...values} {...valuesHR} />;
       case 'SYSTEM ADMIN':
         return <AdminMainDashboard />;
 

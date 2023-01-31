@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { BusinessIcon, VacationIcon } from './icons';
 import CardWTitle from '../../../CustomComponents/CardWTitle';
-import { ProfilePhoto } from '../Employee/profile.preview';
+import { ProfilePhoto } from './profile.preview';
 import { SickIcon } from './icons';
 
 type Props = {

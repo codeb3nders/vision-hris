@@ -9,8 +9,8 @@ import {
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import CardWTitle from 'CustomComponents/CardWTitle';
-import { AppCtx } from './../../../App';
-import { LeaveIcon, OTIcon } from '../Common/icons';
+import { AppCtx } from '../../../App';
+import { LeaveIcon, OTIcon } from './icons';
 
 type Props = {
   className?: string;

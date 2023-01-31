@@ -184,7 +184,7 @@ const OBForm: React.FC<Props> = ({
         <ItineraryForm data={details} setDetails={setDetails} />
       </div>
     }
-    <div className='col-span-8'>
+    {/* <div className='col-span-8'>
       <FormControl variant='standard' size='small' fullWidth required>
           <InputLabel id='approver'>Approver</InputLabel>
           <Select
@@ -207,7 +207,7 @@ const OBForm: React.FC<Props> = ({
             })}
           </Select>
         </FormControl>
-    </div>
+    </div> */}
   </GridWrapper>
 };
 

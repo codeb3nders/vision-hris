@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 import axios from "axios";
 import { URL_LOGIN } from "constants/EndpointPath";
 import { LoginI } from "slices/interfaces/employeeI";
+import { MANAGER } from "constants/Values";
 
 const initialState: any = {
     access_token: "",
@@ -12,7 +13,8 @@ const initialState: any = {
     status: 'idle',
     error: null,
     isLoggedIn: false,
-    teamMembers: []
+    teamMembers: [],
+    isManagerLogin: false
 };
 
 export const authAction: any = createAsyncThunk(
@@ -55,6 +57,7 @@ export const authSlice = createSlice({
                     state.access_token = action.payload.access_token;
                     state.userData = action.payload.userInfo;
                     state.userGroup = action.payload.userInfo.userGroup.code;
+                    state.isManagerLogin = action.payload.userInfo.userGroup.code === MANAGER;
                 }
             })
             .addCase(authAction.rejected, (state, action) => {
