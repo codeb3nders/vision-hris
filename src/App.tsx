@@ -63,7 +63,8 @@ const App: React.FC<Props> = () => {
   const { isLoggedIn, userData, access_token, userGroup, isManagerLogin } = auth;
   const [isHRLogin, setIsHRLogin] = useState(false);
   const [isSysAdLogin, setIsSysAdLogin] = useState(false);
-  const [isEmployeeLogin, setIsEmployeeLogin] = useState(true);  
+  const [isEmployeeLogin, setIsEmployeeLogin] = useState(true);
+  const [isDelegated, setIsDelegatedApprover] = useState(false);
   const [currentPage, setCurrentPage] = useState('login');
   const teamLeaderGetStatus = useSelector(employeeDataStatus);
   const teamLeaderInfo = useSelector(employeeData);
@@ -85,13 +86,13 @@ const App: React.FC<Props> = () => {
     if (teamLeaderGetStatus === 'succeeded') {
       console.log({teamLeaderInfo})
     }
-  }, [teamLeaderGetStatus, teamLeaderInfo])
+  }, [teamLeaderGetStatus])
 
   useEffect(() => {
     if (isManagerLogin && employeeStatus !== 'idle') {
       dispatch(setTeamMembers(teamMembers))
     }
-  }, [dispatch, employeeStatus, isManagerLogin, teamMembers])
+  }, [employeeStatus])
 
   const getTeamMembers = async() => {
     await dispatch(getAllEmployeesAction({
@@ -138,10 +139,18 @@ const App: React.FC<Props> = () => {
           setIsEmployeeLogin(true);
       }
     }
-  }, [getTeamLeaderDetails, getTeamMembers, userData]);
+  }, [userData]);
 
   const createLog = async (data) => {
     
+    const getMyIP = async() => { 
+      try {
+        const res = await axios.get('https://ipapi.co/json/')
+        return res.data.IPv4;
+      } catch (error) {
+        console.error({error})
+      }
+    }
     const getMyBrowser = () => {
       return navigator.userAgent.toString();
     }
