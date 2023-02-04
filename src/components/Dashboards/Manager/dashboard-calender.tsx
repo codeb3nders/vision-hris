@@ -1,18 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  Close,
-  EventNote,
-  KeyboardArrowDown,
-  Publish,
-} from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
-import { Button, Menu, MenuItem } from "@mui/material";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { createContext, useContext, useEffect, useState } from "react";
 import { AppCtx } from "App";
-import LeaveBalances from "components/MyProfile/Leaves/leave.balances";
-import DialogModal from "CustomComponents/DialogModal";
 import { useDispatch, useSelector } from "react-redux";
 import { authStore } from "slices/userAccess/authSlice";
-import LeaveForm from "../Forms/LeaveForm";
+
 import moment, { Moment } from 'moment-timezone'
 import {
   getAllDataAction,
@@ -20,8 +11,6 @@ import {
   dataStatus,
   newDataStatus,
   updateStatus,
-  createAction,
-  newData,
 } from "slices/leaveRequests";
 import {
   BirthdayIcon,
@@ -35,24 +24,16 @@ import {
   VacationIcon,
 } from "components/Dashboards/Common/icons";
 import { getListOfValues } from "slices";
-import {
-  createAction as createOB,
-  data as OBRequestsData,
-  dataStatus as OBDataStatus,
-} from "slices/obRequests";
-import { EMPLOYEE, HR_ADMIN, MANAGER, PENDING } from "constants/Values";
-import Leaves from "components/MyProfile/Leaves";
-import useRequiredChecker from "hooks/useRequiredChecker";
+import { PENDING } from "constants/Values";
 import TeamCalendar from "components/ManagerDashboard/team_calendar/TeamCalendar";
 import { EmployeeI } from "slices/interfaces/employeeI";
 
 moment.tz.setDefault("Asia/Manila")
-const approverModes = ["approver", "hr admin"];
 
 const color = {
   APPROVED: "green",
   PENDING: "orange",
-  //TODO: add more color per status
+  
 };
 
 export type LeavesContext = {
@@ -105,10 +86,10 @@ export const LeaveDetailsInitialState: LeaveDetailsModel = {
   approver: "",
 };
 
-const LeaveManagement = ({isProfileView = false}) => {
+const LeaveManagement = () => {
   const dispatch = useDispatch();
-  const { userGroup } = useSelector(authStore);
-  const { access_token, userData, isHRLogin, isManagerLogin, isEmployeeLogin } = useContext(AppCtx);
+ 
+  const { access_token, userData, isHRLogin, isManagerLogin } = useContext(AppCtx);
   const [open, setOpen] = useState<boolean>(false);
   const [selectedLeaveType, setSelectedLeaveType] = useState<{
     code: string;
@@ -120,8 +101,8 @@ const LeaveManagement = ({isProfileView = false}) => {
   const [leaveDetails, setLeaveDetails] = useState<LeaveDetailsModel>(
     LeaveDetailsInitialState
   );
-  const [isRefresh, setIsRefresh] = useState<boolean>(true);
-  const [withError, setWithError] = useState<boolean>(true);
+
+
   const [teamCalendarData, setTeamCalendarData] = useState<{
     teamMembers: any[];
     leavesPerTeam: any[];
@@ -132,15 +113,11 @@ const LeaveManagement = ({isProfileView = false}) => {
   const getDataStatus = useSelector(dataStatus);
   const { teamMembers } = useSelector(authStore);
 
-  const [leaveRequests, setLeaveRequests] = useState<any[]>([]);
-  const [leaveHistory, setLeaveHistory] = useState<any[]>([]);
-  const [cancelledLeaves, setCancelledLeaves] = useState<any[]>([]);
-  const [pendingLeaves, setPendingLeaves] = useState<any[]>([]);
+
   const getNewDataStatus = useSelector(newDataStatus);
   const getUpdateDataStatus = useSelector(updateStatus);
-  const getNewData = useSelector(newData);
 
-  console.log(">>>>>>>>>>----", data)
+
   
   useEffect(() => {
     if (isManagerLogin) {
@@ -158,7 +135,7 @@ const LeaveManagement = ({isProfileView = false}) => {
       getUpdateDataStatus === "succeeded"
     ) {
       getData();
-      // notifyApprover();
+      
     }
   }, [getNewDataStatus, getUpdateDataStatus]);
 
@@ -168,7 +145,7 @@ const LeaveManagement = ({isProfileView = false}) => {
         upcoming: any[] = [],
         history: any[] = [],
         disapprovedCancelled: any[] = [];
-        console.log(">>>>>>>>>>", data)
+       
       const allLeaves = data.map((o: LeaveDetailsModel) => {
         const d: any = {
           ...o,
@@ -206,10 +183,7 @@ const LeaveManagement = ({isProfileView = false}) => {
         }
         return d;
       });
-      setPendingLeaves(pending);
-      setLeaveRequests(upcoming);
-      setLeaveHistory(history);
-      setCancelledLeaves(disapprovedCancelled);
+   
       
       if (isManagerLogin && teamMembers.length > 0) {
         console.log({teamMembers})
@@ -320,195 +294,12 @@ const LeaveManagement = ({isProfileView = false}) => {
     );
   };
 
-  const handleSubmit = async () => {
-    if (leaveDetails.leaveType === "OB") {
-      const {
-        id,
-        dateOfReturnToWork,
-        leaveType,
-        noOfDays,
-        offsetOThrs,
-        reasonOfLeave,
-        ...obData
-      } = leaveDetails;
-      await dispatch(
-        createOB({
-          body: {
-            ...obData,
-          },
-          access_token,
-        })
-      );
-    } else {
-      const { id, approverDetails, ...rest } = leaveDetails;
-      await dispatch(
-        createAction({
-          body: {
-            ...rest,
-          },
-          access_token,
-        })
-      );
-    }
-    setOpen(false);
-  };
-console.log({isHRLogin})
-  return (
-    <LeavesCtx.Provider
-      value={{
-        isRefresh,
-        leaveTypes,
-      }}
-    >
-      {(isManagerLogin || isHRLogin) && teamCalendarData.teamMembers.length > 0 ? (
-        <TeamCalendar {...teamCalendarData} />
-      ) : (
-        <>
-          <LeaveBalances />
-          <SelectAndFileLeave setSelectedLeaveType={setSelectedLeaveType} />
-        </>
-      )}
-      {open && (
-        <NewApplicationModal
-          open={open}
-          setOpen={setOpen}
-          selectedLeaveType={selectedLeaveType}
-          leaveDetails={leaveDetails}
-          setLeaveDetails={setLeaveDetails}
-          handleSubmit={handleSubmit}
-          withError={withError}
-          setWithError={setWithError}
-        />
-      )}
-      <Leaves
-        leaveRequests={leaveRequests}
-        pendingLeaves={pendingLeaves}
-        cancelledLeaves={cancelledLeaves}
-        leaveHistory={leaveHistory}
-      />
-    </LeavesCtx.Provider>
-  );
+
+  return <TeamCalendar {...teamCalendarData} />
+   
+  
 };
 
-const SelectAndFileLeave = ({ setSelectedLeaveType }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const { leaveTypes } = useContext(LeavesCtx);
-  const [leaveTypeList, setLeaveTypeList] = useState<any[]>([]);
 
-  useEffect(() => {
-    setLeaveTypeList(leaveTypes || []);
-  }, [leaveTypes]);
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLElement>,
-    selected: any
-  ) => {
-    setSelectedLeaveType(selected);
-    setAnchorEl(null);
-  };
-  // console.log({leaveTypeList})
-  return (
-    <div>
-      <Button
-        // variant="contained"
-        disableElevation
-        // color='primary'
-        onClick={handleClick}
-        endIcon={<KeyboardArrowDown />}
-      >
-        Apply for Leave
-      </Button>
-      <Menu
-        id="lock-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "lock-button",
-          role: "listbox",
-        }}
-      >
-        {leaveTypeList
-          .slice()
-          .sort((a: any, b: any) => a.name.localeCompare(b.name))
-          .map((option) => (
-            <MenuItem
-              key={option.code}
-              onClick={(event) => handleMenuItemClick(event, option)}
-            >
-              {option.name}
-            </MenuItem>
-          ))}
-      </Menu>
-    </div>
-  );
-};
-
-const NewApplicationModal = ({
-  open,
-  setOpen,
-  selectedLeaveType,
-  leaveDetails,
-  setLeaveDetails,
-  handleSubmit,
-  withError,
-  setWithError,
-}) => {
-  // console.log({ leaveDetails }, "leaveDetailsleaveDetails")
-  const { validated } = useRequiredChecker({
-    data: leaveDetails,
-    module: "leaveForm",
-  });
-
-  return (
-    <DialogModal
-      id="leaveForm-dialog"
-      className="laptop:w-[500px] desktop:w-[500px] "
-      titleIcon={<EventNote className="mr-2 text-sky-500" />}
-      title={`${selectedLeaveType.name} Form`}
-      onClose={() => setOpen(false)}
-      open={open}
-      actions={
-        <div className="mt-4">
-          <div className="grid grid-cols-2">
-            <LoadingButton
-              className="bg-sky-500 hover:bg-sky-600 text-md ease-in-out"
-              // loading={loading}
-              loadingPosition="start"
-              // startIcon={<Publish />}
-              variant="contained"
-              disabled={!validated || withError}
-              onClick={() => handleSubmit()}
-              disableElevation
-            >
-              Submit
-            </LoadingButton>
-            <button
-              className="col-span-1 px-2 py-1 text-slate-400 hover:text-slate-800"
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      }
-    >
-      <LeaveForm
-        leaveType={selectedLeaveType.code}
-        leaveDetails={leaveDetails}
-        setLeaveDetails={setLeaveDetails}
-        setWithError={setWithError}
-      />
-    </DialogModal>
-  );
-};
 
 export default LeaveManagement;

@@ -11,6 +11,7 @@ import Attendance from "./attendance";
 import Timeline, { TimelineHeaders, DateHeader } from "react-calendar-timeline";
 
 import moment from "moment";
+import DashboardCalendar from "./dashboard-calender";
 
 const groups = [
   { id: 1, title: "group 1" },
@@ -56,12 +57,7 @@ const ManagerMainDashboard = (props: Props) => {
       />
       <Shortcuts className="col-span-3 tablet:col-span-4 laptop:col-span-3 phone:col-span-12  self-stretch" />
       <div className="col-span-12">
-        <Timeline
-          groups={groups}
-          items={items}
-          defaultTimeStart={moment().add(-1, "month")}
-          defaultTimeEnd={moment().add(1, "year")}
-        />
+        <DashboardCalendar/>
       </div>
       <div className="col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4 grid space-y-4">
         <LeaveRequests />
