@@ -13,35 +13,6 @@ import Timeline, { TimelineHeaders, DateHeader } from "react-calendar-timeline";
 import moment from "moment";
 import DashboardCalendar from "./dashboard-calender";
 
-const groups = [
-  { id: 1, title: "group 1" },
-  { id: 2, title: "group 2" },
-];
-
-const items = [
-  {
-    id: 1,
-    group: 1,
-    title: "item 1",
-    start_time: moment(),
-    end_time: moment().add(1, "hour"),
-  },
-  {
-    id: 2,
-    group: 2,
-    title: "item 2",
-    start_time: moment().add(-0.5, "hour"),
-    end_time: moment().add(0.5, "hour"),
-  },
-  {
-    id: 3,
-    group: 1,
-    title: "item 3",
-    start_time: moment().add(2, "hour"),
-    end_time: moment().add(3, "hour"),
-  },
-];
-
 type Props = {
   celebrations: [];
 };
@@ -57,7 +28,7 @@ const ManagerMainDashboard = (props: Props) => {
       />
       <Shortcuts className="col-span-3 tablet:col-span-4 laptop:col-span-3 phone:col-span-12  self-stretch" />
       <div className="col-span-12">
-        <DashboardCalendar/>
+        <DashboardCalendar />
       </div>
       <div className="col-span-4 tablet:col-span-6 laptop:col-span-5 phone:col-span-12 desktop:col-span-4 grid space-y-4">
         <LeaveRequests />
