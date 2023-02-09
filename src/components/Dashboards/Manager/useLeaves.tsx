@@ -63,9 +63,34 @@ export const LeavesCtx = createContext<LeavesContext>({
   leaveTypes: [],
 });
 
-const color = {
+const leaveStatusColor = {
   APPROVED: "green",
   PENDING: "orange",
+};
+
+const leaveTypeColor = {
+  BL: "purple",
+  CL: "yellow",
+  ML: "pink",
+  PL: "blue",
+  SIL: "black",
+  SL: "red",
+  UL: "black",
+  VL: "black",
+  BLM: "black",
+  CHR: "black",
+  GIL: "black",
+  HIL: "black",
+  IBP: "black",
+  MDT: "black",
+  OLD: "black",
+  SHA: "black",
+  SOL: "black",
+  STH: "black",
+  TRZ: "black",
+  VCW: "black",
+  VHO: "black",
+  VIN: "black",
 };
 
 const initialTeamCalendarData = {
@@ -238,13 +263,24 @@ export const useLeave = () => {
               className: "weekend",
 
               style: {
-                background: `${color[o.status]}`,
+                background: statusColor(o),
               },
             },
           };
         }),
       };
     });
+  };
+
+  const statusColor = (o) => {
+    console.log({ o });
+    return `linear-gradient(to right, 
+        ${leaveTypeColor[o.leaveType]},
+        ${leaveTypeColor[o.leaveType]},
+        ${leaveStatusColor[o.status]}, 
+        ${leaveStatusColor[o.status]},                   
+        ${leaveStatusColor[o.status]}, 
+        ${leaveStatusColor[o.status]})`;
   };
 
   const getLeaveIcon = (type: string) => {
